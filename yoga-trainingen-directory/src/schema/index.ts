@@ -275,6 +275,19 @@ export const Program = strictObject({
   /** Descriptive label for findability — NOT a quality signal (§5). */
   format_label: z.enum(["200", "300", "500", "other", "none"]),
   style_claimed: z.string().optional(),
+  /** Normalized style tags (controlled vocab) for filtering — descriptive, NOT
+   *  a quality signal. Tag `multistyle` ONLY when the school self-frames that way
+   *  or lists >=2 co-equal styles; a program that simply states no style gets
+   *  `styles: []` (unknown), never `multistyle` by default. "allround" is DERIVED
+   *  (see isMultistyle in dataset.ts), never stored. */
+  styles: z
+    .array(
+      z.enum([
+        "vinyasa", "hatha", "ashtanga", "yin", "yang", "kundalini", "iyengar",
+        "restorative", "raja", "jnana", "nidra", "multistyle", "own_method", "other",
+      ]),
+    )
+    .optional(),
   accreditation: z.array(Accreditation).default([]),
   delivery: strictObject({
     mode: z.enum(["in_person", "online", "hybrid"]),
@@ -391,8 +404,16 @@ export const Provider = strictObject({
     }),
   ),
   crkbo: strictObject({
+    /** Quad. `no` ONLY after an adequate, documented register search (by legal
+     *  name from KvK + relevant person names), never from a brand-name miss or a
+     *  "charges BTW" inference. The register is complete, so non-membership is a
+     *  real finding — but only when the right keys were searched (record them in note/source). */
     registered: Quad,
-    /** Registered entity's name — often a BV/holding/person, not the brand. */
+    /** instelling = the organisation is registered; docent = a named individual.
+     *  Exemption riding on a registered docent is tied to that person (same
+     *  fragility as a personally-held YA registration). */
+    register: z.enum(["instelling", "docent"]).optional(),
+    /** Registered entity's or person's name — often a BV/holding/person, not the brand. */
     holder: z.string().optional(),
     checked: YearMonth.nullable(),
     source: z.string().optional(),

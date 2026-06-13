@@ -65,6 +65,13 @@
                 "unknown"
               ]
             },
+            "register": {
+              "type": "string",
+              "enum": [
+                "instelling",
+                "docent"
+              ]
+            },
             "holder": {
               "type": "string"
             },
@@ -198,6 +205,28 @@
               },
               "style_claimed": {
                 "type": "string"
+              },
+              "styles": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "vinyasa",
+                    "hatha",
+                    "ashtanga",
+                    "yin",
+                    "yang",
+                    "kundalini",
+                    "iyengar",
+                    "restorative",
+                    "raja",
+                    "jnana",
+                    "nidra",
+                    "multistyle",
+                    "own_method",
+                    "other"
+                  ]
+                }
               },
               "accreditation": {
                 "type": "array",

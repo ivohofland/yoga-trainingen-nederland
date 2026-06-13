@@ -116,6 +116,15 @@ export function contactRatio(program: Program): number | null {
   return Math.round((contact / total) * 100) / 100;
 }
 
+/** "allround/multistyle" is derived, never stored (spec §4.12): the school
+ *  self-tagged multistyle, or named >=2 co-equal specific styles. */
+export function isMultistyle(program: Program): boolean {
+  const tags = program.styles ?? [];
+  if (tags.includes("multistyle")) return true;
+  const specific = tags.filter((t) => t !== "other" && t !== "own_method");
+  return specific.length >= 2;
+}
+
 export function bundleDelta(provider: Provider, program: Program): number | null {
   const moduleIds = program.composition?.modules;
   if (!moduleIds?.length || program.price.amount_eur == null) return null;

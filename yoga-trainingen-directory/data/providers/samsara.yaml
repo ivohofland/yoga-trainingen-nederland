@@ -8,6 +8,7 @@ locations:
     address: "Korte Haven 125, 3111 BH"
 crkbo:
   registered: "yes"
+  register: instelling
   holder: "Samsara Yoga Opleiding"
   checked: "2026-06-13"
   source: site-2026-06

@@ -49,6 +49,7 @@ programs:
     format_label: "200"
     style_claimed: "Vinyasa Flow (met ruimte voor eigen stijl: Dynamische Hatha /
       Slow Flow); wetenschappelijk onderbouwde anatomie en fysiologie"
+    styles: [vinyasa]  # primair Vinyasa; Hatha/Slow Flow als variant "ruimte voor eigen stijl", niet co-equaal → geen tweede tag (§4.12)
     accreditation:
       - body: yoga_alliance
         label_claimed: "geregistreerd bij Yoga Alliance; 'voldoet aan de hoogste

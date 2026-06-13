@@ -58,6 +58,7 @@ programs:
     format_label: "200"
     style_claimed: "Multi Style: Raja, Hatha, Yin, Kundalini & Ashtanga;
       traditionele Indiase yogatraditie + moderne inzichten"
+    styles: [multistyle, raja, hatha, yin, kundalini, ashtanga]  # zelf-gelabeld "Multi Style"
     accreditation:
       - body: yoga_alliance
         label_claimed: "Yoga Alliance Gecertificeerd; erkend door Yoga Alliance International"
@@ -114,6 +115,7 @@ programs:
     style_claimed: "Multi Style incl. Naad Yoga; kosha's, chakra's, guna's, '9
       Dimensies van Bewustzijn'; neuroplasticiteit en trauma-geïnformeerd
       lesgeven"
+    styles: [multistyle]  # zelf-gelabeld "Multi Style"
     accreditation:
       - body: yoga_alliance
         label_claimed: "officieel erkend door de Yoga Alliance als een RYT300-uur

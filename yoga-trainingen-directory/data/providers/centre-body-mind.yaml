@@ -32,9 +32,9 @@ sources:
     captured: "2026-06-12"
   - id: ya-register-2026-06
     type: register
-    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pi3LAAQ&sid=0013g000002nnUBAAY&name=The-Centre-of-Body-&-Mind
     archived_url: null
-    captured: "2026-06-12"
+    captured: "2026-06-13"
     local_snapshot: data/archives/centre-body-mind/ya-register-2026-06-2026-06-12.pdf
   - id: crkbo-register-2026-06
     type: register
@@ -49,6 +49,7 @@ programs:
     url: https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
     format_label: "200"
     style_claimed: "Hatha, Ashtanga, Vinyasa en Yin; chakra-leer"
+    styles: [hatha, ashtanga, vinyasa, yin]  # 4 co-equale stijlen -> derived multistyle
     accreditation:
       - body: yoga_alliance
         label_claimed: "200 RYT Alliance certificaat"

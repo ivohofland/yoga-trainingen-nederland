@@ -9,13 +9,14 @@ locations:
     address: "Blankenstraat 166, 1018 SG"
 crkbo:
   registered: "yes"
+  register: instelling
   holder: "Stichting Critical Alignment"
   checked: "2026-06-13"
   source: site-2026-06
   note: >
     Tweemaal expliciet vermeld als fiscaal feit: "Vanwege registratie bij het
     CRKBO is de opleiding vrijgesteld van btw." Schone §10-presentatie (geen
-    keurmerk-framing). Stichting-vorm.
+    keurmerk-framing). Stichting-vorm. LET OP: 'yes' o.b.v. eigen site-vermelding; nog te bevestigen in CRKBO-register op juridische naam.
 registrations: [] # GEEN YA of VYN: eigen methode/certificering (CAY)
 depth: listed
 last_verified: "2026-06-13"
@@ -38,6 +39,7 @@ programs:
       Leeuwen; alignment via bewegingsketens/'11 verbindingen', hulpmiddelen
       (strip, rol, boog, hoofdstandbankje); anatomie + psychologie van
       spanning/trauma"
+    styles: [own_method]  # eigen methode CAY
     accreditation: []
     delivery:
       mode: in_person

@@ -109,7 +109,7 @@ Provenance anchor; everything contested points at one of these.
 | `website` | url | L1 | |
 | `locations[]` | `{city, address?}` | L1 | |
 | `status` | enum | L1 | `active \| inactive \| unknown` |
-| `crkbo` | `{registered (q), holder?, checked: date, source}` | L1 | public register → verifiable; **fact, never endorsement** (§10). `holder` = the registered entity's name, which often differs from the studio brand (BV, holding, or person name) — same pattern as `registrations[].holder`. Consequence for method: CRKBO must be checked per provider via their legal name (KvK), not assumed absent because the brand name isn't in the register |
+| `crkbo` | `{registered (q), register?, holder?, checked: date, source}` | L1 | public register → verifiable; **fact, never endorsement** (§10). `register: instelling \| docent` — *instelling* = the organisation is registered; *docent* = a named individual is registered, so the VAT exemption rides on that person (same fragility as a personally-held YA registration). `holder` = the registered entity's/person's name, often ≠ brand. **`registered: no` is allowed only after a documented search by legal name (KvK) + relevant person names; a brand-name miss or a 'charges BTW' inference is `unknown`, not `no`** (see §4.11) |
 | `registrations[]` | `{body, identifier?, holder?, first_registered?, verified_in_register (q), source}` | L1 | `body: yoga_alliance \| vyn \| other` — recorded as claim until checked against the register. `holder` = the name the registration is actually held under; pilot found an RYS registered to the lead teacher personally while the studio markets the training, so the holder is real consumer-relevant data |
 | `legal` | `{kvk?, legal_name?}` | L2 | |
 | `founded_year` | `{value: int, source}` | L2 | cheap track-record anchor (§8) |
@@ -230,6 +230,23 @@ The §12 correction workflow, logged.
 Two §9 axes are intentionally *not* fields. **Soft signals** (post-training support, alumni community, responsiveness tone) are gameable and corroboration-only — they belong in `editorial`, never in structured data where a filter could treat them as fact. **Upsell structure** ("do you really need the 300?") emerges from `composition` + module pricing + derived `bundle_delta`; a dedicated field would be opinion dressed as data. And there is no `coherence` field by design — only the six signals.
 
 ---
+
+## 4.11 CRKBO inference rule
+
+Two facts about CRKBO must not be collapsed:
+
+- **The VAT treatment of the price** (`price.vat`: `incl` / `excl` / `exempt_crkbo`) is *directly observed* — always recordable as fact.
+- **Registration** (`crkbo.registered`) reflects the *register*, which is public and complete.
+
+The inference between them is asymmetric. *Sold btw-vrij* → almost certainly CRKBO (or another exemption): near-definitional. *Charges BTW* → this **training** isn't being treated as exempt, but that is **not** proof the **provider** has no registration: it could be held by another entity (a BV/holding), by the founder personally in the **Docenten** register, be pending, or be lapsed. Exemption can even ride on a registered *teacher* while the school-brand holds no *Instelling* registration at all.
+
+Therefore: never set `registered: no` from a brand-name register miss or a "charges BTW" inference — that stays `unknown`, with a note capturing the signal ("charges BTW → exemption unlikely"). Set `no` only after a **documented search by legal name (KvK) + relevant person names**; record the searched names in `source`/`note` so the finding is falsifiable. The register being complete is what makes a properly-searched non-membership a real `no` rather than mere absence of evidence.
+
+## 4.12 Style classification
+
+`style_claimed` stays verbatim (a claim). For filtering, `Program.styles[]` holds normalized tags from a controlled vocabulary (`vinyasa, hatha, ashtanga, yin, yang, kundalini, iyengar, restorative, raja, jnana, nidra, multistyle, own_method, other`) — descriptive, **not a quality signal** (like `format_label`).
+
+Store the literal `multistyle` tag **only when the school self-frames that way** ("multistyle", "allround") — it records *their label*, not your conclusion. When a school instead names ≥2 **co-equal** specific styles, list those tags and leave `multistyle` out: "allround" is then **derived** (`isMultistyle()` returns true for the self-label *or* for ≥2 co-equal specifics), never stored — the same don't-store-the-conclusion rule as coherence. "Co-equal" matters: a primary style with a subordinate variant ("Vinyasa, met ruimte voor wat Hatha") is **one** style tag, not two. A program that simply states no style gets `styles: []` (unknown); absence of a statement is not a finding, never `multistyle` as a residual default.
 
 ## 5. Layer 1 — minimum live-worthy record (open decision #4)
 
