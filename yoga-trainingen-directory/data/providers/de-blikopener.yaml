@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: de-blikopener
+name: de Blikopener
+aka: [ "Blikopener Yoga Opleidingen", "Yoga Opleidingen De Blikopener" ]
+website: https://www.blikopener.info
+status: active
+locations:
+  - city: Tilburg
+crkbo:
+  registered: "yes"
+  holder: "Yoga Opleidingen De Blikopener"
+  checked: "2026-06-13"
+  source: crkbo-register-2026-06
+  note: "naam-match in CRKBO-register (geharvest 2026-06-12)"
+registrations:
+  - body: vyn
+    holder: "de Blikopener"
+    verified_in_register: "yes"
+    source: vyn-register-2026-06
+  - body: other
+    identifier: "Europese Yogafederatie (U.E.Y.) + V.E.Y.O. (Verenigde Erkende Yoga
+      Opleidingen)"
+    verified_in_register: unknown
+    source: site-2026-06
+depth: listed
+last_verified: "2026-06-13"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.blikopener.info/
+    archived_url: https://web.archive.org/web/20260613080628/https://www.blikopener.info/
+    captured: "2026-06-13"
+    note: "homepage; prijzen/uren achter 'Agenda's en Tarieven'-menu, nog niet
+      uitgelezen"
+    local_snapshot: data/archives/de-blikopener/site-2026-06-2026-06-13.pdf
+  - id: vyn-register-2026-06
+    type: register
+    url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    archived_url: https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    captured: "2026-06-13"
+    local_snapshot: data/archives/de-blikopener/vyn-register-2026-06-2026-06-13.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-13"
+    local_snapshot: data/archives/de-blikopener/crkbo-register-2026-06-2026-06-13.pdf
+
+programs:
+  - id: hatha-raja-opleiding
+    name: "Hatha Raja Yoga docentenopleiding"
+    url: https://www.blikopener.info/
+    format_label: other # eigen meerjarig traject; VYN-erkend, geen RYT-label gepubliceerd
+    style_claimed: "Hatha en Raja yoga; 'Houding + Adem = Energie'; klassieke traditie"
+    accreditation:
+      - body: vyn
+        label_claimed: "landelijk officieel erkend door de Vereniging Yogadocenten
+          Nederland (V.Y.N.) en de Europese Yogafederatie (U.E.Y.)"
+        verified: "yes"
+        source: vyn-register-2026-06
+    delivery:
+      mode: in_person
+      structure: mixed
+      language: nl
+    price:
+      amount_eur: null
+      vat: exempt_crkbo
+      published: "yes"
+      note: "prijs op aparte tarievenpagina, nog niet uitgelezen"
+      source: site-2026-06
+    hours_claimed:
+      total: null
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: "geen urentelling op homepage; meerjarig traject"
+    assessment_described:
+      exists: unknown
+    coherence_signals:
+      single_cohort_intake: "yes"
+      single_cohort_intake_note: "jaarlijkse start; 1e jaar start 31 aug 2026"
+      continuous_lead_teacher: "yes"
+      continuous_lead_teacher_note: "Hans 't Hart (sinds 1968) en Natasja de Senerpont
+        Domis (sinds 2006), met ondersteunende docenten"
+      source: site-2026-06
+    track_record:
+      note: "claimt 'bestaat nu ruim 55 jaar'; site-motto 'sinds 1982';
+        oudste-generatie NL-opleiding"
+    cohorts:
+      - id: c-2026-08
+        start: "2026-08"
+        status: announced
+        source: site-2026-06
+        note: "1e jaar start 31 aug 2026; proeflessen mei/juni, open dag 23 aug"
+
+people:
+  - id: hans-t-hart
+    name: "Hans 't Hart"
+    trainings_claimed:
+      - label: "yoga- en meditatieleraar sinds 1968; leiding opleiding"
+        verified: unknown
+        source: site-2026-06
+  - id: natasja-de-senerpont-domis
+    name: "Natasja de Senerpont Domis"
+    trainings_claimed:
+      - label: "yoga- en meditatielerares sinds 2006; leiding opleiding"
+        verified: unknown
+        source: site-2026-06

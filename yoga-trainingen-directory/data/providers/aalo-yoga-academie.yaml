@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: aalo-yoga-academie
+name: AALO Yoga Academie
+aka: [ "AALO Opleidingen", "AALO" ]
+website: https://www.aalo.nl/yoga-academie/
+status: active
+locations:
+  - city: Culemborg
+    note: "leslocatie (o.a.); ook Woerden, Maastricht genoemd; AALO is landelijk
+      sport-/fitnessopleider"
+  - city: Woerden
+crkbo:
+  registered: unknown
+  checked: "2026-06-13"
+  source: crkbo-register-2026-06
+  note: "geen naam-match in CRKBO 'yoga'-zoek; AALO Opleidingen B.V. mogelijk
+    elders geregistreerd - via KvK checken"
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "AALO Opleidingen B.V."
+    first_registered: "2015-12"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+depth: listed
+last_verified: "2026-06-13"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.aalo.nl/yoga-academie/
+    archived_url: https://web.archive.org/web/20260613081543/https://www.aalo.nl/yoga-academie/
+    captured: "2026-06-13"
+    note: "overzichtspagina; prijzen per module/pakket op aparte inschrijfpagina's,
+      nog niet uitgelezen"
+    local_snapshot: data/archives/aalo-yoga-academie/site-2026-06-2026-06-13.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-13"
+    local_snapshot: data/archives/aalo-yoga-academie/ya-register-2026-06-2026-06-13.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-13"
+    local_snapshot: data/archives/aalo-yoga-academie/crkbo-register-2026-06-2026-06-13.pdf
+
+programs:
+  - id: yin-yang-ryt200
+    name: "Yin/Yang Yoga Teacher Training (RYT-200)"
+    url: https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/
+    format_label: "200"
+    style_claimed: "Yin en Yang (Power/Vinyasa) yoga; opgebouwd uit losse pakketten
+      (basis + advanced + afronding)"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "internationaal erkend door Yoga Alliance; na afronding totale
+          traject registreren als RYT-200"
+        verified: "yes"
+        source: ya-register-2026-06
+    delivery:
+      mode: in_person
+      structure: modular
+      language: nl
+    price:
+      amount_eur: null
+      vat: unknown
+      published: "yes"
+      note: "prijs per pakket/module op inschrijfpagina's, niet als één totaal op
+        overzicht; nog uit te lezen"
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    composition:
+      type: free_assembly # RYT200 samengesteld uit losse pakketten/modules
+    coherence_signals:
+      required_sequence: not_published
+      single_cohort_intake: "no"
+      single_cohort_intake_note: "doorlopende moduulstarts op verschillende locaties/data"
+      integrative_assessment: not_published
+      integrative_assessment_note: "apart 'Afrondingspakket RYT-200' bestaat; inhoud nog niet uitgelezen"
+      continuous_lead_teacher: "no"
+      continuous_lead_teacher_note: "wisselende YA-geaccrediteerde docenten/Master Trainers per module"
+      modules_sold_separately: "yes"
+      modules_sold_separately_note: "modules ook los als basis-/advanced-pakket én als
+        Yoga Alliance PE/continuing education verkocht - §7 dubbele dienst, hier
+        al op 200u-niveau"
+      source: site-2026-06
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2015
+      source: ya-register-2026-06
+      note: "AALO afficheert 'Feedback Company 8.8' studentbeoordeling als marketing"
+
+  - id: yin-ryt200
+    name: "Yin Yoga Teacher Training (RYT-200)"
+    url: https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/
+    format_label: "200"
+    style_claimed: "Yin yoga (fysieke + subtiele lichaam, meridianen/qigong,
+      mindfulness/meditatie); modulair opgebouwd"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "internationaal erkend door Yoga Alliance; RYT-200 na afronding"
+        verified: "yes"
+        source: ya-register-2026-06
+    delivery:
+      mode: in_person
+      structure: modular
+      language: nl
+    price:
+      amount_eur: null
+      vat: unknown
+      published: "yes"
+      note: "per module/pakket; nog uit te lezen"
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    composition:
+      type: free_assembly
+    coherence_signals:
+      modules_sold_separately: "yes"
+      modules_sold_separately_note: "Yin Yoga 1-4 ook los/als PE verkrijgbaar"
+      single_cohort_intake: "no"
+      source: site-2026-06
+    assessment_described:
+      exists: not_published

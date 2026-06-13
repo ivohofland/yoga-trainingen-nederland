@@ -1,0 +1,123 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: samsara
+name: Samsara Yoga Opleiding
+website: https://samsara.nl
+status: active
+locations:
+  - city: Schiedam
+    address: "Korte Haven 125, 3111 BH"
+crkbo:
+  registered: "yes"
+  holder: "Samsara Yoga Opleiding"
+  checked: "2026-06-13"
+  source: site-2026-06
+  note: >
+    Expliciet en zuiver vermeld: "De opleiding is geregistreerd in het CRKBO en
+    derhalve vrijgesteld van BTW." Prijs is dienovereenkomstig btw-vrij (EUR
+    2.705 excl. btw-heffing). Schone §10-casus: CRKBO hier als fiscaal feit
+    gepresenteerd, NIET als kwaliteitskeurmerk - contrast met Arhanta's
+    erkenning-lijstje.
+registrations:
+  - body: vyn
+    identifier: "VYN 200u instructeur + VYN/EYU 500u allround docent"
+    holder: "Samsara Yoga Opleiding"
+    verified_in_register: "yes"
+    source: vyn-register-2026-06
+  - body: other
+    identifier: "EYU (European Yoga Union) 500u"
+    verified_in_register: unknown
+    source: site-2026-06
+depth: listed
+last_verified: "2026-06-13"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://samsara.nl/opleidingen/
+    archived_url: https://web.archive.org/web/20260613075555/https://samsara.nl/opleidingen/
+    captured: "2026-06-13"
+    local_snapshot: data/archives/samsara/site-2026-06-2026-06-13.pdf
+  - id: vyn-register-2026-06
+    type: register
+    url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    archived_url: https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    captured: "2026-06-13"
+    local_snapshot: data/archives/samsara/vyn-register-2026-06-2026-06-13.pdf
+
+programs:
+  - id: 4jarige-allround-500
+    name: "4-jarige opleiding tot allround yogadocent (VYN/EYU 500u)"
+    url: https://samsara.nl/opleidingen/
+    format_label: "500"
+    style_claimed: "nonduale hatha yoga en jnana yoga; gegrond in advaita vedanta
+      (Shankara, Krishnamurti, Ramana Maharsi, Nisargadatta, Wolter Keers, Douwe
+      Tiemersma)"
+    accreditation:
+      - body: vyn
+        label_claimed: "VYN-erkend 200u yoga-instructeur (na jaar 2); VYN/EYU-erkend
+          500u allround yogadocent (na jaar 3-4)"
+        verified: "yes"
+        source: vyn-register-2026-06
+    delivery:
+      mode: in_person
+      structure: weekends # 22 lesdagen/jaar; vrij of za afhankelijk van even/oneven startjaar
+      duration_months_min: 48
+      language: nl
+    prerequisites_claimed: "min. 23 jaar; middelbare school afgerond; HBO
+      werk-/denkniveau; min. 1 jaar yoga (bij voorkeur VYN-erkend docent);
+      deelname open dag/gesprek"
+    price:
+      amount_eur: 2705
+      vat: exempt_crkbo
+      published: "yes"
+      includes: "22 lesdagen, begeleiding/intervisie, 2 individuele gesprekken/jaar,
+        lesmaterialen, retraiteweekend (jaar 4) incl. maaltijden, gebruik
+        matten/kussens"
+      excludes: "boeken (literatuurlijst per jaar); verdiepings-/specialisatiemodules"
+      note: >
+        LET OP: EUR 2.705 is de prijs PER STUDIEJAAR (2026-2027), niet voor de
+        hele 4-jarige opleiding. Totale opleidingskosten (~4 jaar) nergens als
+        één bedrag gepubliceerd - transparantie-aandachtspunt. Gespreid betalen
+        in 4 termijnen.
+      source: site-2026-06
+    hours_claimed:
+      total: 500 # eindkwalificatie VYN/EYU 500u over 4 jaar
+      contact: null # 22 lesdagen/jaar gepubliceerd, niet als urentotaal
+      self_study: null # "thuis 10-15 uur/week"; daarnaast min. 120u yoga bij erkende docent
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: >
+        Format uitgedrukt in lesdagen en weekuren, niet in een
+        uren-uitsplitsing. Min. 120u yoga volgen bij (erkende) docent als aparte
+        verplichting. Begeleide lespraktijk aanwezig ("oefenlessen geven aan
+        medecursisten, eigen cursisten, intervisie") maar niet gekwantificeerd.
+    composition:
+      type: single_program # samenhangend 4-jarig traject met doorstroommomenten
+    coherence_signals:
+      required_sequence: "yes"
+      required_sequence_note: "doorstroom per studiejaar afhankelijk van opdrachten,
+        praktijkdagen en aanwezigheidsverplichting"
+      single_cohort_intake: "yes"
+      single_cohort_intake_note: "jaarlijkse start in september; even/oneven startjaar
+        bepaalt vaste lesdag"
+      integrative_assessment: "yes"
+      integrative_assessment_note: "exameneisen per fase (200u na jaar 2, 500u na jaar
+        4); opdrachten + praktijkdagen doorlopend"
+      continuous_lead_teacher: not_published
+      modules_sold_separately: "no"
+      modules_sold_separately_note: "specialisatiemodules apart, maar de kernopleiding is één traject"
+      source: site-2026-06
+    assessment_described:
+      exists: "yes"
+      continuous: "yes"
+      final: "yes"
+      quote: "Hoewel de overgang naar een volgend studiejaar afhangt van het voldoen
+        aan de opdrachten, praktijkdagen en het voldoen van de
+        aanwezigheidsverplichting … Bij het voldoen aan de exameneisen ontvang
+        je het diploma"
+    cohorts:
+      - id: c-2026-09
+        start: "2026-09"
+        status: announced
+        source: site-2026-06
+        note: "studiejaar 2026-2027; conceptplanning als PDF gepubliceerd"

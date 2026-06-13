@@ -1,0 +1,232 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yoga-nature-studio
+name: Yoga Nature Studio
+website: https://yoganaturestudio.com
+status: active
+locations:
+  - city: Maastricht
+    address: "Kleine Looiersstraat 6, 6211 JL"
+crkbo:
+  registered: unknown
+  checked: "2026-06-13"
+  source: crkbo-register-2026-06
+  note: "geen naam-match in CRKBO-register; 200u-prijs incl. 21% btw bevestigt
+    geen vrijstelling"
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200 (+ 300 via modules)"
+    holder: "Yoga Nature Studio"
+    first_registered: "2024-04"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+depth: listed
+last_verified: "2026-06-13"
+sources:
+  - id: site-200-2026-06
+    type: website
+    url: https://yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/
+    archived_url: https://web.archive.org/web/20260613081202/https://en.yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/
+    captured: "2026-06-13"
+    local_snapshot: data/archives/yoga-nature-studio/site-200-2026-06-2026-06-13.pdf
+  - id: site-300-2026-06
+    type: website
+    url: https://yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/
+    archived_url: https://web.archive.org/web/20260613081307/https://en.yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/
+    captured: "2026-06-13"
+    note: "prijzen niet op deze pagina; per module geboekt"
+    local_snapshot: data/archives/yoga-nature-studio/site-300-2026-06-2026-06-13.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-13"
+    local_snapshot: data/archives/yoga-nature-studio/ya-register-2026-06-2026-06-13.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-13"
+    local_snapshot: data/archives/yoga-nature-studio/crkbo-register-2026-06-2026-06-13.pdf
+
+programs:
+  - id: 200-living-vinyasa
+    name: "200-uur Living Vinyasa Opleiding"
+    url: https://yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/
+    format_label: "200"
+    style_claimed: "Living Vinyasa; Vinyasa Krama sequencing met Daphne Koken's
+      'D.I.Y.-sequence'; embodiment; prana/vayu's, anatomie, filosofie (Bhagavad
+      Gita, Yoga Sutras, Samkhya, Hatha Yoga Pradipika), Ayurveda-basis"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "door Yoga Alliance erkende opleiding; 'voldoet aan
+          internationale Yoga Alliance richtlijnen voor een 200 uur opleiding'"
+        verified: "yes"
+        source: ya-register-2026-06
+    delivery:
+      mode: in_person
+      structure: weekends # 5 modules, vr-zo blokken nov 2026 - jun 2027
+      duration_months_min: 8
+      language: mixed # NL + enkele workshops/boeken Engels
+    prerequisites_claimed: "1-2 jaar regelmatige yoga-ervaring; goede basis
+      practice; begrip NL en Engels"
+    price:
+      amount_eur: 2700 # comparable base: super early bird
+      variants:
+        - { label: "super early bird (voor 20 jul 2026)", amount_eur: 2700 }
+        - { label: "early bird (voor 20 sep 2026)", amount_eur: 2800 }
+        - { label: "regulier (na 20 sep 2026)", amount_eur: 2950 }
+      vat: incl
+      published: "yes"
+      note: "aanbetaling EUR 500 niet-restitueerbaar; termijnbetaling mogelijk;
+        literatuur deels zelf"
+      source: site-200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-200-2026-06
+      note: >
+        Geen uren-uitsplitsing. Wel concreet praktijk-/lespraktijkkader:
+        praktijkdag + supervisie (30 jan), praktijk-examen (27 jun), studiegroep
+        om lesgeven te oefenen, plus 16 studiolessen volgen + min. 8 observeren.
+        Begeleide lespraktijk aanwezig maar niet als urental geïsoleerd.
+    group_size_claimed:
+      max: 14
+      source: site-200-2026-06
+    composition:
+      type: single_program
+    coherence_signals:
+      required_sequence: "yes"
+      required_sequence_note: "5 opeenvolgende modules incl. pre-teacher module;
+        examens in laatste module"
+      single_cohort_intake: "yes"
+      integrative_assessment: "yes"
+      integrative_assessment_note: "praktijk-examen + diploma-uitreiking aan het eind
+        (27 jun); praktijkdag/supervisie tussentijds"
+      continuous_lead_teacher: "yes"
+      continuous_lead_teacher_note: "lead teacher Daphne Koken doorlopend; vast
+        gastdocententeam per onderdeel"
+      modules_sold_separately: "no"
+      source: site-200-2026-06
+    assessment_described:
+      exists: "yes"
+      continuous: "yes"
+      final: "yes"
+      quote: "Tijdens de laatste module vinden de examens plaats … 27 juni -
+        Praktijk-examen & diploma-uitreiking"
+    contract:
+      installments_published: "yes"
+      min_participants:
+        clause: unknown
+      source: site-200-2026-06
+    track_record:
+      first_seen_year: 2024
+      source: ya-register-2026-06
+      note: "Daphne Koken leidt sinds 2014 op (500+ studenten) in Amsterdam, Haarlem,
+        Leeuwarden, Leiden, Maastricht; Maastricht sinds 2023"
+    cohorts:
+      - id: c200-2026-11
+        program: 200-living-vinyasa
+        start: "2026-11"
+        end: "2027-06"
+        status: announced
+        source: site-200-2026-06
+        note: "volledige datumlijst gepubliceerd; praktijk-examen 27 jun 2027"
+        language: mixed
+
+  - id: 300-advanced-vinyasa
+    name: "300-uur Advanced Vinyasa Yoga Teacher Training (modulair)"
+    url: https://yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/
+    format_label: "300"
+    style_claimed: "Advanced Vinyasa; asana/sequencing, hands-on assists, anatomie,
+      embodied movement, filosofie/mythologie, pranayama, teaching skills"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance geaccrediteerd; na vereiste modules + eindopdracht
+          registreren als RYT 300"
+        verified: unknown
+        source: site-300-2026-06
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_max: 36
+      language: nl
+    prerequisites_claimed: "200-uur Yoga Teacher Training of vergelijkbare ervaring;
+      sommige modules ook voor ervaren beoefenaars"
+    price:
+      amount_eur: null
+      vat: unknown
+      published: "no"
+      note: "geen prijs op opleidingspagina; per module geboekt"
+      source: site-300-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-300-2026-06
+    composition:
+      type: free_assembly
+    coherence_signals:
+      required_sequence: "no"
+      required_sequence_note: "'volledig modulair en flexibel'; binnen 3 jaar afronden"
+      single_cohort_intake: "no"
+      single_cohort_intake_note: "doorlopende losse 2-daagse modules, geen vaste cohortstart"
+      integrative_assessment: "yes"
+      integrative_assessment_note: "eindopdracht na afronding van alle vereiste
+        modules, vóór RYT300-registratie"
+      continuous_lead_teacher: not_published
+      modules_sold_separately: "yes"
+      modules_sold_separately_note: "'volgen als bijscholing of combineren tot 300' -
+        §7 dubbele-dienst-specimen"
+      bundle_price_below_sum: unknown
+      source: site-300-2026-06
+    assessment_described:
+      exists: "yes"
+      continuous: "yes"
+      final: "yes"
+      quote: "Na afronding van losse modules ontvang je een deelcertificaat. Na
+        afronding van het volledige traject kun je starten met de eindopdracht."
+    track_record:
+      first_seen_year: 2024
+      source: ya-register-2026-06
+
+people:
+  - id: daphne-koken
+    name: "Daphne Koken"
+    trainings_claimed:
+      - label: "oprichtster/eigenaresse Yoga Nature Studio; senior teacher trainer '1500
+          uur+'; sinds 2014, 500+ studenten
+          (Amsterdam/Haarlem/Leeuwarden/Leiden/Maastricht)"
+        verified: unknown
+        source: site-200-2026-06
+    # CROSS-PROVIDER: Maayke Vidts (Namaste) noemt Daphne Koken als docent bij wie
+    # zij haar practice verdiepte.
+  - id: laura-bliek
+    name: "Laura Bliek"
+    trainings_claimed:
+      - label: "500 uur+ yoga teacher; pranayama-studie bij Kaivalyadhama; geeft
+          filosofie/pranayama"
+        verified: unknown
+        source: site-200-2026-06
+    # CROSS-PROVIDER: dezelfde Laura Bliek co-doceert de Pranayama TT bij Jai Yoga
+    # (eveneens Kaivalyadhama-lijn). Derde docent-overlap in de dataset.
+  - id: robin-voss
+    name: "Robin Voss"
+    background:
+      - field: "ayurveda"
+        credential: "Gecertificeerd Ayurvedisch Arts (CAP), opgeleid door Dr. Vasant Lad"
+        registry: other
+        verified: unknown
+        source: site-200-2026-06
+  - id: beatrice-voss
+    name: "Beatrice Voss"
+    background:
+      - field: "ayurveda"
+        credential: "Gecertificeerd Ayurvedisch Arts (CAP), opgeleid door Dr. Vasant Lad"
+        registry: other
+        verified: unknown
+        source: site-200-2026-06

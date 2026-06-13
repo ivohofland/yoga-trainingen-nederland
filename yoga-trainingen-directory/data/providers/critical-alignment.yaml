@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: critical-alignment
+name: Critical Alignment Yoga & Therapie Instituut
+aka: [ "CAY", "Critical Alignment Instituut" ]
+website: https://criticalalignment.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Blankenstraat 166, 1018 SG"
+crkbo:
+  registered: "yes"
+  holder: "Stichting Critical Alignment"
+  checked: "2026-06-13"
+  source: site-2026-06
+  note: >
+    Tweemaal expliciet vermeld als fiscaal feit: "Vanwege registratie bij het
+    CRKBO is de opleiding vrijgesteld van btw." Schone §10-presentatie (geen
+    keurmerk-framing). Stichting-vorm.
+registrations: [] # GEEN YA of VYN: eigen methode/certificering (CAY)
+depth: listed
+last_verified: "2026-06-13"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://criticalalignment.nl/lerarenopleiding/yoga-lerarenopleiding/
+    archived_url: https://web.archive.org/web/20260613075913/https://criticalalignment.nl/lerarenopleiding/yoga-lerarenopleiding/
+    captured: "2026-06-13"
+    note: "JS-gerenderd; uitgelezen via browser; lokale kopie via archiveerscript
+      essentieel"
+    local_snapshot: data/archives/critical-alignment/site-2026-06-2026-06-13.pdf
+
+programs:
+  - id: cay-lerarenopleiding
+    name: "Critical Alignment Yoga Lerarenopleiding (2-jarig)"
+    url: https://criticalalignment.nl/lerarenopleiding/yoga-lerarenopleiding/
+    format_label: other # eigen methode; geen 200/300/500-format
+    style_claimed: "Critical Alignment Yoga (CAY), bewegingsmethode van Gert van
+      Leeuwen; alignment via bewegingsketens/'11 verbindingen', hulpmiddelen
+      (strip, rol, boog, hoofdstandbankje); anatomie + psychologie van
+      spanning/trauma"
+    accreditation: []
+    delivery:
+      mode: in_person
+      structure: weekends # 8 weekenden (16 lesdagen) per jaar, za+zo 11-17u
+      duration_months_min: 24
+      language: nl # daarnaast aparte Engelstalige editie start okt 2026
+    prerequisites_claimed: "geen specifiek aanvangsniveau yoga vereist; opleiding op hbo-niveau"
+    price:
+      amount_eur: null
+      vat: exempt_crkbo
+      published: "no"
+      note: >
+        Prijs voor de volgende NL-cohort (start 2028) "nog niet bekend".
+        Aanbetaling EUR 250; jaargeld in één keer te voldoen; bij tussentijds
+        stoppen toch volledig jaargeld verschuldigd.
+      source: site-2026-06
+    hours_claimed:
+      total: null # niet in uren uitgedrukt; 16 lesdagen/jaar + 6-8u/week studiebelasting
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: >
+        Geen RYT-urentelling (eigen methode). Wel concreet: in jaar 2 geef je 5
+        yogalessen aan een zelf geworven groep leerlingen + eindverslag +
+        presentatie. Min. 2 CAY-lessen/week verplicht; thuisoefening ~20 min/dag
+        aanbevolen.
+    group_size_claimed:
+      max: null
+      source: site-2026-06
+      note: "minimaal 12 deelnemers (geen max vermeld)"
+    composition:
+      type: single_program
+    coherence_signals:
+      required_sequence: "yes"
+      required_sequence_note: "vast 2-jarig curriculum (jaar 1 techniek/verbindingen,
+        jaar 2 didactiek/lesgeven)"
+      single_cohort_intake: "yes"
+      integrative_assessment: "yes"
+      integrative_assessment_note: "certificering op aanwezigheid (min 14/16), inzet &
+        groei, en verslaglegging einde jaar 2 (5 eigen lessen + ontwikkelverslag
+        + presentatie)"
+      continuous_lead_teacher: not_published
+      continuous_lead_teacher_note: "vast docententeam van 6 genoemd"
+      modules_sold_separately: "no"
+      source: site-2026-06
+    assessment_described:
+      exists: "yes"
+      continuous: "yes"
+      final: "yes"
+      quote: "Voor certificering wordt gekeken naar: aanwezigheid, inzet en groei, en
+        je verslaglegging aan het einde van jaar 2."
+    contract:
+      cancellation_published: "yes"
+      refund_published: "yes"
+      installments_published: "no"
+      min_participants:
+        clause: "yes"
+        value: 12
+      source: site-2026-06
+      note: >
+        Uitgebreide annulerings-/restitutievoorwaarden gepubliceerd; 14 dagen
+        bedenktijd na contract; aanbetaling terug bij afmelding >2 mnd voor
+        start.
+    transparency:
+      syllabus_published: "yes"
+      assessment_criteria_published: "yes"
+      reading_list_published: not_published
+      teacher_bios_published: "yes"
+      source: site-2026-06
+    track_record:
+      note: "boek 'YOGA Critical Alignment' 2009 (herzien 2012); 'honderden docenten
+        opgeleid'"
+    editorial: >
+      Transparantie-uitschieter binnen de dataset: publiceert volledige
+      certificeringscriteria, gedetailleerde kwalificatie-uitkomsten,
+      annulerings- voorwaarden, én een klachtenprocedure met onafhankelijke,
+      bindende externe arbiter (Alma Netten). Dit is exact het materiaal dat
+      elders ontbreekt. (editorial = expliciete observatie, gescheiden van de
+      feiten hierboven)
+
+people:
+  - id: gert-van-leeuwen
+    name: "Gert van Leeuwen"
+    trainings_claimed:
+      - label: "grondlegger Critical Alignment methode; oprichter/directeur instituut;
+          auteur meerdere boeken"
+        verified: unknown
+        source: site-2026-06

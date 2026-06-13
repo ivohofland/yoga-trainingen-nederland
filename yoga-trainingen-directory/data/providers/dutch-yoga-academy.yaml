@@ -1,0 +1,124 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: dutch-yoga-academy
+name: Dutch Yoga Academy
+aka: [ "DYA" ]
+website: https://www.dutchyogaacademy.com
+status: active
+locations:
+  - city: Nijmegen
+crkbo:
+  registered: unknown
+  checked: "2026-06-13"
+  source: crkbo-register-2026-06
+  note: "geen naam-match in CRKBO-register"
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Dutch Yoga Academy"
+    first_registered: "2020-02"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+depth: listed
+last_verified: "2026-06-13"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.dutchyogaacademy.com/
+    archived_url: https://web.archive.org/web/20260613075249/https://www.dutchyogaacademy.com/
+    captured: "2026-06-13"
+    note: "Wix-site; homepage bevat opleidingsbeschrijving; prijzen op aparte pagina
+      /data-prijzen (nog niet uitgelezen)"
+    local_snapshot: data/archives/dutch-yoga-academy/site-2026-06-2026-06-13.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-13"
+    local_snapshot: data/archives/dutch-yoga-academy/ya-register-2026-06-2026-06-13.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-13"
+    local_snapshot: data/archives/dutch-yoga-academy/crkbo-register-2026-06-2026-06-13.pdf
+
+programs:
+  - id: 200-vinyasa
+    name: "200-uurs Vinyasa Yogadocentopleiding"
+    url: https://www.dutchyogaacademy.com/opleiding
+    format_label: "200"
+    style_claimed: "Vinyasa Flow (met ruimte voor eigen stijl: Dynamische Hatha /
+      Slow Flow); wetenschappelijk onderbouwde anatomie en fysiologie"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "geregistreerd bij Yoga Alliance; 'voldoet aan de hoogste
+          kwaliteitseisen van Yoga Alliance'"
+        verified: "yes"
+        source: ya-register-2026-06
+        note: >
+          RYS 200 geverifieerd. Zelfde claim-formulering "Yoga Alliance een
+          Amerikaanse organisatie die yogaopleidingen controleert en
+          accrediteert" als bij Jai Yoga - terugkerend patroon (YA inspecteert
+          geen onderwijs). "Voldoet aan de hoogste kwaliteitseisen" is eveneens
+          claim-materiaal.
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 10
+      language: nl
+    price:
+      amount_eur: null
+      vat: unknown
+      published: "yes"
+      includes: "syllabus, online cursus 'Anatomie & Fysiologie voor Yogadocenten'
+        (los EUR 250), boek 'Essential Yoga Therapy' (los EUR 25)"
+      note: "prijs op /data-prijzen, nog niet uitgelezen; vroegboekkorting genoemd;
+        overige literatuur zelf aanschaffen"
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: >
+        Geen urenverdeling gepubliceerd. Wel concreet feedbacksignaal: "twee
+        keer uitgebreid persoonlijke feedback op een opgenomen les" - begeleide
+        feedback op lesgeven, zij het op opnames i.p.v. live geobserveerd.
+    group_size_claimed:
+      max: 20
+      source: site-2026-06
+      note: "'we streven naar 18-20 mensen per groep'"
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2020
+      source: ya-register-2026-06
+      note: "claimt 15+ jaar opleiden (India + NL), 300+ afgestudeerden; DYA Nijmegen
+        sinds 2018"
+
+people:
+  - id: merel-martens
+    name: "Merel Martens"
+    trainings_claimed:
+      - label: "oprichter & hoofddocent; eigen yogaschool in India opgezet"
+        verified: unknown
+        source: site-2026-06
+    background:
+      - field: "geneeskunde / gezondheidswetenschappen"
+        credential: "studies Geneeskunde en Gezondheidswetenschappen; auteur 'Essential
+          Yoga Therapy'"
+        registry: other
+        verified: unknown
+        source: site-2026-06
+
+claims:
+  - id: ya-controleert-dya
+    scope: "program:200-vinyasa"
+    quote: "Dutch Yoga Academy is geregistreerd bij Yoga Alliance. Yoga Allicance is
+      een Amerikaanse organisatie die yogaopleidingen controleert en
+      accrediteert. Onze 200 uur opleiding voldoet aan de hoogste
+      kwaliteitseisen van Yoga Alliance."
+    category: accreditation
+    source: site-2026-06
