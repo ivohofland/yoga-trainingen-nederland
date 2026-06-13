@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../provider.schema.json
 id: centre-body-mind
 name: "The Centre of Body & Mind"
 website: https://www.centrebodymind.nl

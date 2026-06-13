@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../provider.schema.json
 id: yogic-life
 name: Yogic Life
 website: https://yogiclife.eu

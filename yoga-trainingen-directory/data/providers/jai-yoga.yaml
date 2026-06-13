@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../provider.schema.json
 id: jai-yoga
 name: Jai Yoga
 aka: [ "Reinier Dorrepaal" ]

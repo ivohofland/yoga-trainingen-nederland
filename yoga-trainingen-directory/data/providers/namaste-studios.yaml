@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../provider.schema.json
 id: namaste-studios
 name: "Namasté Studio's"
 website: https://namastestudios.nl

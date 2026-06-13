@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../provider.schema.json
 id: yoga-academie-nederland
 name: Yoga Academie Nederland
 aka: ["YAN"]

@@ -1,0 +1,1236 @@
+{
+  "$ref": "#/definitions/Provider",
+  "definitions": {
+    "Provider": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "aka": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "website": {
+          "type": "string",
+          "format": "uri"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "active",
+            "inactive",
+            "unknown"
+          ]
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "address": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "crkbo": {
+          "type": "object",
+          "properties": {
+            "registered": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no",
+                "not_published",
+                "unknown"
+              ]
+            },
+            "holder": {
+              "type": "string"
+            },
+            "checked": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-\\d{2}(-\\d{2})?$"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "registered",
+            "checked"
+          ],
+          "additionalProperties": false
+        },
+        "registrations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string",
+                "enum": [
+                  "yoga_alliance",
+                  "vyn",
+                  "other"
+                ]
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "holder": {
+                "type": "string"
+              },
+              "first_registered": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+              },
+              "verified_in_register": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+              },
+              "source": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "body",
+              "verified_in_register"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "legal": {
+          "type": "object",
+          "properties": {
+            "kvk": {
+              "type": "string"
+            },
+            "legal_name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "founded_year": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1900,
+                  "maximum": 2100
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "programs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/definitions/Provider/properties/id"
+              },
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "format_label": {
+                "type": "string",
+                "enum": [
+                  "200",
+                  "300",
+                  "500",
+                  "other",
+                  "none"
+                ]
+              },
+              "style_claimed": {
+                "type": "string"
+              },
+              "accreditation": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "body": {
+                      "type": "string",
+                      "enum": [
+                        "yoga_alliance",
+                        "vyn",
+                        "crkbo",
+                        "other"
+                      ]
+                    },
+                    "label_claimed": {
+                      "type": "string"
+                    },
+                    "verified": {
+                      "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "body",
+                    "label_claimed",
+                    "verified"
+                  ],
+                  "additionalProperties": false
+                },
+                "default": []
+              },
+              "delivery": {
+                "type": "object",
+                "properties": {
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "in_person",
+                      "online",
+                      "hybrid"
+                    ]
+                  },
+                  "structure": {
+                    "type": "string",
+                    "enum": [
+                      "weekends",
+                      "evenings",
+                      "intensive",
+                      "modular",
+                      "mixed"
+                    ]
+                  },
+                  "duration_months_min": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "duration_months_max": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "language": {
+                    "type": "string",
+                    "enum": [
+                      "nl",
+                      "en",
+                      "mixed"
+                    ]
+                  }
+                },
+                "required": [
+                  "mode",
+                  "structure"
+                ],
+                "additionalProperties": false
+              },
+              "prerequisites_claimed": {
+                "type": "string"
+              },
+              "price": {
+                "type": "object",
+                "properties": {
+                  "amount_eur": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "amount_eur": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "amount_eur"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "vat": {
+                    "type": "string",
+                    "enum": [
+                      "incl",
+                      "exempt_crkbo",
+                      "excl",
+                      "unknown"
+                    ]
+                  },
+                  "published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "includes": {
+                    "type": "string"
+                  },
+                  "excludes": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "vat",
+                  "published"
+                ],
+                "additionalProperties": false
+              },
+              "hours_claimed": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "contact": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "self_study": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "supervised_teaching_practice": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "breakdown_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "breakdown_published"
+                ],
+                "additionalProperties": false
+              },
+              "group_size_claimed": {
+                "type": "object",
+                "properties": {
+                  "max": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "composition": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "single_program",
+                      "fixed_modular",
+                      "free_assembly"
+                    ]
+                  },
+                  "modules": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "additionalProperties": false
+              },
+              "coherence_signals": {
+                "type": "object",
+                "properties": {
+                  "required_sequence": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "required_sequence_note": {
+                    "type": "string"
+                  },
+                  "single_cohort_intake": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "single_cohort_intake_note": {
+                    "type": "string"
+                  },
+                  "integrative_assessment": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "integrative_assessment_note": {
+                    "type": "string"
+                  },
+                  "continuous_lead_teacher": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "continuous_lead_teacher_note": {
+                    "type": "string"
+                  },
+                  "modules_sold_separately": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "modules_sold_separately_note": {
+                    "type": "string"
+                  },
+                  "bundle_price_below_sum": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "bundle_price_below_sum_note": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "assessment_described": {
+                "type": "object",
+                "properties": {
+                  "exists": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "continuous": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "final": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "quote": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "exists"
+                ],
+                "additionalProperties": false
+              },
+              "contract": {
+                "type": "object",
+                "properties": {
+                  "cancellation_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "refund_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "min_participants": {
+                    "type": "object",
+                    "properties": {
+                      "clause": {
+                        "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                      },
+                      "value": {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      }
+                    },
+                    "required": [
+                      "clause"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "installments_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "invoicing_entity": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "transparency": {
+                "type": "object",
+                "properties": {
+                  "syllabus_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "hours_breakdown_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "assessment_criteria_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "reading_list_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "teacher_bios_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "track_record": {
+                "type": "object",
+                "properties": {
+                  "first_seen_year": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/Provider/properties/founded_year/properties/value/anyOf/0"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "last_confirmed_cohort": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                  },
+                  "cadence_note": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "cohorts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "program": {
+                      "$ref": "#/definitions/Provider/properties/id"
+                    },
+                    "start": {
+                      "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                    },
+                    "end": {
+                      "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "announced",
+                        "confirmed_ran",
+                        "cancelled",
+                        "unknown"
+                      ]
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "price_at_time": {
+                      "type": "object",
+                      "properties": {
+                        "amount_eur": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "vat": {
+                          "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/vat"
+                        }
+                      },
+                      "required": [
+                        "amount_eur",
+                        "vat"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "lead_teachers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "language": {
+                      "type": "string",
+                      "enum": [
+                        "nl",
+                        "en",
+                        "mixed"
+                      ]
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "start",
+                    "status",
+                    "source"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "teachers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "person_id": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "teaches": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "person_id"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "assessment": {
+                "type": "object",
+                "properties": {
+                  "methodology_version": {
+                    "type": "string"
+                  },
+                  "assessed": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                  },
+                  "axes": {
+                    "type": "object",
+                    "properties": {
+                      "pedagogy": {
+                        "type": "object",
+                        "properties": {
+                          "score": {
+                            "anyOf": [
+                              {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 5
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "rationale": {
+                            "type": "string"
+                          },
+                          "evidence": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": [
+                          "score",
+                          "rationale",
+                          "evidence"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "evidence_base": {
+                        "$ref": "#/definitions/Provider/properties/programs/items/properties/assessment/properties/axes/properties/pedagogy"
+                      },
+                      "transparency": {
+                        "$ref": "#/definitions/Provider/properties/programs/items/properties/assessment/properties/axes/properties/pedagogy"
+                      },
+                      "commercial_fairness": {
+                        "$ref": "#/definitions/Provider/properties/programs/items/properties/assessment/properties/axes/properties/pedagogy"
+                      }
+                    },
+                    "required": [
+                      "pedagogy",
+                      "evidence_base",
+                      "transparency",
+                      "commercial_fairness"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "right_of_reply": {
+                    "type": "object",
+                    "properties": {
+                      "sent": {
+                        "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                      },
+                      "method": {
+                        "type": "string"
+                      },
+                      "response_received": {
+                        "anyOf": [
+                          {
+                            "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "response_summary": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "changes_made": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "sent",
+                      "method",
+                      "response_received"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "methodology_version",
+                  "assessed",
+                  "axes",
+                  "right_of_reply"
+                ],
+                "additionalProperties": false
+              },
+              "editorial": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "format_label",
+              "delivery",
+              "price",
+              "hours_claimed"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/definitions/Provider/properties/id"
+              },
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "hours": {
+                "type": "object",
+                "properties": {
+                  "total": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "contact": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              "days_claimed": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "core_pedagogy",
+                  "specialization",
+                  "other"
+                ]
+              },
+              "sold_separately": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+              },
+              "listed_in_ce_catalog": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+              },
+              "price": {
+                "type": "object",
+                "properties": {
+                  "amount_eur": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/amount_eur"
+                  },
+                  "variants": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/variants"
+                  },
+                  "vat": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/vat"
+                  },
+                  "published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
+                  "includes": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/includes"
+                  },
+                  "excludes": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/excludes"
+                  },
+                  "note": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/note"
+                  },
+                  "source": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/source"
+                  }
+                },
+                "required": [
+                  "vat"
+                ],
+                "additionalProperties": false
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "type"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "string"
+              },
+              "quote": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "scientific",
+                  "health_outcome",
+                  "income_outcome",
+                  "accreditation",
+                  "lineage_authority",
+                  "scope_of_practice",
+                  "other"
+                ]
+              },
+              "source": {
+                "type": "string"
+              },
+              "analysis": {
+                "type": "object",
+                "properties": {
+                  "note": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "accurate",
+                      "unsubstantiated",
+                      "misleading",
+                      "regulated_claim"
+                    ]
+                  },
+                  "reviewed": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                  },
+                  "methodology_version": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "note",
+                  "status",
+                  "reviewed",
+                  "methodology_version"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "id",
+              "scope",
+              "quote",
+              "category",
+              "source"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "people": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/definitions/Provider/properties/id"
+              },
+              "name": {
+                "type": "string"
+              },
+              "trainings_claimed": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string"
+                    },
+                    "school": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "$ref": "#/definitions/Provider/properties/founded_year/properties/value/anyOf/0"
+                    },
+                    "verified": {
+                      "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                    },
+                    "source": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "verified"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "background": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "credential": {
+                      "type": "string"
+                    },
+                    "registry": {
+                      "type": "string",
+                      "enum": [
+                        "big",
+                        "other",
+                        "none"
+                      ]
+                    },
+                    "verified": {
+                      "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                    },
+                    "source": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "credential",
+                    "registry",
+                    "verified"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "lineage_claims": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "inquiries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sent": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "correction_request",
+                  "question",
+                  "right_of_reply"
+                ]
+              },
+              "summary": {
+                "type": "string"
+              },
+              "response": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "none"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "received": {
+                        "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "source": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "received",
+                      "summary"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            },
+            "required": [
+              "sent",
+              "type",
+              "summary",
+              "response"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "website",
+                  "wayback",
+                  "brochure",
+                  "register",
+                  "inquiry_response",
+                  "reader_report",
+                  "email",
+                  "other"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "archived_url": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "local_snapshot": {
+                "type": "string"
+              },
+              "captured": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+              },
+              "note": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "type",
+              "captured"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "disclosure": {
+          "type": "string"
+        },
+        "depth": {
+          "type": "string",
+          "enum": [
+            "listed",
+            "reviewed",
+            "assessed"
+          ]
+        },
+        "last_verified": {
+          "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "website",
+        "status",
+        "locations",
+        "crkbo",
+        "sources",
+        "depth",
+        "last_verified"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

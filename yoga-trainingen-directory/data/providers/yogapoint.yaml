@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../provider.schema.json
 id: yogapoint
 name: Yogapoint
 website: https://yogapoint.nl

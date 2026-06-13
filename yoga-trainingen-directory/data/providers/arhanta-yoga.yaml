@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=../provider.schema.json
 id: arhanta-yoga
 name: Arhanta Yoga
 aka: ["Arhanta Yoga Ashram Nederland", "Arhanta Yoga Ashram Europe"]
