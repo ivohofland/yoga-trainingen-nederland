@@ -1,0 +1,71 @@
+# Pilot layer-1 record — captured 2026-06-12
+id: yoga-academie-nederland
+name: Yoga Academie Nederland (YAN)
+website: https://yoga-academie.nl
+status: active
+locations:
+  - city: null   # FRICTION: location not on program page; needs contact/praktische-informatie page
+crkbo:
+  registered: unknown
+  checked: null
+registrations: []   # site has separate "Erkenning" page, not yet fetched
+depth: listed
+last_verified: 2026-06-12
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
+    archived_url: null
+    captured: 2026-06-12
+
+modules:
+  # listed as components of the 300; page text says "tien modules" but lists 8 + afronding — count discrepancy, verbatim noted
+  - { id: holistische-anatomie, name: "Holistische Anatomie", days_claimed: 8, hours: { total: null }, type: other, sold_separately: yes }
+  - { id: chakrapsychologie, name: "Chakrapsychologie", days_claimed: 8, hours: { total: null }, type: specialization, sold_separately: yes }
+  - { id: yoga-coaching, name: "Yoga Coaching", days_claimed: 5, hours: { total: null }, type: specialization, sold_separately: yes }
+  - { id: restorative-nidra, name: "Restorative & Nidra", days_claimed: 8, hours: { total: null }, type: specialization, sold_separately: yes }
+  - { id: mindful-flow, name: "Mindful Flow", days_claimed: 5, hours: { total: null }, type: specialization, sold_separately: yes }
+  - { id: klankschalen-mantra, name: "Klankschalen, Mantra & Yoga", days_claimed: 3, hours: { total: null }, type: specialization, sold_separately: yes }
+  - { id: ayurveda-asana, name: "Ayurveda & Asana", days_claimed: 5, hours: { total: null }, type: specialization, sold_separately: yes }
+  - { id: fysieke-begeleiding, name: "Fysieke begeleiding", days_claimed: 3, hours: { total: null }, type: other, sold_separately: yes }
+  # FRICTION: module hours not stated, only days; schema lacks days field — added days_claimed ad hoc
+
+programs:
+  - id: 300-hatha-verdieping
+    name: "300 uur Hatha verdiepingsopleiding"
+    url: https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
+    format_label: 300
+    style_claimed: "Hatha, yoga en bewustwording"
+    accreditation: []   # none claimed on this page
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 24   # "rond je ongeveer in twee jaar af", eigen tempo
+      language: nl
+    price:
+      amount_eur: null
+      vat: unknown
+      published: yes            # published in linked PDF (datakosten), not yet extracted
+      note: "FRICTION: prijs in PDF-bijlage, niet op pagina — 'published' quad-state heeft geen 'elders gepubliceerd'-nuance nodig? Bron volstaat."
+      source: site-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null          # "studiebelasting 4-6 uur per week naast opleidingsdagen" — niet als totaal
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    composition:
+      type: fixed_modular       # vaste set modules, eigen tempo
+      modules: [holistische-anatomie, chakrapsychologie, yoga-coaching, restorative-nidra, mindful-flow, klankschalen-mantra, ayurveda-asana, fysieke-begeleiding]
+    coherence_signals:
+      required_sequence: unknown   # FRICTION: "ingangseisen per module verschillend" past niet in quad-state; nuance in note
+      required_sequence_note: "Per module verschillende ingangseisen; certificaat per module nodig om 'door te stromen'"
+      single_cohort_intake: no     # eigen tempo, eigen startmoment
+      capstone_or_final_assessment: yes   # "afsluitende dag + scriptie; pas dan overkoepelend 300 uur diploma"
+      continuous_lead_teacher: unknown
+      modules_sold_separately: yes  # "losse modules volgen voor de verdieping van jouw yogaproces"
+      bundle_price_below_sum: unknown
+    assessment_described:
+      exists: yes
+      quote: "voorbereiden van de examens, schrijven van je reflectieverslagen … afronding + scriptie"

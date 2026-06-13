@@ -1,0 +1,63 @@
+# Pilot layer-1 record — captured 2026-06-12
+id: arhanta-yoga
+name: Arhanta Yoga Ashram Nederland
+website: https://www.arhantayoga.nl
+status: active
+locations:
+  - city: null   # FRICTION: not stated on program page; geo meta suggests Gelderland (51.919, 6.467); needs contact-page check
+    note: "Residentiële ashram; 'goed bereikbaar met de trein vanaf Schiphol'"
+crkbo:
+  registered: unknown        # site CLAIMS CRKBO recognition; not yet checked against register
+  checked: null
+  source: site-2026-06
+registrations:
+  - body: yoga_alliance
+    verified_in_register: unknown
+    source: site-2026-06
+depth: listed
+last_verified: 2026-06-12
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.arhantayoga.nl/yoga-opleiding-nederland/
+    archived_url: null       # TODO: archive before publication
+    captured: 2026-06-12
+
+programs:
+  - id: 200-hatha-residentieel
+    name: "200 uur Yoga Docentenopleiding (residentieel)"
+    url: https://www.arhantayoga.nl/yoga-opleiding-nederland/
+    format_label: 200
+    style_claimed: "authentieke Hatha yoga, Indiase Gurukul-traditie"
+    accreditation:
+      - { body: yoga_alliance, label_claimed: "Yoga Alliance erkend opleiding", verified: unknown, source: site-2026-06 }
+      - { body: other, label_claimed: "erkend door IYA", verified: unknown, source: site-2026-06 }
+      - { body: other, label_claimed: "erkend door CRKBO", verified: unknown, source: site-2026-06 }
+        # NOTE: CRKBO presented in the accreditation list — §10 authority-laundering specimen, verbatim:
+        # "deze opleiding is een Yoga Alliance erkend opleiding, en wordt daarnaast erkend door IYA en CRKBO."
+    delivery:
+      mode: in_person
+      structure: intensive   # residential, 21 days
+      duration_months_min: 1
+      language: en           # FRICTION: language field missing from schema; added ad hoc
+    price:
+      amount_eur: 3250       # FRICTION: tiered pricing (dorm 3250 / shared 3650 / single 4150); schema has one amount
+      vat: unknown
+      published: yes
+      includes: "accommodatie, 3 maaltijden per dag, cursusmateriaal; vroegboekkorting €300 eerste 10"
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null   # "lespraktijk vanaf dag één" claimed, never quantified
+      breakdown_published: not_published
+      source: site-2026-06
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: null
+      note: "Site claimt: sinds 2008, ashram NL gebouwd 2013, >21.000 (elders >24.000) afgestudeerden — inconsistent aantal op zelfde pagina"
+    cohorts:
+      - { id: c-2026-07, program: 200-hatha-residentieel, start: 2026-07, end: 2026-08, status: announced, source: site-2026-06 }
+      - { id: c-2026-08, program: 200-hatha-residentieel, start: 2026-08, end: 2026-08, status: announced, source: site-2026-06 }

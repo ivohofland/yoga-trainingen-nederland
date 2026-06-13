@@ -1,0 +1,85 @@
+# Pilot layer-1 record — captured 2026-06-12
+id: namaste-studios
+name: "Namasté Studio's"
+website: https://namastestudios.nl
+status: active
+locations:
+  - city: Voorhout
+    note: "opleiding in Voorhout; tweede studio in Leiden"
+  - city: Leiden
+crkbo:
+  registered: unknown   # niet geclaimd; prijs incl btw
+  checked: null
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Maayke Vidts - Yoga"   # registratie staat op naam van de lead teacher, NIET op Namasté Studio's
+    first_registered: 2025-01
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      YA-profiel koppelt de RYS aan adres Namasté Studio's Voorhout (Jacoba van Beierenweg).
+      Teaching staff: Maayke Vidts, E-RYT 500 + YACEP (daarmee is de ERYT-500-claim op de
+      site geverifieerd). Profiel toont 0 upcoming training dates (sep-2026 cohort niet bij
+      YA aangemeld). 3 school reviews (4,83): reviewers Anyolina Altena en Benedetta La Rosa
+      zijn dezelfde personen als de testimonials op de eigen site.
+depth: listed
+last_verified: 2026-06-12
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://namastestudios.nl/yogadocentopleiding
+    archived_url: null
+    captured: 2026-06-12
+  - id: ya-register-2026-06
+    type: register
+    url: "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&sid=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga"
+    archived_url: null
+    captured: 2026-06-12
+    note: "JS-gerenderd (Salesforce); niet fetchbaar zonder browser — Wayback-snapshot mogelijk problematisch, lokale PDF nodig"
+
+programs:
+  - id: 200-vinyasa
+    name: "Yoga Teacher Training (200 RYT)"
+    url: https://namastestudios.nl/yogadocentopleiding
+    format_label: 200
+    style_claimed: "Vinyasa; 'post-lineage yoga' — traditie en wetenschap in dialoog"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200 RYT; bij 200 opleidingsuren gerechtigd tot registratie bij Yoga Alliance"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 200 bestaat en is gekoppeld aan dit adres — maar op naam van de lead teacher (zie registrations), niet van de studio"
+    delivery:
+      mode: in_person
+      structure: weekends   # startweekend (4 dgn) + 11 weekenden, 12:00-20:00, sep 2026 - jul 2027
+      duration_months_min: 10
+      language: nl          # "lessen in het Nederlands of Engels — afhankelijk van de groep"; studiemateriaal Engels
+    price:
+      amount_eur: 3000      # FRICTION: tweeprijzenstelsel — leden €2.800 / niet-leden €3.000 (beide incl btw); genoteerd: niet-ledenprijs
+      vat: incl
+      published: yes
+      excludes: "verplichte literatuur én deelname aan studiolessen (terwijl lessen volgen wordt verwacht)"
+      note: "aanbetaling €500; termijnen mogelijk"
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null   # "middagen speciaal ingericht voor het oefenen van lesgeven" — ongekwantificeerd
+      breakdown_published: not_published
+      source: site-2026-06
+    assessment_described:
+      exists: yes
+      quote: "Na succesvolle afronding van het theorie- en praktijkexamen ontvang je een officieel certificaat."
+    coherence_signals:
+      continuous_lead_teacher: yes   # lead teacher Maayke (ERYT-500) + gastdocenten
+      single_cohort_intake: yes      # één jaarlijkse start met vaste datumlijst
+    cohorts:
+      - id: c-2026-09
+        program: 200-vinyasa
+        start: 2026-09
+        end: 2027-07
+        status: announced
+        source: site-2026-06
+        note: "volledige weekenddata gepubliceerd; examenmomenten 'volgen'"

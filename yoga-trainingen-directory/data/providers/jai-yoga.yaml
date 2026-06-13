@@ -1,0 +1,191 @@
+id: jai-yoga
+name: Jai Yoga
+aka: [ "Reinier Dorrepaal" ]
+website: https://reinierdorrepaal.nl
+status: active
+locations:
+  - city: Leiden
+    address: "Haagweg 4 G5"
+    note: "opleidingslocatie; footer/KvK vermeldt 'Jai Yoga Leidschendam'
+      (YA-registratieadres)"
+crkbo:
+  registered: unknown
+  checked: "2026-06-12"
+  source: crkbo-register-2026-06
+  note: "geen naam-match; prijzen incl. btw suggereren geen vrijstelling"
+legal:
+  kvk: "50862693"
+  legal_name: "Jai Yoga Leidschendam"
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Jai Yoga"
+    first_registered: "2016-03"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+depth: listed
+last_verified: "2026-06-12"
+sources:
+  - id: site-att-2026-06
+    type: website
+    url: https://reinierdorrepaal.nl/ashtanga-teacher-training/
+    archived_url: https://web.archive.org/web/20260612190235/https://reinierdorrepaal.nl/ashtanga-teacher-training/
+    captured: "2026-06-12"
+    local_snapshot: data/archives/jai-yoga/site-att-2026-06-2026-06-12.pdf
+  - id: site-ptt-2026-06
+    type: website
+    url: https://reinierdorrepaal.nl/pranayama-teacher-training/
+    archived_url: https://web.archive.org/web/20260612190614/https://reinierdorrepaal.nl/pranayama-teacher-training/
+    captured: "2026-06-12"
+    local_snapshot: data/archives/jai-yoga/site-ptt-2026-06-2026-06-12.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: https://web.archive.org/web/20260612190956/https://app.yogaalliance.org/directoryregistrants?type=School
+    captured: "2026-06-12"
+    local_snapshot: data/archives/jai-yoga/ya-register-2026-06-2026-06-12.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260612191114/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-12"
+    local_snapshot: data/archives/jai-yoga/crkbo-register-2026-06-2026-06-12.pdf
+
+programs:
+  - id: ashtanga-tt
+    name: "2-jarige Basis Docentenopleiding gebaseerd op Ashtanga"
+    url: https://reinierdorrepaal.nl/ashtanga-teacher-training/
+    format_label: "200"
+    style_claimed: "Ashtanga (primary serie), pranayama in Kaivalyadhama-lijn,
+      hands-on adjustments"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "geregistreerd bij Yoga Alliance, een Amerikaanse organisatie die
+          yogaopleidingen controleert en accrediteert"
+        verified: "yes"
+        source: ya-register-2026-06
+        note: >
+          Registratie zelf geverifieerd (RYS 200). De karakterisering
+          "controleert en accrediteert" is claim-materiaal: YA inspecteert geen
+          onderwijs. Opvallend eerlijk daarnaast: expliciete disclaimer dat de
+          opleiding NIET leidt tot vermelding als authorised teacher bij Sharath
+          Yoga Centre.
+    delivery:
+      mode: in_person
+      structure: weekends # zaterdagen, bij uitzondering zondag
+      duration_months_min: 24
+      language: nl
+    price:
+      amount_eur: 2890
+      vat: incl
+      published: "yes"
+      excludes: "studieboeken én registratiekosten Yoga Alliance bij afronding"
+      note: "te betalen in twee jaarbedragen van €1.445"
+      source: site-att-2026-06
+    hours_claimed:
+      total: null # nergens een urental op de pagina; format via YA-registratie (RYS 200)
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-att-2026-06
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2016
+      source: ya-register-2026-06
+      note: >
+        Datumaanduidingen op de pagina zijn onderling inconsistent: kop
+        "Registratie ASHTANGA TT 2026-2027" met start 14 maart 2026, daaronder
+        "Opleiding 2028-2029" met laatste opleidingsdag november 2029, en een
+        dataoverzicht gelabeld "Training days Ashtanga TT 2026 2027".
+    cohorts:
+      - id: att-2026-03
+        start: "2026-03"
+        status: announced
+        source: site-att-2026-06
+        note: "start 14 maart 2026"
+
+  - id: pranayama-tt
+    name: "Pranayama Teacher Training (200+ hours)"
+    url: https://reinierdorrepaal.nl/pranayama-teacher-training/
+    format_label: "200"
+    style_claimed: "klassieke pranayama in de lijn van Kaivalyadhama/Swami
+      Kuvalyananda; 'traditional practices with scientific understanding'"
+    accreditation:
+      - body: other
+        label_claimed: "Completion grants official accreditation for Kaivalyadhama's
+          year 1 Pranayama Teacher Training, with direct access to year 2 in
+          India"
+        verified: unknown
+        source: site-ptt-2026-06
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 14
+      language: en # pagina volledig Engelstalig; instructietaal niet expliciet vermeld
+    prerequisites_claimed: "gericht op 'dedicated yoga teachers or serious practitioners'"
+    price:
+      amount_eur: 2385
+      vat: incl
+      published: "yes"
+      excludes: "verplichte boeken (€115 incl. btw, via Jai Yoga verkrijgbaar)"
+      source: site-ptt-2026-06
+    hours_claimed:
+      total: 350
+      contact: 200 # "200+ guided contact hours" / "200 hours of group teaching" — EERSTE provider in dataset die contacturen publiceert
+      self_study: 150
+      supervised_teaching_practice: null # "teaching methodology with supervised practice" geclaimd, niet gekwantificeerd
+      breakdown_published: "yes"
+      source: site-ptt-2026-06
+      note: >
+        Zelfstudie-aanduiding inconsistent op dezelfde pagina: bovenaan
+        "personal practice & study (100+ hrs.)", onderaan "approximately 150
+        additional hours… number of hours amounts to 350".
+    assessment_described:
+      exists: not_published
+    cohorts:
+      - id: ptt-2026-05
+        start: "2026-05"
+        end: "2027-07"
+        status: announced
+        source: site-ptt-2026-06
+        note: "start 16 mei 2026, afronding 4 juli 2027; volledige datumlijst als
+          afbeelding gepubliceerd"
+        language: en
+
+claims:
+  - id: ya-controleert
+    scope: "program:ashtanga-tt"
+    quote: "De opleiding is geregistreerd bij Yoga Alliance, een Amerikaanse
+      organisatie die yogaopleidingen controleert en accrediteert."
+    category: accreditation
+    source: site-att-2026-06
+  - id: kaivalyadhama-1500
+    scope: "program:pranayama-tt"
+    quote: "certified pranayama teachers who completed the 3-year (1,500 hour)
+      advanced pranayama teacher training at Kaivalyadhama Yoga Institute,
+      India"
+    category: lineage_authority
+    source: site-ptt-2026-06
+
+people:
+  - id: hendrik-jan-geukes
+    name: "Hendrik Jan Geukes"
+    background:
+      - field: "geneeskunde"
+        credential: "huisarts (verzorgt anatomielessen Ashtanga TT)"
+        registry: big
+        verified: unknown
+        source: site-att-2026-06
+  - id: liese-van-dam
+    name: "Liese van Dam"
+    background:
+      - field: "ayurveda/yoga"
+        credential: "eigen praktijk; verzorgt introductie Ayurveda"
+        registry: other
+        verified: unknown
+        source: site-att-2026-06
+    # CROSS-PROVIDER: heeft eigen CRKBO-registratie ("Liese van Dam", Ede) —
+    # eerste geval van dezelfde persoon bij 2+ aanbieders; promotie naar
+    # /data/people/ overwegen zodra dit vaker voorkomt (spec §3)

@@ -1,0 +1,108 @@
+id: yoga-academie-nederland
+name: Yoga Academie Nederland
+aka: ["YAN"]
+website: https://yoga-academie.nl
+status: active
+locations:
+  - city: Nieuw-Vennep
+    address: "Haverstraat 44, 2153 GB"
+    note: "adres via YA-register"
+  - city: Amersfoort
+    note: "tweede locatie per VYN-vermelding"
+crkbo:
+  registered: "yes"
+  holder: "Yoga Academie Nederland"
+  checked: "2026-06-12"
+  source: crkbo-register-2026-06
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300"
+    holder: "Yoga Academie Nederland"
+    first_registered: "2019-05"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+  - body: vyn
+    verified_in_register: "yes"
+    source: vyn-register-2026-06
+depth: listed
+last_verified: "2026-06-12"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
+    archived_url: https://web.archive.org/web/20260612/https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
+    local_snapshot: data/archives/yoga-academie-nederland/site-2026-06-12.md
+    captured: "2026-06-12"
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-12"
+  - id: vyn-register-2026-06
+    type: register
+    url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    archived_url: https://web.archive.org/web/20260612/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    captured: "2026-06-12"
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-12"
+
+modules:
+  - { id: holistische-anatomie, name: "Holistische Anatomie", days_claimed: 8, type: other, sold_separately: "yes" }
+  - { id: chakrapsychologie, name: "Chakrapsychologie", days_claimed: 8, type: specialization, sold_separately: "yes" }
+  - { id: yoga-coaching, name: "Yoga Coaching", days_claimed: 5, type: specialization, sold_separately: "yes" }
+  - { id: restorative-nidra, name: "Restorative & Nidra", days_claimed: 8, type: specialization, sold_separately: "yes" }
+  - { id: mindful-flow, name: "Mindful Flow", days_claimed: 5, type: specialization, sold_separately: "yes" }
+  - { id: klankschalen-mantra, name: "Klankschalen, Mantra & Yoga", days_claimed: 3, type: specialization, sold_separately: "yes" }
+  - { id: ayurveda-asana, name: "Ayurveda & Asana", days_claimed: 5, type: specialization, sold_separately: "yes" }
+  - { id: fysieke-begeleiding, name: "Fysieke begeleiding", days_claimed: 3, type: other, sold_separately: "yes" }
+
+programs:
+  - id: 300-hatha-verdieping
+    name: "300 uur Hatha verdiepingsopleiding"
+    url: https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
+    format_label: "300"
+    style_claimed: "Hatha, yoga en bewustwording"
+    accreditation: []
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 24
+      language: nl
+    price:
+      amount_eur: null
+      vat: unknown
+      published: "yes"
+      note: "prijzen in gelinkte PDF (datakosten), nog niet geëxtraheerd"
+      source: site-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    composition:
+      type: fixed_modular
+      modules: [holistische-anatomie, chakrapsychologie, yoga-coaching, restorative-nidra, mindful-flow, klankschalen-mantra, ayurveda-asana, fysieke-begeleiding]
+    coherence_signals:
+      required_sequence: unknown
+      required_sequence_note: "ingangseisen per module verschillend; certificaat per module nodig om 'door te stromen'"
+      single_cohort_intake: "no"
+      integrative_assessment: "yes"
+      integrative_assessment_note: "afsluitende dag + scriptie; pas dan overkoepelend 300 uur diploma"
+      continuous_lead_teacher: unknown
+      modules_sold_separately: "yes"
+      bundle_price_below_sum: unknown
+      source: site-2026-06
+    assessment_described:
+      exists: "yes"
+      continuous: "yes"   # per module toetsing + reflectieverslagen, doorlopend
+      final: "yes"        # afsluitende dag + scriptie
+      quote: "voorbereiden van de examens, schrijven van je reflectieverslagen … afronding + scriptie"
+    track_record:
+      first_seen_year: 2019
+      source: ya-register-2026-06
+      note: "pagina zegt 'tien modules' maar lijst er 8 + afronding — telling klopt niet zichtbaar"

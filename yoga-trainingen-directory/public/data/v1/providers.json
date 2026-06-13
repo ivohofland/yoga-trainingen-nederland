@@ -1,0 +1,812 @@
+{
+  "generated": "2026-06-12T12:55:55.960Z",
+  "count": 5,
+  "providers": [
+    {
+      "id": "arhanta-yoga",
+      "name": "Arhanta Yoga",
+      "aka": [
+        "Arhanta Yoga Ashram Nederland",
+        "Arhanta Yoga Ashram Europe"
+      ],
+      "website": "https://www.arhantayoga.nl",
+      "status": "active",
+      "locations": [
+        {
+          "city": "Sinderen",
+          "address": "Sinderenseweg 66, 7065 BL",
+          "note": "residentiële ashram; adres via YA- en CRKBO-register"
+        }
+      ],
+      "crkbo": {
+        "registered": "yes",
+        "holder": "Arhanta Yoga Netherlands",
+        "checked": "2026-06-12",
+        "source": "crkbo-register-2026-06",
+        "note": "ook 'Arhanta Yoga Publications B.V.' (Sinderen) in register"
+      },
+      "registrations": [
+        {
+          "body": "yoga_alliance",
+          "identifier": "RYS 200, RYS 300, RPYS",
+          "holder": "Arhanta Yoga Ashram Europe",
+          "first_registered": "2010-03",
+          "verified_in_register": "yes",
+          "source": "ya-register-2026-06"
+        }
+      ],
+      "programs": [
+        {
+          "id": "200-hatha-residentieel",
+          "name": "200 uur Yoga Docentenopleiding (residentieel)",
+          "url": "https://www.arhantayoga.nl/yoga-opleiding-nederland/",
+          "format_label": "200",
+          "style_claimed": "authentieke Hatha yoga, Indiase Gurukul-traditie",
+          "accreditation": [
+            {
+              "body": "yoga_alliance",
+              "label_claimed": "Yoga Alliance erkend opleiding",
+              "verified": "yes",
+              "source": "ya-register-2026-06"
+            },
+            {
+              "body": "other",
+              "label_claimed": "erkend door IYA",
+              "verified": "unknown",
+              "source": "site-2026-06"
+            },
+            {
+              "body": "crkbo",
+              "label_claimed": "erkend door CRKBO",
+              "verified": "yes",
+              "source": "crkbo-register-2026-06",
+              "note": "CRKBO in de erkenning-lijst gepresenteerd naast YA/IYA — §10 authority-laundering-specimen, verbatim: \"deze opleiding is een Yoga Alliance erkend opleiding, en wordt daarnaast erkend door IYA en CRKBO.\" Registratie zelf klopt (fiscaal feit, geen kwaliteitskeurmerk).\n"
+            }
+          ],
+          "delivery": {
+            "mode": "in_person",
+            "structure": "intensive",
+            "duration_months_min": 1,
+            "language": "en"
+          },
+          "price": {
+            "amount_eur": 3250,
+            "variants": [
+              {
+                "label": "slaapzaal (4-7 bedden)",
+                "amount_eur": 3250
+              },
+              {
+                "label": "tweepersoonskamer",
+                "amount_eur": 3650
+              },
+              {
+                "label": "eenpersoonskamer",
+                "amount_eur": 4150
+              }
+            ],
+            "vat": "unknown",
+            "published": "yes",
+            "includes": "accommodatie, 3 maaltijden per dag, cursusmateriaal",
+            "note": "vroegboekkorting €300 voor eerste 10 inschrijvingen",
+            "source": "site-2026-06"
+          },
+          "hours_claimed": {
+            "total": 200,
+            "contact": null,
+            "self_study": null,
+            "supervised_teaching_practice": null,
+            "breakdown_published": "not_published",
+            "source": "site-2026-06"
+          },
+          "assessment_described": {
+            "exists": "not_published"
+          },
+          "track_record": {
+            "first_seen_year": 2010,
+            "source": "ya-register-2026-06",
+            "note": "YA first registered 2010-03. Site claimt \"sinds 2008\", ashram NL \"gebouwd 2013\"; afgestudeerden \">21.000\" én \">24.000\" op dezelfde pagina — inconsistent aantal.\n"
+          },
+          "cohorts": [
+            {
+              "id": "c-2026-07",
+              "start": "2026-07",
+              "end": "2026-08",
+              "status": "announced",
+              "source": "site-2026-06"
+            },
+            {
+              "id": "c-2026-08",
+              "start": "2026-08",
+              "end": "2026-08",
+              "status": "announced",
+              "source": "site-2026-06"
+            }
+          ]
+        }
+      ],
+      "modules": [],
+      "claims": [],
+      "people": [],
+      "inquiries": [],
+      "sources": [
+        {
+          "id": "site-2026-06",
+          "type": "website",
+          "url": "https://www.arhantayoga.nl/yoga-opleiding-nederland/",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "ya-register-2026-06",
+          "type": "register",
+          "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
+          "archived_url": null,
+          "captured": "2026-06-12",
+          "note": "YA-directory, country=Netherlands; JS-gerenderd, browser nodig"
+        },
+        {
+          "id": "crkbo-register-2026-06",
+          "type": "register",
+          "url": "https://www.crkbo.nl/Register/Instellingen",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        }
+      ],
+      "depth": "listed",
+      "last_verified": "2026-06-12"
+    },
+    {
+      "id": "centre-body-mind",
+      "name": "The Centre of Body & Mind",
+      "website": "https://www.centrebodymind.nl",
+      "status": "active",
+      "locations": [
+        {
+          "city": "Sassenheim",
+          "address": "Hoofdstraat 197, 2171 BC"
+        }
+      ],
+      "crkbo": {
+        "registered": "unknown",
+        "checked": "2026-06-12",
+        "source": "crkbo-register-2026-06",
+        "note": "Geen naam-match in CRKBO-register, maar prijs 'excl. btw' suggereert juist geen vrijstelling — of registratie onder andere entiteitsnaam. Per-provider check via KvK/juridische naam nodig (naam-zoek is een zeef, geen oordeel).\n"
+      },
+      "registrations": [
+        {
+          "body": "yoga_alliance",
+          "identifier": "RYS 200",
+          "holder": "The Centre of Body & Mind",
+          "first_registered": "2016-07",
+          "verified_in_register": "yes",
+          "source": "ya-register-2026-06"
+        }
+      ],
+      "programs": [
+        {
+          "id": "200-yoga-docentenopleiding",
+          "name": "Yoga Docentenopleiding",
+          "url": "https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding",
+          "format_label": "200",
+          "style_claimed": "Hatha, Ashtanga, Vinyasa en Yin; chakra-leer",
+          "accreditation": [
+            {
+              "body": "yoga_alliance",
+              "label_claimed": "200 RYT Alliance certificaat",
+              "verified": "yes",
+              "source": "ya-register-2026-06"
+            }
+          ],
+          "delivery": {
+            "mode": "in_person",
+            "structure": "weekends",
+            "duration_months_min": 10,
+            "language": "nl"
+          },
+          "prerequisites_claimed": "minimaal twee jaar ervaring met yoga",
+          "price": {
+            "amount_eur": 2600,
+            "vat": "excl",
+            "published": "yes",
+            "excludes": "evtl. kosten stiltedagen",
+            "note": "VAT-inconsistentie verbatim: eenmalig \"€2600 excl. btw\"; termijnen \"10 maanden €290 per maand incl. btw\" (= €2900 totaal; €2600 × 1,21 = €3146 — de twee prijsroutes reconciliëren niet zichtbaar). Early bird -€75; aanbetaling €250.\n",
+            "source": "site-2026-06"
+          },
+          "hours_claimed": {
+            "total": 200,
+            "contact": null,
+            "self_study": null,
+            "supervised_teaching_practice": null,
+            "breakdown_published": "not_published",
+            "source": "site-2026-06"
+          },
+          "assessment_described": {
+            "exists": "yes",
+            "quote": "De opleiding wordt afgerond met een praktijk en theoretisch examen."
+          },
+          "contract": {
+            "min_participants": {
+              "clause": "not_published"
+            },
+            "source": "site-2026-06"
+          },
+          "cohorts": [
+            {
+              "id": "c-2026-09",
+              "start": "2026-09",
+              "end": "2027-07",
+              "status": "announced",
+              "source": "site-2026-06",
+              "note": "volledige datumlijst gepubliceerd incl. examendag 11 juli 2027"
+            }
+          ]
+        }
+      ],
+      "modules": [],
+      "claims": [],
+      "people": [],
+      "inquiries": [],
+      "sources": [
+        {
+          "id": "site-2026-06",
+          "type": "website",
+          "url": "https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "ya-register-2026-06",
+          "type": "register",
+          "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "crkbo-register-2026-06",
+          "type": "register",
+          "url": "https://www.crkbo.nl/Register/Instellingen",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        }
+      ],
+      "depth": "listed",
+      "last_verified": "2026-06-12"
+    },
+    {
+      "id": "namaste-studios",
+      "name": "Namasté Studio's",
+      "website": "https://namastestudios.nl",
+      "status": "active",
+      "locations": [
+        {
+          "city": "Voorhout",
+          "address": "Jacoba van Beierenweg",
+          "note": "opleidingslocatie"
+        },
+        {
+          "city": "Leiden",
+          "note": "tweede studio"
+        }
+      ],
+      "crkbo": {
+        "registered": "unknown",
+        "checked": "2026-06-12",
+        "source": "crkbo-register-2026-06",
+        "note": "geen naam-match; prijs incl. btw suggereert geen vrijstelling"
+      },
+      "registrations": [
+        {
+          "body": "yoga_alliance",
+          "identifier": "RYS 200",
+          "holder": "Maayke Vidts - Yoga",
+          "first_registered": "2025-01",
+          "verified_in_register": "yes",
+          "source": "ya-school-profile-2026-06",
+          "note": "Registratie op naam van de lead teacher, NIET op Namasté Studio's; YA-profiel koppelt de RYS aan het adres Voorhout. Teaching staff: Maayke Vidts, E-RYT 500 + YACEP (ERYT-claim op site daarmee geverifieerd). Profiel toont 0 upcoming training dates. 3 school reviews (4,83): reviewers Anyolina Altena en Benedetta La Rosa zijn dezelfde personen als de testimonials op de eigen site.\n"
+        }
+      ],
+      "programs": [
+        {
+          "id": "200-vinyasa",
+          "name": "Yoga Teacher Training (200 RYT)",
+          "url": "https://namastestudios.nl/yogadocentopleiding",
+          "format_label": "200",
+          "style_claimed": "Vinyasa; 'post-lineage yoga' — traditie en wetenschap in dialoog",
+          "accreditation": [
+            {
+              "body": "yoga_alliance",
+              "label_claimed": "200 RYT; bij 200 opleidingsuren gerechtigd tot registratie bij Yoga Alliance",
+              "verified": "yes",
+              "source": "ya-school-profile-2026-06",
+              "note": "RYS 200 bestaat en is gekoppeld aan dit adres — maar op naam van de lead teacher (zie registrations)"
+            }
+          ],
+          "delivery": {
+            "mode": "in_person",
+            "structure": "weekends",
+            "duration_months_min": 10,
+            "language": "mixed"
+          },
+          "price": {
+            "amount_eur": 3000,
+            "variants": [
+              {
+                "label": "niet-leden",
+                "amount_eur": 3000
+              },
+              {
+                "label": "leden",
+                "amount_eur": 2800
+              }
+            ],
+            "vat": "incl",
+            "published": "yes",
+            "excludes": "verplichte literatuur én deelname aan studiolessen (terwijl lessen volgen wordt verwacht)",
+            "note": "basis = niet-ledenprijs (algemeen beschikbaar); aanbetaling €500; termijnen mogelijk; ledenkorting is tevens upsell-signaal",
+            "source": "site-2026-06"
+          },
+          "hours_claimed": {
+            "total": 200,
+            "contact": null,
+            "self_study": null,
+            "supervised_teaching_practice": null,
+            "breakdown_published": "not_published",
+            "source": "site-2026-06"
+          },
+          "coherence_signals": {
+            "single_cohort_intake": "yes",
+            "single_cohort_intake_note": "één jaarlijkse start met vaste datumlijst",
+            "continuous_lead_teacher": "yes",
+            "continuous_lead_teacher_note": "lead teacher Maayke Vidts (E-RYT 500) + gastdocenten",
+            "source": "site-2026-06"
+          },
+          "assessment_described": {
+            "exists": "yes",
+            "quote": "Na succesvolle afronding van het theorie- en praktijkexamen ontvang je een officieel certificaat."
+          },
+          "cohorts": [
+            {
+              "id": "c-2026-09",
+              "start": "2026-09",
+              "end": "2027-07",
+              "status": "announced",
+              "source": "site-2026-06",
+              "note": "volledige weekenddata gepubliceerd; examenmomenten 'volgen'"
+            }
+          ]
+        }
+      ],
+      "modules": [],
+      "claims": [],
+      "people": [],
+      "inquiries": [],
+      "sources": [
+        {
+          "id": "site-2026-06",
+          "type": "website",
+          "url": "https://namastestudios.nl/yogadocentopleiding",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "ya-school-profile-2026-06",
+          "type": "register",
+          "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&sid=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga",
+          "archived_url": null,
+          "captured": "2026-06-12",
+          "note": "Salesforce-gerenderd; browser nodig; lokale PDF-snapshot vereist (Wayback faalt waarschijnlijk)"
+        },
+        {
+          "id": "crkbo-register-2026-06",
+          "type": "register",
+          "url": "https://www.crkbo.nl/Register/Instellingen",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        }
+      ],
+      "depth": "listed",
+      "last_verified": "2026-06-12"
+    },
+    {
+      "id": "yoga-academie-nederland",
+      "name": "Yoga Academie Nederland",
+      "aka": [
+        "YAN"
+      ],
+      "website": "https://yoga-academie.nl",
+      "status": "active",
+      "locations": [
+        {
+          "city": "Nieuw-Vennep",
+          "address": "Haverstraat 44, 2153 GB",
+          "note": "adres via YA-register"
+        },
+        {
+          "city": "Amersfoort",
+          "note": "tweede locatie per VYN-vermelding"
+        }
+      ],
+      "crkbo": {
+        "registered": "yes",
+        "holder": "Yoga Academie Nederland",
+        "checked": "2026-06-12",
+        "source": "crkbo-register-2026-06"
+      },
+      "registrations": [
+        {
+          "body": "yoga_alliance",
+          "identifier": "RYS 200, RYS 300",
+          "holder": "Yoga Academie Nederland",
+          "first_registered": "2019-05",
+          "verified_in_register": "yes",
+          "source": "ya-register-2026-06"
+        },
+        {
+          "body": "vyn",
+          "verified_in_register": "yes",
+          "source": "vyn-register-2026-06"
+        }
+      ],
+      "programs": [
+        {
+          "id": "300-hatha-verdieping",
+          "name": "300 uur Hatha verdiepingsopleiding",
+          "url": "https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/",
+          "format_label": "300",
+          "style_claimed": "Hatha, yoga en bewustwording",
+          "accreditation": [],
+          "delivery": {
+            "mode": "in_person",
+            "structure": "modular",
+            "duration_months_min": 24,
+            "language": "nl"
+          },
+          "price": {
+            "amount_eur": null,
+            "vat": "unknown",
+            "published": "yes",
+            "note": "prijzen in gelinkte PDF (datakosten), nog niet geëxtraheerd",
+            "source": "site-2026-06"
+          },
+          "hours_claimed": {
+            "total": 300,
+            "contact": null,
+            "self_study": null,
+            "supervised_teaching_practice": null,
+            "breakdown_published": "not_published",
+            "source": "site-2026-06"
+          },
+          "composition": {
+            "type": "fixed_modular",
+            "modules": [
+              "holistische-anatomie",
+              "chakrapsychologie",
+              "yoga-coaching",
+              "restorative-nidra",
+              "mindful-flow",
+              "klankschalen-mantra",
+              "ayurveda-asana",
+              "fysieke-begeleiding"
+            ]
+          },
+          "coherence_signals": {
+            "required_sequence": "unknown",
+            "required_sequence_note": "ingangseisen per module verschillend; certificaat per module nodig om 'door te stromen'",
+            "single_cohort_intake": "no",
+            "capstone_or_final_assessment": "yes",
+            "capstone_or_final_assessment_note": "afsluitende dag + scriptie; pas dan overkoepelend 300 uur diploma",
+            "continuous_lead_teacher": "unknown",
+            "modules_sold_separately": "yes",
+            "bundle_price_below_sum": "unknown",
+            "source": "site-2026-06"
+          },
+          "assessment_described": {
+            "exists": "yes",
+            "quote": "voorbereiden van de examens, schrijven van je reflectieverslagen … afronding + scriptie"
+          },
+          "track_record": {
+            "first_seen_year": 2019,
+            "source": "ya-register-2026-06",
+            "note": "pagina zegt 'tien modules' maar lijst er 8 + afronding — telling klopt niet zichtbaar"
+          }
+        }
+      ],
+      "modules": [
+        {
+          "id": "holistische-anatomie",
+          "name": "Holistische Anatomie",
+          "days_claimed": 8,
+          "type": "other",
+          "sold_separately": "yes"
+        },
+        {
+          "id": "chakrapsychologie",
+          "name": "Chakrapsychologie",
+          "days_claimed": 8,
+          "type": "specialization",
+          "sold_separately": "yes"
+        },
+        {
+          "id": "yoga-coaching",
+          "name": "Yoga Coaching",
+          "days_claimed": 5,
+          "type": "specialization",
+          "sold_separately": "yes"
+        },
+        {
+          "id": "restorative-nidra",
+          "name": "Restorative & Nidra",
+          "days_claimed": 8,
+          "type": "specialization",
+          "sold_separately": "yes"
+        },
+        {
+          "id": "mindful-flow",
+          "name": "Mindful Flow",
+          "days_claimed": 5,
+          "type": "specialization",
+          "sold_separately": "yes"
+        },
+        {
+          "id": "klankschalen-mantra",
+          "name": "Klankschalen, Mantra & Yoga",
+          "days_claimed": 3,
+          "type": "specialization",
+          "sold_separately": "yes"
+        },
+        {
+          "id": "ayurveda-asana",
+          "name": "Ayurveda & Asana",
+          "days_claimed": 5,
+          "type": "specialization",
+          "sold_separately": "yes"
+        },
+        {
+          "id": "fysieke-begeleiding",
+          "name": "Fysieke begeleiding",
+          "days_claimed": 3,
+          "type": "other",
+          "sold_separately": "yes"
+        }
+      ],
+      "claims": [],
+      "people": [],
+      "inquiries": [],
+      "sources": [
+        {
+          "id": "site-2026-06",
+          "type": "website",
+          "url": "https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "ya-register-2026-06",
+          "type": "register",
+          "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "vyn-register-2026-06",
+          "type": "register",
+          "url": "https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "crkbo-register-2026-06",
+          "type": "register",
+          "url": "https://www.crkbo.nl/Register/Instellingen",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        }
+      ],
+      "depth": "listed",
+      "last_verified": "2026-06-12"
+    },
+    {
+      "id": "yogapoint",
+      "name": "Yogapoint",
+      "website": "https://yogapoint.nl",
+      "status": "active",
+      "locations": [
+        {
+          "city": "'s-Hertogenbosch",
+          "address": "Bordeslaan 475, 5223 MP",
+          "note": "opleiding in Den Bosch; studio's ook in Dordrecht, Nijmegen, Utrecht (3x), Woerden"
+        }
+      ],
+      "crkbo": {
+        "registered": "unknown",
+        "checked": "2026-06-12",
+        "source": "crkbo-register-2026-06",
+        "note": "geen naam-match; prijs incl. 21% btw suggereert geen vrijstelling"
+      },
+      "registrations": [
+        {
+          "body": "yoga_alliance",
+          "verified_in_register": "unknown",
+          "source": "ya-register-2026-06",
+          "note": "Site claimt 'erkend door Yoga Alliance' maar Yogapoint niet gevonden in YA NL-lijst (56 scholen) — registratie onder andere holder-naam, lapsed, of zoekradius-artefact. Naamzoektocht in YA-directory nodig; tot dan unknown, niet no.\n"
+        }
+      ],
+      "programs": [
+        {
+          "id": "300-verdieping",
+          "name": "300-uur Verdiepende Yoga Teacher Training",
+          "url": "https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/",
+          "format_label": "300",
+          "style_claimed": "achtvoudige pad van Patanjali; Ashtanga beoefening; chakra-gebaseerde asana's",
+          "accreditation": [
+            {
+              "body": "yoga_alliance",
+              "label_claimed": "erkend door Yoga Alliance, het internationale keurmerk voor yogadocenten; RYT 300 certificaat → upgrade naar RYT 500",
+              "verified": "unknown",
+              "source": "site-2026-06"
+            }
+          ],
+          "delivery": {
+            "mode": "in_person",
+            "structure": "modular",
+            "duration_months_min": 12,
+            "language": "nl"
+          },
+          "prerequisites_claimed": "RYT 200 vereist voor volledige Yoga Alliance-registratie; modules los toegankelijk",
+          "price": {
+            "amount_eur": 3993,
+            "vat": "incl",
+            "published": "yes",
+            "includes": "studiemateriaal, opdrachten, certificaten, persoonlijke begeleiding",
+            "excludes": "literatuur zelf aanschaffen",
+            "note": "incl. 21% btw, 'aftrekbaar voor zzp'ers'",
+            "source": "site-2026-06"
+          },
+          "hours_claimed": {
+            "total": 300,
+            "contact": null,
+            "self_study": null,
+            "supervised_teaching_practice": null,
+            "breakdown_published": "not_published",
+            "source": "site-2026-06"
+          },
+          "group_size_claimed": {
+            "max": 15,
+            "source": "site-2026-06"
+          },
+          "composition": {
+            "type": "fixed_modular",
+            "modules": [
+              "m1-filosofie-levensstijl",
+              "m2-asana-chakra",
+              "m3-pranayama-nidra-meditatie"
+            ]
+          },
+          "coherence_signals": {
+            "required_sequence": "no",
+            "required_sequence_note": "'zelf jouw startmoment kiezen … ongeacht waar je begint'",
+            "single_cohort_intake": "no",
+            "single_cohort_intake_note": "gestaffelde modulestarts (feb '26 / sep '26 / feb '27)",
+            "capstone_or_final_assessment": "not_published",
+            "continuous_lead_teacher": "not_published",
+            "continuous_lead_teacher_note": "'ervaren docenten (E-RYT500) en gastdocenten'",
+            "modules_sold_separately": "yes",
+            "modules_sold_separately_note": "'los te volgen als bijscholing'",
+            "bundle_price_below_sum": "yes",
+            "bundle_price_below_sum_note": "bundel €3.993 < 3 × €1.452 = €4.356",
+            "source": "site-2026-06"
+          },
+          "assessment_described": {
+            "exists": "not_published"
+          },
+          "contract": {
+            "min_participants": {
+              "clause": "yes",
+              "value": 6
+            },
+            "source": "site-2026-06"
+          },
+          "cohorts": [
+            {
+              "id": "m1-2026-02",
+              "start": "2026-02",
+              "status": "announced",
+              "source": "site-2026-06",
+              "note": "module 1"
+            },
+            {
+              "id": "m2-2026-09",
+              "start": "2026-09",
+              "status": "announced",
+              "source": "site-2026-06",
+              "note": "module 2"
+            },
+            {
+              "id": "m3-2027-02",
+              "start": "2027-02",
+              "status": "announced",
+              "source": "site-2026-06",
+              "note": "module 3"
+            }
+          ]
+        }
+      ],
+      "modules": [
+        {
+          "id": "m1-filosofie-levensstijl",
+          "name": "100-uur module 1: Yogafilosofie & Levensstijl",
+          "hours": {
+            "total": 100,
+            "contact": null
+          },
+          "type": "specialization",
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 1452,
+            "vat": "incl",
+            "source": "site-2026-06"
+          }
+        },
+        {
+          "id": "m2-asana-chakra",
+          "name": "100-uur module 2: Yoga Asana & Chakra Psychologie",
+          "hours": {
+            "total": 100,
+            "contact": null
+          },
+          "type": "specialization",
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 1452,
+            "vat": "incl",
+            "source": "site-2026-06"
+          }
+        },
+        {
+          "id": "m3-pranayama-nidra-meditatie",
+          "name": "100-uur module 3: Pranayama, Yoga Nidra & Meditatie",
+          "hours": {
+            "total": 100,
+            "contact": null
+          },
+          "type": "specialization",
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 1452,
+            "vat": "incl",
+            "source": "site-2026-06"
+          }
+        }
+      ],
+      "claims": [],
+      "people": [],
+      "inquiries": [],
+      "sources": [
+        {
+          "id": "site-2026-06",
+          "type": "website",
+          "url": "https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "ya-register-2026-06",
+          "type": "register",
+          "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        },
+        {
+          "id": "crkbo-register-2026-06",
+          "type": "register",
+          "url": "https://www.crkbo.nl/Register/Instellingen",
+          "archived_url": null,
+          "captured": "2026-06-12"
+        }
+      ],
+      "depth": "listed",
+      "last_verified": "2026-06-12"
+    }
+  ]
+}

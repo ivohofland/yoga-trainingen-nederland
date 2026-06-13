@@ -1,0 +1,134 @@
+id: yogapoint
+name: Yogapoint
+website: https://yogapoint.nl
+status: active
+locations:
+  - city: "'s-Hertogenbosch"
+    address: "Bordeslaan 475, 5223 MP"
+    note: "opleiding in Den Bosch; studio's ook in Dordrecht, Nijmegen, Utrecht (3x), Woerden"
+crkbo:
+  registered: unknown
+  checked: "2026-06-12"
+  source: crkbo-register-2026-06
+  note: "geen naam-match; prijs incl. 21% btw suggereert geen vrijstelling"
+registrations:
+  - body: yoga_alliance
+    verified_in_register: unknown
+    source: ya-register-2026-06
+    note: >
+      Site claimt 'erkend door Yoga Alliance' maar Yogapoint niet gevonden in
+      YA NL-lijst (56 scholen) — registratie onder andere holder-naam, lapsed,
+      of zoekradius-artefact. Naamzoektocht in YA-directory nodig; tot dan
+      unknown, niet no.
+depth: listed
+last_verified: "2026-06-12"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
+    archived_url: https://web.archive.org/web/20260612/https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
+    local_snapshot: data/archives/yogapoint/site-2026-06-12.md
+    captured: "2026-06-12"
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-12"
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-12"
+
+modules:
+  - id: m1-filosofie-levensstijl
+    name: "100-uur module 1: Yogafilosofie & Levensstijl"
+    hours: { total: 100, contact: null }
+    type: specialization
+    sold_separately: "yes"
+    price: { amount_eur: 1452, vat: incl, source: site-2026-06 }
+  - id: m2-asana-chakra
+    name: "100-uur module 2: Yoga Asana & Chakra Psychologie"
+    hours: { total: 100, contact: null }
+    type: specialization
+    sold_separately: "yes"
+    price: { amount_eur: 1452, vat: incl, source: site-2026-06 }
+  - id: m3-pranayama-nidra-meditatie
+    name: "100-uur module 3: Pranayama, Yoga Nidra & Meditatie"
+    hours: { total: 100, contact: null }
+    type: specialization
+    sold_separately: "yes"
+    price: { amount_eur: 1452, vat: incl, source: site-2026-06 }
+
+programs:
+  - id: 300-verdieping
+    name: "300-uur Verdiepende Yoga Teacher Training"
+    url: https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
+    format_label: "300"
+    style_claimed: "achtvoudige pad van Patanjali; Ashtanga beoefening; chakra-gebaseerde asana's"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "erkend door Yoga Alliance, het internationale keurmerk voor yogadocenten; RYT 300 certificaat → upgrade naar RYT 500"
+        verified: unknown
+        source: site-2026-06
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 12
+      language: nl
+    prerequisites_claimed: "RYT 200 vereist voor volledige Yoga Alliance-registratie; modules los toegankelijk"
+    price:
+      amount_eur: 3993
+      vat: incl
+      published: "yes"
+      includes: "studiemateriaal, opdrachten, certificaten, persoonlijke begeleiding"
+      excludes: "literatuur zelf aanschaffen"
+      note: "incl. 21% btw, 'aftrekbaar voor zzp'ers'"
+      source: site-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    group_size_claimed: { max: 15, source: site-2026-06 }
+    composition:
+      type: fixed_modular
+      modules: [m1-filosofie-levensstijl, m2-asana-chakra, m3-pranayama-nidra-meditatie]
+    coherence_signals:
+      required_sequence: "no"
+      required_sequence_note: "'zelf jouw startmoment kiezen … ongeacht waar je begint'"
+      single_cohort_intake: "no"
+      single_cohort_intake_note: "gestaffelde modulestarts (feb '26 / sep '26 / feb '27)"
+      integrative_assessment: not_published
+      continuous_lead_teacher: not_published
+      continuous_lead_teacher_note: "'ervaren docenten (E-RYT500) en gastdocenten'"
+      modules_sold_separately: "yes"
+      modules_sold_separately_note: "'los te volgen als bijscholing'"
+      bundle_price_below_sum: "yes"
+      bundle_price_below_sum_note: "bundel €3.993 < 3 × €1.452 = €4.356"
+      source: site-2026-06
+    assessment_described:
+      exists: not_published
+    contract:
+      min_participants:
+        clause: "yes"
+        value: 6
+      source: site-2026-06
+    cohorts:
+      - id: m1-2026-02
+        start: "2026-02"
+        status: announced
+        source: site-2026-06
+        note: "module 1"
+      - id: m2-2026-09
+        start: "2026-09"
+        status: announced
+        source: site-2026-06
+        note: "module 2"
+      - id: m3-2027-02
+        start: "2027-02"
+        status: announced
+        source: site-2026-06
+        note: "module 3"

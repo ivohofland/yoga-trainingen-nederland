@@ -1,0 +1,95 @@
+id: centre-body-mind
+name: "The Centre of Body & Mind"
+website: https://www.centrebodymind.nl
+status: active
+locations:
+  - city: Sassenheim
+    address: "Hoofdstraat 197, 2171 BC"
+crkbo:
+  registered: unknown
+  checked: "2026-06-12"
+  source: crkbo-register-2026-06
+  note: >
+    Geen naam-match in CRKBO-register, maar prijs 'excl. btw' suggereert juist
+    geen vrijstelling — of registratie onder andere entiteitsnaam. Per-provider
+    check via KvK/juridische naam nodig (naam-zoek is een zeef, geen oordeel).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "The Centre of Body & Mind"
+    first_registered: "2016-07"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+depth: listed
+last_verified: "2026-06-12"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
+    archived_url: https://web.archive.org/web/20260612/https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
+    local_snapshot: data/archives/centre-body-mind/site-2026-06-2026-06-12.pdf
+    captured: "2026-06-12"
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-12"
+    local_snapshot: data/archives/centre-body-mind/ya-register-2026-06-2026-06-12.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-12"
+    local_snapshot: data/archives/centre-body-mind/crkbo-register-2026-06-2026-06-12.pdf
+
+programs:
+  - id: 200-yoga-docentenopleiding
+    name: "Yoga Docentenopleiding"
+    url: https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
+    format_label: "200"
+    style_claimed: "Hatha, Ashtanga, Vinyasa en Yin; chakra-leer"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200 RYT Alliance certificaat"
+        verified: "yes"
+        source: ya-register-2026-06
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 10
+      language: nl
+    prerequisites_claimed: "minimaal twee jaar ervaring met yoga"
+    price:
+      amount_eur: 2600
+      vat: excl
+      published: "yes"
+      excludes: "evtl. kosten stiltedagen"
+      note: >
+        VAT-inconsistentie verbatim: eenmalig "€2600 excl. btw"; termijnen "10
+        maanden €290 per maand incl. btw" (= €2900 totaal; €2600 × 1,21 = €3146
+        — de twee prijsroutes reconciliëren niet zichtbaar). Early bird -€75;
+        aanbetaling €250.
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    assessment_described:
+      exists: "yes"
+      continuous: not_published
+      final: "yes"
+      quote: "De opleiding wordt afgerond met een praktijk en theoretisch examen."
+    contract:
+      min_participants:
+        clause: not_published
+      source: site-2026-06
+    cohorts:
+      - id: c-2026-09
+        start: "2026-09"
+        end: "2027-07"
+        status: announced
+        source: site-2026-06
+        note: "volledige datumlijst gepubliceerd incl. examendag 11 juli 2027"

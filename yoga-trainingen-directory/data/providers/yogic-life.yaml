@@ -1,0 +1,179 @@
+id: yogic-life
+name: Yogic Life
+website: https://yogiclife.eu
+status: active
+locations:
+  - city: Leiden
+    address: "Oude Rijn (adres via YA-register)"
+    note: "site spreekt van 'regio Voorschoten, Leiden'; lessen LIVE
+      Leiden/Voorschoten"
+crkbo:
+  registered: unknown
+  checked: "2026-06-12"
+  source: crkbo-register-2026-06
+  note: "geen naam-match; btw-vermelding bij prijzen ontbreekt geheel"
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300"
+    holder: "Yogic Life"
+    first_registered: "2017-08"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+depth: listed
+last_verified: "2026-06-12"
+sources:
+  - id: site-ryt200-2026-06
+    type: website
+    url: https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/
+    archived_url: https://web.archive.org/web/20260612191731/https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/
+    captured: "2026-06-12"
+    note: "JS-gerenderd; web fetch gaf lege body, uitgelezen via browser — lokale
+      kopie via archiveerscript essentieel"
+    local_snapshot: data/archives/yogic-life/site-ryt200-2026-06-2026-06-12.pdf
+  - id: site-ryt300-2026-06
+    type: website
+    url: https://yogiclife.eu/nl/yoga-docent-opleiding/ryt300-yoga-docentenopleiding/
+    archived_url: null
+    captured: "2026-06-12"
+    note: "JS-gerenderd; idem"
+    local_snapshot: data/archives/yogic-life/site-ryt300-2026-06-2026-06-12.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-12"
+    local_snapshot: data/archives/yogic-life/ya-register-2026-06-2026-06-12.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260612191114/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-12"
+    local_snapshot: data/archives/yogic-life/crkbo-register-2026-06-2026-06-12.pdf
+
+programs:
+  - id: ryt200-multistyle
+    name: "RYT200 Yoga Docentenopleiding (Multistyle)"
+    url: https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/
+    format_label: "200"
+    style_claimed: "Multi Style: Raja, Hatha, Yin, Kundalini & Ashtanga;
+      traditionele Indiase yogatraditie + moderne inzichten"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance Gecertificeerd; erkend door Yoga Alliance International"
+        verified: "yes"
+        source: ya-register-2026-06
+        note: >
+          RYS 200 bij Yoga Alliance (VS) geverifieerd. Let op claim-vermenging:
+          de pagina noemt zowel "Yoga Alliance" als "Yoga Alliance
+          International" — dat zijn verschillende organisaties; welke bedoeld
+          wordt wisselt per alinea.
+    delivery:
+      mode: in_person
+      structure: weekends # één dag per week (zondag), ca. 22 dagen sep-mei
+      duration_months_min: 9
+      language: mixed # "in Engels gegeven maar wij gebruiken en oefenen ook in het Nederlands"
+    price:
+      amount_eur: 2399
+      vat: unknown # btw-status nergens vermeld
+      published: "yes"
+      note: "intake verplicht via Zoom-interview à €29 (terugbetaald bij
+        inschrijving)"
+      source: site-ryt200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: 10 # "Practicum (10 uur)"
+      breakdown_published: "yes"
+      source: site-ryt200-2026-06
+      note: >
+        Verdeling per onderdeel gepubliceerd: Asana & Methodologie 100,
+        Anatomie/ Fysiologie/Psychologie 20, Filosofie & Ethiek 30, Meditatie &
+        Ademhaling 15, Practicum 10 — telt op tot 175 van de 200;
+        ondernemersmodule ongekwantificeerd. De "stage, lesgeven beoefening met
+        gestructureerde feedback" is VRIJWILLIG ("vanaf maart, sterk
+        aanbevolen") en telt hier niet mee als begeleide lespraktijk.
+    assessment_described:
+      exists: not_published
+    contract:
+      source: site-ryt200-2026-06
+    cohorts:
+      - id: ryt200-2026-09
+        start: "2026-09"
+        end: "2027-05"
+        status: announced
+        source: site-ryt200-2026-06
+        note: "zondaggroep, start 6 september; rooster wordt pas op de eerste
+          opleidingsdag gedeeld"
+
+  - id: ryt300-multistyle
+    name: "RYT300 Gevorderde Yoga Docentenopleiding (Multistyle)"
+    url: https://yogiclife.eu/nl/yoga-docent-opleiding/ryt300-yoga-docentenopleiding/
+    format_label: "300"
+    style_claimed: "Multi Style incl. Naad Yoga; kosha's, chakra's, guna's, '9
+      Dimensies van Bewustzijn'; neuroplasticiteit en trauma-geïnformeerd
+      lesgeven"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "officieel erkend door de Yoga Alliance als een RYT300-uur
+          programma; na afronding registreren als RYT500"
+        verified: "yes"
+        source: site-ryt300-2026-06
+    delivery:
+      mode: in_person
+      structure: weekends # één dag per week (zaterdag), ca. 33 dagen sep-juni
+      duration_months_min: 10
+      language: mixed
+    prerequisites_claimed: "afgeronde RYT200 Yoga Docentenopleiding"
+    price:
+      amount_eur: 3599
+      vat: unknown
+      published: "yes"
+      note: "intake verplicht via Zoom-interview à €29 (terugbetaald bij
+        inschrijving)"
+      source: site-ryt300-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: "yes"
+      source: site-ryt300-2026-06
+      note: >
+        Verdeling gepubliceerd als BANDBREEDTES: Asana/Sequencing/Praktijk
+        100-150, Lesgeefmethodologie 25-40, Anatomie/Fysiologie/Subtiele
+        Lichamen 20-40, Filosofie/Levensstijl/Ethiek 30-60, Practicum
+        (observeren, assisteren, lesgeven) 30-50. Minima tellen op tot 205,
+        maxima tot 340. Practicum vermengt observeren/assisteren/lesgeven, dus
+        begeleide lespraktijk niet als getal te isoleren.
+    assessment_described:
+      exists: not_published
+    cohorts:
+      - id: ryt300-2026-09
+        start: "2026-09"
+        end: "2027-06"
+        status: announced
+        source: site-ryt300-2026-06
+        note: "zaterdaggroep, start 12 september; rooster pas op eerste opleidingsdag"
+
+claims:
+  - id: ya-international
+    scope: "program:ryt200-multistyle"
+    quote: "Onze yoga docentenopleiding is erkend door Yoga Alliance International,
+      wat betekent dat je na het behalen van je diploma wereldwijd erkend wordt
+      als een gekwalificeerde yoga docent."
+    category: accreditation
+    source: site-ryt200-2026-06
+  - id: negen-dimensies
+    scope: "program:ryt300-multistyle"
+    quote: "Je wordt begeleid via een multidimensionaal leerpad gebaseerd op de
+      kosha's, guna's, de 8 ledematen van yoga en de 9 dimensies van bewustzijn
+      zoals geïntroduceerd in het boek: Yogic Life: A Journey Through Yoga and 9
+      Dimensional Awareness."
+    category: other
+    source: site-ryt300-2026-06
+  - id: neuroplasticiteit
+    scope: "program:ryt300-multistyle"
+    quote: "Neuroplasticiteit, trauma-geïnformeerd lesgeven, moderne wetenschap"
+    category: scientific
+    source: site-ryt300-2026-06

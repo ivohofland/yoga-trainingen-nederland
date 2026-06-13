@@ -1,0 +1,94 @@
+# Pilot layer-1 record — captured 2026-06-12
+id: yogapoint
+name: Yogapoint
+website: https://yogapoint.nl
+status: active
+locations:
+  - city: "'s-Hertogenbosch"
+    address: "Bordeslaan 475, 5223 MP"
+    note: "opleiding in Den Bosch; studio's ook in Dordrecht, Nijmegen, Utrecht (3x), Woerden"
+crkbo:
+  registered: unknown   # niet geclaimd; prijs incl 21% btw suggereert géén vrijstelling
+  checked: null
+registrations:
+  - body: yoga_alliance
+    verified_in_register: unknown
+    source: site-2026-06
+depth: listed
+last_verified: 2026-06-12
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
+    archived_url: null
+    captured: 2026-06-12
+
+modules:
+  - id: m1-filosofie-levensstijl
+    name: "100-uur module 1: Yogafilosofie & Levensstijl"
+    hours: { total: 100, contact: null }
+    type: specialization
+    sold_separately: yes    # "los te volgen als bijscholing"
+    price: { amount_eur: 1452, vat: incl, source: site-2026-06 }
+  - id: m2-asana-chakra
+    name: "100-uur module 2: Yoga Asana & Chakra Psychologie"
+    hours: { total: 100, contact: null }
+    type: specialization
+    sold_separately: yes
+    price: { amount_eur: 1452, vat: incl, source: site-2026-06 }
+  - id: m3-pranayama-nidra-meditatie
+    name: "100-uur module 3: Pranayama, Yoga Nidra & Meditatie"
+    hours: { total: 100, contact: null }
+    type: specialization
+    sold_separately: yes
+    price: { amount_eur: 1452, vat: incl, source: site-2026-06 }
+
+programs:
+  - id: 300-verdieping
+    name: "300-uur Verdiepende Yoga Teacher Training"
+    url: https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
+    format_label: 300
+    style_claimed: "achtvoudige pad van Patanjali; Ashtanga beoefening; chakra-gebaseerde asana's"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "erkend door Yoga Alliance, het internationale keurmerk voor yogadocenten; RYT 300 certificaat → upgrade naar RYT 500"
+        verified: unknown
+        source: site-2026-06
+    delivery:
+      mode: in_person
+      structure: modular    # 12-14 bijeenkomsten/module, za 12:00-18:30 / zo 12:30-19:00
+      duration_months_min: 12
+      language: nl
+    price:
+      amount_eur: 3993
+      vat: incl             # "inclusief 21% btw (aftrekbaar voor zzp'ers)"
+      published: yes
+      includes: "studiemateriaal, opdrachten, certificaten, persoonlijke begeleiding"
+      excludes: "literatuur zelf aanschaffen"
+      source: site-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    group_size_claimed: { max: 15, source: site-2026-06 }
+    composition:
+      type: fixed_modular
+      modules: [m1-filosofie-levensstijl, m2-asana-chakra, m3-pranayama-nidra-meditatie]
+    coherence_signals:
+      required_sequence: no          # "zelf jouw startmoment kiezen … ongeacht waar je begint"
+      single_cohort_intake: no       # gestaffelde modulestarts (feb '26 / sep '26 / feb '27)
+      capstone_or_final_assessment: not_published
+      continuous_lead_teacher: not_published   # "ervaren docenten (E-RYT500) en gastdocenten"
+      modules_sold_separately: yes
+      bundle_price_below_sum: yes    # bundel €3.993 < 3×€1.452 = €4.356
+    assessment_described:
+      exists: not_published          # certificaat per module genoemd; toetsing niet beschreven
+    contract:
+      min_participants: { clause: yes, value: 6 }
+    cohorts:
+      - { id: m1-2026-02, program: 300-verdieping, start: 2026-02, status: announced, source: site-2026-06, note: "module 1" }
+      - { id: m2-2026-09, program: 300-verdieping, start: 2026-09, status: announced, source: site-2026-06, note: "module 2" }
+      - { id: m3-2027-02, program: 300-verdieping, start: 2027-02, status: announced, source: site-2026-06, note: "module 3" }

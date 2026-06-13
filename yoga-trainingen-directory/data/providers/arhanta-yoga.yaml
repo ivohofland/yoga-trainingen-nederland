@@ -1,0 +1,117 @@
+id: arhanta-yoga
+name: Arhanta Yoga
+aka: ["Arhanta Yoga Ashram Nederland", "Arhanta Yoga Ashram Europe"]
+website: https://www.arhantayoga.nl
+status: active
+locations:
+  - city: Sinderen
+    address: "Sinderenseweg 66, 7065 BL"
+    note: "residentiële ashram; adres via YA- en CRKBO-register"
+crkbo:
+  registered: "yes"
+  holder: "Arhanta Yoga Netherlands"
+  checked: "2026-06-12"
+  source: crkbo-register-2026-06
+  note: "ook 'Arhanta Yoga Publications B.V.' (Sinderen) in register"
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300, RPYS"
+    holder: "Arhanta Yoga Ashram Europe"
+    first_registered: "2010-03"
+    verified_in_register: "yes"
+    source: ya-register-2026-06
+depth: listed
+last_verified: "2026-06-12"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.arhantayoga.nl/yoga-opleiding-nederland/
+    archived_url: https://archive.ph/newest/https://www.arhantayoga.nl/yoga-opleiding-nederland/
+    local_snapshot: data/archives/arhanta-yoga/site-2026-06-12.md
+    captured: "2026-06-12"
+    note: >
+      WAYBACK-EXCLUSIE: "This URL has been excluded from the Wayback Machine"
+      (vastgesteld 2026-06-12). Domeinbrede uitsluiting — ook historische
+      snapshots ontoegankelijk; §8-cohortreconstructie via Wayback is voor deze
+      provider onmogelijk. Oorzaak van buiten niet vast te stellen
+      (eigenaar-verzoek, robots-beleid of juridisch verzoek). Alternatief:
+      archive.today + lokale PDF.
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
+    captured: "2026-06-12"
+    note: "YA-directory, country=Netherlands; JS-gerenderd, browser nodig"
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    captured: "2026-06-12"
+
+programs:
+  - id: 200-hatha-residentieel
+    name: "200 uur Yoga Docentenopleiding (residentieel)"
+    url: https://www.arhantayoga.nl/yoga-opleiding-nederland/
+    format_label: "200"
+    style_claimed: "authentieke Hatha yoga, Indiase Gurukul-traditie"
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance erkend opleiding"
+        verified: "yes"
+        source: ya-register-2026-06
+      - body: other
+        label_claimed: "erkend door IYA"
+        verified: unknown
+        source: site-2026-06
+      - body: crkbo
+        label_claimed: "erkend door CRKBO"
+        verified: "yes"
+        source: crkbo-register-2026-06
+        note: >
+          CRKBO in de erkenning-lijst gepresenteerd naast YA/IYA — §10
+          authority-laundering-specimen, verbatim: "deze opleiding is een Yoga
+          Alliance erkend opleiding, en wordt daarnaast erkend door IYA en CRKBO."
+          Registratie zelf klopt (fiscaal feit, geen kwaliteitskeurmerk).
+    delivery:
+      mode: in_person
+      structure: intensive
+      duration_months_min: 1
+      language: en
+    price:
+      amount_eur: 3250
+      variants:
+        - { label: "slaapzaal (4-7 bedden)", amount_eur: 3250 }
+        - { label: "tweepersoonskamer", amount_eur: 3650 }
+        - { label: "eenpersoonskamer", amount_eur: 4150 }
+      vat: unknown
+      published: "yes"
+      includes: "accommodatie, 3 maaltijden per dag, cursusmateriaal"
+      note: "vroegboekkorting €300 voor eerste 10 inschrijvingen"
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2010
+      source: ya-register-2026-06
+      note: >
+        YA first registered 2010-03. Site claimt "sinds 2008", ashram NL
+        "gebouwd 2013"; afgestudeerden ">21.000" én ">24.000" op dezelfde
+        pagina — inconsistent aantal.
+    cohorts:
+      - id: c-2026-07
+        start: "2026-07"
+        end: "2026-08"
+        status: announced
+        source: site-2026-06
+      - id: c-2026-08
+        start: "2026-08"
+        end: "2026-08"
+        status: announced
+        source: site-2026-06
