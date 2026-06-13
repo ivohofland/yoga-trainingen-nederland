@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run validate && next build",
+    "build": "npm run validate && npm run export-json && next build",
     "start": "next start",
     "validate": "tsx scripts/validate.ts",
     "export-json": "tsx scripts/export-json.ts",
