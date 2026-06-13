@@ -54,15 +54,16 @@ content can go live, and the code to render them does not exist yet.
 The deliberate position (see *Decisions* below) is **no general admin/edit UI** —
 records stay files-in-git. These items make that workflow fast and safe instead.
 
-- [ ] **Editor schema validation.** Generate a JSON Schema from the Zod schema
-  and associate it with `data/providers/*.yaml`, so any editor with a YAML
-  language server gives autocomplete, enum hints (the quad-states), and inline
-  validation while editing — the "nice editing" experience without an edit UI,
-  and the generated schema can't drift (regenerated on build, deterministic).
-- [ ] **Read-only QA / review dashboard.** A route that surfaces, per record,
-  what still needs work: `unknown` quad-states (gaps), sources with
-  `archived_url: null`, low completeness, depth, and `last_verified` age. Speeds
-  up the author's research pass; never writes, so it carries no data risk.
+- [x] **Editor schema validation.** `scripts/gen-schema.ts` generates
+  `data/provider.schema.json` from the Zod schema (wired into `build`,
+  deterministic so it can't drift); each `data/providers/*.yaml` references it
+  with a `# yaml-language-server: $schema=` header for autocomplete, quad-state
+  enum hints, and inline validation. New record files should start with the same
+  header line.
+- [x] **Read-only QA / review dashboard.** `providerQa()` in `dataset.ts` +
+  the `/qa` route surface, per record, open `unknown` gaps, unarchived sources,
+  completeness, depth, and `last_verified` age — most-incomplete-first. Never
+  writes.
 
 ## Code health
 
