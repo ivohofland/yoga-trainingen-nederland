@@ -284,6 +284,9 @@ export const Program = z.object({
     supervised_teaching_practice: z.number().nonnegative().nullable().optional(),
     breakdown_published: Quad,
     source: z.string().optional(),
+    /** What the provider says about practice/hours when not given as an isolated
+     *  number — keeps the §5 nuance the bare numbers would otherwise drop. */
+    note: z.string().optional(),
   }),
   group_size_claimed: z
     .object({ max: z.number().positive().nullable().optional(), source: z.string().optional() })

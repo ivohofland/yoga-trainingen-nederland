@@ -399,6 +399,9 @@
                   },
                   "source": {
                     "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
                   }
                 },
                 "required": [
