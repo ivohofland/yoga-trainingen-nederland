@@ -2,14 +2,38 @@
  * Internal QA / review dashboard — a read-only authoring aid (NOT published).
  * Surfaces, per record, what still needs work: open `unknown` gaps,
  * unarchived sources (below the publication bar), completeness, depth, and
- * how stale last_verified is. It never writes — by design there is no edit UI
- * (see ../../technical-todo.md, "Decisions"); records stay files-in-git.
+ * how stale last_verified is. Also lists every relevant link per record —
+ * website, program/module URLs, and each source's live / archive / local copy —
+ * so a review pass can click straight through. It never writes — by design
+ * there is no edit UI (see ../../technical-todo.md, "Decisions"); records stay
+ * files-in-git.
  */
 import { loadDataset, providerQa } from "@/lib/dataset";
 
 export const metadata = { title: "QA / review — interne werklijst" };
 
 const STALE_MONTHS = 6;
+
+/** A link, or a muted/red placeholder when the URL is absent. */
+function Lnk({
+  href,
+  label,
+  missing = "—",
+  missingColor = "#999",
+}: {
+  href?: string | null;
+  label: string;
+  missing?: string;
+  missingColor?: string;
+}) {
+  return href ? (
+    <a href={href} target="_blank" rel="noreferrer">
+      {label}
+    </a>
+  ) : (
+    <span style={{ color: missingColor }}>{missing}</span>
+  );
+}
 
 export default function Qa() {
   const { providers, errors } = loadDataset();
@@ -59,6 +83,68 @@ export default function Qa() {
             ) : (
               <p style={{ margin: "0.4rem 0", color: "#070" }}>geen open gaten</p>
             )}
+
+            <div style={{ fontSize: "0.85rem", margin: "0.4rem 0" }}>
+              <div>
+                <span style={{ color: "#777" }}>website: </span>
+                <Lnk href={p.website} label={p.website.replace(/^https?:\/\/(www\.)?/, "")} />
+              </div>
+              {p.programs.length > 0 && (
+                <div>
+                  <span style={{ color: "#777" }}>opleidingen: </span>
+                  {p.programs.map((pr, i) => (
+                    <span key={pr.id}>
+                      {i > 0 ? " · " : ""}
+                      <Lnk href={pr.url} label={pr.name} missing={`${pr.name} (geen url)`} />
+                    </span>
+                  ))}
+                </div>
+              )}
+              {p.modules.length > 0 && (
+                <div>
+                  <span style={{ color: "#777" }}>modules: </span>
+                  {p.modules.map((m, i) => (
+                    <span key={m.id}>
+                      {i > 0 ? " · " : ""}
+                      <Lnk href={m.url} label={m.name} missing={`${m.name} (geen url)`} />
+                    </span>
+                  ))}
+                </div>
+              )}
+              <table style={{ borderCollapse: "collapse", marginTop: "0.3rem" }}>
+                <tbody>
+                  {p.sources.map((s) => (
+                    <tr key={s.id}>
+                      <td style={{ paddingRight: 12, color: "#777", verticalAlign: "top" }}>
+                        <code>{s.id}</code>{" "}
+                        <span style={{ color: "#999" }}>
+                          ({s.type}, {s.captured})
+                        </span>
+                      </td>
+                      <td style={{ paddingRight: 12, verticalAlign: "top" }}>
+                        <Lnk href={s.url} label="live" missing="geen url" />
+                      </td>
+                      <td style={{ paddingRight: 12, verticalAlign: "top" }}>
+                        {s.archived_url ? (
+                          <Lnk href={s.archived_url} label="archief" />
+                        ) : s.url ? (
+                          <span style={{ color: "#b00" }}>niet gearchiveerd</span>
+                        ) : (
+                          <span style={{ color: "#999" }}>n.v.t.</span>
+                        )}
+                      </td>
+                      <td style={{ color: "#555", verticalAlign: "top" }}>
+                        {s.local_snapshot ? (
+                          <code>{s.local_snapshot}</code>
+                        ) : (
+                          <span style={{ color: "#999" }}>geen lokale kopie</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </section>
         );
       })}
