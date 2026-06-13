@@ -14,6 +14,16 @@
  */
 import { z } from "zod";
 
+/**
+ * All object schemas are strict: an unknown key is a validation ERROR, not
+ * silently dropped. Non-strict Zod would strip a misplaced or mistyped field
+ * (e.g. a `note` under the wrong parent), so `npm run validate` passed while the
+ * data was quietly lost on load/export. Strict makes validate (and CI) catch
+ * that class of bug — matching the generated JSON Schema (additionalProperties:
+ * false), so the editor and the build agree.
+ */
+const strictObject = <T extends z.ZodRawShape>(shape: T) => z.object(shape).strict();
+
 /* ---------- primitives ---------- */
 
 /** yes | no | not_published | unknown — see spec §2.2 */
@@ -31,7 +41,7 @@ const slug = z.string().regex(/^[a-z0-9][a-z0-9-]*$/, "expected kebab-case slug"
 
 /* ---------- Source (provenance anchor, spec §4.1) ---------- */
 
-export const Source = z.object({
+export const Source = strictObject({
   id: z.string(),
   type: z.enum([
     "website",
@@ -55,11 +65,11 @@ export type Source = z.infer<typeof Source>;
 
 /* ---------- shared sub-objects ---------- */
 
-export const Price = z.object({
+export const Price = strictObject({
   /** Comparable base: cheapest generally-available variant (methodology convention). */
   amount_eur: z.number().positive().nullable().optional(),
   variants: z
-    .array(z.object({ label: z.string(), amount_eur: z.number().positive() }))
+    .array(strictObject({ label: z.string(), amount_eur: z.number().positive() }))
     .optional(),
   vat: z.enum(["incl", "exempt_crkbo", "excl", "unknown"]),
   published: Quad,
@@ -71,7 +81,7 @@ export const Price = z.object({
 });
 export type Price = z.infer<typeof Price>;
 
-export const Accreditation = z.object({
+export const Accreditation = strictObject({
   body: z.enum(["yoga_alliance", "vyn", "crkbo", "other"]),
   label_claimed: z.string(),
   verified: Quad,
@@ -79,7 +89,7 @@ export const Accreditation = z.object({
   note: z.string().optional(),
 });
 
-export const Registration = z.object({
+export const Registration = strictObject({
   body: z.enum(["yoga_alliance", "vyn", "other"]),
   identifier: z.string().optional(),
   /** Name the registration is actually held under — often a person/BV, not the brand. */
@@ -92,7 +102,7 @@ export const Registration = z.object({
 
 /* ---------- Module (spec §4.4) ---------- */
 
-export const Module = z.object({
+export const Module = strictObject({
   id: slug,
   name: z.string(),
   url: z.string().url().optional(),
@@ -114,7 +124,7 @@ export type Module = z.infer<typeof Module>;
 
 /* ---------- Cohort (type/instance split, spec §4.5) ---------- */
 
-export const Cohort = z.object({
+export const Cohort = strictObject({
   id: z.string(),
   program: slug.optional(), // redundant when nested, kept for cross-checking
   start: YearMonth,
@@ -135,7 +145,7 @@ export type Cohort = z.infer<typeof Cohort>;
 
 /* ---------- Claim (verbatim quotes, spec §4.6) ---------- */
 
-export const Claim = z.object({
+export const Claim = strictObject({
   id: z.string(),
   scope: z.string(), // "provider" | "program:<id>" | "module:<id>"
   /** VERBATIM — quote them, never characterize them (legal posture §3). */
@@ -164,12 +174,12 @@ export type Claim = z.infer<typeof Claim>;
 
 /* ---------- Person (spec §4.7, layer 3) ---------- */
 
-export const Person = z.object({
+export const Person = strictObject({
   id: slug,
   name: z.string(),
   trainings_claimed: z
     .array(
-      z.object({
+      strictObject({
         label: z.string(),
         school: z.string().optional(),
         year: Year.optional(),
@@ -181,7 +191,7 @@ export const Person = z.object({
   /** Healthcare credentials are BIG-register-verifiable — the hard axis. */
   background: z
     .array(
-      z.object({
+      strictObject({
         field: z.string(),
         credential: z.string(),
         registry: z.enum(["big", "other", "none"]),
@@ -197,23 +207,23 @@ export type Person = z.infer<typeof Person>;
 
 /* ---------- Assessment (layer 3, spec §4.8) ---------- */
 
-const Axis = z.object({
+const Axis = strictObject({
   score: z.number().int().min(1).max(5).nullable(),
   rationale: z.string(),
   evidence: z.array(z.string()),
 });
 
-export const Assessment = z.object({
+export const Assessment = strictObject({
   methodology_version: z.string(),
   assessed: YearMonth,
   /** Sub-scores only. There is deliberately no field where a total could live. */
-  axes: z.object({
+  axes: strictObject({
     pedagogy: Axis,
     evidence_base: Axis,
     transparency: Axis,
     commercial_fairness: Axis,
   }),
-  right_of_reply: z.object({
+  right_of_reply: strictObject({
     sent: YearMonth,
     method: z.string(),
     response_received: YearMonth.nullable(),
@@ -225,21 +235,21 @@ export type Assessment = z.infer<typeof Assessment>;
 
 /* ---------- Inquiry (correction workflow as data, spec §4.9) ---------- */
 
-export const Inquiry = z.object({
+export const Inquiry = strictObject({
   sent: YearMonth,
   type: z.enum(["correction_request", "question", "right_of_reply"]),
   summary: z.string(),
   /** "none" after the stated window = displayable, defensible silence. */
   response: z.union([
     z.literal("none"),
-    z.object({ received: YearMonth, summary: z.string(), source: z.string().optional() }),
+    strictObject({ received: YearMonth, summary: z.string(), source: z.string().optional() }),
   ]),
 });
 export type Inquiry = z.infer<typeof Inquiry>;
 
 /* ---------- Program (spec §4.3) ---------- */
 
-export const CoherenceSignals = z.object({
+export const CoherenceSignals = strictObject({
   required_sequence: Quad.optional(),
   required_sequence_note: z.string().optional(),
   single_cohort_intake: Quad.optional(),
@@ -258,7 +268,7 @@ export const CoherenceSignals = z.object({
   source: z.string().optional(),
 });
 
-export const Program = z.object({
+export const Program = strictObject({
   id: slug,
   name: z.string(),
   url: z.string().url().optional(),
@@ -266,7 +276,7 @@ export const Program = z.object({
   format_label: z.enum(["200", "300", "500", "other", "none"]),
   style_claimed: z.string().optional(),
   accreditation: z.array(Accreditation).default([]),
-  delivery: z.object({
+  delivery: strictObject({
     mode: z.enum(["in_person", "online", "hybrid"]),
     structure: z.enum(["weekends", "evenings", "intensive", "modular", "mixed"]),
     duration_months_min: z.number().positive().optional(),
@@ -277,7 +287,7 @@ export const Program = z.object({
   price: Price,
   /** The §5 decomposition. supervised_teaching_practice = the only number
    *  about teaching ability; its emptiness across the market is the finding. */
-  hours_claimed: z.object({
+  hours_claimed: strictObject({
     total: z.number().positive().nullable().optional(),
     contact: z.number().positive().nullable().optional(),
     self_study: z.number().positive().nullable().optional(),
@@ -289,7 +299,11 @@ export const Program = z.object({
     note: z.string().optional(),
   }),
   group_size_claimed: z
-    .object({ max: z.number().positive().nullable().optional(), source: z.string().optional() })
+    .object({
+      max: z.number().positive().nullable().optional(),
+      source: z.string().optional(),
+      note: z.string().optional(),
+    })
     .optional(),
   composition: z
     .object({
@@ -322,6 +336,7 @@ export const Program = z.object({
       /** Legal entity that invoices the training — makes VAT structuring visible as fact. */
       invoicing_entity: z.string().optional(),
       source: z.string().optional(),
+      note: z.string().optional(),
     })
     .optional(),
   transparency: z
@@ -331,6 +346,7 @@ export const Program = z.object({
       assessment_criteria_published: Quad.optional(),
       reading_list_published: Quad.optional(),
       teacher_bios_published: Quad.optional(),
+      source: z.string().optional(),
     })
     .optional(),
   track_record: z
@@ -345,7 +361,7 @@ export const Program = z.object({
   cohorts: z.array(Cohort).optional(),
   teachers: z
     .array(
-      z.object({
+      strictObject({
         person_id: z.string(),
         role: z.string().optional(),
         teaches: z.array(z.string()).optional(),
@@ -360,7 +376,7 @@ export type Program = z.infer<typeof Program>;
 
 /* ---------- Provider (spec §4.2) ---------- */
 
-export const Provider = z.object({
+export const Provider = strictObject({
   id: slug,
   /** Publicly known brand name — the canonical identifier throughout. */
   name: z.string(),
@@ -368,13 +384,13 @@ export const Provider = z.object({
   website: z.string().url(),
   status: z.enum(["active", "inactive", "unknown"]),
   locations: z.array(
-    z.object({
+    strictObject({
       city: z.string().nullable(),
       address: z.string().optional(),
       note: z.string().optional(),
     }),
   ),
-  crkbo: z.object({
+  crkbo: strictObject({
     registered: Quad,
     /** Registered entity's name — often a BV/holding/person, not the brand. */
     holder: z.string().optional(),
