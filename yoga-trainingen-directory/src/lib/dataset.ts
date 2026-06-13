@@ -146,3 +146,49 @@ export function completeness(p: Provider): number {
   }
   return total === 0 ? 0 : Math.round((filled / total) * 100);
 }
+
+/* ---------- QA / review report (read-only authoring aid) ---------- */
+
+export interface ProviderQa {
+  completeness: number;
+  /** Sources still missing a public archive — below the publication bar. */
+  unarchivedSources: number;
+  totalSources: number;
+  /** Months since last_verified, for a staleness flag (null if unparseable). */
+  ageMonths: number | null;
+  /** Open work: only `unknown` quad-states (genuine gaps), never `not_published`
+   *  (which is a finding, not a gap — see spec §2). */
+  gaps: string[];
+}
+
+/** Surfaces what a record still needs. Pure read — never mutates the dataset. */
+export function providerQa(p: Provider, now = new Date()): ProviderQa {
+  const gaps: string[] = [];
+  if (p.crkbo.registered === "unknown") gaps.push("CRKBO: nog niet onderzocht");
+
+  for (const program of p.programs) {
+    const tag = program.id;
+    if (program.price.amount_eur == null && program.price.published === "unknown")
+      gaps.push(`${tag}: prijs nog niet onderzocht`);
+    if (program.hours_claimed.breakdown_published === "unknown")
+      gaps.push(`${tag}: urenuitsplitsing nog niet onderzocht`);
+    if (program.hours_claimed.supervised_teaching_practice == null)
+      gaps.push(`${tag}: begeleide lespraktijk niet vermeld`);
+    if (!program.delivery.language) gaps.push(`${tag}: voertaal ontbreekt`);
+  }
+
+  const unarchivedSources = p.sources.filter((s) => s.archived_url == null).length;
+
+  const m = /^(\d{4})-(\d{2})/.exec(p.last_verified);
+  const ageMonths = m
+    ? (now.getFullYear() - Number(m[1])) * 12 + (now.getMonth() + 1 - Number(m[2]))
+    : null;
+
+  return {
+    completeness: completeness(p),
+    unarchivedSources,
+    totalSources: p.sources.length,
+    ageMonths,
+    gaps,
+  };
+}
