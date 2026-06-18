@@ -1,0 +1,436 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yoga-moves
+name: Yoga Moves
+aka: [ "Yoga Moves studio ONE", "Yoga Moves Utrecht" ]
+website: https://www.yogamoves.nl
+status: active
+locations:
+  - city: Utrecht
+    address: "Sint Janshovenstraat 1, 3572 RA (Studio ONE — opleidingslocatie)"
+  - city: Utrecht
+    address: "Croeselaan 209, 3521 BN (Fly Studio — opleidingslocatie)"
+  - city: Utrecht
+    address: "Jan v. Scorelstraat 41, 3583 CK (Hot)"
+    note: "studio, geen opleidingslocatie"
+  - city: Utrecht
+    address: "Servaasbolwerk 15, 3512 NK (Hot Central)"
+    note: "studio, geen opleidingslocatie"
+  - city: Utrecht
+    address: "Musicallaan 163, 3543 EC (Terwijde)"
+    note: "studio, geen opleidingslocatie"
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Yoga Moves B.V."
+  checked: "2026-06-18"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Yoga Moves" in het Naam-veld van het CRKBO
+    Register Instellingen geeft exact 1 treffer — "Yoga Moves B.V., Utrecht,
+    www.yogamoves.nl" (gecontroleerd 2026-06-18). Bevestigd door btw-vrije
+    verkoop op de site ("exempt from VAT (BTW) as we are CRKBO-registered") =
+    direct waargenomen exempt_crkbo. Het register heeft geen per-instelling
+    permalink; bewijs is de gedateerde lokale snapshot van het zoekresultaat
+    (zie bron crkbo-register-2026-06).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300"
+    holder: "Yoga Moves"
+    first_registered: "2005-08"
+    verified_in_register: unknown
+    source: ya-register-ym-2026-06
+    note: >
+      Studio-gehouden registratie. Site: "Yoga Alliance Registered Yoga School
+      (RYS) since 2005. (YA ID: 19445)". Oudste NL-geregistreerde RYS.
+      verified_in_register=unknown tot de Salesforce-pagina browser-gerenderd is
+      vastgelegd.
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Pranayama (Marilou van Hoek)"
+    verified_in_register: unknown
+    source: ya-register-pranayama-2026-06
+    note: >
+      HOLDER-SPECIMEN: de Ashtanga-opleiding (programma ashtanga-tt) wordt
+      gehost door Yoga Moves maar gecertificeerd door Marilou van Hoeks eigen
+      school "Pranayama" (pranayama.nl) — een aparte YA-RYS, niet de Yoga
+      Moves-registratie. Diploma komt van Pranayama; btw-vrijstelling loopt via
+      Yoga Moves' CRKBO. Zie de open modelleer-vraag in de overdracht: dit
+      programma eventueel als eigen provider afsplitsen.
+legal:
+  legal_name: "Yoga Moves B.V."
+founded_year:
+  value: 2005
+  source: ya-register-ym-2026-06
+  note: "YA-RYS sinds 2005 (oudste NL-RYS); '20+ years' op de site — studio
+    mogelijk ouder."
+depth: listed
+last_verified: "2026-06-18"
+sources:
+  - id: site-200-2026-06
+    type: website
+    url: https://www.yogamoves.nl/yoga-moves-vinyasa-200hr
+    archived_url: https://web.archive.org/web/20260618124846/https://www.yogamoves.nl/yoga-moves-vinyasa-200hr
+    captured: "2026-06-18"
+    local_snapshot: data/archives/yoga-moves/site-200-2026-06-2026-06-18.pdf
+  - id: site-300-2026-06
+    type: website
+    url: https://www.yogamoves.nl/advanceyouryoga
+    archived_url: https://web.archive.org/web/20260618124930/https://www.yogamoves.nl/advanceyouryoga
+    captured: "2026-06-18"
+    local_snapshot: data/archives/yoga-moves/site-300-2026-06-2026-06-18.pdf
+  - id: site-ashtanga-2026-06
+    type: website
+    url: https://www.yogamoves.nl/ashtanga-teacher-training
+    archived_url: null
+    captured: "2026-06-18"
+    local_snapshot: data/archives/yoga-moves/site-ashtanga-2026-06-2026-06-18.pdf
+  - id: ya-register-ym-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgfOAAQ&sid=0013g000002nmHJAAY&name=Yoga-Moves-studio-ONE
+    archived_url: null
+    captured: "2026-06-18"
+    note: "Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde
+      lokale capture nodig."
+    local_snapshot: data/archives/yoga-moves/ya-register-ym-2026-06-2026-06-18.pdf
+  - id: ya-register-pranayama-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000phi5VAAQ&sid=0013g000004vaKlAAI&name=Pranayama
+    archived_url: null
+    captured: "2026-06-18"
+    note: "Aparte YA-entiteit 'Pranayama' (Marilou van Hoek); zelfde
+      Salesforce-rendering."
+    local_snapshot: data/archives/yoga-moves/ya-register-pranayama-2026-06-2026-06-18.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Yoga Moves"
+    captured: "2026-06-18"
+    note: >
+      Zoekrecept (reproduceerbaar): open de pagina, tik "Yoga Moves" in het
+      Naam-veld (DevExpress-filter, server-side callback) → 1 treffer "Yoga
+      Moves B.V.". Het register heeft geen per-instelling permalink en geen API;
+      een gewone fetch/Wayback legt alleen pagina 1 van 485 vast. Bewijs is dus
+      de gedateerde lokale snapshot van het gefilterde resultaat; Wayback wordt
+      voor dit domein overgeslagen (zie archive-script).
+    local_snapshot: data/archives/yoga-moves/crkbo-register-2026-06-2026-06-18.pdf
+
+programs:
+  - id: 200-vinyasa
+    name: "200 Hour Accredited Vinyasa Teacher Training"
+    url: https://www.yogamoves.nl/yoga-moves-vinyasa-200hr
+    format_label: "200"
+    style_claimed: "Vinyasa Flow Yoga"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance Registered Yoga School (RYS) since 2005. (YA ID: 19445)"
+        verified: unknown
+        source: ya-register-ym-2026-06
+        note: >
+          Op dezelfde pagina ook: "register with Yoga Alliance International as
+          RYT-200" — vermengt de gewone Yoga Alliance (RYS 19445) met "Yoga
+          Alliance International". Zie claim ya-international-200.
+    delivery:
+      mode: in_person
+      structure: mixed
+      duration_months_min: 6
+      language: en
+    price:
+      amount_eur: 2860
+      vat: exempt_crkbo
+      published: yes
+      excludes: >
+        studieboeken (±€70), reiskosten, lunch, extra
+        (vinyasa-/alignment-)lessen; €100 niet-restitueerbare aanmeldkosten
+      note: >
+        Regulier €2860 (+ €50 admin bij termijnbetaling). Vroegboek-ladder
+        afhankelijk van inschrijfdatum: aflopend tot €2360 (tiers €2760/2660/
+        2560/2460/2360 per deadline, per start-editie).
+      source: site-200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-200-2026-06
+      note: >
+        Geen urenuitsplitsing op de pagina; "observing in YM classes" inbegrepen
+        maar niet gekwantificeerd.
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: unknown
+      quote: "evaluations during the course dates"
+    track_record:
+      first_seen_year: 2005
+      source: ya-register-ym-2026-06
+      note: "Oudste NL-RYS; vlaggenschip-200u. Twee parallel-edities (do-programma +
+        weekendprogramma)."
+    cohorts:
+      - id: 200-do-2026-09
+        start: "2026-09"
+        status: announced
+        source: site-200-2026-06
+        language: en
+        lead_teachers: [ "Jasmijn Koelink", "Caitlin Lindsey", "Hilary Brown" ]
+        note: "Donderdagprogramma, start 24 sep 2026, ~3 donderdagen/maand, Studio ONE."
+      - id: 200-we-2027-01
+        start: "2027-01"
+        end: "2027-07"
+        status: announced
+        source: site-200-2026-06
+        language: en
+        lead_teachers: [ "Jasmijn Koelink", "Caitlin Lindsey", "Hilary Brown" ]
+        note: "Weekendprogramma, start 22 jan 2027, 8 weekenden vr-za-zo, Fly Studio,
+          eindigt begin juli."
+
+  - id: 300-advance
+    name: "Advance Your Yoga — Teacher Training RYT 300 Hour"
+    url: https://www.yogamoves.nl/advanceyouryoga
+    format_label: "300"
+    style_claimed: "embodied Vinyasa, Hatha, and Prana Flow"
+    styles: [ vinyasa, hatha ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: >
+          Yoga Alliance Registered Yoga School (RYS) since 2005 (YA ID: 19445);
+          "The full 300-hour program meets Yoga Alliance requirements for
+          advanced training (RYT-500)"
+        verified: unknown
+        source: ya-register-ym-2026-06
+        note: >
+          Deze pagina distantieert zich juist expliciet van naäpers ("we work
+          with YogaAlliance.org (there are many copy cats!)") — contrast met de
+          200u- en Ashtanga-pagina's die "Yoga Alliance International" noemen.
+          Zie claim ya-copycats-300.
+    delivery:
+      mode: hybrid
+      structure: modular
+      duration_months_min: 12
+      duration_months_max: 36
+      language: en
+    prerequisites_claimed: "200-hour certificate from a recognised school;
+      practising a form of Vinyasa yoga"
+    price:
+      amount_eur: 3950
+      variants:
+        - { label: "volledig programma", amount_eur: 3950 }
+        - { label: "vroegboek (volledig betaald voor 2 jan)", amount_eur: 3700 }
+      vat: exempt_crkbo
+      published: yes
+      includes: >
+        alle foundation-modules + retraite (accommodatie & eten), handleidingen
+        per module, evaluatie per module, 2 jaar gratis online videotheek
+      excludes: "transport, boeken, lunch, incidentals retraite, keuze-uren
+        (electives); €50 admin bij termijn; €55 per uitgestelde module"
+      note: >
+        Ook deel-instap mogelijk: eerste 4 modules incl. Inner Compass los €2745
+        (aanbod €2545), eerste 3 modules €1545 (aanbod €1395).
+      source: site-300-2026-06
+    hours_claimed:
+      total: 300
+      contact: 245
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: yes
+      source: site-300-2026-06
+      note: >
+        "245+ contact hours in 8 required modules" + 45 keuze-uren (electives) +
+        "OmWork" (persoonlijke praktijk ±15-20u/maand, 25 te geven lesuren,
+        eindproject). Begeleide lespraktijk niet als apart urental; wel Module 7
+        "The Art of Reading Bodies" (adjustments) en 25 lesuren als
+        afstudeereis.
+    composition:
+      type: free_assembly
+    coherence_signals:
+      required_sequence: not_published
+      required_sequence_note: "8 modules met data feb-dec, maar 'electives at your own
+        timing' en af te ronden over 1-3 jaar; elke module draait elke 12-18
+        mnd."
+      single_cohort_intake: no
+      single_cohort_intake_note: "Modulair; aangekondigde start feb 2026 maar modules
+        afzonderlijk en gespreid te volgen."
+      integrative_assessment: yes
+      integrative_assessment_note: "Eindproject (gedeeld in laatste weekend) overspant
+        het traject; daarnaast per-module evaluatie."
+      continuous_lead_teacher: no
+      continuous_lead_teacher_note: "Samengestelde faculty (Doug Keller, Shiva Rea,
+        Simon Rowe, Nele van Poucke, Hilary Brown, Marianne van Wetter); geen
+        doorlopende hoofddocent."
+      modules_sold_separately: yes
+      modules_sold_separately_note: "\"individual modules can also be booked
+        separately\"; elke module heeft eigen prijs/pagina."
+      bundle_price_below_sum: unknown
+      bundle_price_below_sum_note: "Modulprijzen nog niet alle uitgelezen;
+        deel-aanbiedingen (€2545 vs €2745) suggereren korting maar volledige som
+        nog te berekenen."
+      source: site-300-2026-06
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "Attend & pass each modules evaluation process, which may include a
+        multiply choice a written or video assignment, practical evaluations, or
+        quizzes"
+    contract:
+      cancellation_published: yes
+      refund_published: yes
+      min_participants:
+        clause: yes
+      installments_published: yes
+      invoicing_entity: "Yoga Moves B.V."
+      source: site-300-2026-06
+      note: "Annulering tot 42 dagen (6 weken) voor start, onder inhouding van o.a.
+        €100 aanmeld- en €50 admin-fee; daarna geen restitutie. School behoudt
+        recht te annuleren bij onvoldoende inschrijvingen."
+    transparency:
+      syllabus_published: yes
+      hours_breakdown_published: yes
+      assessment_criteria_published: yes
+      reading_list_published: not_published
+      teacher_bios_published: yes
+      source: site-300-2026-06
+    track_record:
+      first_seen_year: 2026
+      source: site-300-2026-06
+      note: "Als 'NEW' aangekondigd, start feb 2026; school heeft RYS sinds 2005 maar
+        dit specifieke 300u-traject is nieuw."
+    cohorts:
+      - id: 300-2026-02
+        start: "2026-02"
+        status: announced
+        source: site-300-2026-06
+        language: en
+        note: "Modulair, start feb 2026, af te ronden in 1-3 jaar."
+
+  - id: ashtanga-tt
+    name: "Ashtanga Yoga Teacher Training"
+    url: https://www.yogamoves.nl/ashtanga-teacher-training
+    format_label: "200"
+    style_claimed: "Ashtanga Yoga (Primary Series), lijn Pattabhi Jois /
+      Krishnamacharya; pranayama in Kaivalyadham-lijn"
+    styles: [ ashtanga ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance Registered Yoga School (RYS 200) ... register with
+          Yoga Alliance International as RYT-200"
+        verified: unknown
+        source: ya-register-pranayama-2026-06
+        note: >
+          Certificerende entiteit is Marilou van Hoeks eigen school "Pranayama"
+          (pranayama.nl), een APARTE YA-RYS, niet Yoga Moves. "the Ashtanga
+          program is hosted by Yoga Moves, but you will be certified by Marilous
+          yoga school/company." Btw-vrijstelling via Yoga Moves' CRKBO.
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 9
+      language: en
+    prerequisites_claimed: "solid foundation in Ashtanga yoga practice (Led classes
+      and/or Mysore) of preferably at least 1 year; min. 3 maanden regelmatige
+      praktijk bij instroom uit andere stijl"
+    price:
+      amount_eur: 2750
+      variants:
+        - { label: "regulier", amount_eur: 2750 }
+        - { label: "vroegboek (tot 1 feb)", amount_eur: 2650 }
+        - { label: "termijnbetaling", amount_eur: 2800 }
+      vat: exempt_crkbo
+      published: yes
+      excludes: "studieboeken (5 verplichte titels)"
+      note: "Btw-vrij via Yoga Moves' CRKBO."
+      source: site-ashtanga-2026-06
+    hours_claimed:
+      total: null
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-ashtanga-2026-06
+      note: >
+        Geen uren-totaal op de pagina (format via RYS 200). Wel: "Observing and
+        Assisting in Class: at least 12 hours under the guidance of Lead
+        Teacher/ Assistant(s)" (observeren/assisteren), dagelijkse eigen
+        praktijk 1-2u, huiswerk 3-8u/week.
+    assessment_described:
+      exists: yes
+      continuous: unknown
+      final: yes
+      quote: "The last weekend is examinations and graduation day."
+    track_record:
+      first_seen_year: null
+      source: site-ashtanga-2026-06
+      note: "Eerdere edities blijkens testimonials/foto's (o.a. 2022); huidige cohort
+        start 7 maart 2026."
+    cohorts:
+      - id: ashtanga-2026-03
+        start: "2026-03"
+        status: announced
+        source: site-ashtanga-2026-06
+        language: en
+        lead_teachers: [ "Marilou van Hoek" ]
+        note: "Start 7 maart 2026 (oorspronkelijk 6 maart; inhaaldag 20 juni); 8
+          weekenden vr-za-zo 11:30-18:30, Fly Studio."
+
+claims:
+  - id: ya-international-200
+    scope: "program:200-vinyasa"
+    quote: "Upon graduation you receive a diploma from Yoga Moves and may register
+      with Yoga Alliance International as RYT-200 (Registered Yoga Teacher)."
+    category: accreditation
+    source: site-200-2026-06
+  - id: ya-first-school
+    scope: "provider"
+    quote: "Yoga Moves was the first school to register with Yoga Alliance and has
+      lead the call to have more schools accredited."
+    category: accreditation
+    source: site-200-2026-06
+  - id: ya-copycats-300
+    scope: "program:300-advance"
+    quote: "Note: we work with YogaAlliance.org (there are many copy cats!)"
+    category: accreditation
+    source: site-300-2026-06
+  - id: pranayama-cert-ashtanga
+    scope: "program:ashtanga-tt"
+    quote: "the Ashtanga program is hosted by Yoga Moves, but you will be certified
+      by Marilous yoga school/company."
+    category: accreditation
+    source: site-ashtanga-2026-06
+  - id: ashtanga-yai
+    scope: "program:ashtanga-tt"
+    quote: "With this diploma from Pranayama you may register with Yoga Alliance
+      International as RYT-200 (Registered Yoga Teacher)."
+    category: accreditation
+    source: site-ashtanga-2026-06
+  - id: vinyasa-intro-nl
+    scope: "provider"
+    quote: "Did you know that Yoga Moves was instrumental in introducing Vinyasa
+      (Prana) Flow Yoga to The Netherlands before anyone knew what it was?"
+    category: other
+    source: site-300-2026-06
+
+people:
+  - id: hilary-brown
+    name: "Hilary Brown"
+    trainings_claimed:
+      - label: "ERYT 500 (Experienced Registered Yoga Teacher)"
+        verified: unknown
+        source: site-300-2026-06
+    background:
+      - field: "yoga"
+        credential: "oprichter Yoga Moves; hoofddocent 200u Vinyasa; '40+ years as
+          entrepreneur'"
+        registry: none
+        verified: unknown
+        source: site-200-2026-06
+  - id: marilou-van-hoek
+    name: "Marilou van Hoek"
+    background:
+      - field: "yoga"
+        credential: "hoofddocent Ashtanga TT; eigen school/bedrijf 'Pranayama'
+          (pranayama.nl), certificerende entiteit van de Ashtanga-opleiding"
+        registry: none
+        verified: unknown
+        source: site-ashtanga-2026-06
