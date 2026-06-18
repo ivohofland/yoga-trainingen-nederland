@@ -1225,6 +1225,9 @@
                   }
                 ]
               },
+              "query": {
+                "type": "string"
+              },
               "local_snapshot": {
                 "type": "string"
               },

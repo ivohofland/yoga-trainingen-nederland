@@ -97,6 +97,7 @@ Provenance anchor; everything contested points at one of these.
 | `type` | enum | `website \| wayback \| brochure \| register \| inquiry_response \| reader_report \| email \| other` — `reader_report` = a validated correction from a reader ("meld een fout" route); validation happens before entry, the source type preserves provenance |
 | `url` | url? | |
 | `archived_url` | url? | Wayback/archive.today — archive *before* citing critically |
+| `query` | string? | reproducible search term for a **no-permalink register** (CRKBO, the Salesforce-rendered YA grids): the exact text typed into the register's name filter to isolate the entry. These registers have no per-entry URL and no API, and a plain fetch/Wayback only ever captures page 1 — so the archive script types `query` into the filter, waits for the server callback, and snapshots the *filtered* result; that dated local snapshot is the evidence. Operationalizes §4.11's "record the searched names so the finding is falsifiable" |
 | `captured` | date | when you saw it |
 | `note` | string? | |
 
@@ -241,6 +242,8 @@ Two facts about CRKBO must not be collapsed:
 The inference between them is asymmetric. *Sold btw-vrij* → almost certainly CRKBO (or another exemption): near-definitional. *Charges BTW* → this **training** isn't being treated as exempt, but that is **not** proof the **provider** has no registration: it could be held by another entity (a BV/holding), by the founder personally in the **Docenten** register, be pending, or be lapsed. Exemption can even ride on a registered *teacher* while the school-brand holds no *Instelling* registration at all.
 
 Therefore: never set `registered: no` from a brand-name register miss or a "charges BTW" inference — that stays `unknown`, with a note capturing the signal ("charges BTW → exemption unlikely"). Set `no` only after a **documented search by legal name (KvK) + relevant person names**; record the searched names in `source`/`note` so the finding is falsifiable. The register being complete is what makes a properly-searched non-membership a real `no` rather than mere absence of evidence.
+
+**Archiving the search.** The CRKBO register has no per-entry permalink and no API — it is a DevExpress grid (≈4 800 instellingen over hundreds of pages) filtered by typing into the *Naam* / *Plaats* / *Website* boxes, server-side. A plain fetch, Wayback, or archive.today snapshot of the register URL therefore captures only page 1, never the searched row, and carries **no evidentiary value** for a specific registration — the same failure mode as the Salesforce-rendered YA register pages. The evidence is instead a **dated, browser-rendered local snapshot of the *filtered* result**, reproduced from the `Source.query` term (§4.1); Wayback is skipped for `crkbo.nl/Register/*`. A `yes` rests on that filtered snapshot, not on the bare URL.
 
 ## 4.12 Style classification
 

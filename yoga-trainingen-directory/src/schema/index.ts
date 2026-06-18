@@ -56,6 +56,11 @@ export const Source = strictObject({
   url: z.string().url().optional(),
   /** Archive BEFORE citing critically. null = consciously not yet archived. */
   archived_url: z.string().url().nullable().optional(),
+  /** Reproducible search term for a no-permalink register (CRKBO, the Salesforce
+   *  YA grids — spec §4.1/§4.11). The archive script types it into the register's
+   *  name filter and snapshots the FILTERED result; a bare fetch/Wayback of these
+   *  registers only ever captures page 1, so the dated local snapshot is the proof. */
+  query: z.string().optional(),
   /** Repo-relative path to a local evidence snapshot (text extraction, PDF, screenshot). */
   local_snapshot: z.string().optional(),
   captured: YearMonth,

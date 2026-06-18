@@ -46,13 +46,34 @@ const ids = args.filter((a) => !a.startsWith("--"));
 
 const today = new Date().toISOString().slice(0, 10);
 
-/** Domeinen waar een Wayback-snapshot geen bewijswaarde heeft (JS-shell:
- *  Wayback slaat header/footer op zonder data). De lokale Playwright-kopie
- *  is daar het bewijs; Wayback wordt overgeslagen. */
-const WAYBACK_POINTLESS = [/app\.yogaalliance\.org/];
+/** Bronnen waar een Wayback-snapshot geen bewijswaarde heeft. Twee gevallen:
+ *  - JS-shell (Salesforce YA-register): Wayback slaat header/footer op zonder data.
+ *  - Zoek-register zonder permalink (CRKBO): Wayback legt alleen pagina 1 vast,
+ *    nooit de gezochte rij.
+ *  In beide gevallen is de lokale (eventueel gefilterde) Playwright-kopie het
+ *  bewijs; Wayback wordt overgeslagen. */
+const WAYBACK_POINTLESS = [/app\.yogaalliance\.org/, /crkbo\.nl\/Register\//i];
 
 function sha256(buf: Buffer | string): string {
   return crypto.createHash("sha256").update(buf).digest("hex");
+}
+
+/** Zoek-registers zonder permalink (CRKBO): typ de zoekterm in het Naam-filter
+ *  en wacht op de DevExpress-callback, zodat de snapshot de GEFILTERDE rij toont
+ *  i.p.v. pagina 1. Het Naam-filterveld is het eerste tekstinvoerveld met de
+ *  CRKBO-thema-klasse — domein-generiek voor zowel Instellingen als Docenten. */
+async function applyRegisterFilter(
+  page: import("playwright").Page,
+  query: string,
+): Promise<boolean> {
+  const naam = page.locator("input.dxeEditArea_Crkbo").first();
+  if ((await naam.count()) === 0) return false;
+  await naam.fill(query);
+  await naam.press("Enter"); // triggert de server-side callback (contains-filter)
+  // Wacht tot de callback de grid heeft herladen; netwerk gaat kort idle.
+  await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
+  await page.waitForTimeout(3_000); // settle-tijd voor de DevExpress-callback
+  return true;
 }
 
 async function saveLocalCopy(
@@ -60,6 +81,7 @@ async function saveLocalCopy(
   providerId: string,
   sourceId: string,
   url: string,
+  query?: string,
 ): Promise<string> {
   const dir = path.join(ARCHIVE_DIR, providerId);
   fs.mkdirSync(dir, { recursive: true });
@@ -72,6 +94,13 @@ async function saveLocalCopy(
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
     await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
     await page.waitForTimeout(5_000); // settle-tijd voor traag renderende JS-apps
+
+    // Zoek-register zonder permalink: filter op de zoekterm vóór de capture.
+    if (query) {
+      const ok = await applyRegisterFilter(page, query);
+      if (!ok)
+        console.warn(`\n    let op: geen filterveld gevonden voor query "${query}" — ongefilterde capture`);
+    }
 
     const html = await page.content();
     fs.writeFileSync(`${base}.html`, html);
@@ -189,14 +218,15 @@ async function main() {
       const url = item.get("url") as string | undefined;
       if (!url) continue;
       const note = (item.get("note") as string | undefined) ?? "";
+      const query = item.get("query") as string | undefined;
       const excluded = /wayback-exclusie/i.test(note);
 
       // 1. lokale kopie
       const hasLocal = !!item.get("local_snapshot");
       if (!hasLocal || FORCE) {
-        process.stdout.write(`  ${sourceId}: lokale kopie… `);
+        process.stdout.write(`  ${sourceId}: lokale kopie${query ? ` (filter: "${query}")` : ""}… `);
         try {
-          const rel = await saveLocalCopy(browser, providerId, sourceId, url);
+          const rel = await saveLocalCopy(browser, providerId, sourceId, url, query);
           item.set("local_snapshot", rel);
           changed = true;
           console.log("ok");
