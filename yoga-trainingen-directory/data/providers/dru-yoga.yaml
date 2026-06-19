@@ -1,0 +1,224 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: dru-yoga
+name: Dru Yoga
+aka:
+  [
+    "International School of Dru Yoga",
+    "Dru Yoga Docenten Opleiding",
+    "Dru Health & Wellbeing",
+    "Dru Yoga Nederland"
+  ]
+website: https://www.druyogaopleiding.nl
+status: active
+locations:
+  - city: Wageningen
+    note: "opleidingslocatie ('onze zaal in Wageningen') + CRKBO-vestigingsplaats"
+  - city: Arnhem
+    address: "De Overmaat 73"
+    note: "YA-registratieadres (International School of Dru Yoga (Arnhem))"
+  - city: Randwijk
+    address: "Nijburgsestraat 39, 6668 AZ"
+    note: "post-/contactadres Dru Health & Wellbeing (footer)"
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Stichting Dru Health and Wellbeing"
+  checked: "2026-06-18"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Dru Health" in het Naam-veld van het CRKBO
+    Register Instellingen geeft exact 1 treffer — "Stichting Dru Health and
+    Wellbeing, Wageningen" (gecontroleerd 2026-06-18). LET OP: de prijspagina
+    vermeldt geen btw-behandeling; vrijstelling is via deze registratie
+    waarschijnlijk maar wordt niet expliciet gesteld, dus price.vat blijft
+    unknown (§4.11: btw-behandeling alleen als fact bij directe waarneming).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "International School of Dru Yoga"
+    first_registered: "2005-12"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      ENTITEIT-NUANCE: de YA-RYS staat op naam van "International School of Dru
+      Yoga (Arnhem)" (De Overmaat 73, Arnhem; moederlocatie Snowdonia, UK) —
+      niet op de NL-uitvoerende entiteit Dru Health & Wellbeing / Stichting Dru
+      Health and Wellbeing (Wageningen). De NL-opleiding rijdt op die
+      internationale RYS. Profielpagina (live 2026-06-18) bevestigt RYS-status +
+      locatie Arnhem; RYS-niveau (200) en eerste registratie (2005-12) komen uit
+      de YA-directory- enumeratie. YA-profiel noteert taal ENGLISH
+      (internationale school), terwijl de NL-opleiding Nederlandstalig is.
+legal:
+  legal_name: "Stichting Dru Health and Wellbeing"
+founded_year:
+  value: 2005
+  source: ya-register-2026-06
+  note: "YA-RYS sinds dec 2005; Dru claimt 45+ jaar internationale
+    opleidingservaring."
+depth: listed
+last_verified: "2026-06-18"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.druyogaopleiding.nl
+    archived_url: null
+    captured: "2026-06-18"
+    note: "Opleidingspagina met programma, contacturen, data en volledige prijs."
+    local_snapshot: data/archives/dru-yoga/site-2026-06-2026-06-18.pdf
+  - id: checkout-2026-06
+    type: website
+    url: https://drunetherlands.plugandpay.nl/checkout/druyoga2026-aanbetaling
+    archived_url: null
+    captured: "2026-06-18"
+    note: "Aanbetaling-checkout (€250, niet-restitueerbaar); tenant 'Dru Health &
+      Wellbeing'."
+    local_snapshot: data/archives/dru-yoga/checkout-2026-06-2026-06-18.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgXKAAY&sid=0013g000002nm5WAAQ&name=International-School-of-Dru-Yoga-(Arnhem)
+    archived_url: null
+    captured: "2026-06-18"
+    note: "Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde
+      lokale capture nodig."
+    local_snapshot: data/archives/dru-yoga/ya-register-2026-06-2026-06-18.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Dru Health"
+    captured: "2026-06-18"
+    note: >
+      Zoekrecept: tik "Dru Health" in het Naam-veld → 1 treffer "Stichting Dru
+      Health and Wellbeing, Wageningen". Register zonder permalink/API; bewijs
+      is de gedateerde lokale snapshot van het gefilterde resultaat; Wayback
+      overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/dru-yoga/crkbo-register-2026-06-2026-06-18.pdf
+
+programs:
+  - id: 200-dru
+    name: "Dru Yoga Docenten Opleiding"
+    url: https://www.druyogaopleiding.nl
+    format_label: "200"
+    style_claimed: "Dru Yoga — vindt zijn oorsprong in Hatha Yoga; Energy Block
+      Release (EBR)-reeksen, asana, pranayama, mudra's, mantra, meditatie, yoga
+      nidra"
+    styles: [ own_method ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Een Dru Yoga diploma staat garant voor accreditatie bij de Yoga
+          Alliance"
+        verified: yes
+        source: ya-register-2026-06
+        note: >
+          RYS 200 zelf geverifieerd, maar gehouden door International School of
+          Dru Yoga (Arnhem), niet door de NL-entiteit. De formulering "staat
+          garant voor accreditatie" is claim-materiaal (zie claim ya-garant).
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 20
+      language: nl
+    prerequisites_claimed: "enige yoga-ervaring (bijv. wekelijkse yogales);
+      intakegesprek maakt deel uit van de toelatingsprocedure"
+    price:
+      amount_eur: 2961
+      variants:
+        - { label: "ineens (voor start opleiding)", amount_eur: 2961 }
+        - { label: "12 maandtermijnen (€254/mnd)", amount_eur: 3048 }
+      vat: unknown
+      published: yes
+      includes: "alle offline trainingen, video's, studieboeken, lesgeld en het examen"
+      excludes: "3-daagse retraite in module 5 (€125, verplicht onderdeel) + eigen
+        accommodatie voor de retraite"
+      note: >
+        €250 niet-restitueerbare inschrijving (onderdeel van het totaal).
+        Restbedrag ineens €2961 (2,7% goedkoper) of 12×€254 = €3048. Betaling
+        via drunetherlands.plugandpay.nl (Dru Health & Wellbeing). Geen
+        btw-vermelding.
+      source: site-2026-06
+    hours_claimed:
+      total: null
+      contact: 220
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: yes
+      source: site-2026-06
+      note: >
+        "De opleiding zelf bestaat uit 220 contacturen" — expliciet vermeld.
+        Daarnaast 5-7 uur/week eigen praktijk + zelfstudie (geen totaal).
+        Lesgeven is onderdeel (groepsles mogelijk na module 3), maar niet als
+        urental geïsoleerd. Module 5 bevat een 3-daagse retraite.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      required_sequence: yes
+      required_sequence_note: "6 opbouwende modules (1 'In verbinding met jezelf' → 6
+        'Van leerling naar leraar'); lesgeven aan groepen pas mogelijk na module
+        3."
+      single_cohort_intake: yes
+      single_cohort_intake_note: "Eén startdatum (28 mrt 2026), vaste groep met mentorgroep/intervisie."
+      integrative_assessment: yes
+      integrative_assessment_note: "Examen + diploma over het geheel; per-module
+        huiswerkopdrachten en dagboek; module 6 integreert leerling→leraar."
+      continuous_lead_teacher: unknown
+      continuous_lead_teacher_note: "'Ervaren opleidingsteam' met meerdere docenten;
+        geen doorlopende hoofddocent benoemd op de pagina."
+      modules_sold_separately: no
+      modules_sold_separately_note: "De 6 modules vormen samen de opleiding;
+        bijscholing is een apart traject (bijscholing.druyoga.nl)."
+      bundle_price_below_sum: not_published
+      bundle_price_below_sum_note: "Geen losse moduleprijzen gepubliceerd."
+      source: site-2026-06
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "Succesvol afronden van alle huiswerkopdrachten"
+    contract:
+      cancellation_published: not_published
+      refund_published: not_published
+      installments_published: yes
+      invoicing_entity: "Dru Health & Wellbeing (Stichting Dru Health and Wellbeing)"
+      source: site-2026-06
+      note: "Alleen de €250 inschrijving is expliciet niet-restitueerbaar; volledig
+        annulerings-/restitutiebeleid niet op de pagina."
+    transparency:
+      syllabus_published: yes
+      hours_breakdown_published: yes
+      assessment_criteria_published: yes
+      reading_list_published: not_published
+      teacher_bios_published: not_published
+      source: site-2026-06
+    track_record:
+      first_seen_year: 2005
+      source: ya-register-2026-06
+      note: "YA-RYS sinds 2005-12 (International School of Dru Yoga); cohort 2026
+        start 28 mrt 2026."
+    cohorts:
+      - id: dru-2026-03
+        start: "2026-03"
+        end: "2027-12"
+        status: announced
+        source: site-2026-06
+        language: nl
+        note: "Start 28 & 29 mrt 2026; 6 modules; weekenden za-zo 9:30-16:30; 2027-data
+          onder voorbehoud."
+
+claims:
+  - id: ya-garant
+    scope: "provider"
+    quote: "Een Dru Yoga diploma staat garant voor accreditatie bij de Yoga Alliance."
+    category: accreditation
+    source: site-2026-06
+  - id: science-supported
+    scope: "program:200-dru"
+    quote: "Een yogavorm die geworteld is in een eeuwenoude traditie en wordt
+      ondersteund door moderne wetenschap."
+    category: scientific
+    source: site-2026-06
+  - id: 45-jaar
+    scope: "provider"
+    quote: "Ondersteuning van een yogaschool met al meer dan 45 jaar internationale
+      ervaring in het opleiden van yogadocenten."
+    category: other
+    source: site-2026-06
