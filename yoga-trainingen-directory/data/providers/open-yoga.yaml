@@ -1,0 +1,222 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: open-yoga
+name: Open Yoga
+aka: [ "Open Yoga Groningen" ]
+website: https://openyoga.nl
+status: active
+locations:
+  - city: Groningen
+    note: "studio + opleidingslocatie; 10+ jaar actief, 70+ lessen/week. Enige
+      studio in Noord-NL met YA-registratie voor zowel 200u als 300u."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Open Yoga"
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Open Yoga" → exact 1 treffer "Open Yoga,
+    Groningen, www.openyoga.nl" (2026-06-20). Schone naam-match. De
+    opleidingspagina's vermelden geen btw-behandeling → price.vat blijft unknown
+    (§4.11), ondanks CRKBO.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300"
+    holder: "Open Yoga"
+    first_registered: "2018-05"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS geverifieerd op het live YA-profiel "Open Yoga" (Groningen; bevestigd
+      2026-06-20). RYS-niveau (200 + 300) en eerste registratie (2018-05) uit de
+      YA-directory-enumeratie. Beide niveaus worden ook daadwerkelijk
+      aangeboden.
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-basis-2026-06
+    type: website
+    url: https://openyoga.nl/basis-yoga-opleiding/
+    archived_url: https://web.archive.org/web/20260620163507/https://openyoga.nl/basis-yoga-opleiding/
+    captured: "2026-06-20"
+    note: "200u Basis Yoga Opleiding (NL): programma, prijs, data, docenten."
+    local_snapshot: data/archives/open-yoga/site-basis-2026-06-2026-06-20.pdf
+  - id: site-fundamental-2026-06
+    type: website
+    url: https://openyoga.nl/fundamental-yoga-teacher-training/
+    archived_url: https://web.archive.org/web/20260620163652/https://openyoga.nl/fundamental-yoga-teacher-training/
+    captured: "2026-06-20"
+    note: "Engelstalige variant van de 200u-opleiding ('Fundamental Teacher
+      Training')."
+    local_snapshot: data/archives/open-yoga/site-fundamental-2026-06-2026-06-20.pdf
+  - id: site-advanced-2026-06
+    type: website
+    url: https://openyoga.nl/advanced-yoga-teacher-training/
+    archived_url: https://web.archive.org/web/20260620163848/https://openyoga.nl/advanced-yoga-teacher-training/
+    captured: "2026-06-20"
+    note: "300u Advanced Teacher Training (Continuing Education): zelf samen te
+      stellen modulair traject."
+    local_snapshot: data/archives/open-yoga/site-advanced-2026-06-2026-06-20.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phtaAAA&sid=0013g000002nnCHAAY&name=Open-Yoga
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Titel bevestigt 'Open
+      Yoga | Registered Yoga School'."
+    local_snapshot: data/archives/open-yoga/ya-register-2026-06-2026-06-20.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Open Yoga"
+    captured: "2026-06-20"
+    note: >
+      Zoekrecept: tik "Open Yoga" in het Naam-veld → 1 treffer "Open Yoga,
+      Groningen". Register zonder permalink; bewijs is de gefilterde snapshot;
+      Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/open-yoga/crkbo-register-2026-06-2026-06-20.pdf
+
+programs:
+  - id: 200-basis
+    name: "Basis Yoga Opleiding (200u) / Fundamental Teacher Training"
+    url: https://openyoga.nl/basis-yoga-opleiding/
+    format_label: "200"
+    style_claimed: "Algemene 200u-basis: functioneel uitgevoerde asana, functionele
+      anatomie (botten/spieren), meditatie, pranayama, lesgeven & sequencing,
+      filosofie, geschiedenis, yoga & ondernemen"
+    styles: []
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Once you have completed our teacher training you can register at
+          Yoga Alliance with your certificate"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS van Open Yoga geverifieerd in het register."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 4
+      language: nl
+    prerequisites_claimed: "voor iedereen; geen vooropleiding (zowel aankomend
+      docent als verdieping eigen practice)"
+    price:
+      amount_eur: 2890
+      vat: unknown
+      published: yes
+      includes: "€175 inschrijfkosten; gratis lessen bij Open Yoga + 10% korting op
+        workshops tijdens de opleiding"
+      excludes: "boeken (±€125)"
+      note: "€2890 incl. €175 inschrijfkosten; termijnbetaling mogelijk. Geen
+        btw-vermelding → vat unknown (§4.11), ondanks CRKBO."
+      source: site-basis-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-basis-2026-06
+      note: >
+        200u over 8 trainingsweekenden (vr/za/zo 09:00-17:00, jun-sep 2026).
+        Functionele anatomie is een kernonderdeel. Lesgeven is onderdeel maar
+        niet als geïsoleerd uren-/lespraktijk-urental gepubliceerd. NB: ook een
+        Engelstalige variant ('Fundamental Teacher Training', zie
+        site-fundamental).
+    assessment_described:
+      exists: not_published
+      quote: "De diploma uitreiking is op 27 september."
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+      note: "Studio 10+ jaar; RYS sinds 2018."
+    cohorts:
+      - id: basis-2026-06
+        start: "2026-06"
+        end: "2026-09"
+        status: announced
+        source: site-basis-2026-06
+        language: nl
+        lead_teachers: [ "Dieuwertje Homan", "Esther van der Hoef", "Sarah van der Sman" ]
+        note: "Start 5-6-7 jun 2026, 8 weekenden, diploma-uitreiking 27 sep 2026."
+
+  - id: 300-advanced
+    name: "Advanced Teacher Training (300hr) — Continuing Education"
+    url: https://openyoga.nl/advanced-yoga-teacher-training/
+    format_label: "300"
+    style_claimed: "Continuing Education: zelf samengesteld uit keuzemodules met
+      internationale gastdocenten (filosofie, geschiedenis, asana, anatomie,
+      pranayama)"
+    styles: []
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "300hr certification na het afronden van het programma binnen 2,5
+          jaar; alle modules op dezelfde studio; daarna RYT500 aan te vragen"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 300 van Open Yoga geverifieerd in het register."
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_max: 30
+      language: en
+    prerequisites_claimed: "afgeronde 200u (Fundamental/Basis) Teacher Training"
+    price:
+      amount_eur: null
+      vat: unknown
+      published: not_published
+      note: >
+        Geen vaste totaalprijs gepubliceerd: zelf samen te stellen uit losse
+        modules (ook los te boeken zonder volledige inschrijving); prijs per
+        module via e-mail. Na 200+300 → RYT500 aan te vragen.
+      source: site-advanced-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-advanced-2026-06
+      note: >
+        300u zelf samen te stellen uit keuzemodules binnen 2,5 jaar; YA-eis:
+        alle modules op één locatie. Modules grotendeels in weekenden/avonden,
+        met internationale gastdocenten (o.a. Max Strom gaf hier gastlessen —
+        zie provider inner-axis).
+    composition:
+      type: free_assembly
+    coherence_signals:
+      required_sequence: no
+      required_sequence_note: "'Design your own' — modules in vrije volgorde/keuze."
+      single_cohort_intake: no
+      single_cohort_intake_note: "Doorlopend modulair (Continuing Education), geen vaste cohort-start."
+      integrative_assessment: not_published
+      integrative_assessment_note: "Geen overkoepelende toetsing beschreven; CE-modules."
+      continuous_lead_teacher: no
+      continuous_lead_teacher_note: "Wisselende internationale gastdocenten per module."
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Modules zijn los te volgen zonder inschrijving
+        voor het volledige 300u-traject."
+      bundle_price_below_sum: not_published
+      bundle_price_below_sum_note: "Geen prijzen gepubliceerd."
+      source: site-advanced-2026-06
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+      note: "Modulair CE-traject; geen vaste cohort. Internationale gastdocenten."
+
+claims:
+  - id: leer-elders
+    scope: "program:300-advanced"
+    quote: "If our program doesn't offer a subject that you are drawn to, we
+      encourage you to take the opportunity to learn at another place."
+    category: other
+    source: site-advanced-2026-06
+  - id: enige-noord-nl
+    scope: "provider"
+    quote: "We zijn de enige yogastudio in Noord-Nederland met een Yoga
+      Alliance-registratie voor zowel de 200-uurs als 300-uurs teacher
+      training."
+    category: other
+    source: site-basis-2026-06
