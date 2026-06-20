@@ -1,0 +1,315 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: balanzs
+name: Balanzs
+aka: [ "Balanzs Academy" ]
+website: https://balanzs.nl
+status: active
+locations:
+  - city: Den Haag
+    address: "Laan van NOI"
+    note: "opleidingslocatie (cohort okt 2026). Balanzs heeft 3 studio's in Den
+      Haag."
+  - city: Utrecht
+    address: "Oudegracht"
+    note: "opleidingslocatie (cohort jan 2027)"
+  - city: Rotterdam
+    address: "Kleiweg"
+    note: >
+      opleidingslocatie (cohort jan 2027). Balanzs is een keten met 8 studio's
+      (Amsterdam 2, Rotterdam 2, Den Haag 3, Utrecht 1) + zustermerk Pilatezs;
+      de TT draait in Den Haag, Utrecht en Rotterdam (de Amsterdam-studio's
+      hosten geen TT).
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Balanzs"
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Balanzs" → exact 1 treffer "Balanzs,
+    's-Gravenhage, www.balanzs.nl" (2026-06-20). Opvallend: een commerciële
+    keten die wél CRKBO-geregistreerd is — en de registratie staat op dezelfde
+    entiteit die de opleiding verzorgt, dus btw-vrijstelling voor de
+    docentenopleiding is zeer waarschijnlijk. TÓCH price.vat=unknown (§4.11): de
+    TT-prijspagina's/ brochure noemen geen btw-regel, en de algemene voorwaarden
+    (art. 11.1) stellen slechts generiek "prijzen inclusief omzetbelasting,
+    tenzij anders vermeld" — all-in, maar niet TT-specifiek en zonder expliciete
+    vrijstellingsvermelding. Een factuur/checkout-btw-regel zou het definitief
+    maken.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Balanzs"
+    first_registered: "2016-04"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS geverifieerd op het live YA-profiel "Balanzs" (The Hague; bevestigd
+      2026-06-20). RYS-niveau (200) en eerste registratie (2016-04) uit de
+      YA-directory-enumeratie.
+founded_year:
+  value: 2011
+  source: brochure-2026-06
+  note: "Balanzs gestart in 2011 door Menno & Zsoka Bernard (1 studio Den Haag →
+    100+ docenten/medewerkers); YA-RYS sinds 2016."
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-denhaag-2026-06
+    type: website
+    url: https://balanzs.nl/trainingen/200h-den-haag/
+    archived_url: https://web.archive.org/web/20260620154600/https://balanzs.nl/trainingen/200h-den-haag/
+    captured: "2026-06-20"
+    note: "200u TT Den Haag: 2-module-opzet, volledige cohortdata okt 2026–jul 2027,
+      prijs, docententeam."
+    local_snapshot: data/archives/balanzs/site-denhaag-2026-06-2026-06-20.pdf
+  - id: site-utrecht-2026-06
+    type: website
+    url: https://balanzs.nl/trainingen/200h-utrecht/
+    archived_url: https://web.archive.org/web/20260620154729/https://balanzs.nl/trainingen/200h-utrecht/
+    captured: "2026-06-20"
+    note: >
+      200u TT Utrecht: identieke opzet/prijs, start jan 2027 (data 'volgen
+      later'); Engelstalige variant:
+      balanzs.nl/en/trainings/200h-yoga-teacher-training/.
+    local_snapshot: data/archives/balanzs/site-utrecht-2026-06-2026-06-20.pdf
+  - id: site-rotterdam-2026-06
+    type: website
+    url: https://balanzs.nl/trainingen/200-hour-teacher-training/
+    archived_url: https://web.archive.org/web/20260620154922/https://balanzs.nl/trainingen/200-hour-teacher-training/
+    captured: "2026-06-20"
+    note: "200u TT Rotterdam (Balanzs Kleiweg): identieke opzet/prijs/docententeam,
+      start jan 2027 (data later)."
+    local_snapshot: data/archives/balanzs/site-rotterdam-2026-06-2026-06-20.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002piWxAAI&sid=0013g000002no74AAA&name=Balanzs
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Balanzs',
+      The Hague, RYS."
+    local_snapshot: data/archives/balanzs/ya-register-2026-06-2026-06-20.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Balanzs"
+    captured: "2026-06-20"
+    note: >
+      Zoekrecept: tik "Balanzs" in het Naam-veld → 1 treffer "Balanzs,
+      's-Gravenhage". Register zonder permalink; bewijs is de gefilterde
+      snapshot; Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/balanzs/crkbo-register-2026-06-2026-06-20.pdf
+  - id: brochure-2026-06
+    type: brochure
+    url: https://balanzs.nl/app/uploads/200h-VinyasaYin-TT-ebook-Algemeen-1.pdf
+    archived_url: https://web.archive.org/web/20260620155042/https://balanzs.nl/app/uploads/200h-VinyasaYin-TT-ebook-Algemeen-1.pdf
+    captured: "2026-06-20"
+    note: >
+      "200H Yin & Vinyasa Teacher Training" e-book/brochure (algemeen).
+      Gedetailleerd: 10-weekenden-curriculum (4 in Module 1, 6 in Module 2),
+      per-weekend-inhoud, docentachtergronden, losse moduleprijzen,
+      groepsgroottes, toelatingseisen.
+  - id: terms-2026-06
+    type: website
+    url: https://balanzs.nl/algemene-voorwaarden/
+    archived_url: https://web.archive.org/web/20260620155229/https://balanzs.nl/algemene-voorwaarden/
+    captured: "2026-06-20"
+    note: >
+      Algemene voorwaarden. Art. 11.1: "De prijzen zijn in euro's inclusief
+      omzetbelasting, tenzij anders vermeld" (generieke all-in-clausule, niet
+      TT-specifiek). Art. 7-8: docentenopleiding definitief bij €100
+      aanbetaling; annuleringsstaffel (≥12 wkn 50%, 6-12 wkn 50%, 1-6 wkn 70%,
+      <1 wk geen restitutie).
+    local_snapshot: data/archives/balanzs/terms-2026-06-2026-06-20.pdf
+
+programs:
+  - id: 200-vinyasa-yin
+    name: "200 uurs Yoga Teacher Training"
+    url: https://balanzs.nl/trainingen/200h-den-haag/
+    format_label: "200"
+    style_claimed: "Vinyasa & Yin gecombineerd in één opleiding; oosters (TCM voor
+      Yin) + westers (anatomie voor Vinyasa) curriculum; filosofie, fascia,
+      zenuwstelsel, breathwork"
+    styles: [ vinyasa, yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance-gecertificeerd; 'Deze module vormt je tot een 200h
+          Yoga Alliance teacher'"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS van Balanzs geverifieerd in het register (zie registrations)."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 9
+      language: nl
+    prerequisites_claimed: "HBO/BSc denkniveau + min. 1 jaar persoonlijke
+      lichaam-&-geest-beoefening; Module 2 vereist afgeronde Module 1"
+    price:
+      amount_eur: 3115
+      variants:
+        - { label: "early bird 200u (tot early-bird-datum)", amount_eur: 2650 }
+        - { label: "late bird 200u", amount_eur: 3115 }
+        - { label: "termijnbetaling 200u", amount_eur: 3400 }
+        - { label: "Module 1 los (85u), late bird", amount_eur: 1425 }
+        - { label: "Module 2 los (115u), late bird", amount_eur: 2025 }
+      vat: unknown
+      published: yes
+      excludes: "verplichte literatuur (±€120 voor beide modules)"
+      note: >
+        Volledige 200u (Module 1 + 2): early bird €2650 (15% korting, tot de
+        per-cohort early-bird-datum; Den Haag 11 sep 2026), late bird €3115 (10%
+        korting), termijnbetaling €3400. Modules ook los: Module 1 (85u)
+        €1300/€1425/€1550; Module 2 (115u) €1800/€2025/€2300. De bundel (€3115
+        late bird) ligt €335 ónder de som van de losse late-bird-modules
+        (€1425+€2025=€3450). €100 niet-restitueerbare aanbetaling. Tijdens de
+        opleiding 'Balanzs Always'-abonnement €65/4wk (i.p.v. €95). Geen
+        btw-vermelding → vat unknown (§4.11), ondanks CRKBO.
+      source: brochure-2026-06
+    group_size_claimed:
+      max: 28
+      source: brochure-2026-06
+      note: "Module 1: 28 plekken; Module 2: 20 plekken."
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: brochure-2026-06
+      note: >
+        200u in 2 modules over 10 weekenden: Module 1 = 85u (4 weekenden;
+        Yin+Yang/ Vinyasa-asana, anatomie elk weekend, 5 elementen/meridianen,
+        filosofie, chakra's, Sanskriet), Module 2 = 115u (6 weekenden; teaching
+        skills, voice, hands-on adjustments, blessurepreventie, business of
+        yoga). Zelfstudie 2-4 uur/week. Begeleide lespraktijk aanwezig maar niet
+        als urental: studenten geven asana's in weekend 5 & 7 en CO-DOCEREN een
+        echte studioles met een ervaren docent in weekend 8. Geen geïsoleerde
+        contact-/lespraktijk-uren.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      required_sequence: yes
+      required_sequence_note: "Module 1 is 'krachtige voorbereiding op Module 2'; M1 vóór M2."
+      single_cohort_intake: yes
+      single_cohort_intake_note: "Vaste cohorten per stad (Den Haag okt 2026, Utrecht
+        + Rotterdam jan 2027)."
+      integrative_assessment: yes
+      integrative_assessment_note: "Examen na Module 1 (22 jan 2027, Den Haag) + échte
+        lespraktijk in Module 2."
+      continuous_lead_teacher: unknown
+      continuous_lead_teacher_note: "'Senior Teacher Team' (6 docenten) met
+        André-Louis als TT-directeur; of één doorlopende hoofddocent lesgeeft is
+        niet expliciet."
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Beide modules los te koop: Module 1 (85u)
+        €1300-1550, Module 2 (115u) €1800-2300 (M2 vereist afgeronde M1)."
+      bundle_price_below_sum: yes
+      bundle_price_below_sum_note: "Bundel 200u €3115 (late bird) < som losse
+        late-bird-modules €1425+€2025=€3450; bundeldelta ≈ −€335."
+      source: brochure-2026-06
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "This is also final exam weekend. Your knowledge and skills will be
+        tested. If you successfully pass your examinations, we will present you
+        with your Balanzs Yoga Teaching Training Certificate."
+    track_record:
+      first_seen_year: 2016
+      source: ya-register-2026-06
+      note: >
+        RYS sinds 2016; testimonials van cohort 2024. Dezelfde opleiding draait
+        in 3 steden (Den Haag, Utrecht, Rotterdam) met IDENTIEKE opzet, prijs en
+        Senior Teacher Team — alleen locatie en startdatum verschillen.
+    cohorts:
+      - id: balanzs-denhaag-2026-10
+        start: "2026-10"
+        end: "2027-07"
+        status: announced
+        source: site-denhaag-2026-06
+        language: nl
+        note: "Den Haag (Laan van NOI); online opening 6 okt, 10 weekenden okt 2026–jul
+          2027; examen 22 jan 2027; open dagen 5 jul/6 sep 2026."
+      - id: balanzs-utrecht-2027-01
+        start: "2027-01"
+        status: announced
+        source: site-utrecht-2026-06
+        language: nl
+        note: "Utrecht (Oudegracht); start jan 2027, exacte data volgen later; open dag
+          8 feb."
+      - id: balanzs-rotterdam-2027-01
+        start: "2027-01"
+        status: announced
+        source: site-rotterdam-2026-06
+        language: nl
+        note: "Rotterdam (Kleiweg); start jan 2027, exacte data volgen later."
+    teachers:
+      - person_id: andre-louis
+        role: "TT-directeur; Vinyasa/Power/Hot"
+      - person_id: zsoka
+        role: "oprichter; business of yoga + silence retreat"
+      - person_id: katherine
+        role: "anatomie/fysiologie"
+      - person_id: dong
+        role: "Yin/TCM, anatomie"
+
+claims:
+  - id: meest-complete
+    scope: "program:200-vinyasa-yin"
+    quote: "Onze 200-uurs teacher training, geleid door Senior Teachers, is één van
+      de meest complete en blijvende opleidingen in Nederland."
+    category: other
+    source: site-denhaag-2026-06
+  - id: geen-guru
+    scope: "provider"
+    quote: "Niet streng, niet hiërarchisch, geen guru-cultuur. Maar vanuit
+      compassie, menselijkheid en plezier."
+    category: other
+    source: site-denhaag-2026-06
+
+people:
+  - id: andre-louis
+    name: "André-Louis"
+    background:
+      - field: "yoga"
+        credential: "TT-directeur Balanzs; Zuid-Afrikaans, rugby-achtergrond; yoga sinds
+          2011, doceert sinds 2012; Vinyasa/Power/Hot"
+        registry: none
+        verified: unknown
+        source: brochure-2026-06
+  - id: zsoka
+    name: "Zsoka Bernard"
+    trainings_claimed:
+      - label: "E-RYT (Yoga Alliance)"
+        verified: unknown
+        source: brochure-2026-06
+    background:
+      - field: "business/yoga"
+        credential: "mede-oprichter Balanzs (2011); MSc International Business; doceert
+          'Business of Yoga' + silence retreat"
+        registry: none
+        verified: unknown
+        source: brochure-2026-06
+  - id: katherine
+    name: "Katherine"
+    background:
+      - field: "anatomie/biologie"
+        credential: "BSc Anatomical Sciences (Dundee, incl. humane dissectie); MSc + PhD
+          Stem Cell Biology & Genetics; verzorgt anatomie/uitlijning — sterk
+          anatomie-/evidence-signaal"
+        registry: other
+        verified: unknown
+        source: brochure-2026-06
+  - id: dong
+    name: "Dong"
+    background:
+      - field: "TCM/shiatsu"
+        credential: "Shiatsu-therapeut + yoga/Do-in sinds 2012 (Classical Shiatsu;
+          Universal Healing Tao/Mantak Chia); MSc Early Childhood Psychology
+          (China); verdieping Anatomie/Fysiologie/Pathologie/Psychologie aan
+          Shenzhou Open University for TCM (2016)"
+        registry: other
+        verified: unknown
+        source: brochure-2026-06
