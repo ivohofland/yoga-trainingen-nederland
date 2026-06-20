@@ -1,0 +1,224 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yagoy
+name: Yagoy
+aka: [ "Yagoy - Yoga Your Way", "Yoga Your Way" ]
+website: https://yagoy.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Karel du Jardinstraat 33 BG (Yagoy Pijp)"
+    note: "opleidingslocatie voor de teacher trainings"
+  - city: Amsterdam
+    address: "Postjesweg 106-1 (Yagoy West)"
+    note: "YA-registratieadres"
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Yagoy"
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Yagoy" in het Naam-veld → exact 1 treffer
+    "Yagoy, Amsterdam, yagoy.nl" (2026-06-20). Schone naam-match (merk = CRKBO-
+    entiteit). De overzichtspagina's vermelden de prijs expliciet als "VAT
+    exempted" → price.vat = exempt_crkbo, consistent met deze registratie.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RPYS"
+    holder: "Yagoy - Yoga Your Way"
+    first_registered: "2015-07"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      Profielpagina (live 2026-06-20) bevestigt RYS-status, locatie Amsterdam
+      (Postjesweg 106-1), taal ENGLISH, types Flow + Gentle Yoga. RYS-niveau (200)
+      + RPYS (Registered Prenatal Yoga School) en eerste registratie (2015-07) uit
+      de YA-directory-enumeratie.
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-yin-2026-06
+    type: website
+    url: https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/
+    archived_url: null
+    captured: "2026-06-20"
+    note: >
+      Yin 200u: programma, faculty, 10-weekend-structuur, examens, literatuurlijst.
+      LET OP: datumlijst zonder jaartal en intro-workshops verwijzen naar
+      "September 2024 training" — mogelijk niet-actuele cohortdata; prijs niet op
+      de pagina (achter 'registration package').
+  - id: site-vinyasa-2026-06
+    type: website
+    url: https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Vinyasa 200u (november-start): RYT200, locatie Yagoy Pijp, Engelstalig. Prijs niet op de pagina."
+  - id: overview-yin-2026-06
+    type: website
+    url: https://yagoy.nl/teacher-training-yin/
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Yin-overzichtspagina met 'Training fee': Early Bird €2300 (max 10 inschrijvingen), regulier €2500, termijn €2600; 2026/2027-deadlines."
+  - id: overview-vinyasa-2026-06
+    type: website
+    url: https://yagoy.nl/teacher-trainings-vinyasa/
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Vinyasa-overzichtspagina met 'Costs': Early Bird €2300 (max 10, 'Early Bird has Closed'), regulier €2500, termijn €2600; 2026/2027-deadlines."
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pi9zAAA&sid=0013g000002nnhPAAQ&name=Yagoy---Yoga-Your-Way
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yagoy - Yoga Your Way', Amsterdam, taal English."
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Yagoy"
+    captured: "2026-06-20"
+    note: >
+      Zoekrecept: tik "Yagoy" in het Naam-veld → 1 treffer "Yagoy, Amsterdam,
+      yagoy.nl". Register zonder permalink; bewijs is de gefilterde snapshot;
+      Wayback overgeslagen voor crkbo.nl/Register/*.
+
+programs:
+  - id: 200-yin
+    name: "Yin Yoga Teacher Training (200 hr RYT)"
+    url: https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/
+    format_label: "200"
+    style_claimed: "Yin Yoga via Traditional Chinese Medicine & meridiaansysteem; Paul Grilley-methode (functionele anatomie, skeletvariatie); chakra's, Bhagavad Gita"
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "After graduating you are eligible for a Yoga Alliance RYT-200 (Registered Yoga School)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS van Yagoy zelf geverifieerd in het register."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 9
+      language: en
+    prerequisites_claimed: "consistente, toegewijde yogapraktijk; tijdens de TT min. 1x/week Yin + min. 1x/maand met Shari of Jonas"
+    price:
+      amount_eur: 2500
+      variants:
+        - { label: "early bird (max 10, soms gesloten)", amount_eur: 2300 }
+        - { label: "regulier", amount_eur: 2500 }
+        - { label: "termijnbetaling (aanbetaling + 4 termijnen)", amount_eur: 2600 }
+      vat: exempt_crkbo
+      published: yes
+      note: >
+        Prijs op het overzicht (overview-yin-2026-06): Early Bird €2300 (volledig
+        vooraf, beperkt tot 10 inschrijvingen — soms al gesloten), regulier €2500,
+        termijnbetaling €2600 (aanbetaling + 4 termijnen). Kop expliciet "Training
+        fee (VAT exempted)" → exempt_crkbo (bevestigt de CRKBO-registratie).
+        Tijdens de TT: 'Sometimes Yagoy' pas (10 lessen/3 mnd) €70 i.p.v. €110.
+      source: overview-yin-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin-2026-06
+      note: >
+        200u-format over 10 weekenden (vr 18:30-21:30 masterclass; za/zo 09:00-17:00:
+        praktijk, theorie, 'practicing your skills'). Geen geïsoleerd uren-/
+        lespraktijk-urental gepubliceerd. Max. 28 deelnemers; wachtlijst.
+    group_size_claimed:
+      max: 28
+      source: site-yin-2026-06
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "In the final weekends, there will be exams: a written exam in weekend 9 and a practical exam in weekend 10."
+    track_record:
+      cadence_note: "Jaarlijkse 200u Yin-TT, 10 weekenden okt-juni (Yagoy Pijp)."
+      source: overview-yin-2026-06
+      note: >
+        Detailpagina toont weekenddata zonder jaartal + verouderde
+        intro-workshop-verwijzing ('September 2024 training'); het prijsoverzicht
+        heeft echter actuele 2026/2027-deadlines, dus de lopende intake is 2026-2027.
+    cohorts:
+      - id: yin-2026-10
+        start: "2026-10"
+        end: "2027-06"
+        status: announced
+        source: overview-yin-2026-06
+        language: en
+        note: "Start ~okt 2026 (10 weekenden t/m jun 2027); jaar afgeleid uit prijspagina-deadlines (EB voor 1/15 sep 2026)."
+    teachers:
+      - person_id: shari-iskandar
+        role: "hoofddocent Yin TT"
+      - person_id: jonas-nathan
+        role: "hoofddocent Yin TT"
+
+  - id: 200-vinyasa
+    name: "Vinyasa Yoga Teacher Training (200 hr RYT)"
+    url: https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/
+    format_label: "200"
+    style_claimed: "Vinyasa yoga; 'taught by teachers and speakers from various yogic traditions'"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Vinyasa Yoga Teacher Training (200 hr RYT); Yoga Alliance RYT-200"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS van Yagoy zelf geverifieerd in het register."
+    delivery:
+      mode: in_person
+      structure: weekends
+      language: en
+    price:
+      amount_eur: 2500
+      variants:
+        - { label: "early bird (max 10)", amount_eur: 2300 }
+        - { label: "regulier", amount_eur: 2500 }
+        - { label: "termijnbetaling (aanbetaling + 4 termijnen)", amount_eur: 2600 }
+      vat: exempt_crkbo
+      published: yes
+      note: >
+        Prijs op het overzicht (overview-vinyasa-2026-06): Early Bird €2300 (max 10),
+        regulier €2500, termijnbetaling €2600. Kop expliciet "VAT exempted" →
+        exempt_crkbo (bevestigt de CRKBO-registratie).
+      source: overview-vinyasa-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-vinyasa-2026-06
+      note: "200u-format, weekenden bij Yagoy Pijp (Karel du Jardinstraat 33); november-start."
+    track_record:
+      cadence_note: "Vinyasa 200u met november-start (URL '...-nov')."
+      source: overview-vinyasa-2026-06
+      note: "Prijsoverzicht toont 2026/2027-deadlines (regulier volledig vooraf voor 1 feb 2027)."
+    cohorts:
+      - id: vinyasa-2026-11
+        start: "2026-11"
+        status: announced
+        source: overview-vinyasa-2026-06
+        language: en
+        note: "November-start; jaar 2026-2027 afgeleid uit prijspagina-deadlines."
+
+people:
+  - id: shari-iskandar
+    name: "Shari Iskandar"
+    background:
+      - field: "yoga/TCM"
+        credential: "mede-oprichter Yagoy Yin-TT; achtergrond Econometrie; studeerde Chinese geneeskunde, Ayurveda, kinesiologie, Reiki; studeert voor acupuncturist"
+        registry: none
+        verified: unknown
+        source: site-yin-2026-06
+  - id: jonas-nathan
+    name: "Jonas Nathan"
+    background:
+      - field: "yoga"
+        credential: "mede-oprichter Yagoy Yin-TT; 300-uurs gespecialiseerde Yin-training bij Jo Phee; kern Paul Grilley-methode"
+        registry: none
+        verified: unknown
+        source: site-yin-2026-06
