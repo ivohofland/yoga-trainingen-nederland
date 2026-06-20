@@ -1,0 +1,347 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: sanayou
+name: SanaYou YOGAcademy
+aka: [ "SanaYouYOGA", "SanaYou" ]
+website: https://sanayou.com
+status: active
+locations:
+  - city: Zwolle
+    address: "Hasselterdijk 20-E, 8043 PD"
+    note: "studio + opleidingslocatie (klassikale RYT/VYN200); online programma's
+      landelijk"
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "SanaYouYOGA"
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "SanaYou" → exact 1 treffer "SanaYouYOGA,
+    Zwolle, www.sanayouyogacademy.com" (2026-06-20). De academy heeft ook een
+    btw-nummer (NL001422164B38) — er worden dus ook btw-belaste producten
+    verkocht. De opleidingspagina's vermelden GEEN btw-behandeling van de
+    trainingen → price.vat blijft unknown (§4.11), ondanks CRKBO. DRIE
+    registers: YA + CRKBO + VYN (zie registrations).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300"
+    holder: "SanaYouYOGA"
+    first_registered: "2018-07"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS geverifieerd op het live YA-profiel "SanaYouYOGA" (Zwolle; talen
+      NL+EN; bevestigd 2026-06-20). RYS-niveau (200 + 300) + eerste registratie
+      (2018-07) uit de YA-directory-enumeratie.
+  - body: vyn
+    identifier: "VYN200"
+    holder: "SanaYouYOGA"
+    verified_in_register: unknown
+    source: vyn-register-2026-06
+    note: >
+      De klassikale 200u-opleiding wordt gebrand als "RYT/VYN200" en "Erkend
+      door VYN". LET OP: een websearch suggereert dat de VYN-erkenning van de
+      klassikale 200u een AANVRAAG betrof, terwijl de Yoga Nidra-opleiding
+      VYN-erkend is — daarom verified_in_register=unknown tot het VYN-register
+      (yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen) de 200u
+      bevestigt. Alleen de KLASSIKALE 200u draagt VYN; de online 200u en de
+      RYT300 zijn YA-only.
+legal:
+  kvk: "52440052"
+  legal_name: "SanaYouYOGA"
+founded_year:
+  value: 2018
+  source: ya-register-2026-06
+  note: "YA-RYS sinds 2018-07; in YA + CRKBO + VYN."
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-klassikaal-2026-06
+    type: website
+    url: https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal
+    archived_url: https://web.archive.org/web/20260620190230/https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal
+    captured: "2026-06-20"
+    note: "Klassikale RYT/VYN200 Yin & Yang: 4×50u modules, prijzen, data, toetsing,
+      docenten."
+    local_snapshot: data/archives/sanayou/site-klassikaal-2026-06-2026-06-20.pdf
+  - id: site-online-2026-06
+    type: website
+    url: https://sanayou.com/overzicht-online-ryt200-yoga-opleidingen
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Online RYT200 (3 routes: Yin, Yin & Yang, Yang); modulair,
+      Nederlandstalig, YA-erkend."
+    local_snapshot: data/archives/sanayou/site-online-2026-06-2026-06-20.pdf
+  - id: site-300-2026-06
+    type: website
+    url: https://sanayou.com/overzicht-ryt300-yoga-opleidingen
+    archived_url: https://web.archive.org/web/20260620190653/https://sanayou.com/overzicht-ryt300-yoga-opleidingen
+    captured: "2026-06-20"
+    note: "RYT300 'The Art of Advanced Teaching' (hybride): 2 richtingen Yin
+      Mastery/Yoga Awakening; €2250; YA-erkend."
+    local_snapshot: data/archives/sanayou/site-300-2026-06-2026-06-20.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjNrAAI&sid=0013g000002noscAAA&name=SanaYou-YOGAcademy
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als
+      'SanaYouYOGA', Zwolle, talen NL+EN, RYS."
+    local_snapshot: data/archives/sanayou/ya-register-2026-06-2026-06-20.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "SanaYou"
+    captured: "2026-06-20"
+    note: "Zoekrecept: tik 'SanaYou' → 1 treffer 'SanaYouYOGA, Zwolle'. Gefilterde
+      snapshot is het bewijs; Wayback overgeslagen voor crkbo.nl/Register/*."
+    local_snapshot: data/archives/sanayou/crkbo-register-2026-06-2026-06-20.pdf
+  - id: vyn-register-2026-06
+    type: register
+    url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    archived_url: https://web.archive.org/web/20260620190919/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    captured: "2026-06-20"
+    note: >
+      VYN (Vereniging Yogadocenten Nederland) register van erkende
+      yogaopleidingen. Geen per-school permalink waargenomen; SanaYou-vermelding
+      voor de 200u nog te bevestigen (zie registrations-note over aanvraag vs.
+      erkend).
+    local_snapshot: data/archives/sanayou/vyn-register-2026-06-2026-06-20.pdf
+
+programs:
+  - id: 200-klassikaal
+    name: "RYT/VYN200 Yin & Yang Yoga Teacher Training (klassikaal, Zwolle)"
+    url: https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal
+    format_label: "200"
+    style_claimed: "Allround Yin + Yang Yoga (Vinyasa Flow, Hatha, Easy Flow) met
+      Critical Alignment-elementen; functionele anatomie/biomechanica, filosofie
+      (Bhagavad Gita, Vayus/Koshas/Kriyas), meridianen & 5 Elementen, pranayama,
+      meditatie"
+    styles: [ multistyle, yin, vinyasa, hatha ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "RYT200, erkend door Yoga Alliance"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS geverifieerd in het register."
+      - body: vyn
+        label_claimed: "VYN200, erkend door de Vereniging Yogadocenten Nederland"
+        verified: unknown
+        source: vyn-register-2026-06
+        note: "VYN-erkenning van de 200u nog te bevestigen (mogelijk aanvraag; zie
+          registrations)."
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 10
+      duration_months_max: 36
+      language: nl
+    prerequisites_claimed: "geen; voor beginnende docenten én beoefenaars die willen verdiepen"
+    price:
+      amount_eur: 2999
+      variants:
+        - { label: "volledige RYT/VYN200 in 1 lesjaar (van €3500)", amount_eur: 2999 }
+        - { label: "losse module (50u)", amount_eur: 875 }
+      vat: unknown
+      published: yes
+      includes: >
+        24 lesdagen (4 modules × 50u, incl. 1 Zoom-lesdag), online leerplatform
+        (3 mnd/module), 5 lesboeken, 3 extra online modules (twv €465), 5
+        theorietoetsen + deelcertificaten
+      excludes: "praktijktoetsen (€97,50 per stuk, apart aan te vragen)"
+      note: >
+        Volledig in 1 lesjaar €2999 (van €3500, €500 voordeel), in 1/5/10
+        termijnen; losse module €875. Tot 3 jaar om alle 4 modules af te ronden.
+        Geen btw-vermelding → vat unknown (§4.11), ondanks CRKBO.
+      source: site-klassikaal-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-klassikaal-2026-06
+      note: >
+        4 modules van 50u (Yin 1, Yin 2, Yang 1, Yang 2), elk 6 lesdagen.
+        Lesgeven/didactiek + eigen lessen opbouwen aanwezig; geen geïsoleerd
+        contact-/lespraktijk-urental gepubliceerd.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      required_sequence: no
+      required_sequence_note: "Modules flexibel: 'na elkaar of gelijktijdig', eigen
+        tempo; 2 instroommomenten/jaar per module."
+      single_cohort_intake: no
+      single_cohort_intake_note: "Meerdere startmomenten; modulaire instroom."
+      integrative_assessment: yes
+      integrative_assessment_note: "Per 100u theorie- + praktijktoets; einddiploma pas
+        na beide deelcertificaten + alle examens."
+      continuous_lead_teacher: no
+      continuous_lead_teacher_note: "Docententeam (Sandy Karsten = hoofd-opleider) +
+        wisselende module-docenten."
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Elke 50u-module los te koop (€875)."
+      bundle_price_below_sum: yes
+      bundle_price_below_sum_note: "Bundel €2999 < 4×€875 = €3500; bundeldelta ≈ −€501."
+      source: site-klassikaal-2026-06
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "Wanneer je beide deelcertificaten hebt behaald én alle examens hebt
+        afgerond, ontvang je het officieel erkende RYT/VYN200 Yin en Yang Yoga
+        Teacher Training Diploma."
+    track_record:
+      first_seen_year: 2018
+      source: site-klassikaal-2026-06
+      note: "RYS sinds 2018; deelnemers geven gem. 9.6; meerdere cohorten/jaar."
+    cohorts:
+      - id: klassikaal-2026-09
+        start: "2026-09"
+        end: "2027-06"
+        status: announced
+        source: site-klassikaal-2026-06
+        language: nl
+        note: "Start 18 sep 2026 (Yin-route) of 25 sep 2026 (Yang-route); volledige
+          datumlijst t/m mei 2027 gepubliceerd."
+    teachers:
+      - person_id: sandy-karsten
+        role: "hoofd docentenopleider"
+      - person_id: manja-weijers
+        role: "anatomie/biomechanica/blessurepreventie"
+      - person_id: sandra-merks
+        role: "Vinyasa/filosofie/Yin"
+      - person_id: amanda-beelen
+        role: "Yin/TCM/5 Elementen"
+
+  - id: 200-online
+    name: "RYT200 Online Teacher Training (Yin / Yin & Yang / Yang)"
+    url: https://sanayou.com/overzicht-online-ryt200-yoga-opleidingen
+    format_label: "200"
+    style_claimed: "Online, Nederlandstalig; 3 routes: Yin Yoga, Yin & Yang, of Yang"
+    styles: [ yin, vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "RYT200, erkend door Yoga Alliance (Nederlandstalig, online)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "YA-only (geen VYN voor de online variant)."
+    delivery:
+      mode: online
+      structure: modular
+      language: nl
+    price:
+      amount_eur: null
+      vat: unknown
+      published: yes
+      note: "Modulair online (3 routes); prijs per module/traject — bedragen niet
+        uitgelezen in deze ronde."
+      source: site-online-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-online-2026-06
+      note: "200u online, modulair (o.a. Yin Yoga Basics, 5 Elementenleer, Fascia,
+        Advanced Yin & Yang Flows)."
+    composition:
+      type: free_assembly
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+
+  - id: 300-hybride
+    name: "RYT300 — The Art of Advanced Teaching (hybride)"
+    url: https://sanayou.com/overzicht-ryt300-yoga-opleidingen
+    format_label: "300"
+    style_claimed: "Verdieping; 2 richtingen: Yin Mastery of Yoga Awakening. Modules
+      o.a. Critical Alignment, Yoga Nidra, Your Body Your Yoga, Nervus Vagus,
+      Fascia, Restorative Alignment, 5 Elementen, Reiki"
+    styles: [ yin, vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "RYT300, erkend door Yoga Alliance; doorgroei naar RYT500"
+        verified: yes
+        source: ya-register-2026-06
+        note: "YA-only."
+    delivery:
+      mode: hybrid
+      structure: modular
+      language: nl
+    prerequisites_claimed: "afgeronde RYT200"
+    price:
+      amount_eur: 2250
+      variants:
+        - { label: "volledig (van €3500)", amount_eur: 2250 }
+      vat: unknown
+      published: yes
+      note: "€2250 (van €3500); modulair, online + live dagen; €25 administratiekosten
+        per te verplaatsen lesdatum. Geen btw-vermelding → vat unknown (§4.11)."
+      source: site-300-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-300-2026-06
+      note: "300u hybride, modulair (13+ keuzemodules), 2 richtingen (Yin Mastery /
+        Yoga Awakening)."
+    composition:
+      type: free_assembly
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+
+people:
+  - id: sandy-karsten
+    name: "Sandy Karsten"
+    trainings_claimed:
+      - label: "E-RYT500 & YACEP"
+        verified: unknown
+        source: site-klassikaal-2026-06
+    background:
+      - field: "yoga"
+        credential: "hoofd docentenopleider SanaYou; Critical Alignment specialist, Yin
+          Yoga Master, functionele anatomie"
+        registry: none
+        verified: unknown
+        source: site-klassikaal-2026-06
+  - id: manja-weijers
+    name: "Manja Weijers"
+    background:
+      - field: "fysiotherapie"
+        credential: "fysiotherapeut + P-DTR practitioner; neurologisch expert; opleider
+          anatomie/biomechanica/blessurepreventie; yogadocent Yin & Yang —
+          BIG-verifieerbaar"
+        registry: big
+        verified: unknown
+        source: site-klassikaal-2026-06
+  - id: sandra-merks
+    name: "Sandra Merks"
+    trainings_claimed:
+      - label: "RYT500"
+        verified: unknown
+        source: site-klassikaal-2026-06
+    background:
+      - field: "yoga"
+        credential: "Vinyasa Flow & yogafilosofie, Yin & Yoga Nidra, Critical Alignment,
+          Ashtanga"
+        registry: none
+        verified: unknown
+        source: site-klassikaal-2026-06
+  - id: amanda-beelen
+    name: "Amanda Beelen"
+    trainings_claimed:
+      - label: "RYT200"
+        verified: unknown
+        source: site-klassikaal-2026-06
+    background:
+      - field: "yoga"
+        credential: "Yin Yoga-opleider; TCM, Chakra & 5 Elementenleer; Reiki en Yoga Nidra"
+        registry: none
+        verified: unknown
+        source: site-klassikaal-2026-06
