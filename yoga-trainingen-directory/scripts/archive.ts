@@ -2,7 +2,9 @@
  * Archiveer-automatisering: voor elke bron in de provider-records
  *   1. lokale kopie    — Playwright rendert de pagina (incl. JS) en bewaart
  *                        volledige-pagina-PDF + HTML + SHA-256-hash in
- *                        data/archives/<provider>/
+ *                        data/archives/<provider>/. Bronnen die zelf een
+ *                        download zijn (PDF-brochure e.d.) worden rechtstreeks
+ *                        via fetch opgehaald i.p.v. gerenderd.
  *   2. publiek archief — Wayback Save Page Now; snapshot-URL wordt
  *                        teruggeschreven in het record (comments blijven staan)
  *
@@ -58,6 +60,43 @@ function sha256(buf: Buffer | string): string {
   return crypto.createHash("sha256").update(buf).digest("hex");
 }
 
+/** Bronnen die een direct te downloaden bestand zijn (PDF-brochure, e.d.)
+ *  i.p.v. een te renderen HTML-pagina. Playwright's page.goto() gooit hierop
+ *  "Download is starting", dus zulke URL's halen we rechtstreeks op. */
+function isDirectFileUrl(url: string): boolean {
+  try {
+    return /\.(pdf|docx?|pptx?|xlsx?|zip)$/i.test(new URL(url).pathname);
+  } catch {
+    return false;
+  }
+}
+
+/** Haalt een binair bestand (bijv. PDF-brochure) rechtstreeks op via fetch en
+ *  bewaart het + SHA-256. Geen HTML-kopie: het bestand is zelf het bewijs.
+ *  Retourneert het relatieve pad naar de bewaarde kopie. */
+async function saveDirectFile(
+  providerId: string,
+  sourceId: string,
+  url: string,
+): Promise<string> {
+  const dir = path.join(ARCHIVE_DIR, providerId);
+  fs.mkdirSync(dir, { recursive: true });
+  const ext = (path.extname(new URL(url).pathname) || ".pdf").toLowerCase();
+  const base = path.join(dir, `${sourceId}-${today}`);
+
+  // User-Agent meesturen: sommige servers weigeren de standaard-fetch-UA.
+  const res = await fetch(url, {
+    redirect: "follow",
+    headers: { "User-Agent": "Mozilla/5.0 (yoga-trainingen archiveerscript)" },
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status} bij ophalen van ${url}`);
+  const buf = Buffer.from(await res.arrayBuffer());
+  fs.writeFileSync(`${base}${ext}`, buf);
+  fs.writeFileSync(`${base}.sha256`, `${sha256(buf)}  ${path.basename(base)}${ext}\n`);
+
+  return path.relative(process.cwd(), `${base}${ext}`).replaceAll("\\", "/");
+}
+
 /** Zoek-registers zonder permalink (CRKBO): typ de zoekterm in het Naam-filter
  *  en wacht op de DevExpress-callback, zodat de snapshot de GEFILTERDE rij toont
  *  i.p.v. pagina 1. Het Naam-filterveld is het eerste tekstinvoerveld met de
@@ -83,6 +122,10 @@ async function saveLocalCopy(
   url: string,
   query?: string,
 ): Promise<string> {
+  // Direct te downloaden bestand (PDF-brochure e.d.): rechtstreeks ophalen,
+  // niet via de browser renderen (die zou crashen op "Download is starting").
+  if (isDirectFileUrl(url)) return saveDirectFile(providerId, sourceId, url);
+
   const dir = path.join(ARCHIVE_DIR, providerId);
   fs.mkdirSync(dir, { recursive: true });
   const base = path.join(dir, `${sourceId}-${today}`);
@@ -91,7 +134,15 @@ async function saveLocalCopy(
   try {
     // domcontentloaded i.p.v. networkidle: Salesforce-achtige apps houden
     // permanent verbindingen open, waardoor networkidle nooit optreedt.
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
+    try {
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60_000 });
+    } catch (e) {
+      // Onverwachte download (bijv. content-disposition: attachment zonder
+      // bestandsextensie in de URL): val terug op rechtstreeks ophalen.
+      if (/Download is starting/i.test((e as Error).message))
+        return await saveDirectFile(providerId, sourceId, url);
+      throw e;
+    }
     await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => {});
     await page.waitForTimeout(5_000); // settle-tijd voor traag renderende JS-apps
 
