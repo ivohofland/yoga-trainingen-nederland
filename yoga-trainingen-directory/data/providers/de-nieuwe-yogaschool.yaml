@@ -1,0 +1,387 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: de-nieuwe-yogaschool
+name: De Nieuwe Yogaschool
+aka: [ "DNYS", "DNYS Academie", "Johan Noorloos Teachertraining" ]
+website: https://denieuweyogaschool.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Laurierstraat 109, 1016 PL"
+    note: "studio + DNYS Academie (opleidingslocatie); opgericht 2013"
+  - city: Leeuwarden
+    address: "Westersingel 2F, 8913 CK (Club Yoga Leeuwarden)"
+    note: >
+      Gastlocatie voor de Vinyasa 200u-opleiding. Club Yoga Leeuwarden host de
+      DNYS/Johan-Noorloos-opleiding sinds 2016; inschrijving én certificering
+      (Yoga Alliance) lopen via De Nieuwe Yogaschool (Momence-boeking), niet via
+      Club Yoga zelf — Club Yoga is alleen de zaal/partner. Zie bron
+      club-yoga-2026-06.
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "De Nieuwe Yogaschool Online B.V."
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Nieuwe Yogaschool" → exact 1 treffer "De
+    Nieuwe Yogaschool Online B.V., Amsterdam, denieuweyogaschoolonline.nl"
+    (2026-06-20). HOLDER-/STRUCTUUR-NUANCE: de CRKBO-registratie zit in de
+    *Online* B.V. (die de online opleidingen btw-vrij verkoopt), terwijl de live
+    200u-opleidingen MÉT 21% btw worden verkocht (€2450 excl → €2964,50 incl).
+    De btw-structurering is daarmee zichtbaar als feit (§10/§4.11): de
+    vrijstelling rijdt op de online-entiteit, niet op de live trainingen.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300"
+    holder: "Johan Noorloos Teachertraining"
+    first_registered: "2014-05"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      HOLDER-SPECIMEN: de YA-RYS staat op naam van oprichter "Johan Noorloos
+      Teachertraining", niet op de studio of de B.V. Profielpagina (live
+      2026-06-20) bevestigt RYS-status, locatie Amsterdam, talen DUTCH+ENGLISH.
+      RYS-niveau (200 + 300) en eerste registratie (2014-05) uit de
+      YA-directory-enumeratie. LET OP: er is GEEN actueel 300u-traject
+      geadverteerd — de drie lopende yoga-opleidingen zijn alle 200u. De
+      "Advanced trainingen" zijn korte workshops (<6 dagen) en de overige
+      opleidingen (Yogatherapie/Ademcoach/Schoolverlichting) zijn aparte
+      specialisaties (deels alleen HNY-gecertificeerd). De RYS300 wordt dus
+      gehouden maar is niet aan een lopend 300u-programma gekoppeld.
+founded_year:
+  value: 2013
+  source: site-vinyasa-2026-06
+  note: "Studio opgericht in 2013 door Johan Noorloos, Mariken Hogenhout en
+    Sijbrand Maal; YA-RYS sinds 2014-05."
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-vinyasa-2026-06
+    type: website
+    url: https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/
+    archived_url: https://web.archive.org/web/20260620140652/https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/
+    captured: "2026-06-20"
+    note: "Vinyasa 200u NL: programma, data, prijs, docenten, examen."
+    local_snapshot: data/archives/de-nieuwe-yogaschool/site-vinyasa-2026-06-2026-06-20.pdf
+  - id: site-yin-2026-06
+    type: website
+    url: https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/
+    archived_url: https://web.archive.org/web/20260620140733/https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/
+    captured: "2026-06-20"
+    note: "Yin 200u NL: programma, prijs, certificering."
+    local_snapshot: data/archives/de-nieuwe-yogaschool/site-yin-2026-06-2026-06-20.pdf
+  - id: site-intensive-2026-06
+    type: website
+    url: https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Vinyasa Teacher Training Intensive (EN): 3,5 weken immersion, prijs,
+      certificering."
+    local_snapshot: data/archives/de-nieuwe-yogaschool/site-intensive-2026-06-2026-06-20.pdf
+  - id: club-yoga-2026-06
+    type: website
+    url: https://club-yoga.nl/teacher-training/
+    archived_url: https://web.archive.org/web/20260620140953/https://club-yoga.nl/teacher-training/
+    captured: "2026-06-20"
+    note: >
+      Club Yoga Leeuwarden (Westersingel 2F) — gastlocatie/partner. Promopagina,
+      geen eigen boeking: "Sinds 2016 werken we samen met Johan Noorloos van De
+      Nieuwe Yogaschool... Volg de 200 uurs yin of vinyasa opleiding gewoon bij
+      ons in Leeuwarden." Inschrijving loopt via DNYS (Momence).
+    local_snapshot: data/archives/de-nieuwe-yogaschool/club-yoga-2026-06-2026-06-20.pdf
+  - id: netwerk-2026-06
+    type: website
+    url: https://www.hetnieuweyoganetwerk.nl/
+    archived_url: https://web.archive.org/web/20260620141110/https://www.hetnieuweyoganetwerk.nl/
+    captured: "2026-06-20"
+    note: >
+      "Het Nieuwe Yoganetwerk" — DNYS' EIGEN netwerk/BV (eigen KvK 77928229, btw
+      861201516B01) van door DNYS opgeleide docenten/coaches. Functioneert als
+      DNYS' eigen certificerende instantie (zelf-certificering, geen
+      onafhankelijke accreditatie). Het openbare register bevat o.a. profielen
+      met als enige vermelde opleiding "Cacao & Microdose Facilitator Training"
+      — illustreert dat het HNY-keurmerk geen yoga-opleidingsdrempel impliceert.
+    local_snapshot: data/archives/de-nieuwe-yogaschool/netwerk-2026-06-2026-06-20.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phYeAAI&sid=0013g000002nn8dAAA&name=Johan-Noorloos-Teachertraining
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Johan
+      Noorloos Teachertraining', Amsterdam, talen NL+EN."
+    local_snapshot: data/archives/de-nieuwe-yogaschool/ya-register-2026-06-2026-06-20.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Nieuwe Yogaschool"
+    captured: "2026-06-20"
+    note: >
+      Zoekrecept: tik "Nieuwe Yogaschool" in het Naam-veld → 1 treffer "De
+      Nieuwe Yogaschool Online B.V., Amsterdam". Register zonder permalink;
+      bewijs is de gefilterde snapshot; Wayback overgeslagen voor
+      crkbo.nl/Register/*.
+    local_snapshot: data/archives/de-nieuwe-yogaschool/crkbo-register-2026-06-2026-06-20.pdf
+
+programs:
+  - id: 200-vinyasa
+    name: "Vinyasa yoga opleiding 200 uur"
+    url: https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/
+    format_label: "200"
+    style_claimed: "Vinyasa yoga, lesopbouw gebaseerd op de eerste Ashtanga Vinyasa
+      serie; o.a. Sacred Practice & Lunar flow, energetic Vinyasa, intro Yin"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "erkende Vinyasa yoga opleiding (Yoga Alliance); registratie als
+          RYT 200"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Externe accreditatie. RYS gehouden onder 'Johan Noorloos Teachertraining'
+          (zie registrations)."
+      - body: other
+        label_claimed: "Yoga Alliance & Het Nieuwe Yoganetwerk gecertificeerd diploma"
+        verified: no
+        source: site-vinyasa-2026-06
+        note: >
+          ZELF-CERTIFICERING: 'Het Nieuwe Yoganetwerk' is DNYS' eigen
+          netwerk/BV, geen onafhankelijke accreditatie (zie bron netwerk-2026-06
+          + claim hny-zelfcertificering). Apart gehouden van de YA-accreditatie
+          hierboven.
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 7
+      language: nl
+    prerequisites_claimed: "geen vooropleiding nodig; HBO werk- en denkniveau; geen
+      yoga-ervaring vereist"
+    price:
+      amount_eur: 2964.50
+      vat: incl
+      published: yes
+      excludes: "verplichte literatuur (boekenlijst apart gepubliceerd)"
+      note: >
+        € 2.450 excl. btw → € 2.964,50 incl. 21% btw (consumentenprijs). Let op:
+        mét btw verkocht, ondanks CRKBO bij de Online B.V. (zie crkbo-note).
+        Vroegboek €121 korting (eerste 5; code EARLYBIRD-VINYASA-AUG).
+        Termijnbetaling mogelijk. Inclusief lessenkaart cadeau.
+      source: site-vinyasa-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-vinyasa-2026-06
+      note: >
+        200u-format; lesdata als weekenden (vr-avond + za/zo) + enkele
+        midweekdagen, geen uren-uitsplitsing. 4 OPTIONELE praktijkdagen onder
+        mentorbegeleiding. Zelfstudie: verplichte literatuur, boekpresentatie,
+        persoonlijk verslag, eigen oefengroepje. Max. 3 dagen missen.
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "Aan het einde van de 200-uurs Vinyasa yoga opleiding rond je de training
+        af met een praktijkexamen en een theorie-examen."
+    track_record:
+      first_seen_year: 2014
+      source: site-vinyasa-2026-06
+      note: "'Meer dan 2.000 studenten gingen je voor'; sinds 2016 ook docenten
+        opgeleid bij Defensie."
+    cohorts:
+      - id: vinyasa-2026-08-adam
+        start: "2026-08"
+        end: "2027-04"
+        status: announced
+        source: site-vinyasa-2026-06
+        language: nl
+        note: "Start 28 aug 2026, Amsterdam (Laurierstraat); lesdata t/m 16-18 apr
+          2027."
+      - id: vinyasa-2026-08-leeuwarden
+        start: "2026-08"
+        status: announced
+        source: site-vinyasa-2026-06
+        language: nl
+        note: "Start 15 aug 2026, Leeuwarden (Club Yoga); weekendritme za/zo."
+
+  - id: 200-yin
+    name: "Yin yoga opleiding 200 uur"
+    url: https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/
+    format_label: "200"
+    style_claimed: "Yin yoga; 'helende kracht', filosofie en theorie achter yin"
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yin yoga opleiding (Yoga Alliance); registratie als RYT 200"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Externe accreditatie; RYS onder 'Johan Noorloos Teachertraining'."
+      - body: other
+        label_claimed: "Yoga Alliance & Het Nieuwe Yoganetwerk gecertificeerd diploma"
+        verified: no
+        source: site-yin-2026-06
+        note: "ZELF-CERTIFICERING (Het Nieuwe Yoganetwerk = DNYS' eigen netwerk); zie
+          claim hny-zelfcertificering."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 7
+      language: nl
+    prerequisites_claimed: "geen vooropleiding nodig; HBO werk- en denkniveau"
+    price:
+      amount_eur: 2964.50
+      vat: incl
+      published: yes
+      excludes: "verplichte literatuur"
+      note: "€ 2.450 excl. btw → € 2.964,50 incl. 21% btw. Vroegboek €121 (code
+        EARLYBIRD-YIN-OCT26). Termijnbetaling mogelijk."
+      source: site-yin-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin-2026-06
+      note: "200u-format, ~7 maanden; geen uren-uitsplitsing gepubliceerd."
+    assessment_described:
+      exists: yes
+      quote: "Word Yin yoga docent (Yoga Alliance) met onze 200-uurs Yin yoga
+        opleiding"
+    track_record:
+      first_seen_year: 2014
+      source: ya-register-2026-06
+    cohorts:
+      - id: yin-2026-10
+        start: "2026-10"
+        status: announced
+        source: site-yin-2026-06
+        language: nl
+        note: "Start 3 okt 2026, ~7 maanden."
+
+  - id: 200-vinyasa-intensive
+    name: "Vinyasa Yoga Teacher Training Intensive (EN)"
+    url: https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/
+    format_label: "200"
+    style_claimed: "Vinyasa yoga (Engelstalige summer intensive)"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200-hour Yoga Alliance certified training; register as RYT 200"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Externe accreditatie; RYS onder 'Johan Noorloos Teachertraining'."
+      - body: other
+        label_claimed: "Yoga Alliance & Het Nieuwe Yoganetwerk certified diploma"
+        verified: no
+        source: site-intensive-2026-06
+        note: "ZELF-CERTIFICERING (Het Nieuwe Yoganetwerk = DNYS' eigen netwerk); zie
+          claim hny-zelfcertificering."
+    delivery:
+      mode: in_person
+      structure: intensive
+      duration_months_min: 1
+      language: en
+    price:
+      amount_eur: 2964.50
+      vat: incl
+      published: yes
+      note: "€ 2.450 excl. VAT → € 2.964,50 incl. 21% VAT. Early Bird €121 (eerste 5;
+        code EARLYBIRD-VINYASA-INTENSIVE)."
+      source: site-intensive-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-intensive-2026-06
+      note: >
+        Volledig 200u-programma in 3,5 weken immersion, dagelijks 10:00-17:00,
+        Amsterdam. Bevat 'mentored teaching labs' + feedback van senior
+        teachers; geen geïsoleerd uren-/lespraktijk-urental gepubliceerd.
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "mentored teaching labs, feedback from senior teachers, integration of
+        everything you've learned"
+    track_record:
+      first_seen_year: 2026
+      source: site-intensive-2026-06
+      note: "Als 'NEW TRAINING' aangekondigd; eerste editie start 27 jul 2026."
+    cohorts:
+      - id: intensive-2026-07
+        start: "2026-07"
+        status: announced
+        source: site-intensive-2026-06
+        language: en
+        note: "Start 27 jul 2026, 3,5 weken, dagelijks 10-17u, Amsterdam."
+
+claims:
+  - id: hny-zelfcertificering
+    scope: "provider"
+    quote: "Onze opleidingen zijn gecertificeerd door Het Nieuwe Yoganetwerk, dat
+      staat voor veiligheid, verbinding, integriteit en gelijkwaardigheid. Onze
+      yoga opleidingen zijn daarnaast erkend door de Yoga Alliance."
+    category: accreditation
+    source: site-yin-2026-06
+  - id: hny-eigen-netwerk
+    scope: "provider"
+    quote: "Dit is het netwerk van en voor yogadocenten, trainers en coaches, die
+      door De Nieuwe Yogaschool zijn opgeleid."
+    category: accreditation
+    source: netwerk-2026-06
+  - id: tweeduizend-studenten
+    scope: "provider"
+    quote: "Meer dan 2.000 studenten gingen je voor!"
+    category: other
+    source: site-vinyasa-2026-06
+
+people:
+  - id: johan-noorloos
+    name: "Johan Noorloos"
+    trainings_claimed:
+      - label: "houder YA-RYS ('Johan Noorloos Teachertraining')"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "mede-oprichter DNYS (2013); auteur ('Het Nieuwe Yogaboek: Anicha
+          yoga'); leidde naar eigen zeggen duizenden yogadocenten op"
+        registry: none
+        verified: unknown
+        source: site-vinyasa-2026-06
+  - id: charlotte-simons
+    name: "Charlotte Simons"
+    background:
+      - field: "geneeskunde"
+        credential: "arts (afgestudeerd 2011; psychiatrie + 7 jaar militair arts);
+          acupunctuur voor artsen; doceert Yin/Vinyasa/Yogatherapie"
+        registry: big
+        verified: unknown
+        source: site-vinyasa-2026-06
+  - id: simon-rowe
+    name: "Simon Rowe"
+    trainings_claimed:
+      - label: "Yoga Alliance E-RYT 500, YACEP; 500u bij Global School of Prana Flow
+          Yoga"
+        verified: unknown
+        source: site-vinyasa-2026-06
+    background:
+      - field: "yoga"
+        credential: "vakdocent DNYS Vinyasa. CROSS-PROVIDER: ook faculty bij Yoga Moves
+          300u (id yoga-moves) — docent-overlap-specimen"
+        registry: none
+        verified: unknown
+        source: site-vinyasa-2026-06
+  - id: moena-de-jong
+    name: "Moena de Jong"
+    background:
+      - field: "yoga"
+        credential: "DNYS-docent (Vinyasa/Yin/filosofie). CROSS-PROVIDER: 'Beatrice
+          Savaris & Moena De Jong' staat als eigen YA-RYS in de enumeratie
+          (2026-04)"
+        registry: none
+        verified: unknown
+        source: site-vinyasa-2026-06
