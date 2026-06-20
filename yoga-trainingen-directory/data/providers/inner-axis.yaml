@@ -1,0 +1,216 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: inner-axis
+name: Inner Axis
+aka:
+  [
+    "Max Strom",
+    "Inner Axis Yoga Teacher Training",
+    "Inner Axis - health, transformation, empowerment"
+  ]
+website: https://maxstrom.com
+status: active
+locations:
+  - city: Utrecht
+    address: "Sint Janshovenstraat (Yoga Moves studio ONE)"
+    note: >
+      Gastlocatie: het in-person segment wordt gehost bij Yoga Moves Utrecht.
+      Dit is ook het YA-registratieadres. Zie ook provider yoga-moves (aparte
+      RYS van de studio zelf).
+  - city: "Salzburg (regio), Oostenrijk"
+    note: "Segment 2 (Breathe to Heal) op een retraitecentrum in de lagere Alpen;
+      Applied Anatomy-segment is volledig online (live)."
+crkbo:
+  registered: unknown
+  checked: "2026-06-18"
+  source: crkbo-register-2026-06
+  note: >
+    Geen CRKBO-Instellingen-registratie gevonden: gezocht op "Strom" (0
+    treffers), "Inner" (13 treffers, geen Inner Axis) en "Axis" (alleen 'Axis
+    Consultancy Hattem') op 2026-06-18. Docenten-register niet gecontroleerd en
+    geen NL-rechtspersoon (KvK) geïdentificeerd → unknown, niet no (§4.11).
+    Internationaal persoonlijk merk (Max Strom, VS/NL); inschrijving/facturatie
+    via maxstrom.com. Het in-person segment wordt gehost bij Yoga Moves Utrecht
+    (dat wél CRKBO heeft), maar of de opleiding via die CRKBO factureert is
+    onbekend.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Inner Axis (Max Strom)"
+    first_registered: "2008-04"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      Eigen YA-RYS van Max Strom, oorspronkelijk geregistreerd onder de naam
+      "Yoga Moves" op het adres van Yoga Moves studio ONE (Sint Janshovenstraat,
+      Utrecht) — vandaar dat de YA-profiel-URL nog de slug "Yoga-Moves" draagt.
+      Het profiel is later hernoemd naar "Inner Axis - health, transformation,
+      empowerment" (live bevestigd 2026-06-18, adres Sint Janshovenstraat
+      Utrecht). Dit is een APARTE registratie van de eigen RYS van de Yoga
+      Moves-studio (Hilary Brown, id yoga-moves) — twee YA-scholen op één adres.
+      RYS-niveau (200) en eerste registratie (2008-04) uit de
+      YA-directory-enumeratie.
+founded_year:
+  value: 2008
+  source: ya-register-2026-06
+  note: "YA-RYS sinds apr 2008 (oorspr. als 'Yoga Moves'); Max Strom doceert yoga
+    sinds 1994."
+depth: listed
+last_verified: "2026-06-18"
+sources:
+  - id: site-maxstrom-2026-06
+    type: website
+    url: https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/
+    archived_url: https://web.archive.org/web/20260620133612/https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/
+    captured: "2026-06-18"
+    note: "Opleidingspagina: structuur, faculty, dagrooster, ethiek-code. Geen prijs
+      of cohortdatum."
+    local_snapshot: data/archives/inner-axis/site-maxstrom-2026-06-2026-06-20.pdf
+  - id: signup-2026-06
+    type: website
+    url: https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom
+    archived_url: https://web.archive.org/web/20260620133755/https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom
+    captured: "2026-06-18"
+    note: "Kajabi interesse-/aanmeldformulier; geen prijs of data. Linkt een
+      'Medical disclaimer'."
+    local_snapshot: data/archives/inner-axis/signup-2026-06-2026-06-20.pdf
+  - id: host-2026-06
+    type: website
+    url: https://yogamoves.nl/teacher-training/max-strom-inner-axis-tt/
+    archived_url: https://web.archive.org/web/20260620133927/https://www.yogamoves.nl/teacher-training
+    captured: "2026-06-18"
+    note: "Gastpagina van Yoga Moves Utrecht die de Inner Axis TT host/aankondigt
+      (bevestigt de host-relatie)."
+    local_snapshot: data/archives/inner-axis/host-2026-06-2026-06-20.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgscAAA&sid=0013g000002nmYlAAI&name=Yoga-Moves
+    archived_url: null
+    captured: "2026-06-18"
+    note: >
+      Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde
+      lokale capture nodig. URL-slug "Yoga-Moves" maar rendert als "Inner Axis -
+      health, transformation, empowerment", adres Sint Janshovenstraat Utrecht.
+    local_snapshot: data/archives/inner-axis/ya-register-2026-06-2026-06-20.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Strom"
+    captured: "2026-06-18"
+    note: >
+      Negatieve check (bewijs van afwezigheid): "Strom" → 0 treffers; ook
+      "Inner" (geen Inner Axis) en "Axis" (alleen 'Axis Consultancy')
+      gecontroleerd 2026-06-18. Snapshot legt het lege/niet-matchende resultaat
+      vast.
+    local_snapshot: data/archives/inner-axis/crkbo-register-2026-06-2026-06-20.pdf
+
+programs:
+  - id: 200-inner-axis
+    name: "Inner Axis Yoga Teacher Training (200-hour)"
+    url: https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/
+    format_label: "200"
+    style_claimed: "Inner Axis — Max Strom's breath- en bewegingssysteem (yoga,
+      breathwork, Qi Gong, bewegingstherapie); ademgeïnitieerde beweging"
+    styles: [ own_method ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200-hour Yoga Alliance Registered Yoga School; Max Strom E-RYT
+          500, YACEP"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS-registratie geverifieerd; zie registrations voor de holder-nuance
+          (oorspr. 'Yoga Moves')."
+    delivery:
+      mode: hybrid
+      structure: intensive
+      language: en
+    price:
+      amount_eur: null
+      vat: unknown
+      published: not_published
+      note: >
+        Geen prijs gepubliceerd op opleidings- of inschrijfpagina; inschrijving
+        via een Kajabi-interesseformulier zonder bedrag of cohortdata. Wie
+        eerder de 40-uurs Breathe to Heal Facilitator Training volgde krijgt
+        korting ("tuition will be adjusted accordingly").
+      source: signup-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-maxstrom-2026-06
+      note: >
+        28 opleidingsdagen totaal, hybride. Segment 1: 15 dagen in-person Inner
+        Axis yoga/beweging met Max (1 rustdag). Segment 2: Breathe to Heal
+        (retraite Oostenrijk) + 6 dagen Applied Anatomy live online (Jamie
+        Elmer, 3 weekenden). Max doceert 21 dagen, Jamie 7, + 4u online nazorg.
+        Geen uren-uitsplitsing of geïsoleerd lespraktijk-urental gepubliceerd;
+        wel posture labs en "practicing teaching" in het dagrooster (9-16:30
+        incl. 1,5u pauze).
+    assessment_described:
+      exists: not_published
+      quote: "there is some required reading, along with a few short writing
+        assignments"
+    track_record:
+      first_seen_year: 2008
+      source: ya-register-2026-06
+      note: >
+        YA-RYS sinds 2008; gehost bij Yoga Moves Utrecht. Inschrijfpagina toont
+        geen aangekondigd cohort met datum (interesse-formulier) — geen Cohort
+        met status announced opgenomen.
+    teachers:
+      - person_id: max-strom
+        role: "hoofddocent / oprichter Inner Axis"
+        teaches: [ "Inner Axis yoga & beweging", "breathwork", "teaching methodology" ]
+      - person_id: jamie-elmer
+        role: "faculty"
+        teaches: [ "Applied Anatomy (live online)" ]
+
+claims:
+  - id: inner-axis-conditions
+    scope: "program:200-inner-axis"
+    quote: "Combining yoga, breath work, Qi Gong and movement therapy, Max developed
+      the groundbreaking system Inner Axis, designed to alleviate crippling
+      anxiety, depression, PTS and sleep problems."
+    category: health_outcome
+    source: site-maxstrom-2026-06
+  - id: inner-axis-relieve
+    scope: "program:200-inner-axis"
+    quote: "you want to help your students reduce their stress levels, profoundly
+      relieve anxiety, depression, grief and PTS. This is what the Inner Axis
+      System can do."
+    category: health_outcome
+    source: site-maxstrom-2026-06
+  - id: rapid-results
+    scope: "provider"
+    quote: "His field-tested method focuses on the causes rather than the symptoms
+      and his system is known to produce rapid results."
+    category: health_outcome
+    source: site-maxstrom-2026-06
+
+people:
+  - id: max-strom
+    name: "Max Strom"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: unknown
+        source: site-maxstrom-2026-06
+    background:
+      - field: "yoga/breathwork"
+        credential: "doceert yoga sinds 1994; ontwikkelaar Inner Axis-systeem; auteur
+          ('A Life Worth Breathing', 'There Is No App For Happiness');
+          VS-geboren, NL-gevestigd, doceert in het Engels"
+        registry: none
+        verified: unknown
+        source: site-maxstrom-2026-06
+  - id: jamie-elmer
+    name: "Jamie Elmer"
+    background:
+      - field: "bewegingstherapie/anatomie"
+        credential: "movement therapist, E-RYT 500, YACEP; BA Dance Anatomy (CalArts);
+          verzorgt het Applied Anatomy-segment"
+        registry: other
+        verified: unknown
+        source: site-maxstrom-2026-06
