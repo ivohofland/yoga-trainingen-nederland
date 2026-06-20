@@ -1,0 +1,186 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yogaplace
+name: Yogaplace
+aka: [ "Yogaplace Academy" ]
+website: https://yogaplace.nl
+status: active
+locations:
+  - city: Sittard
+    address: "Rijksweg Zuid 43"
+    note: "studio + Academy; trainingsweekenden van de 200u-opleiding"
+  - city: Belfeld
+    address: "Landgoed Leonardushoeve"
+    note: "interne (residentiële) trainingsweek van de 200u-opleiding"
+crkbo:
+  registered: unknown
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Zoekterm "Yogaplace" in het CRKBO Register Instellingen → 0 treffers (geen
+    instelling met 'Yogaplace' in de naam, 2026-06-20). De opleiding wordt MÉT
+    21% btw verkocht (€3695 incl. btw), dus vrijstelling wordt niet toegepast.
+    Juridische naam/KvK niet volledig doorzocht → unknown, niet no (§4.11:
+    'charges btw → vrijstelling onwaarschijnlijk' blijft unknown).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Yogaplace Academy"
+    first_registered: "2016-04"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS geverifieerd op het live YA-profiel "Yogaplace Academy" (Sittard,
+      talen NL+EN; bevestigd 2026-06-20). Opvallend: de opleidingspagina
+      formuleert de accreditatie ZACHT — "voldoet aan de criteria van Yoga
+      Alliance US" en "RYT 200 aanvragen" — terwijl de RYS reëel en actief is
+      (de school onderclaimt dus eerder dan overclaimt). RYS-niveau (200) +
+      eerste registratie (2016-04) uit de YA-directory-enumeratie.
+legal:
+  legal_name: "Yogaplace Academy"
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://yogaplace.nl/academy/opleidingen/yoga-docentenopleiding/
+    archived_url: null
+    captured: "2026-06-20"
+    note: "200u Ashtanga-based docentenopleiding: programma, data, prijs,
+      certificering, docenten."
+    local_snapshot: data/archives/yogaplace/site-2026-06-2026-06-20.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002piA3AAI&sid=0013g000002nnjIAAQ&name=Yogaplace-Academy
+    archived_url: null
+    captured: "2026-06-20"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "Yogaplace
+      Academy", Sittard, talen NL+EN, RYS. RYS-niveau (200) + eerste registratie
+      (2016-04) uit de YA-directory-enumeratie.
+    local_snapshot: data/archives/yogaplace/ya-register-2026-06-2026-06-20.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Yogaplace"
+    captured: "2026-06-20"
+    note: >
+      Negatieve check: "Yogaplace" → 0 treffers (2026-06-20). Register zonder
+      permalink; bewijs is de gefilterde (lege) snapshot; Wayback overgeslagen
+      voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/yogaplace/crkbo-register-2026-06-2026-06-20.pdf
+
+programs:
+  - id: 200-ashtanga
+    name: "Yoga Docentenopleiding Ashtanga based (200 uur)"
+    url: https://yogaplace.nl/academy/opleidingen/yoga-docentenopleiding/
+    format_label: "200"
+    style_claimed: "Ashtanga based — traditie T. Krishnamacharya / K. Pattabhi Jois,
+      achtvoudige pad van Patanjali; pranayama in de Sri O.P. Tiwari-lijn;
+      lesmethodologie ook in Easy/Vinyasa/Power flow"
+    styles: [ ashtanga ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Onze Yoga docentenopleiding voldoet aan de criteria van Yoga
+          Alliance US; met het certificaat kun je RYT 200 aanvragen"
+        verified: yes
+        source: ya-register-2026-06
+        note: >
+          RYS geverifieerd (live YA-profiel 'Yogaplace Academy', Sittard). De
+          pagina formuleert het ZACHT ('voldoet aan de criteria' / 'aanvragen')
+          terwijl de RYS reëel is — onderclaim. Zie registrations + claim
+          ya-criteria.
+    delivery:
+      mode: in_person
+      structure: mixed
+      duration_months_min: 8
+      language: nl
+    prerequisites_claimed: "toelating via inschrijfprocedure; optionele Pre-teacher
+      training vooraf (sep 2026)"
+    price:
+      amount_eur: 3695
+      vat: incl
+      published: yes
+      includes: "all-in inclusief retreat (interne residentiële trainingsweek)"
+      note: "€ 3695 all-in, incl. 21% btw. Studiebeurs mogelijk (1 mnd voor aanvang
+        bekend)."
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: >
+        200u over 8 maanden: 7 trainingsweekenden (Sittard) + 1 interne
+        residentiële week (Belfeld). Geen uren-uitsplitsing gepubliceerd.
+        "Praktijkstage bij een erkende yogaschool" = begeleide lespraktijk, niet
+        gekwantificeerd. Bevat ook mentoring + intervisie.
+    assessment_described:
+      exists: not_published
+      quote: "Na afronding van deze yogaopleiding ontvang je een officieel certificaat
+        van Yogaplace Academy, Docentenopleiding 200 uur."
+    track_record:
+      first_seen_year: 2016
+      source: site-2026-06
+      note: "RYS-vermelding in YA-directory sinds 2016; reviews van cohorten
+        2020-2023; jaarlijkse opleiding."
+    cohorts:
+      - id: yogaplace-2027-03
+        start: "2027-03"
+        status: announced
+        source: site-2026-06
+        language: nl
+        note: "Start maart 2027, 8 maanden; inschrijving sluit 5 feb 2027; optionele
+          Pre-teacher training sep 2026."
+    teachers:
+      - person_id: manon-simonis
+        role: "founder, primary teacher & hoofddocent"
+      - person_id: chantal-leenders
+        role: "primary teacher, hoofddocent opleidingen"
+      - person_id: sanne-hermans
+        role: "primary teacher, hoofddocent opleidingen"
+      - person_id: lisa-louer
+        role: "primary teacher, hoofddocent opleidingen"
+
+claims:
+  - id: ya-criteria
+    scope: "program:200-ashtanga"
+    quote: "Met dit certificaat kan je een Registered Yoga Teacher (RYT 200)
+      certificering aanvragen bij Yoga Alliance US. Onze Yoga docentenopleiding
+      voldoet aan de criteria van Yoga Alliance US."
+    category: accreditation
+    source: site-2026-06
+
+people:
+  - id: manon-simonis
+    name: "Manon Simonis"
+    trainings_claimed:
+      - label: "E-RYT 500 & YACEP (Yoga Alliance)"
+        verified: unknown
+        source: site-2026-06
+    background:
+      - field: "yoga"
+        credential: "founder Yogaplace; primary teacher en hoofddocent van de opleiding"
+        registry: none
+        verified: unknown
+        source: site-2026-06
+  - id: chantal-leenders
+    name: "Chantal Leenders"
+    trainings_claimed:
+      - label: "E-RYT 200"
+        verified: unknown
+        source: site-2026-06
+  - id: sanne-hermans
+    name: "Sanne Hermans"
+    trainings_claimed:
+      - label: "RYT 200"
+        verified: unknown
+        source: site-2026-06
+  - id: lisa-louer
+    name: "Lisa Louer"
+    trainings_claimed:
+      - label: "E-RYT 200"
+        verified: unknown
+        source: site-2026-06
