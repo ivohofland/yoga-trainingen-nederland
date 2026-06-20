@@ -12,7 +12,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(`\n✓ ${providers.length} provider record(s) valid\n`);
+console.log();
 for (const p of providers) {
   console.log(`  ${p.name} [${p.depth}] — completeness ${completeness(p)}%`);
   for (const program of p.programs) {
@@ -29,4 +29,6 @@ for (const p of providers) {
     console.log(parts.join(" | "));
   }
 }
-console.log();
+// Conclusie onderaan: bij een lange lijst blijft de uitkomst zo in beeld
+// zonder terugscrollen.
+console.log(`\n✓ ${providers.length} provider record(s) valid\n`);
