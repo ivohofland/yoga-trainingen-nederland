@@ -1,0 +1,198 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: thrive-yoga
+name: Thrive Yoga
+aka: [ "Thrive Yoga & Pilates", "Thrive Training" ]
+website: https://thriveyoga.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Sumatrakade 1, 1019 BJ (Zeeburg)"
+    note: "hoofdvestiging + YA-adres. Thrive heeft 4 boetiekstudio's in Amsterdam
+      Oost (Zeeburg, IJburg, Oost/Indische buurt, Celebes)."
+  - city: Amsterdam
+    address: "IJburg — 'Stadsoase Naar Zee' (City Oasis by the Sea)"
+    note: "opleidingslocatie van de 200u Vinyasa-opleiding"
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Thrive Training"
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Thrive" → exact 1 treffer "Thrive Training,
+    Amsterdam, www.thriveyoga.nl" (2026-06-20). HOLDER-NUANCE: geregistreerd als
+    "Thrive Training", niet als "Thrive Yoga BV" (de KvK-entiteit). De
+    opleidings- pagina stelt bovendien EXPLICIET "De training is vrijgesteld van
+    btw CRKBO" → price.vat = exempt_crkbo (beide helften van §4.11 sluiten aan).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Thrive Yoga"
+    first_registered: "2018-06"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS geverifieerd op het live YA-profiel "Thrive Yoga" (Amsterdam 1019 BJ;
+      talen NL+EN; bevestigd 2026-06-20). RYS-niveau (200) en eerste registratie
+      (2018-06) uit de YA-directory-enumeratie. De opleidingspagina linkt ook
+      een ouder YA-profiel (r.yogaalliance.org sid=11559).
+legal:
+  kvk: "68469500"
+  legal_name: "Thrive Yoga BV"
+founded_year:
+  value: 2012
+  source: site-2026-06
+  note: "Thrive opgericht in 2012 door Marco; Marco leidt yogadocenten op sinds
+    2018 (= jaar YA-RYS)."
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://thriveyoga.nl/events/vinyasa-yoga-opleiding-amsterdam/
+    archived_url: https://web.archive.org/web/20260620171305/https://thriveyoga.nl/events/vinyasa-yoga-opleiding-amsterdam/
+    captured: "2026-06-20"
+    note: >
+      200u Vinyasa Yoga Opleiding: programma per weekend, prijs (€3050, btw-vrij
+      CRKBO), data 2 cohorten + upcoming 2027, docenten, locatie IJburg.
+    local_snapshot: data/archives/thrive-yoga/site-2026-06-2026-06-20.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjWnAAI&sid=0013g000002np1JAAQ&name=Thrive-Yoga
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Thrive
+      Yoga', Amsterdam, talen NL+EN, RYS."
+    local_snapshot: data/archives/thrive-yoga/ya-register-2026-06-2026-06-20.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Thrive"
+    captured: "2026-06-20"
+    note: >
+      Zoekrecept: tik "Thrive" in het Naam-veld → 1 treffer "Thrive Training,
+      Amsterdam". Register zonder permalink; bewijs is de gefilterde snapshot;
+      Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/thrive-yoga/crkbo-register-2026-06-2026-06-20.pdf
+
+programs:
+  - id: 200-vinyasa
+    name: "Vinyasa Yoga Opleiding (200u)"
+    url: https://thriveyoga.nl/events/vinyasa-yoga-opleiding-amsterdam/
+    format_label: "200"
+    style_claimed: "Vinyasa; combineert Ashtanga Vinyasa-benadering + elementen
+      Jivamukti Yoga + Functionele Yoga, met kennismaking Yin. Drie pijlers:
+      (functionele) anatomie, filosofie (Bhakti/mantra) en persoonlijke
+      ontwikkeling; ook pranayama"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Thrive Vinyasa Yoga Opleiding Amsterdam (200 uur Yoga Alliance);
+          registratie als RYT na het certificaat"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS van Thrive geverifieerd in het register."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 9
+      language: nl
+    prerequisites_claimed: "enige yoga-ervaring (lessen of eigen practice);
+      gemotiveerd; geschikt voor aankomend docent én verdieping eigen practice"
+    price:
+      amount_eur: 3050
+      vat: exempt_crkbo
+      published: yes
+      includes: "reader; tijdens de training 10% korting op maandabonnement of 20% op
+        strippenkaart"
+      excludes: "overige boeken + het volgen van yogalessen buiten de weekenden"
+      note: >
+        €3050 reguliere prijs; €250 aanbetaling bij inschrijving, restant
+        uiterlijk 4 weken voor aanvang; betaling in 4 termijnen mogelijk (+€50
+        toeslag). EXPLICIET btw-vrij (CRKBO).
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: >
+        9 weekenden over 9 maanden (3x vrijdagavond 19-21 + za/zo 09:00-17:00),
+        alle dagdelen fysiek. Daarnaast verwacht: gem. 4 yogalessen/maand (32
+        totaal, min. 12 met de eigen mentor). 'Asana in Depth' (2
+        sessies/weekend), teaching skills + sequencing (eigen lessen
+        voorbereiden). Geen geïsoleerd contact-/lespraktijk-urental
+        gepubliceerd.
+    group_size_claimed:
+      max: 14
+      source: site-2026-06
+      note: "Min. 10, max. ±14 cursisten, verdeeld over 2 mentorgroepen."
+    assessment_described:
+      exists: not_published
+      quote: "na succesvolle afronding ontvang je het Thrive Yoga Vinyasa-certificaat"
+    track_record:
+      first_seen_year: 2018
+      source: site-2026-06
+      note: >
+        Marco leidt op sinds 2018 (= YA-RYS); oud-deelnemers o.a. 2019.
+        Jaarlijkse najaarsstart. Pagina noemt meerdere cohorten: een lopend
+        '2026'-traject en de upcoming 2027-editie.
+    cohorts:
+      - id: vinyasa-2025-10
+        start: "2025-10"
+        end: "2026-06"
+        status: confirmed_ran
+        source: site-2026-06
+        language: nl
+        note: "Najaar 2025–jun 2026 ('De 2026 training is al begonnen'); volledige
+          datumlijst gepubliceerd, laatste weekend 5-7 jun 2026."
+      - id: vinyasa-2027-10
+        start: "2027-10"
+        status: announced
+        source: site-2026-06
+        language: nl
+        note: "Vinyasa Yoga Opleiding 2027, opent medio 2026; ook Engelstalige variant
+          ('International Teacher Training, English Spoken')."
+    teachers:
+      - person_id: marco
+        role: "hoofddocent / oprichter Thrive"
+      - person_id: stefania
+        role: "hoofddocent"
+      - person_id: gretchen
+        role: "senior teacher"
+
+people:
+  - id: marco
+    name: "Marco"
+    trainings_claimed:
+      - label: "500u YACEP; Vinyasa 500u (Svaha Yoga); Jivamukti 300u (India)"
+        verified: unknown
+        source: site-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          oprichter Thrive (2012); 500u Vinyasa bij Svaha Yoga; Yin bij Yoga
+          Garden (Anat Geiger, 200u) + Paul Grilley (100u VS); Jivamukti 300u in
+          India. LINEAGE-CROSS: Svaha Yoga + Anat Geiger (= oprichter TFY,
+          geparkeerd).
+        registry: none
+        verified: unknown
+        source: site-2026-06
+  - id: stefania
+    name: "Stefania"
+    background:
+      - field: "yoga"
+        credential: "hoofddocent; advocaat + gediplomeerd yogaleraar/masseuse;
+          achtergrond Ashtanga + Jivamukti, functionele beweging, Zen Yoga"
+        registry: none
+        verified: unknown
+        source: site-2026-06
+  - id: gretchen
+    name: "Gretchen"
+    trainings_claimed:
+      - label: "200u YACEP (Laughing Lotus, San Francisco, 2012) + 300u+ bijscholing"
+        verified: unknown
+        source: site-2026-06
