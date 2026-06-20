@@ -110,6 +110,7 @@ sources:
       Gedetailleerd: 10-weekenden-curriculum (4 in Module 1, 6 in Module 2),
       per-weekend-inhoud, docentachtergronden, losse moduleprijzen,
       groepsgroottes, toelatingseisen.
+    local_snapshot: data/archives/balanzs/brochure-2026-06-2026-06-20.pdf
   - id: terms-2026-06
     type: website
     url: https://balanzs.nl/algemene-voorwaarden/
