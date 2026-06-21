@@ -116,6 +116,7 @@ export const Module = strictObject({
       total: z.number().positive().nullable().optional(),
       contact: z.number().positive().nullable().optional(),
     })
+    .strict()
     .optional(),
   /** Some providers advertise modules in days only (pilot: YAN). */
   days_claimed: z.number().positive().optional(),
@@ -140,6 +141,7 @@ export const Cohort = strictObject({
   source: z.string(),
   price_at_time: z
     .object({ amount_eur: z.number().positive(), vat: Price.shape.vat })
+    .strict()
     .optional(),
   lead_teachers: z.array(z.string()).optional(),
   /** Per-run override where program-level language is "mixed" ("depends on the group"). */
@@ -173,6 +175,7 @@ export const Claim = strictObject({
       reviewed: YearMonth,
       methodology_version: z.string(),
     })
+    .strict()
     .optional(),
 });
 export type Claim = z.infer<typeof Claim>;
@@ -318,16 +321,19 @@ export const Program = strictObject({
   }),
   group_size_claimed: z
     .object({
+      min: z.number().positive().nullable().optional(),
       max: z.number().positive().nullable().optional(),
       source: z.string().optional(),
       note: z.string().optional(),
     })
+    .strict()
     .optional(),
   composition: z
     .object({
       type: z.enum(["single_program", "fixed_modular", "free_assembly"]),
       modules: z.array(z.string()).optional(),
     })
+    .strict()
     .optional(),
   /** Six checkable signals; coherence is the pattern, never a field (§7). */
   coherence_signals: CoherenceSignals.optional(),
@@ -342,6 +348,7 @@ export const Program = strictObject({
       final: Quad.optional(),
       quote: z.string().optional(),
     })
+    .strict()
     .optional(),
   contract: z
     .object({
@@ -349,6 +356,7 @@ export const Program = strictObject({
       refund_published: Quad.optional(),
       min_participants: z
         .object({ clause: Quad, value: z.number().positive().optional() })
+        .strict()
         .optional(),
       installments_published: Quad.optional(),
       /** Legal entity that invoices the training — makes VAT structuring visible as fact. */
@@ -356,6 +364,7 @@ export const Program = strictObject({
       source: z.string().optional(),
       note: z.string().optional(),
     })
+    .strict()
     .optional(),
   transparency: z
     .object({
@@ -366,6 +375,7 @@ export const Program = strictObject({
       teacher_bios_published: Quad.optional(),
       source: z.string().optional(),
     })
+    .strict()
     .optional(),
   track_record: z
     .object({
@@ -375,6 +385,7 @@ export const Program = strictObject({
       source: z.string().optional(),
       note: z.string().optional(),
     })
+    .strict()
     .optional(),
   cohorts: z.array(Cohort).optional(),
   teachers: z
@@ -426,10 +437,12 @@ export const Provider = strictObject({
   }),
   registrations: z.array(Registration).default([]),
   legal: z
-    .object({ kvk: z.string().optional(), legal_name: z.string().optional() })
+    .object({ kvk: z.string().optional(), legal_name: z.string().optional(), note: z.string().optional() })
+    .strict()
     .optional(),
   founded_year: z
     .object({ value: Year.nullable(), source: z.string().optional(), note: z.string().optional() })
+    .strict()
     .optional(),
   programs: z.array(Program).default([]),
   modules: z.array(Module).default([]),

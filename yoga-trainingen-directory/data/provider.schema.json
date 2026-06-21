@@ -147,6 +147,9 @@
             },
             "legal_name": {
               "type": "string"
+            },
+            "note": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -441,6 +444,17 @@
               "group_size_claimed": {
                 "type": "object",
                 "properties": {
+                  "min": {
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "max": {
                     "anyOf": [
                       {
