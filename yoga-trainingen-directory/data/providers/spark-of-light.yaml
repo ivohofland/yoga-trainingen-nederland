@@ -1,0 +1,308 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: spark-of-light
+name: Spark of Light Yoga
+aka: [ "Spark of Light", "Andere Boeg" ]
+website: https://sparkoflightyoga.com
+status: active
+locations:
+  - city: Wageningen
+    address: "Nel Vietsstraat 14b, 6702 (YA-adres); lesweekenden in sportcentrum de
+      Bongerd / de Zwanenridder, Wageningen e.o."
+    note: "opleidingslocatie 200u (Wageningen). Vlakbij Arnhem/Ede/Nijmegen."
+  - city: Doorwerth
+    note: "opleidingslocatie 300u-modules (let op: kat aanwezig)."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Andere Boeg"
+  checked: "2026-06-21"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd, maar via een HOLDER-NUANCE: de Instelling staat NIET
+    onder "Spark of Light" of op website-substring "sparkoflight" (DevExpress
+    Website-filter matcht vanaf het begin van "www."), maar onder de naam
+    "Andere Boeg", Wageningen, met Website-kolom www.sparkoflightyoga.com —
+    gevonden via Plaats-filter "Wageningen" (2026-06-21). Naam-zoekacties op
+    "Spark of Light"/"Kamp"/"Marloes" (ook in het Docentenregister) gaven 0
+    relevante treffers. De site stelt EXPLICIET "BTW-vrijgesteld, omdat het een
+    CRKBO-erkende opleiding is" → price.vat = exempt_crkbo (register +
+    expliciete claim sluiten aan, §4.11).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200, RYS 300"
+    holder: "Spark of Light Yoga"
+    first_registered: "2018-12"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 ÉN RYS 300 geverifieerd op het live YA-profiel "Spark of Light
+      Yoga" (Nel Vietsstraat 14b, Wageningen; talen EN+NL, langzaam ook DE/FR;
+      rating 4.75/8 reviews, NPS 8.8; First Registered December 2018; bevestigd
+      2026-06-21). De RYS-200- én RYS-300-designatiebadges staan rechtsboven op
+      het profiel. LET OP voor scraping: de badges zijn afbeeldingen zonder
+      machineleesbare alt-tekst, dus een tekst-/DOM-extractie mist de RYS 300 —
+      visuele (screenshot) verificatie nodig. Onder "Upcoming Training Dates"
+      staan alleen 200u-cohorten omdat de 300u modulair is (geen vaste
+      cohortdatum).
+  - body: vyn
+    identifier: "VYN"
+    holder: "Spark of Light Yoga"
+    verified_in_register: unknown
+    source: site-200-2026-06
+    note: >
+      Beide opleidingen stellen erkenning door de Vereniging Yogadocenten
+      Nederland (VYN); afgestudeerden kunnen zich als "yogainstructeur" bij VYN
+      aanmelden. Geen per-school VYN-permalink waargenomen →
+      verified_in_register unknown tot het VYN-register dit bevestigt.
+legal:
+  legal_name: "Andere Boeg"
+  note: "CRKBO-Instellingsnaam 'Andere Boeg' (Wageningen) gekoppeld aan
+    sparkoflightyoga.com. KvK-nr niet doorzocht."
+founded_year:
+  value: 2018
+  source: ya-register-2026-06
+  note: "YA-RYS sinds dec 2018; docente geeft naar eigen zeggen ruim 25 jaar les."
+depth: listed
+last_verified: "2026-06-21"
+sources:
+  - id: site-200-2026-06
+    type: website
+    url: https://sparkoflightyoga.com/hatha-yoga-opleiding-200-uur/
+    archived_url: https://web.archive.org/web/20260621152600/https://sparkoflightyoga.com/hatha-yoga-opleiding-200-uur/
+    captured: "2026-06-21"
+    note: >
+      200u Hatha Yoga Opleiding (nondualistisch shaivisme/tantra): programma, 10
+      weekenden, data najaar 2026, prijs (€3450, BTW-vrij CRKBO),
+      YA+VYN-erkenning, groepsgrootte, practitioner- vs docent-certificaat,
+      docente Marloes van der Kamp.
+    local_snapshot: data/archives/spark-of-light/site-200-2026-06-2026-06-21.pdf
+  - id: site-300-2026-06
+    type: website
+    url: https://sparkoflightyoga.com/yoga-docentopleiding-300-uur/
+    archived_url: null
+    captured: "2026-06-21"
+    note: >
+      300u verdiepende opleiding (modulair): Yin (2×50u YA / 2×40u VYN), Yoga
+      Nidra (2×50u), Energetische Aspecten (2×50u + 1×32u); YA = 6×50u, VYN = 7
+      modules + scriptie + examen (min. 3 jaar). Locatie Doorwerth, max 16. Geen
+      prijs vermeld.
+    local_snapshot: data/archives/spark-of-light/site-300-2026-06-2026-06-21.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjxpAAA&sid=0013g000002npPJAAY&name=Spark-of-Light-Yoga
+    archived_url: null
+    captured: "2026-06-21"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Spark of
+      Light Yoga', Wageningen, talen EN/NL/(DE/FR), First Registered December
+      2018; designatiebadges RECHTSBOVEN: RYS 200 én RYS 300 (afbeeldingen
+      zonder alt-tekst → alleen visueel zichtbaar). 2 RYS200-cohorten gelijst;
+      docente Marloes van der Kamp (E-RYT500, YACEP)."
+    local_snapshot: data/archives/spark-of-light/ya-register-2026-06-2026-06-21.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Andere Boeg"
+    captured: "2026-06-21"
+    note: >
+      Holder-nuance: geregistreerd als Instelling "Andere Boeg", Wageningen,
+      Website www.sparkoflightyoga.com. Gevonden via Plaats-filter "Wageningen"
+      (naam-zoek op de brand faalt; de naam-kolom-term is "Andere Boeg").
+      Register zonder permalink; bewijs is de gefilterde snapshot; Wayback
+      overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/spark-of-light/crkbo-register-2026-06-2026-06-21.pdf
+
+programs:
+  - id: 200-hatha
+    name: "Hatha Yoga Opleiding (200u)"
+    url: https://sparkoflightyoga.com/hatha-yoga-opleiding-200-uur/
+    format_label: "200"
+    style_claimed: "Hatha yoga vanuit de nondualistisch-shaivistische (tantrische)
+      traditie: houdingen (max. gezondheid i.p.v. max. prestatie), anatomie,
+      meditaties, adem-/ontspanningstechnieken, mantra's, mudra's, bandhas,
+      pranayama, yoga nidra, filosofie & zelfonderzoek"
+    styles: [ hatha ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Erkend door Yoga Alliance; na afronding aanmelden als yogadocent
+          (200 RYT)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS 200 geverifieerd in het register."
+      - body: vyn
+        label_claimed: "Erkend door de Vereniging Yogadocenten Nederland; aanmelden als
+          yogainstructeur"
+        verified: unknown
+        source: site-200-2026-06
+        note: "VYN-erkenning nog te bevestigen in het VYN-register."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 10
+      language: nl
+    prerequisites_claimed: "geen vooropleiding; psychisch gezond (expliciet NIET
+      geschikt bij gevoeligheid voor/voorgeschiedenis van psychose of ander
+      psychiatrisch beeld). Geschikt voor aankomend docent én verdieping eigen
+      practice"
+    price:
+      amount_eur: 3450
+      variants:
+        - { label: "niet-flexibel, lesgeld in 1x (start aug 2026)", amount_eur: 3450 }
+        - { label: "niet-flexibel, lesgeld in 2x", amount_eur: 3587 }
+        - {
+            label: "losse weekend-module (bestaande docenten, mits plaats)",
+            amount_eur: 333
+          }
+      vat: exempt_crkbo
+      published: yes
+      note: >
+        Start aug 2026: €3450 (1x betaald) of €3587 (in 2x); flexibel tarief
+        +10% (zie contract). EXPLICIET BTW-vrijgesteld (CRKBO-erkend).
+        Practitioner-route: examens + werk buiten de weekenden optioneel;
+        docent-certificaat vereist ze wel.
+      source: site-200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-200-2026-06
+      note: >
+        10 lesweekenden/jaar (9 modules van 2 dagen + 2 examendagen), elke
+        lesdag 09:00-17:30. Daarnaast ~5u/week buiten de weekenden verwacht
+        (eigen beoefening, oefenen in lesgeven, achtergronden) voor het
+        docent-certificaat. Lesgeven aan medecursisten vanaf het begin; geen
+        geïsoleerd contact-/ lespraktijk-urental gepubliceerd. Online omgeving
+        vanaf sep 2026.
+    group_size_claimed:
+      min: 16
+      max: 24
+      source: site-200-2026-06
+      note: "16-24 deelnemers; vanaf feb 2027 max. 28."
+    assessment_described:
+      exists: yes
+      quote: "Wil je het certificaat voor yoga docent halen ... 2 examen-dagen; wil je
+        een practitioner-certificaat, dan zijn ... ook de examens optioneel"
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+      note: >
+        RYS sinds dec 2018; 2 instroommomenten per jaar (feb + eind aug/begin
+        sep). YA-register toont meerdere gedateerde cohorten.
+    cohorts:
+      - id: hatha-2025-08
+        start: "2025-08"
+        end: "2026-06"
+        status: confirmed_ran
+        source: ya-register-2026-06
+        language: en
+        note: "YA-register: 30 aug 2025 - 28 jun 2026 (Hatha & Tantra focus); loopt."
+      - id: hatha-2026-02
+        start: "2026-02"
+        end: "2027-01"
+        status: confirmed_ran
+        source: ya-register-2026-06
+        language: nl
+        note: "YA-register: 7 feb 2026 - 10 jan 2027; gestart (feb 2026)."
+      - id: hatha-2026-08
+        start: "2026-08"
+        status: announced
+        source: site-200-2026-06
+        language: nl
+        note: "Najaarssemester 2026: 29-30 aug, 26-27 sep, 24-25 okt, 21-22 nov, 19-20
+          dec 2026 (vervolg in 2027). Aangekondigd."
+    teachers:
+      - person_id: marloes-van-der-kamp
+        role: "hoofddocent / eigenaar"
+
+  - id: 300-verdieping
+    name: "Verdiepende Yoga Docentopleiding (300u, modulair)"
+    url: https://sparkoflightyoga.com/yoga-docentopleiding-300-uur/
+    format_label: "300"
+    style_claimed: "Multi-style verdieping: Yin yoga (meridianen, fascia, mudra,
+      adem), Yoga Nidra (gedachtenpatronen, diepe ontspanning), Energetische
+      Aspecten (prana/adem/bewustzijn, chakra yoga, ayurveda & yoga); asana-
+      uitlijning, contra-indicaties, anatomie, meditatie"
+    styles: [ multistyle, yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Erkend door Yoga Alliance; voor erkenning volg je 6 modules van
+          50 uur"
+        verified: yes
+        source: ya-register-2026-06
+        note: >
+          School draagt de RYS-300-designatie op het YA-profiel (badge
+          rechtsboven, bevestigd 2026-06-21). De 300u is opgebouwd uit 6
+          YA-erkende 50u-modules.
+      - body: vyn
+        label_claimed: "Erkend door de Vereniging Yogadocenten Nederland; 7 modules +
+          scriptie + afsluitend examen, min. 3 jaar"
+        verified: unknown
+        source: site-300-2026-06
+        note: "VYN-erkenning + vrijstellingen; nog te bevestigen in het VYN-register."
+    delivery:
+      mode: hybrid
+      structure: modular
+      duration_months_min: 12
+      duration_months_max: 36
+      language: nl
+    prerequisites_claimed: "afgeronde 200u-yogaopleiding (elders mag, na overleg
+      over ontbrekende onderdelen); modules ook los te volgen als bijscholing"
+    price:
+      vat: exempt_crkbo
+      published: no
+      note: "Geen prijs gepubliceerd op de 300u-pagina ('neem contact op'); modules
+        los te volgen. BTW-behandeling als de 200u (CRKBO) aangenomen, maar geen
+        expliciete 300u-prijsvermelding."
+      source: site-300-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-300-2026-06
+      note: >
+        YA-pad: 6 modules van 50u (geen vrijstelling). VYN-pad: 7 modules +
+        scriptie + examen, min. 3 jaar (vrijstellingen mogelijk). Modules: Yin
+        (2×50u YA / 2×40u VYN), Yoga Nidra (2×50u), Energetische Aspecten (2×50u
+        + 1×32u). Modulair instroombaar; los als 50u-bijscholing.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      required_sequence: no
+      required_sequence_note: "Elke module los instroombaar; binnen 1/2/3 jaar te
+        voltooien (VYN min. 3 jaar). Geen vaste volgorde."
+      single_cohort_intake: no
+    group_size_claimed:
+      max: 16
+      source: site-300-2026-06
+      note: "Max. 16 deelnemers."
+    assessment_described:
+      exists: yes
+      quote: "Voor erkenning bij de Vereniging Yogadocenten Nederland volg je alle 7
+        modules, schrijf je een scriptie en doe je een afsluitend examen"
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+      note: "Vervolgopleiding gekoppeld aan de 200u; modulaire, doorlopende instroom."
+    teachers:
+      - person_id: marloes-van-der-kamp
+        role: "hoofddocent / eigenaar"
+
+people:
+  - id: marloes-van-der-kamp
+    name: "Marloes van der Kamp"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "enige hoofddocent & eigenaar Spark of Light Yoga; naar eigen zeggen
+          opgegroeid met yoga en ruim 25 jaar les in yoga & meditatie;
+          nondualistisch-shaivistische/tantrische lijn"
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
