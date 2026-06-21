@@ -1,0 +1,325 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: tula
+name: Tula Yogastudio's
+aka: [ "Tula Yoga Amsterdam", "TULA Amsterdam bv" ]
+website: https://www.tulayogastudios.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Houtrijkstraat 38, 1013 VD (Westerpark)"
+    note: "opleidingslocatie (beide 200u-trainingen) + YA-adres. Tula heeft meerdere
+      studio's in Amsterdam (o.a. Westerpark, Bos en Lommer)."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "TULA Amsterdam bv"
+  checked: "2026-06-21"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "Tula" → treffer "TULA Amsterdam bv,
+    Amsterdam, www.tula.amsterdam" (2026-06-21; de 2e rij "Tarantula training &
+    acteurs" is een toevallige substring-match, geen Tula). HOLDER-NUANCE:
+    geregistreerd als "TULA Amsterdam bv", niet als de KvK-naam op de footer
+    (KvK 72041072). BEIDE opleidingspagina's stellen EXPLICIET dat de prijs 0%
+    btw bevat "since TULA is a registered vocational institute at CRKBO" →
+    price.vat = exempt_crkbo (beide helften van §4.11 sluiten aan).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Tula"
+    first_registered: "2018-09"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS geverifieerd op het live YA-profiel "Tula" (Houtrijkstraat 38,
+      Amsterdam; talen EN+NL; rating 4.71/26 reviews; bevestigd 2026-06-21).
+      First Registered September 2018. EÉN school-RYS dekt BEIDE
+      200u-programma's (Yin + Vinyasa); Tula publiceert geen aparte RYS per
+      training. LABEL-NUANCE (zie claim ryt-rys-labeling): Tula labelt zijn
+      trainingen inconsistent als "RYS 200hrs" (titels) én "RYT-200"
+      (nav/kwalificatie). RYS = het school-label dat Tula draagt; RYT = het
+      individuele afgestudeerden-label. De feitelijke registratie is deze ene
+      school-RYS; de afgestudeerde kan RYT-200 aanvragen.
+legal:
+  kvk: "72041072"
+  legal_name: "TULA Amsterdam bv"
+  note: "KvK-nr van de footer (Tula Yogastudio's). CRKBO-holder eveneens 'TULA
+    Amsterdam bv'."
+depth: listed
+last_verified: "2026-06-21"
+claims:
+  - id: ryt-rys-labeling
+    scope: provider
+    quote: "Yin Yoga RYT-200 ... Vinyasa Yoga Teacher Training RYS 200hrs"
+    category: accreditation
+    source: site-vinyasa-2026-06
+sources:
+  - id: site-yin-2026-06
+    type: website
+    url: https://www.tulayogastudios.nl/yin-yoga-teacher-training
+    archived_url: https://web.archive.org/web/20260621063759/https://www.tulayogastudios.nl/yin-yoga-teacher-training
+    captured: "2026-06-21"
+    note: >
+      Yin Yoga Teacher Training (titel 'RYS 200hrs', nav 'RYT-200'): hybride, 3
+      modules van 5 studiodagen + 10u online, data 2026-2027, prijs, btw-vrij
+      CRKBO, docent Eva de Hoijer.
+    local_snapshot: data/archives/tula/site-yin-2026-06-2026-06-21.pdf
+  - id: site-vinyasa-2026-06
+    type: website
+    url: https://www.tulayogastudios.nl/vinyasa-yoga-teacher-training
+    archived_url: https://web.archive.org/web/20260621063838/https://www.tulayogastudios.nl/vinyasa-yoga-teacher-training
+    captured: "2026-06-21"
+    note: >
+      Vinyasa Yoga Teacher Training (titel 'RYS 200hrs'): 12 weekenden,
+      curriculum, data okt-2025-cohort (VOL) + okt-2026, prijs (early bird
+      €2.790 / regulier €2.990, 0% btw CRKBO), docenten Moena de Jong & Beatrice
+      Savaris.
+    local_snapshot: data/archives/tula/site-vinyasa-2026-06-2026-06-21.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjnHAAQ&sid=0013g000002npF6AAI&name=Tula
+    archived_url: null
+    captured: "2026-06-21"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Tula',
+      Amsterdam, talen EN+NL, RYS, First Registered September 2018; docenten
+      o.a. Eva de Hoijer (E-RYT500) en Moena de Jong (E-RYT500)."
+    local_snapshot: data/archives/tula/ya-register-2026-06-2026-06-21.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Tula"
+    captured: "2026-06-21"
+    note: >
+      Zoekrecept: tik "Tula" in het Naam-veld → treffer "TULA Amsterdam bv,
+      Amsterdam, www.tula.amsterdam" (de rij 'Tarantula training & acteurs' is
+      een substring-match, niet Tula). Register zonder permalink; bewijs is de
+      gefilterde snapshot; Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/tula/crkbo-register-2026-06-2026-06-21.pdf
+
+programs:
+  - id: 200-vinyasa
+    name: "Vinyasa Yoga Teacher Training (200u)"
+    url: https://www.tulayogastudios.nl/vinyasa-yoga-teacher-training
+    format_label: "200"
+    style_claimed: "Vinyasa; asana & bandhas, (functionele) anatomie, yogische
+      anatomie (chakra's/mudra's), pranayama & meditatie, filosofie (Yoga
+      Sutras, Bhagavad Gita, 8-voudige pad), ayurveda, yoga & zwangerschap,
+      communicatie/ marketing/business"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Certified 200hrs. Vinyasa Yoga Teacher Training; na een
+          schriftelijk + praktijkexamen kom je in aanmerking voor een Yoga
+          Alliance Certification RYT-200 (Registered Yoga Teacher)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS van Tula geverifieerd in het register."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 8
+      language: en
+    prerequisites_claimed: "elk niveau; aangeraden ≥2x/week zelfpractice gedurende
+      ≥2 jaar. Geschikt voor aankomend docent én verdieping eigen practice"
+    price:
+      amount_eur: 2990
+      variants:
+        - { label: "early bird (betaald voor 1 aug 2025)", amount_eur: 2790 }
+        - { label: "regulier (betaald voor 1 okt 2025)", amount_eur: 2990 }
+      vat: exempt_crkbo
+      published: yes
+      includes: >
+        al het trainingsmateriaal; 20u online Yoga Anatomy-cursus (Viki
+        Stelma-Boviatsis); masterclass communicatie/marketing/ondernemerschap
+        (Ruben Stelma); extra oefen-lesuren in de studio; flinke korting op Tula
+        membership/strippenkaart
+      excludes: "boeken van de leeslijst; 40 verplichte yogalessen tijdens de training
+        (bij Tula of elders)"
+      note: >
+        Prijzen incl. 0% btw (CRKBO). EXPLICIET: "0% VAT is included, due to
+        Tula's registration at the CRKBO".
+      source: site-vinyasa-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-vinyasa-2026-06
+      note: >
+        12 weekenden (za/zo 10:00-18:00) = 200u geclaimd; daarnaast 20u online
+        anatomie (verplicht), 40 verplichte yogalessen, ~2u studie/week, 3 extra
+        (niet-verplichte) oefendagen. Geen geïsoleerd contact-/lespraktijk-
+        urental gepubliceerd.
+    group_size_claimed:
+      max: 10
+      source: site-vinyasa-2026-06
+      note: "Max. 10 cursisten."
+    assessment_described:
+      exists: yes
+      quote: "After graduating from this Teacher Training (passing a written and
+        practical exam), you are eligible for a Yoga Alliance Certification
+        RYT-200"
+    track_record:
+      first_seen_year: 2017
+      source: site-vinyasa-2026-06
+      note: >
+        Afgestudeerden-foto's en reviews vanaf 2017/2018 (Sarah: 'van oktober
+        2017 tot april 2018'); graduation classes 2019 & 2020 gedocumenteerd.
+        Jaarlijkse najaarsstart.
+    cohorts:
+      - id: vinyasa-2025-10
+        start: "2025-10"
+        end: "2026-05"
+        status: confirmed_ran
+        source: site-vinyasa-2026-06
+        language: en
+        note: "Start 4 okt 2025, 12 weekenden t/m examen/graduation 16-17 mei 2026;
+          volledige datumlijst gepubliceerd. Pagina: 'This training is fully
+          booked'."
+      - id: vinyasa-2026-10
+        start: "2026-10"
+        status: announced
+        source: site-vinyasa-2026-06
+        language: en
+        note: "'The next training will start in October 2026' — aangekondigd, nog geen
+          gepubliceerde datumlijst."
+    teachers:
+      - person_id: moena-de-jong
+        role: "hoofddocent / mede-ontwerper"
+      - person_id: beatrice-savaris
+        role: "hoofddocent / mede-ontwerper"
+
+  - id: 200-yin
+    name: "Yin Yoga Teacher Training (200u, hybride)"
+    url: https://www.tulayogastudios.nl/yin-yoga-teacher-training
+    format_label: "200"
+    style_claimed: "Yin Yoga (gebaseerd op het werk van Paul Grilley), met
+      mindfulness, meditatie & pranayama; fascia/anatomie, zenuwstelsel,
+      contra-indicaties, lesgeven & ethiek"
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Certified 200hrs. Yin Yoga Teacher Training; na alle 3 modules
+          kom je in aanmerking voor een Yoga Alliance Certification RYT-200"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS van Tula geverifieerd in het register."
+    delivery:
+      mode: hybrid
+      structure: modular
+      duration_months_min: 11
+      language: en
+    prerequisites_claimed: "geen vooropleiding vereist voor het volledige
+      certificaat; LET OP: zonder eerder docentdiploma/Yin-ervaring moeten
+      modules 1 & 2 afgerond zijn voordat je Yin mag lesgeven"
+    price:
+      amount_eur: 1650
+      variants:
+        - { label: "volledige training (3 modules)", amount_eur: 1650 }
+        - { label: "losse module", amount_eur: 550 }
+        - { label: "early bird per module (tijdgebonden per module)", amount_eur: 500 }
+      vat: exempt_crkbo
+      published: yes
+      note: >
+        €1.650 volledig (€550/module); early bird €500/module (module 1 t/m 1
+        aug 2026, module 2 t/m 1 dec 2026, module 3 t/m 1 mrt 2027). Prijzen
+        incl. 0% btw (CRKBO): "These prices do not include VAT, nor will this be
+        added, since TULA is a registered vocational institute at CRKBO".
+      source: site-yin-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin-2026-06
+      note: >
+        Geclaimd als 200u over 3 modules, maar de gepubliceerde deelgetallen
+        zijn INTERN INCONSISTENT: '3 modules of 60 hours' (=180u), elders '5
+        studiodagen + 10u online' per module (=±45u/module, ±135u totaal) en in
+        één tab '7 weekends + 7 days online – 50 hrs'. Geen sluitende
+        uren-uitsplitsing.
+    group_size_claimed:
+      max: 9
+      source: site-yin-2026-06
+      note: "Kleine groep: max. 9 cursisten per module (elders 'max 10' genoemd)."
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      required_sequence: no
+      required_sequence_note: "3 modules kunnen los gevolgd worden; volledige
+        200u-certificaat pas na alle 3. Zonder eerdere ervaring zijn modules 1 &
+        2 nodig voordat je Yin mag lesgeven."
+      single_cohort_intake: no
+    assessment_described:
+      exists: yes
+      quote: "Your 200-hour certificate will only be awarded after successfully
+        completing all 3 modules"
+    track_record:
+      first_seen_year: 2023
+      source: site-yin-2026-06
+      note: >
+        Yin-opleiding gepromoot met reviews (o.a. Stefanie, Carina) en een
+        e-book; eerdere lead trainer Hellen van der Harten (meta), huidige lead
+        trainer Eva de Hoijer.
+    cohorts:
+      - id: yin-2026-09
+        start: "2026-09"
+        end: "2027-07"
+        status: announced
+        source: site-yin-2026-06
+        language: en
+        note: >
+          Module 1 (Basic Training): 5 zaterdagen 19 sep - 12 dec 2026 (examen);
+          Module 2 (Mindfulness & Nervous System): 9 jan - 3 apr 2027; Module 3
+          (Meditation & Pranayama): 24 apr - 17 jul 2027. Inschrijving per
+          module open (bsport-links actief).
+    teachers:
+      - person_id: eva-de-hoijer
+        role: "hoofddocent (lead trainer Yin)"
+
+people:
+  - id: moena-de-jong
+    name: "Moena de Jong"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          internationaal yogadocent; mede-ontwerper Tula Vinyasa TT; alignment +
+          Sanskrit/mantra (harmonium). CROSS-PROVIDER: ook docent bij De Nieuwe
+          Yogaschool en houder van een eigen YA-registratie.
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
+  - id: beatrice-savaris
+    name: "Beatrice Savaris"
+    trainings_claimed:
+      - label: "Baptiste Level 1 & 2; Yin & meridianen (Annie Au); prenatale/postnatale
+          yoga (Uma Dinsmore); workshops o.a. Kathryn Budig, Tiffany Cruikshank"
+        verified: unknown
+        source: site-vinyasa-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead trainer in meerdere TT-programma's in NL & Zwitserland;
+          mede-ontwerper Tula Vinyasa TT"
+        registry: none
+        verified: unknown
+        source: site-vinyasa-2026-06
+  - id: eva-de-hoijer
+    name: "Eva de Hoijer"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead trainer Yin TT; ~20 jaar practice; Yin, Restorative,
+          Mindfulness & Meditatie; voormalig studio-eigenaar"
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
