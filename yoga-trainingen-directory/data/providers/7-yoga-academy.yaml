@@ -1,0 +1,127 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: 7-yoga-academy
+name: 7 Yoga Academy
+aka: [ "7Yoga", "7Yoga.nl" ]
+website: https://www.7yoga.nl
+status: active
+locations:
+  - city: Maarssen
+    address: "Gageldijk 2 D5, 3602 AL"
+    note: "7Yoga Academy (Utrecht-regio); studio + opleidingslocatie"
+crkbo:
+  registered: unknown
+  checked: "2026-06-20"
+  source: crkbo-register-2026-06
+  note: >
+    Geen CRKBO-Instellingen-treffer: gezocht op "7Yoga" en "7 Yoga" → 0 treffers
+    (2026-06-20). Prijspagina vermeldt geen btw; juridische naam/KvK niet
+    doorzocht → unknown, niet no (§4.11). Klein studio.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "7Yoga.nl"
+    first_registered: "2018-07"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS geverifieerd op het live YA-profiel "7Yoga.nl" (Maarssen; talen NL+EN;
+      bevestigd 2026-06-20). RYS-niveau (200) + eerste registratie (2018-07) uit
+      de YA-directory-enumeratie.
+depth: listed
+last_verified: "2026-06-20"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1
+    archived_url: https://web.archive.org/web/20260621061914/https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1
+    captured: "2026-06-20"
+    note: "RYT200-opleidingspagina (Wix): programma, prijs, locatie,
+      annuleringsbeleid. Toont het jan-2026-cohort als 'Afgelopen / niet meer
+      boekbaar'."
+    local_snapshot: data/archives/7-yoga-academy/site-2026-06-2026-06-21.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjliAAA&sid=0013g000002npDZAAY&name=7-Yoga-Academy
+    archived_url: null
+    captured: "2026-06-20"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als '7Yoga.nl',
+      Maarssen, talen NL+EN, RYS."
+    local_snapshot: data/archives/7-yoga-academy/ya-register-2026-06-2026-06-21.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "7Yoga"
+    captured: "2026-06-20"
+    note: "Negatieve check: '7Yoga' en '7 Yoga' → 0 treffers (2026-06-20).
+      Gefilterde (lege) snapshot is het bewijs; Wayback overgeslagen voor
+      crkbo.nl/Register/*."
+    local_snapshot: data/archives/7-yoga-academy/crkbo-register-2026-06-2026-06-21.pdf
+
+programs:
+  - id: 200-ryt
+    name: "Yoga Teacher Training (RYT 200)"
+    url: https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1
+    format_label: "200"
+    style_claimed: "Algemene 200u: asana, ademhaling, meditatie,
+      anatomie/fysiologie, filosofie & geschiedenis, lesopbouw & didactiek"
+    styles: []
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Internationaal erkende 200-urige Yoga Teacher Training; na
+          afronding RYT-200 certificaat erkend door Yoga Alliance"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS geverifieerd in het register."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 3
+      language: nl
+    prerequisites_claimed: "geen; voor beoefenaars die willen verdiepen én wie docent wil worden"
+    price:
+      amount_eur: 2499
+      vat: unknown
+      published: yes
+      includes: "studiemateriaal & certificaat"
+      note: "€2499 incl. studiemateriaal & certificaat; inschrijfgeld +
+        termijnbetaling mogelijk. Geen btw-vermelding → vat unknown (§4.11)."
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: "200u op locatie, verspreid over 10 weekenden (NL). Geen
+        uren-/lespraktijk-uitsplitsing."
+    assessment_described:
+      exists: not_published
+      quote: "Na afronding ontvang je een RYT-200 certificaat, erkend door Yoga
+        Alliance"
+    contract:
+      cancellation_published: yes
+      refund_published: yes
+      min_participants:
+        clause: yes
+      installments_published: yes
+      source: site-2026-06
+      note: "Tot 8 wkn voor start vol terug (min. inschrijfgeld), 8-4 wkn 50%, <4 wkn
+        geen restitutie. Recht op annulering bij onvoldoende aanmeldingen (dan
+        vol terug of kosteloos volgende editie)."
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+      note: >
+        RYS sinds 2018. Het jan-2026-cohort staat als 'Afgelopen' en 'kan niet
+        meer worden geboekt'; er is GEEN nieuw cohort aangekondigd op de pagina
+        — provider/programma bestaat, maar momenteel geen open inschrijving.
+    cohorts:
+      - id: ryt-2026-01
+        start: "2026-01"
+        status: confirmed_ran
+        source: site-2026-06
+        language: nl
+        note: "Start jan 2026, gecertificeerd 'binnen 10 weken'; pagina markeert het als
+          afgelopen/niet meer boekbaar."
