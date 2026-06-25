@@ -1,0 +1,201 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: neo-yoga-delft
+name: Neo Yoga Delft
+aka: [ "Neo Yoga", "Neo Yoga Trainingen" ]
+website: https://neoyogatrainingen.nl
+status: active
+locations:
+  - city: Delft
+    address: "Kluizenaarsbocht 6, 2614 GT"
+    note: "Neo Yoga Delft Studio (opleidingslocatie + YA-adres); gratis parkeren."
+crkbo:
+  registered: unknown
+  checked: "2026-06-21"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer onder de voor de hand liggende namen: "Neo Yoga" → 0 in het
+    Instellingenregister; "Gaag" (David van der Gaag) en "Schuurman" (Gemma
+    Schuurman) → geen Delftse/relevante treffer in het Docentenregister
+    (2026-06-21). KvK/juridische naam niet doorzocht en de site vermeldt geen
+    btw-behandeling → registered unknown (niet no; §4.11) en price.vat unknown.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Neo Yoga Delft"
+    first_registered: "2019-03"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Neo Yoga Delft"
+      (Kluizenaarsbocht 6, Delft; rating 4.83/3 reviews; First Registered March
+      2019; bevestigd 2026-06-21). YA teaching staff: David van der Gaag en
+      Akhilesh Bodhi (beiden E-RYT 500/YACEP). De opleidingspagina noemt David
+      van der Gaag + Gemma Schuurman als de TT-docenten.
+legal:
+  legal_name: "Neo Yoga Delft"
+  note: "Studio rond David van der Gaag (+ Gemma Schuurman); KvK-nr niet
+    doorzocht. Rekeningnummer NL73INGB0006133374 op de site."
+founded_year:
+  value: 2019
+  source: ya-register-2026-06
+  note: "YA-RYS sinds maart 2019."
+depth: listed
+last_verified: "2026-06-21"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://neoyogatrainingen.nl/yoga-teacher-training/
+    archived_url: https://web.archive.org/web/20260625144638/https://neoyogatrainingen.nl/yoga-teacher-training/
+    captured: "2026-06-21"
+    note: >
+      200u Hatha Yoga Teacher Training: inhoud, dagindeling, urenverdeling (180
+      contact + min. 20 zelfstudie), data 2027-cohort, prijs (€2885; €100
+      vroegboek), toetsing, voorwaarden, docenten David van der Gaag & Gemma
+      Schuurman, max 10 deelnemers.
+    local_snapshot: data/archives/neo-yoga-delft/site-2026-06-2026-06-25.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pk6uAAA&sid=0013g000002npWdAAI&name=Neo-Yoga-Delft
+    archived_url: null
+    captured: "2026-06-21"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Neo Yoga
+      Delft', Delft, RYS 200, First Registered March 2019; teaching staff David
+      van der Gaag (E-RYT500/YACEP) en Akhilesh Bodhi (E-RYT500/YACEP); 1 cohort
+      gelijst (7 jan - 10 apr 2027)."
+    local_snapshot: data/archives/neo-yoga-delft/ya-register-2026-06-2026-06-25.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Neo Yoga"
+    captured: "2026-06-21"
+    note: >
+      Negatieve check: "Neo Yoga" → 0 in Instellingen; "Gaag"/"Schuurman" → geen
+      relevante treffer in Docenten. Gefilterde (lege) snapshot is het bewijs;
+      Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/neo-yoga-delft/crkbo-register-2026-06-2026-06-25.pdf
+
+programs:
+  - id: 200-hatha
+    name: "Neo Yoga Teacher Training Hatha Yoga (200u)"
+    url: https://neoyogatrainingen.nl/yoga-teacher-training/
+    format_label: "200"
+    style_claimed: "Hatha Yoga als brede basis: asana-verdieping (techniek,
+      correcties, blessures), pranayama, Yoga Sutra's van Patanjali, props,
+      functionele anatomie, lesgeeftechnieken & lesopbouw, begeleiden van
+      ontspanning/meditatie, filosofie & geschiedenis, kennismaking met
+      verschillende yogastijlen, yogadocent als zzp'er & ethiek"
+    styles: [ hatha ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Certificering Yoga Alliance; na afronding registreren als RYT 200"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 200 van Neo Yoga Delft geverifieerd in het register; lead teacher
+          David van der Gaag is E-RYT 500."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 4
+      language: nl
+    prerequisites_claimed: "enige yoga-ervaring (geen complete beginner, geen
+      volleerde yogi). Voertaal Nederlands; non-Dutch kunnen meedoen mits
+      Nederlands verstaanbaar, en mogen in het Engels lesgeven/schrijven"
+    price:
+      amount_eur: 2885
+      variants:
+        - { label: "regulier tarief", amount_eur: 2885 }
+        - { label: "vroegboek (boeken voor 1 sep 2026)", amount_eur: 2785 }
+      vat: unknown
+      published: yes
+      includes: >
+        alle lesdagen; gebruik van de studio buiten lestijden tussen
+        trainingsdagen; toegang tot een digitale database + groepswhatsapp;
+        observeren van ervaren docenten; reader; boekenpakket; certificaat
+        (waarmee je je bij Yoga Alliance kunt inschrijven als RYT 200)
+      note: >
+        €2885 regulier, €2785 bij vroegboeken (voor 1 sep 2026). Termijnbetaling
+        mogelijk zonder extra kosten. Geen btw-vermelding → vat unknown (§4.11).
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: 180
+      self_study: 20
+      supervised_teaching_practice: null
+      breakdown_published: yes
+      source: site-2026-06
+      note: >
+        EXPLICIET gepubliceerd: 200u = 180u gezamenlijk (contact) op de
+        trainingsdagen + minimaal 20u zelfstudie (waarschijnlijk meer).
+        Deelnemers geven elke bijeenkomst (een deel van) een les (dagelijks
+        ~12:30-14:30 peer-teaching + feedback); geen geïsoleerd
+        lespraktijk-urental, maar lespraktijk is structureel en doorlopend.
+    group_size_claimed:
+      max: 10
+      source: site-2026-06
+      note: "Max. 10 deelnemers (een review noemt 9); bewust kleinschalig."
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: no
+      quote: "Het is ook mogelijk om niet te slagen voor de Teacher Training, je koopt
+        geen certificaat"
+    contract:
+      cancellation_published: yes
+      refund_published: yes
+      installments_published: yes
+      source: site-2026-06
+      note: "Geen restitutie op het lesgeld; bij gemiste dagen in overleg een passende
+        oplossing. Termijnbetaling mogelijk zonder extra kosten. Algemene
+        annuleringsvoorwaarden van Neo Yoga Trainingen van toepassing."
+    track_record:
+      first_seen_year: 2019
+      source: ya-register-2026-06
+      note: >
+        RYS sinds maart 2019; reviews van deelnemers o.a. 2022 en 2026.
+        YA-profiel bevat verouderde 'start 2022'-tekst maar een actueel
+        2027-cohort is gelijst.
+    cohorts:
+      - id: hatha-2027-01
+        start: "2027-01"
+        end: "2027-04"
+        status: announced
+        source: site-2026-06
+        language: nl
+        note: >
+          Do 7 jan - za 10 apr 2027; 8 weekenden (mix van lange 4-daagse blokken
+          en korte vr/za). LET OP interne datum-inconsistentie op de site: het
+          DATA-blok noemt 'do 11 - zo 14 feb' terwijl het programma-blok 'do 25
+          - zo 28 feb' noemt; ook één jaartal-typfout ('za 10 april 2026' i.p.v.
+          2027).
+    teachers:
+      - person_id: david-van-der-gaag
+        role: "lead teacher / eigenaar"
+      - person_id: gemma-schuurman
+        role: "docent (praktijk + zachtere yogavormen)"
+
+people:
+  - id: david-van-der-gaag
+    name: "David van der Gaag"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead teacher/eigenaar Neo Yoga Delft; E-RYT 500; Hatha Yoga.
+          YA-profiel vermeldt ook 'Akhilesh Bodhi' (E-RYT 500) als teaching
+          staff."
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
+  - id: gemma-schuurman
+    name: "Gemma Schuurman"
+    background:
+      - field: "yoga"
+        credential: "mededocent Neo Yoga Delft (praktijklessen, creatieve/zachtere
+          yogavormen). Niet als aparte YA-staff geverifieerd in de twee getoonde
+          namen."
+        registry: none
+        verified: unknown
+        source: site-2026-06
