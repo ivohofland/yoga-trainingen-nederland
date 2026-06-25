@@ -1,0 +1,267 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: pure-energy-yoga
+name: Pure Energy Yoga
+aka: [ "Pure Energy Yin Yoga", "Discover your Yin side" ]
+website: https://pureenergyyoga.nl
+status: active
+locations:
+  - city: Utrecht
+    address: "M.P. Lindostraat 4"
+    note: "YA-registratieadres. Postadres elders: Rutger Loenenweg 16, 3711 CG
+      Austerlitz."
+  - city: Amsterdam
+    address: "Yogaschool Noord, Plotterstraat 22"
+    note: "opleidingslocatie van het gebundelde 200u-cohort (host-studio;
+      inschrijving via yogaschoolnoord.nl). Modules ook in Amersfoort en België
+      (Gent/nabij Antwerpen) — 'Pure Energy Yoga on tour'."
+crkbo:
+  registered: yes
+  register: docent
+  holder: "Esther Scheen"
+  checked: "2026-06-21"
+  source: crkbo-register-2026-06
+  note: >
+    Geregistreerd in het CRKBO DOCENTENregister (niet Instellingen): zoekterm
+    "Scheen" → treffer "Esther Scheen, Utrecht" (2026-06-21). "Pure Energy" gaf
+    0 treffers in het Instellingenregister. De vrijstelling hangt dus aan de
+    persoon (Esther Scheen, lead teacher), niet aan een instelling — zelfde
+    fragiliteit als een persoonlijk gehouden YA-registratie. LET OP: de site
+    vermeldt NERGENS een btw-behandeling van de opleiding → price.vat blijft
+    unknown (§4.11), ondanks de docent-registratie.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Pure Energy Yoga"
+    first_registered: "2018-11"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Pure Energy Yoga" (M.P.
+      Lindostraat 4, Utrecht; rating 4.88/8 reviews; First Registered November
+      2018; bevestigd 2026-06-21). Eén RYS200-trainingsvenster gelijst (Sep 2024
+      - Sep 2028) — een doorlopend/modulair venster, geen vast cohort. Teaching
+      staff (3): Esther Scheen, Angelique Boset, Jeske Papadopoulos — allen
+      E-RYT 500.
+legal:
+  legal_name: "Esther Scheen"
+  note: "Eenmansschool rond lead teacher/eigenaar Esther Scheen; KvK-nr niet
+    doorzocht. CRKBO-docent op haar naam."
+founded_year:
+  value: 2018
+  source: ya-register-2026-06
+  note: "YA-RYS sinds nov 2018; Esther Scheen geeft naar eigen zeggen >20 jaar
+    yogales."
+depth: listed
+last_verified: "2026-06-21"
+sources:
+  - id: site-200-2026-06
+    type: website
+    url: https://pureenergyyoga.nl/200-uur-yin-yoga-opleiding-training/
+    archived_url: https://web.archive.org/web/20260621171404/https://pureenergyyoga.nl/200-uur-yin-yoga-opleiding-training/
+    captured: "2026-06-21"
+    note: >
+      Hoofdpagina 200u Yin Yoga opleiding: opbouw uit 4 × 50u YACEP-modules,
+      moduleinhoud, certificering (50h CE per module; 200u-diploma na 4 modules
+      + online theorie-examen), volgorde-advies, lesmateriaal.
+    local_snapshot: data/archives/pure-energy-yoga/site-200-2026-06-2026-06-21.pdf
+  - id: site-event-200-2026-06
+    type: website
+    url: https://pureenergyyoga.nl/event/yin-yoga-opleiding-200h-ya-jan-t-m-apr-2026-amsterdam-korter-traject/
+    archived_url: https://web.archive.org/web/20260621171616/https://pureenergyyoga.nl/event/yin-yoga-opleiding-200h-ya-jan-t-m-apr-2026-amsterdam-korter-traject/
+    captured: "2026-06-21"
+    note: >
+      Gebundeld 200u-cohort Amsterdam (25 sep 2026 - 17 apr 2027, 20 dagen,
+      Yogaschool Noord): prijstrappen (€847/1, €1547/2, €2159/3, €2897/4
+      modules), inhoud per module, data, docent Esther Scheen,
+      annulerings-/lesmateriaalbeleid.
+    local_snapshot: data/archives/pure-energy-yoga/site-event-200-2026-06-2026-06-21.pdf
+  - id: site-event-basis-2026-06
+    type: website
+    url: https://pureenergyyoga.nl/event/yin-yoga-basis-opleiding-amsterdam-yin-yoga-anatomie-50h-ya-2026/
+    archived_url: https://web.archive.org/web/20260621171741/https://pureenergyyoga.nl/event/yin-yoga-basis-opleiding-amsterdam-yin-yoga-anatomie-50h-ya-2026/
+    captured: "2026-06-21"
+    note: >
+      Basis-module (Yin Yoga & Anatomie 50h YA) Amsterdam: €847, 5 lesdagen (25
+      sep - 10 okt 2026), ~12u zelfstudie/huiswerk, gastdocent Angelique Boset
+      (dag 4), inschrijving via Yogaschool Noord.
+    local_snapshot: data/archives/pure-energy-yoga/site-event-basis-2026-06-2026-06-21.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjwYAAQ&sid=0013g000002npNCAAY&name=Pure-Energy-Yoga
+    archived_url: null
+    captured: "2026-06-21"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Pure
+      Energy Yoga', Utrecht, RYS 200, First Registered November 2018; teaching
+      staff Esther Scheen, Angelique Boset (E-RYT500/YACEP), Jeske Papadopoulos
+      (E-RYT500/YACEP)."
+    local_snapshot: data/archives/pure-energy-yoga/ya-register-2026-06-2026-06-21.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Docenten
+    archived_url: null
+    query: "Scheen"
+    captured: "2026-06-21"
+    note: >
+      DOCENTENregister (niet Instellingen): "Scheen" → "Esther Scheen, Utrecht".
+      "Pure Energy" gaf 0 treffers in Instellingen. Register zonder permalink;
+      bewijs is de gefilterde snapshot; Wayback overgeslagen voor
+      crkbo.nl/Register/*.
+    local_snapshot: data/archives/pure-energy-yoga/crkbo-register-2026-06-2026-06-21.pdf
+
+programs:
+  - id: 200-yin
+    name: "Yin Yoga Opleiding (200u YA, 4 modules)"
+    url: https://pureenergyyoga.nl/200-uur-yin-yoga-opleiding-training/
+    format_label: "200"
+    style_claimed: "Yin Yoga in de lijn van founders Paul & Suzee Grilley:
+      functionele anatomie & fascia, skeletale variatie, energetische anatomie
+      (meridianen, 5 elementen, Chinese geneeskunde), Qi Gong/energiewerk,
+      myofascial release (myoyin), mindfulness & meditatie, lesopbouw/thematiek"
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance geregistreerde 200u Yin Yoga opleiding; na
+          afronding aanmelden als RYT 200 (internationaal erkend docent). Elke
+          module 50h CE (YACEP)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 200 van Pure Energy Yoga geverifieerd in het register; lead teacher
+          Esther Scheen is E-RYT 500."
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 7
+      language: nl
+    prerequisites_claimed: "geen; advies om met de basis-module (Anatomie) te
+      starten. Enige volgorde-eis: Yin Yoga & Energiewerk (Qi Gong) vereist
+      eerst Yin Yoga & Energie (of een basis in meridianenleer + 5 elementen)"
+    price:
+      amount_eur: 2897
+      variants:
+        - { label: "1 module (50u)", amount_eur: 847 }
+        - { label: "2 modules (100u)", amount_eur: 1547 }
+        - { label: "3 modules (150u)", amount_eur: 2159 }
+        - { label: "4 modules (200u, volledige opleiding)", amount_eur: 2897 }
+      vat: unknown
+      published: yes
+      includes: >
+        per module een full-colour Nederlandstalig Pure Energy Yin Yoga lesboek
+        (4 totaal), playlists, lesoverzichten, ondersteunend videomateriaal, 2
+        guasha-tools, 2 kleine fasciaballetjes + 1 opblaasbare fasciabal, en
+        (eventueel) het online examen
+      excludes: "'The Complete Guide to Yin Yoga' (Bernie Clark) — zelf aanschaffen"
+      note: >
+        €2897 voor de volledige 200u (4 modules), of per pakket/module
+        afzonderlijk; termijnbetaling mogelijk. GEEN btw-vermelding op de site →
+        vat unknown (§4.11), ondanks CRKBO-docentregistratie van Esther Scheen.
+      source: site-event-200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-200-2026-06
+      note: >
+        4 modules van 50u (Anatomie/basis, Energie, Energiewerk/Qi Gong,
+        Myofascial release/myoyin). Elke 50u-module = 5 lesdagen + persoonlijke
+        zelfstudie/lees-/huiswerkopdrachten (~12u/module, grotendeels
+        Bernie-Clark-lezen vooraf). 200u-diploma = 4 modules + online
+        theorie-examen + afrondingsopdracht. Geen geïsoleerd contact-/
+        lespraktijk-urental gepubliceerd.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      required_sequence: no
+      required_sequence_note: "Modules in flexibele volgorde, basis aanbevolen eerst;
+        uitzondering: Qi Gong vereist eerst de Energie-module."
+      single_cohort_intake: no
+      single_cohort_intake_note: "Modules minstens 2×/jaar, op wisselende locaties
+        (Amsterdam/Amersfoort/België); doorlopende, samen-te-stellen instroom.
+        Daarnaast een gebundeld 200u-cohort (zie cohorts)."
+      modules_sold_separately: yes
+      modules_sold_separately_note: >
+        Dezelfde 4 modules worden óók los verkocht als YACEP-nascholing (50h CE)
+        voor reeds gediplomeerde docenten — dubbele dienst op 200u-niveau: ieder
+        modulair onderdeel telt mee voor het 200u-traject én staat los als
+        continuing-education-product (vgl. AALO).
+    assessment_described:
+      exists: yes
+      quote: "Als je alle vier de modules volgt dan kun je een online theorie-examen
+        en afronding doen en een 200 uurs Yoga Alliance diploma ontvangen"
+    contract:
+      cancellation_published: yes
+      refund_published: yes
+      installments_published: yes
+      source: site-event-200-2026-06
+      note: "Annulering: ≥12 wkn voor start €100 admin; 12-8 wkn 50%; <8 wkn 100%
+        lesgeld. NA ontvangst van de studieboeken geen restitutie meer."
+    track_record:
+      first_seen_year: 2018
+      source: ya-register-2026-06
+      note: >
+        RYS sinds nov 2018; doorlopend modulair aanbod (YA-venster 2024-2028).
+        Esther Scheen werkte naar eigen zeggen jaren als lead
+        teacher/ontwikkelaar van andere 200u Yin(&Yang)-opleidingen.
+    cohorts:
+      - id: yin-2026-09-amsterdam
+        start: "2026-09"
+        end: "2027-04"
+        status: announced
+        source: site-event-200-2026-06
+        language: nl
+        note: >
+          Gebundeld 20-daags 200u-cohort, Yogaschool Noord Amsterdam (25 sep
+          2026 - 17 apr 2027): Basis (sep-okt) → Energie (okt-nov) → MFR/Myoyin
+          (jan-feb 2027) → Qi Gong (apr 2027). Inschrijving + booking via host
+          yogaschoolnoord.nl; lead Esther Scheen + gastdocenten.
+    teachers:
+      - person_id: esther-scheen
+        role: "lead teacher / eigenaar"
+      - person_id: angelique-boset
+        role: "gastdocent (zenuwstelsel & meditatie masterclasses)"
+      - person_id: jeske-papadopoulos
+        role: "docent (YA teaching staff)"
+
+people:
+  - id: esther-scheen
+    name: "Esther Scheen"
+    trainings_claimed:
+      - label: "E-RYT 500 (Yoga Alliance); Yin Yoga primair bij Paul & Suzee Grilley,
+          daarnaast Jo Phee, Bernie Clark, Dhugal Meacham, Sarah Lo, Mirjam
+          Wagner, Sarah Powers; Chinese geneeskunde, Qi Gong, fascia"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead teacher/eigenaar Pure Energy Yoga; E-RYT 500; Yin-specialist
+          (Grilley-lijn). Ook werkzaam als moleculair biologisch analist in een
+          ziekenhuis."
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
+  - id: angelique-boset
+    name: "Angelique Boset"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance); yogatherapeut"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "gastdocent; yogatherapeut; masterclasses zenuwstelsel & meditatie
+          in de basismodule"
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
+  - id: jeske-papadopoulos
+    name: "Jeske Papadopoulos"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "YA teaching staff Pure Energy Yoga (E-RYT 500)"
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
