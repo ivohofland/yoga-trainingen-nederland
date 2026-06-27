@@ -1,0 +1,308 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yoga-centrum-oosterwold
+name: Yoga Centrum Oosterwold
+aka: [ "Yoga Meirink", "Yoga Centrum Oosterwold - Yoga Meirink" ]
+website: https://yogacentrumoosterwold.nl
+status: active
+locations:
+  - city: Almere
+    address: "Ban Zhaoweg 10, 1349 LN (Oosterwold)"
+    note: "studio + opleidingslocatie (klassikaal/in-person)."
+crkbo:
+  registered: unknown
+  checked: "2026-06-25"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: "Meirink" en "Oosterwold" → 0 in het Instellingenregister;
+    "Meirink" → 0 in het Docentenregister (2026-06-25). KvK-naam (Yoga Meirink,
+    KvK 28318808) niet apart doorzocht; de site toont geen CRKBO-logo of
+    btw-vermelding → registered unknown (niet no; §4.11) en price.vat unknown.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Yoga Centrum Oosterwold - Yoga Meirink"
+    first_registered: "2019-11"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Yoga Centrum Oosterwold -
+      Yoga Meirink" (Ban Zhaoweg 10, Almere; 0 reviews; talen NL/DE/EN; First
+      Registered November 2019; bevestigd 2026-06-25). ALLEEN RYS 200 (geen RYS
+      300/500): de route naar RYT 500 loopt via YA-geregistreerde
+      masterclasses/bijscholingen (15-75u CE/YACEP-modules), niet via een aparte
+      RYS-300/500-designatie (zie masterclasses-bron). Teaching staff: Petra
+      Meirink (E-RYT 500, RPYT, YACEP), Renske Meijer e.a.
+legal:
+  kvk: "28318808"
+  legal_name: "Yoga Meirink"
+  note: "Studio van Petra Meirink-Chatah; KvK 28318808."
+founded_year:
+  value: 2019
+  source: ya-register-2026-06
+  note: "YA-RYS sinds nov 2019; Petra Meirink geeft sinds 2008 les op deze locatie
+    (YA-docentprofiel)."
+depth: listed
+last_verified: "2026-06-25"
+sources:
+  - id: site-odaka-2026-06
+    type: website
+    url: https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/
+    archived_url: https://web.archive.org/web/20260627090418/https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/
+    captured: "2026-06-25"
+    note: "RYT 200 Odaka Yoga (Level 1): verplichte kernmodules, stijlbeschrijving
+      (eb/vloed-golven, surfing-spots, Bushido), in-person; geen prijs op de
+      pagina."
+    local_snapshot: data/archives/yoga-centrum-oosterwold/site-odaka-2026-06-2026-06-27.pdf
+  - id: site-yin-2026-06
+    type: website
+    url: https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/
+    archived_url: https://web.archive.org/web/20260627090457/https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/
+    captured: "2026-06-25"
+    note: "RYT 200 Yin Yoga: één meerdaagse module + losse weekend-studiedagen;
+      thema's (Wu Shen/Wu Xing TCM, pranayama, Achtvoudig Pad,
+      Ayurveda/Chakra's); docententeam; Grilley/Powers/Bernie-Clark-lijn; geen
+      prijs op de pagina."
+    local_snapshot: data/archives/yoga-centrum-oosterwold/site-yin-2026-06-2026-06-27.pdf
+  - id: site-masterclasses-2026-06
+    type: website
+    url: https://yogacentrumoosterwold.nl/masterclasses/
+    archived_url: https://web.archive.org/web/20260627090533/https://yogacentrumoosterwold.nl/masterclasses/
+    captured: "2026-06-25"
+    note: >
+      Masterclasses/bijscholingen: YA-gecertificeerde CE-modules van 15-75u,
+      toegankelijk vanaf level 1 (200u). EXPLICIET als de 300/500-route: "te
+      gebruiken voor je officiële bijscholingen en als aanvulling van je
+      opleiding tot RYT 500 en 500+". Dus geen RYS-300/500, maar gestapelde CE
+      richting RYT 500.
+    local_snapshot: data/archives/yoga-centrum-oosterwold/site-masterclasses-2026-06-2026-06-27.pdf
+  - id: site-voorwie-2026-06
+    type: website
+    url: https://yogacentrumoosterwold.nl/opleidingen-voor-wie/
+    archived_url: https://web.archive.org/web/20260627090608/https://yogacentrumoosterwold.nl/opleidingen-voor-wie/
+    captured: "2026-06-25"
+    note: "Doelgroep/uniek: kleinschalige groepen 3-10 deelnemers; basisopleidingen
+      ook voor niet-docenten; RYT 200-registratie na afronding."
+    local_snapshot: data/archives/yoga-centrum-oosterwold/site-voorwie-2026-06-2026-06-27.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pkOeAAI&sid=0013g000002npjyAAA&name=Yoga-Centrum-Oosterwold---Yoga-Meirink
+    archived_url: null
+    captured: "2026-06-25"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga
+      Centrum Oosterwold - Yoga Meirink', Almere, RYS 200, First Registered
+      November 2019, 0 reviews; 2 cohorten (Odaka 9 aug 2026-10 jan 2027; Yin 1
+      nov 2026-25 jul 2027). Scholarship-notitie: early bird €300 korting; via
+      korting/werk te verlagen tot €1500 voor een 200u-training, waarvan €1000
+      in rentevrije maandtermijnen. Teaching staff Petra Meirink
+      (E-RYT500/RPYT/YACEP), Renske Meijer.
+    local_snapshot: data/archives/yoga-centrum-oosterwold/ya-register-2026-06-2026-06-27.pdf
+  - id: ya-teacher-petra-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023hrqAAA
+    archived_url: null
+    captured: "2026-06-25"
+    note: >
+      YA-docentprofiel Petra Meirink (RYT; First Registered Aug 2017). Teaching
+      experience: Centre Body en Mind (Sassenheim, jun 2016-heden) + Yoga
+      Centrum Oosterwold (aug 2008-heden) + Namaste Body and Mind (Leiden, feb
+      2019-mrt 2020). DOCENT-OVERLAP-SPECIMEN (cross-provider, zie
+      centre-body-mind & namaste-studios).
+    local_snapshot: data/archives/yoga-centrum-oosterwold/ya-teacher-petra-2026-06-2026-06-27.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Meirink"
+    captured: "2026-06-25"
+    note: "Negatieve check: 'Meirink'/'Oosterwold' → 0 in Instellingen; 'Meirink' →
+      0 in Docenten. Gefilterde (lege) snapshot is het bewijs; Wayback
+      overgeslagen voor crkbo.nl/Register/*."
+    local_snapshot: data/archives/yoga-centrum-oosterwold/crkbo-register-2026-06-2026-06-27.pdf
+
+programs:
+  - id: 200-odaka
+    name: "RYT 200 Odaka Yoga (Level 1)"
+    url: https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/
+    format_label: "200"
+    style_claimed: "Odaka Yoga (doorontwikkeling van Hatha; Francesca Cassia &
+      Roberto Milletti): basisgolven/alignment, surfing-spots-lesstructuur,
+      eb-en-vloed-beweging, pranayama, functionele anatomie & lesdesign,
+      Bushido- ethiek naast Yama's/Niyama's"
+    styles: [ hatha, multistyle ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Na afronding RYT 200 geregistreerd; internationaal Level 1 lesgeven"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS 200 geverifieerd. Op de Odaka-pagina geen specifieke lead
+          teacher genoemd (eigenaar/lead Petra Meirink is E-RYT 500)."
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 5
+      language: nl
+    prerequisites_claimed: "geen; ook voor wie zich enkel wil verdiepen (niet per se
+      docent wil worden)"
+    price:
+      vat: unknown
+      published: no
+      note: >
+        Geen opleidingsprijs op de site (prijzenpagina dekt alleen
+        rittenkaarten/abonnementen). YA-profiel noemt scholarship/kortingen:
+        early bird €300; via korting/werk te verlagen tot €1500 voor een
+        200u-training (waarvan €1000 in rentevrije termijnen). Geen
+        btw-vermelding → vat unknown.
+      source: ya-register-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-odaka-2026-06
+      note: "200u klassikaal (in-person), opgebouwd uit kernmodules; praktijk-
+        opdrachten + peer-teaching. Geen uren-/contact-uitsplitsing
+        gepubliceerd."
+    group_size_claimed:
+      min: 3
+      max: 10
+      source: site-voorwie-2026-06
+      note: "Kleinschalige groepen 3-10 deelnemers (schoolbreed)."
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2019
+      source: ya-register-2026-06
+      note: "RYS sinds 2019; Odaka-cohort jaarlijks."
+    cohorts:
+      - id: odaka-2026-08
+        start: "2026-08"
+        end: "2027-01"
+        status: announced
+        source: ya-register-2026-06
+        language: nl
+        note: "YA-register: Odaka Yoga 9 aug 2026 - 10 jan 2027."
+    teachers:
+      - person_id: petra-meirink
+        role: "eigenaar / lead teacher (Odaka)"
+
+  - id: 200-yin
+    name: "RYT 200 Yin Yoga"
+    url: https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/
+    format_label: "200"
+    style_claimed: "Yin Yoga (Grilley/Powers/Bernie-Clark-lijn): Yin/Yang (Wu Shen &
+      Wu Xing / TCM), meridianen, pranayama & Yin, Achtvoudig Pad
+      (Yama's/Niyama's), Ayurveda & Chakra's,
+      practice/anatomie/filosofie/didactiek"
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "RYT 200-certificaat; registreren bij Yoga Alliance, wereldwijd
+          Yin Yoga doceren"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS 200 geverifieerd; lead Petra Meirink-Chatah is E-RYT 500."
+    delivery:
+      mode: in_person
+      structure: mixed
+      duration_months_min: 9
+      language: nl
+    prerequisites_claimed: "geen expliciete vooropleiding vermeld"
+    price:
+      vat: unknown
+      published: no
+      note: "Geen opleidingsprijs op de site; zelfde scholarship/korting-notitie als
+        Odaka (YA-profiel). Geen btw-vermelding → vat unknown."
+      source: ya-register-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin-2026-06
+      note: "200u klassikaal: één meerdaagse module + losse weekend-studiedagen +
+        huiswerkopdrachten. Geen uren-/contact-uitsplitsing gepubliceerd."
+    group_size_claimed:
+      min: 3
+      max: 10
+      source: site-voorwie-2026-06
+      note: "Kleinschalige groepen 3-10 deelnemers (schoolbreed)."
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2025
+      source: site-yin-2026-06
+      note: "Yin RYT200 als nieuwere lijn (site noemt start okt 2025); YA-cohort nov
+        2026 gelijst."
+    cohorts:
+      - id: yin-2026-11
+        start: "2026-11"
+        end: "2027-07"
+        status: announced
+        source: ya-register-2026-06
+        language: nl
+        note: "YA-register: Yin Yoga Teacher Training 1 nov 2026 - 25 jul 2027. (Site
+          verwees eerder ook naar een start okt 2025.)"
+    teachers:
+      - person_id: petra-meirink
+        role: "lead teacher (practice, didactiek, filosofie, westerse anatomie)"
+      - person_id: aarjan-meirink
+        role: "docent (Traditionele Chinese Geneeskunde)"
+      - person_id: hilde-roberts
+        role: "docent (filosofie & chakra's)"
+      - person_id: linda-ravenstijn
+        role: "docent (practice & didactiek)"
+      - person_id: manisha-lakshi
+        role: "docent (Ayurveda)"
+
+people:
+  - id: petra-meirink
+    name: "Petra Meirink-Chatah"
+    trainings_claimed:
+      - label: "E-RYT 500, RPYT, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          eigenaar/hoofddocent Yoga Centrum Oosterwold (sinds 2008); E-RYT 500,
+          RPYT, YACEP. CROSS-PROVIDER (YA-docentprofiel): ook docent bij Centre
+          of Body & Mind (Sassenheim, sinds 2016) en eerder Namaste Body and
+          Mind (Leiden, 2019-2020).
+        registry: other
+        verified: yes
+        source: ya-teacher-petra-2026-06
+  - id: aarjan-meirink
+    name: "Aarjan Meirink"
+    background:
+      - field: "yoga"
+        credential: "docent Traditionele Chinese Geneeskunde in de Yin-opleiding"
+        registry: none
+        verified: unknown
+        source: site-yin-2026-06
+  - id: hilde-roberts
+    name: "Hilde Roberts"
+    background:
+      - field: "yoga"
+        credential: "docent filosofie & chakra's (Yin-opleiding)"
+        registry: none
+        verified: unknown
+        source: site-yin-2026-06
+  - id: linda-ravenstijn
+    name: "Linda Ravenstijn"
+    background:
+      - field: "yoga"
+        credential: "docent practice & didactiek (Yin-opleiding)"
+        registry: none
+        verified: unknown
+        source: site-yin-2026-06
+  - id: manisha-lakshi
+    name: "Dr. Manisha Lakshi"
+    background:
+      - field: "ayurveda"
+        credential: "docent Ayurveda (Yin-opleiding); 'Dr.'"
+        registry: none
+        verified: unknown
+        source: site-yin-2026-06
