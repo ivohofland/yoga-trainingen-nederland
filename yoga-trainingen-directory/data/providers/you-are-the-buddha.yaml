@@ -1,0 +1,243 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: you-are-the-buddha
+name: You are the Buddha
+aka: [ "Yoga Academy You are the Buddha", "YATB" ]
+website: https://www.youarethebuddha.com
+status: active
+locations:
+  - city: Breda
+    address: "Station Breda (stationshal, naast Starbucks), Gravinnen van
+      Nassauboulevard 37, 4811 BN"
+    note: "studio + opleidingslocatie (klassikaal)."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "You Are The Buddha"
+  checked: "2026-06-25"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "You Are The Buddha", Breda,
+    www.youarethebuddha.com (2026-06-25, zoekterm "Buddha"). De academy heeft
+    óók een btw-nummer (NL003572308B48) op de footer — er worden dus ook
+    btw-belaste producten verkocht. De opleidingspagina vermeldt GEEN
+    btw-behandeling bij de €3450-prijs → price.vat blijft unknown (§4.11),
+    ondanks CRKBO-Instelling. DRIE registers: YA + CRKBO + VYN.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "You are the Buddha"
+    first_registered: "2021-02"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Yoga Academy You are the
+      Buddha" (Gravinnen van Nassauboulevard 37, Breda; rating 5.0/4 reviews,
+      NPS 10; First Registered February 2021; bevestigd 2026-06-25). YA lijst
+      één cohort (9 okt - 11 dec 2026); de site noemt echter een start jan 2027
+      (33 lesdagen) — mogelijk een ander/ouder window. Teaching staff: Marlies
+      Tobias (E-RYT 500, YACEP), Marlou Ansems (RYT 500) + 1.
+  - body: vyn
+    identifier: "VYN erkende yogaopleiding"
+    holder: "Yoga Academy You are the Buddha"
+    verified_in_register: yes
+    source: vyn-register-2026-06
+    note: >
+      VYN-erkenning register-geverifieerd: "Yoga Academy You are the Buddha"
+      staat op de VYN-lijst van erkende yogaopleidingen (yoganederland.nl,
+      2026-06-25). Site claimt "VYN erkend, 1 van 10 in Nederland" +
+      VYN-visitatierapport 2025 + interview in YogaVizier (VYN-vakblad) 2026.
+legal:
+  kvk: "81439199"
+  legal_name: "You Are The Buddha"
+  note: "KvK 81439199; btw NL003572308B48. CRKBO-Instelling."
+founded_year:
+  value: 2020
+  source: ya-teacher-marlies-2026-06
+  note: "Marlies Tobias geeft les bij You are the Buddha sinds okt 2020; YA-RYS
+    sinds feb 2021."
+depth: listed
+last_verified: "2026-06-25"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://www.youarethebuddha.com/ytt
+    archived_url: https://web.archive.org/web/20260627100609/https://www.youarethebuddha.com/ytt
+    captured: "2026-06-25"
+    note: >
+      200u YTT Breda (Wix): 5 modules / 33 lesdagen, curriculum + prijs per
+      module + totaal €3450, YA + VYN claim, lead teacher Marlies Tobias,
+      locatie Station Breda, start jan 2027, vrijdag 11:00-17:30, min. 85%
+      aanwezigheid.
+    local_snapshot: data/archives/you-are-the-buddha/site-2026-06-2026-06-27.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000GLj5EAAT&sid=0013g00000B6xkEAAR&name=You-are-the-Buddha
+    archived_url: null
+    captured: "2026-06-25"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga
+      Academy You are the Buddha', Breda, RYS 200, First Registered February
+      2021, rating 5.0/4, NPS 10; 1 cohort (9 okt-11 dec 2026); teaching staff
+      Marlies Tobias (E-RYT500/YACEP), Marlou Ansems (RYT500)."
+    local_snapshot: data/archives/you-are-the-buddha/ya-register-2026-06-2026-06-27.pdf
+  - id: ya-teacher-marlies-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000230eOAAQ
+    archived_url: null
+    captured: "2026-06-25"
+    note: >
+      YA-docentprofiel Marlies Tobias (E-RYT 500, YACEP; First Registered Aug
+      2015; 11424 teaching hours). Teaching experience: You are the Buddha (okt
+      2020-heden), eerder Yogaschool Breda (2019-2021) en Clouds Day Spa,
+      Lancaster CA (2017-2018).
+    local_snapshot: data/archives/you-are-the-buddha/ya-teacher-marlies-2026-06-2026-06-27.pdf
+  - id: vyn-register-2026-06
+    type: register
+    url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    archived_url: https://web.archive.org/web/20260627100741/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    captured: "2026-06-25"
+    note: "VYN (Vereniging Yogadocenten Nederland) lijst erkende yogaopleidingen;
+      'Yoga Academy You are the Buddha' staat erop (browser-gerenderd; geen
+      per-school permalink)."
+    local_snapshot: data/archives/you-are-the-buddha/vyn-register-2026-06-2026-06-27.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Buddha"
+    captured: "2026-06-25"
+    note: >
+      Treffer "You Are The Buddha, Breda, www.youarethebuddha.com"
+      (Instellingenregister). Register zonder permalink; bewijs is de gefilterde
+      snapshot; Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/you-are-the-buddha/crkbo-register-2026-06-2026-06-27.pdf
+
+programs:
+  - id: 200-ytt
+    name: "200-uur Yoga Teacher Training (5 modules)"
+    url: https://www.youarethebuddha.com/ytt
+    format_label: "200"
+    style_claimed: "Multistyle langs het achtvoudige pad van Patanjali: filosofie/
+      geschiedenis/ethiek, asana (yin, hatha, vinyasa) met alignment & cueing,
+      anatomie (Engels online programma), pranayama & subtiele anatomie,
+      meditatie, didactiek/lesopbouw. Na afronding zelfstandig
+      yin/hatha/vinyasa-les + ademsessie (30 min) + meditatiesessie (30 min)
+      begeleiden"
+    styles: [ multistyle, yin, hatha, vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance RYS-200; na afronding registreren als RYT 200"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS 200 geverifieerd; lead Marlies Tobias is E-RYT 500."
+      - body: vyn
+        label_claimed: "VYN-erkend (1 van 10 erkende opleidingen in NL);
+          VYN-visitatierapport 2025"
+        verified: yes
+        source: vyn-register-2026-06
+        note: "Op de VYN-lijst van erkende yogaopleidingen geverifieerd."
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 12
+      language: nl
+    prerequisites_claimed: "minimaal 1 jaar eigen yogapraktijk; min. 85%
+      aanwezigheid; ruimte voor huiswerk/zelfstudie. Geschikt voor (aankomend)
+      docenten, coaches en zorgprofessionals."
+    price:
+      amount_eur: 3450
+      variants:
+        - { label: "volledige opleiding (5 modules)", amount_eur: 3450 }
+        - { label: "Module 1 Yoga Wisdom (6 lesdagen)", amount_eur: 699 }
+        - { label: "Module 2 Asana Lab (8 lesdagen)", amount_eur: 899 }
+        - { label: "Module 3 Breath Mechanics (6 lesdagen)", amount_eur: 699 }
+        - { label: "Module 4 Mindful Mastery (6 lesdagen)", amount_eur: 699 }
+        - { label: "Module 5 Studio Ready (7 lesdagen; alleen na 1-4)", amount_eur: 699 }
+      vat: unknown
+      published: yes
+      includes: "studiemateriaal en certificering"
+      note: >
+        €3450 volledig; modules 1-4 los te volgen met deelcertificaat, module 5
+        alleen na afronding 1-4. Som losse modules (699+899+699+699+699=€3695)
+        ligt boven het bundeltarief €3450. Geen btw-vermelding → vat unknown
+        (§4.11).
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: >
+        200u over 33 lesdagen (vrijdag 11:00-17:30) in 5 modules + Engelstalig
+        online anatomie-programma + huiswerk/zelfstudie. Geen geïsoleerd
+        contact-/lespraktijk-urental gepubliceerd.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      modules_sold_separately: yes
+      modules_sold_separately_note: >
+        Modules 1-4 los te volgen met eigen deelcertificaat (instap op één
+        thema); module 5 'Studio Ready' alleen toegankelijk na afronding van
+        1-4. Volledige RYS-200-diploma na alle 5.
+    group_size_claimed:
+      max: 10
+      source: site-2026-06
+      note: "Circa 10 deelnemers per groep (kleinschalig)."
+    assessment_described:
+      exists: yes
+      continuous: yes
+      quote: "Elke module sluit af met een deelcertificaat. Alle vijf samen leiden tot
+        het RYS-200 diploma."
+    track_record:
+      first_seen_year: 2021
+      source: ya-register-2026-06
+      note: >
+        YA-RYS sinds feb 2021; eerdere cohorten gedocumenteerd via reviews/
+        testimonials YTT 2024 & 2025 en 'Groepsfoto YTT 2026'. Genoemd in
+        YogaVizier nr. 1, 2026.
+    cohorts:
+      - id: ytt-2027-01
+        start: "2027-01"
+        status: announced
+        source: site-2026-06
+        language: nl
+        note: "Start januari 2027, 33 lesdagen/5 modules op vrijdagen. (YA-profiel lijst
+          daarnaast een window 9 okt-11 dec 2026.)"
+    teachers:
+      - person_id: marlies-tobias
+        role: "lead teacher / oprichter"
+      - person_id: marlou-ansems
+        role: "docent (YA teaching staff)"
+
+people:
+  - id: marlies-tobias
+    name: "Marlies Tobias"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP, VYN, VMBN; MSc Yoga Therapy in opleiding (VaYU); YA
+          First Registered 2015, 11424 lesuren; 4 jaar lead teacher in de VS"
+        verified: yes
+        source: ya-teacher-marlies-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          oprichter/lead teacher You are the Buddha (sinds 2020); E-RYT 500,
+          YACEP; VYN + VMBN; MSc Yoga Therapy i.o. (VaYU, eerste Europese
+          student). Yogatherapie bij de Olympische Spelen Parijs 2024;
+          onderzoekspresentatie SYR 2023 (Kripalu). Eerder Yogaschool Breda +
+          Clouds Day Spa (Lancaster, CA).
+        registry: other
+        verified: yes
+        source: ya-teacher-marlies-2026-06
+  - id: marlou-ansems
+    name: "Marlou Ansems"
+    trainings_claimed:
+      - label: "RYT 500 (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "docent You are the Buddha; YA teaching staff (RYT 500)"
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
