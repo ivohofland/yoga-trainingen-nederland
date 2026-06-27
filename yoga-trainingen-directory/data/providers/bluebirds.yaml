@@ -1,0 +1,344 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: bluebirds
+name: Bluebirds
+aka: [ "Bluebirds Academy", "Bluebirds BV", "Blue Birds" ]
+website: https://blue-birds.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Bluebirds Oost, 1093 BH (opleidingslocatie/Academy)"
+    note: "Bluebirds-studio's in Amsterdam Oost/West/Zuid + Haarlem (sinds 2016).
+      Opleidingen draaien bij Bluebirds Oost."
+  - city: Nieuwkuijk
+    address: "Abdijhof Mariënkroon (klooster, nabij Den Bosch)"
+    note: "residentiële immersie-week van de 2026 hybride opleiding."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Bluebirds BV"
+  checked: "2026-06-25"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "Bluebirds BV", Amsterdam,
+    www.blue-birds.nl (2026-06-25). Bluebirds is de boekings-, factuur- én
+    CRKBO-entiteit van de opleidingen; beide opleidingspagina's stellen
+    EXPLICIET "all prices at 0% VAT as we are CRKBO registered" → price.vat =
+    exempt_crkbo (§4.11).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "MarleneYoga (Marlene Henny)"
+    first_registered: "2021-10"
+    verified_in_register: yes
+    source: ya-register-marlene-2026-06
+    note: >
+      HOLDER-NUANCE (vgl. Pranayama onder Yoga Moves): het 2025-cohort van de
+      Bluebirds 200u Vinyasa-opleiding werd gecertificeerd door MarleneYoga's
+      eigen RYS (Marlene Henny, E-RYT 500 + Fleur van Zonneveld, E-RYT 200),
+      NIET door Bluebirds. YA-profiel "MarleneYoga" (Keizerrijk 86, Amsterdam;
+      First Registered October 2021; 4.92/6 reviews, afstudeerders jun 2026). De
+      eigen MarleneYoga-site is inmiddels 404. Diploma kwam van MarleneYoga;
+      btw/boeking via Bluebirds.
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Embodied Bodhi Academy"
+    first_registered: "2025-12"
+    verified_in_register: yes
+    source: ya-register-embodied-2026-06
+    note: >
+      HOLDER-NUANCE: het 2026-cohort (Vinyasa Hybrid, David Rodrigues Junior &
+      Pascalle van Haaften) wordt gecertificeerd door "Embodied Bodhi Academy" —
+      een NIEUWE RYS (YA First Registered December 2025; 0 reviews/0 dates),
+      specifiek opgezet voor deze Bluebirds-collaboratie. Teaching staff: David
+      (The Psychedelic Yogi, E-RYT 200) + Pascalle (Go Beyond Yoga, E-RYT 500;
+      lead met E-RYT 500). Diploma van Embodied Bodhi; btw/boeking via
+      Bluebirds.
+legal:
+  legal_name: "Bluebirds BV"
+  note: >
+    Bluebirds heeft GEEN eigen YA-RYS; alle 200u-opleidingen worden extern
+    gecertificeerd door rotérende RYS-partners (MarleneYoga 2025, Embodied Bodhi
+    2026). Bluebirds biedt onder eigen naam wel YACEP/continuing-ed + een
+    sub-200 Yin TT (buiten fase-1 scope). Bluebirds =
+    boekings-/factuur-/CRKBO-/venue- entiteit (de canonieke
+    marketing+booking-home, vgl. decision #9).
+founded_year:
+  value: 2016
+  source: site-2025-vinyasa-2026-06
+  note: "Eerste Bluebirds-studio sinds 2016 (Amsterdam Oost)."
+depth: listed
+last_verified: "2026-06-25"
+sources:
+  - id: site-2025-vinyasa-2026-06
+    type: website
+    url: https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr
+    archived_url: https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr
+    captured: "2025-08-09"
+    note: >
+      2025-cohort Vinyasa Flow Teacher Training (200u) — tekst door gebruiker
+      aangereikt (gearchiveerde MarleneYoga-pagina; web.archive.org op fetch-
+      blocklist, dus niet zelf machine-gelezen). Inhoud: 8 weekenden + 6
+      zaterdagen over 7 mnd (13 sep 2025-15 mrt 2026), max 16, lead Fleur &
+      Marlene, prijzen €2950/€3150/€2835, 0% btw CRKBO.
+    local_snapshot: data/archives/bluebirds/site-2025-vinyasa-2026-06-2026-06-27.pdf
+  - id: site-2026-hybrid-2026-06
+    type: website
+    url: https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/
+    archived_url: https://web.archive.org/web/20260627185357/https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/
+    captured: "2026-06-25"
+    note: >
+      2026-cohort Vinyasa Hybrid Teacher Training (200u) — Bluebirds Academy ×
+      Embodied Bodhi (David Rodrigues Junior & Pascalle van Haaften): online +
+      immersie Bluebirds Oost (19-24 okt 2026) + residentieel klooster
+      Mariënkroon (21-27 nov 2026), prijzen €2790/€2990 + €499, 0% btw CRKBO,
+      curriculum.
+    local_snapshot: data/archives/bluebirds/site-2026-hybrid-2026-06-2026-06-27.pdf
+  - id: ya-register-marlene-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000YikjoAAB&sid=0013g00000RBeW7AAL&name=MarleneYoga
+    archived_url: null
+    captured: "2026-06-25"
+    note: "YA-profiel 'MarleneYoga' (certificerende RYS 2025-cohort): Amsterdam, RYS
+      200, First Registered October 2021, 4.92/6 reviews (afstudeerders jun
+      2026); Marlene Henny (E-RYT500) + Fleur van Zonneveld (E-RYT200)."
+    local_snapshot: data/archives/bluebirds/ya-register-marlene-2026-06-2026-06-27.pdf
+  - id: ya-register-embodied-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000pA1qJYAS&sid=001TR00000hZqXeYAK&name=Embodied-Bodhi-Academy
+    archived_url: null
+    captured: "2026-06-25"
+    note: "YA-profiel 'Embodied Bodhi Academy' (certificerende RYS 2026-cohort):
+      Amsterdam, RYS 200, First Registered December 2025, 0 reviews/0 dates;
+      David Rodrigues Junior (E-RYT200) + Pascalle van Haaften (E-RYT500)."
+    local_snapshot: data/archives/bluebirds/ya-register-embodied-2026-06-2026-06-27.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Bluebird"
+    captured: "2026-06-25"
+    note: >
+      Treffer "Bluebirds BV, Amsterdam, www.blue-birds.nl"
+      (Instellingenregister). "Embodied" → geen Embodied Bodhi; MarleneYoga niet
+      apart doorzocht — beide lopen btw-technisch via Bluebirds BV. Register
+      zonder permalink; bewijs is de gefilterde snapshot; Wayback overgeslagen
+      voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/bluebirds/crkbo-register-2026-06-2026-06-27.pdf
+
+programs:
+  - id: 200-vinyasa-2025
+    name: "Vinyasa Flow Teacher Training (200u) — 2025 cohort (MarleneYoga-gecert.)"
+    url: https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr
+    format_label: "200"
+    style_claimed: "Vinyasa Flow (Vinyasa Krama, stap-voor-stap): asana & alignment
+      (benefits/contra-indicaties), 'embody the flow', pranayama (6 pranayamas),
+      energetisch lichaam (chakra's & kosha's), teaching methodology, filosofie
+      (Yoga Sutras), toegepaste anatomie (online cursus David Keil), art of
+      relaxation (yin/restorative/yoga nidra), fysiologie (zenuwstelsel)"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200h Vinyasa Teacher Training; RYT-200 na afronding"
+        verified: yes
+        source: ya-register-marlene-2026-06
+        note: "Certificerende RYS = MarleneYoga (Marlene Henny, E-RYT 500). Lead
+          teachers Fleur & Marlene; gastdocenten voor o.a. anatomie/Ayurveda."
+      - body: crkbo
+        label_claimed: "all prices at 0% VAT as we are CRKBO registered"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "Via Bluebirds BV (CRKBO-Instelling)."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 7
+      language: en
+    prerequisites_claimed: "voor wie de eigen yogapraktijk wil verdiepen én wie
+      docent wil worden (geen expliciete jaren-eis)"
+    price:
+      amount_eur: 3150
+      variants:
+        - { label: "early bird (tot 1 jul 2025)", amount_eur: 2950 }
+        - { label: "reguliere prijs", amount_eur: 3150 }
+        - { label: "Bluebirds member (10% korting)", amount_eur: 2835 }
+      vat: exempt_crkbo
+      published: yes
+      note: "EXPLICIET 0% btw (CRKBO via Bluebirds). Anatomie via online cursus David
+        Keil inbegrepen."
+      source: site-2025-vinyasa-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2025-vinyasa-2026-06
+      note: >
+        8 weekenden + 6 zaterdagen over 7 maanden (13 sep 2025-15 mrt 2026),
+        dagelijks 9:30-17:00. Online anatomie-cursus (David Keil) apart. Geen
+        geïsoleerd contact-/lespraktijk-urental gepubliceerd.
+    group_size_claimed:
+      max: 16
+      source: site-2025-vinyasa-2026-06
+      note: "Max. 16 deelnemers; meeste lessen door lead teachers Fleur & Marlene."
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2025
+      source: ya-register-marlene-2026-06
+      note: >
+        2025-cohort liep 13 sep 2025-15 mrt 2026; afstudeer-reviews op het
+        MarleneYoga-YA-profiel jun 2026. Daarna is de MarleneYoga-opleiding bij
+        Bluebirds opgevolgd door het Embodied-Bodhi-cohort (zie programma
+        200-vinyasa-hybrid-2026).
+    cohorts:
+      - id: vinyasa-2025-09
+        start: "2025-09"
+        end: "2026-03"
+        status: confirmed_ran
+        source: site-2025-vinyasa-2026-06
+        language: en
+        note: "13 sep 2025-15 mrt 2026; 8 weekenden + 6 zaterdagen; gecertificeerd door
+          MarleneYoga."
+    teachers:
+      - person_id: marlene-henny
+        role: "lead teacher (MarleneYoga, RYS-houder 2025)"
+      - person_id: fleur-van-zonneveld
+        role: "lead teacher"
+
+  - id: 200-vinyasa-hybrid-2026
+    name: "Vinyasa Hybrid Teacher Training (200u) — 2026 cohort (Embodied
+      Bodhi-gecert.)"
+    url: https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/
+    format_label: "200"
+    style_claimed: "Vinyasa: asana, pranayama & meditatie, intelligent sequencing &
+      transitions, cueing/teaching presence, functionele alignment &
+      biomechanica, subtle body, filosofie/ethiek; online anatomie & filosofie;
+      blend traditie + moderne bewegingswetenschap"
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance registered 200-hour Vinyasa TT; RYT-200 na afronding"
+        verified: yes
+        source: ya-register-embodied-2026-06
+        note: "Certificerende RYS = Embodied Bodhi Academy. Lead met E-RYT 500 =
+          Pascalle van Haaften; co-lead David Rodrigues Junior (E-RYT 200)."
+      - body: crkbo
+        label_claimed: "all prices at 0% VAT as we are CRKBO registered"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "Via Bluebirds BV (CRKBO-Instelling)."
+    delivery:
+      mode: hybrid
+      structure: mixed
+      duration_months_min: 3
+      language: en
+    prerequisites_claimed: "voor beoefenaars die Vinyasa willen verdiepen én wie
+      gecertificeerd docent wil worden"
+    price:
+      amount_eur: 2990
+      variants:
+        - { label: "early bird (tot 31 jul)", amount_eur: 2790 }
+        - { label: "reguliere prijs", amount_eur: 2990 }
+        - { label: "Bluebirds member/teamlid", amount_eur: 2699 }
+        - { label: "residentiële kloosterweek (apart)", amount_eur: 499 }
+      vat: exempt_crkbo
+      published: yes
+      includes: >
+        online anatomie- & filosofiemodule, 6-daagse studio-immersie (Bluebirds
+        Oost), alle lessen/workshops/assessments, Embodied Bodhi Course & Asana
+        Manual, YA RYT-200-certificering. Residentieel (€499): 6 nachten
+        Abdijhof Mariënkroon, gedeelde kamer, 3 maaltijden/dag (excl. transport)
+      note: "€2790 early/€2990 regulier + verplicht €499 residentieel. EXPLICIET 0%
+        btw (CRKBO via Bluebirds)."
+      source: site-2026-hybrid-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-hybrid-2026-06
+      note: >
+        Hybride: zelf-paced online (filosofie + toegepaste anatomie) + immersie
+        1 (Bluebirds Oost, 19-24 okt 2026, 8:30-17:00) + immersie 2
+        (residentieel Mariënkroon, 21-27 nov 2026). Afstudeereis: een volledige
+        1-uurs Vinyasa-les geven. Geen geïsoleerd contact-/lespraktijk-urental.
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "Participants will teach regularly and guide a complete 1-hour Vinyasa
+        yoga class as part of the graduation requirements."
+    track_record:
+      first_seen_year: 2026
+      source: ya-register-embodied-2026-06
+      note: "Opvolger van de MarleneYoga-opleiding op dezelfde venue; nieuwe RYS
+        (Embodied Bodhi, dec 2025) + nieuw docentenduo."
+    cohorts:
+      - id: vinyasa-hybrid-2026-10
+        start: "2026-10"
+        end: "2026-11"
+        status: announced
+        source: site-2026-hybrid-2026-06
+        language: en
+        note: "Online vanaf half sep; studio-immersie 19-24 okt 2026; residentieel 21-27
+          nov 2026 (Mariënkroon)."
+    teachers:
+      - person_id: pascalle-van-haaften
+        role: "lead teacher (Embodied Bodhi; E-RYT 500)"
+      - person_id: david-rodrigues-junior
+        role: "lead teacher (E-RYT 200; 'The Psychedelic Yogi')"
+
+people:
+  - id: marlene-henny
+    name: "Marlene Henny"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance); RYS-houder MarleneYoga"
+        verified: yes
+        source: ya-register-marlene-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead teacher 2025-cohort; RYS-houder MarleneYoga (E-RYT 500). Eigen
+          MarleneYoga-site nu 404."
+        registry: other
+        verified: yes
+        source: ya-register-marlene-2026-06
+  - id: fleur-van-zonneveld
+    name: "Fleur van Zonneveld"
+    trainings_claimed:
+      - label: "E-RYT 200, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-marlene-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead teacher 2025-cohort (E-RYT 200)."
+        registry: other
+        verified: yes
+        source: ya-register-marlene-2026-06
+  - id: pascalle-van-haaften
+    name: "Pascalle van Haaften (Go Beyond Yoga)"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance); 2-jarige Ayurveda-studie; ballet"
+        verified: yes
+        source: ya-register-embodied-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead teacher 2026-cohort (E-RYT 500); focus flexibiliteit &
+          backbends; balletachtergrond; Ayurveda."
+        registry: other
+        verified: yes
+        source: ya-register-embodied-2026-06
+  - id: david-rodrigues-junior
+    name: "David Rodrigues Junior (The Psychedelic Yogi / David Junior)"
+    trainings_claimed:
+      - label: "E-RYT 200 (Yoga Alliance); trainde met Dylan Werner, Patrick Beach, Sri
+          Dharma Mittra"
+        verified: yes
+        source: ya-register-embodied-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead teacher 2026-cohort (E-RYT 200); internationaal
+          Vinyasa-docent; handstands, arm balances & inversions."
+        registry: other
+        verified: yes
+        source: ya-register-embodied-2026-06
