@@ -6,75 +6,145 @@ website: https://www.dutchyogaacademy.com
 status: active
 locations:
   - city: Nijmegen
+    address: "Bodhi Yogashala (Oost), Prins Hendrikstraat 16, 6521 AW"
+    note: >
+      Opleidingslocatie = host-studio Bodhi Yogashala Oost (van mededocent
+      Lisanne Jansen); tevens YA-adres. CRKBO-registratieplaats is echter
+      Odiliapeel (zie crkbo) — organisatie elders geregistreerd dan de
+      leslocatie.
 crkbo:
-  registered: unknown
-  checked: "2026-06-13"
+  registered: yes
+  register: instelling
+  holder: "Dutch Yoga Academy"
+  checked: "2026-06-25"
   source: crkbo-register-2026-06
-  note: "geen naam-match in CRKBO-register"
+  note: >
+    Register-geverifieerd: Instelling "Dutch Yoga Academy", Odiliapeel,
+    www.dutchyogaacademy.com (2026-06-25), gevonden via de Website-kolom
+    ("dutchyoga"). LET OP: een eerdere check (2026-06-13) vond geen naam-match —
+    mogelijk register-update sindsdien of onvolledige eerdere zoek; nu wél
+    aanwezig. Registratieplaats Odiliapeel ≠ leslocatie Nijmegen. De site
+    vermeldt GEEN btw-behandeling bij de prijs → price.vat blijft unknown
+    (§4.11), ondanks CRKBO-Instelling.
 registrations:
   - body: yoga_alliance
     identifier: "RYS 200"
     holder: "Dutch Yoga Academy"
     first_registered: "2020-02"
-    verified_in_register: "yes"
+    verified_in_register: yes
     source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Dutch Yoga Academy" (Prins
+      Hendrikstraat 16, Nijmegen; rating 4.75/2 reviews; taal NL; First
+      Registered February 2020; bevestigd 2026-06-25). 0 training dates op YA
+      (cohorten via de site). Lead teacher Merel Martens (E-RYT 500, YACEP).
+legal:
+  legal_name: "Dutch Yoga Academy"
+  note: "CRKBO-Instelling geregistreerd te Odiliapeel; leslocatie Nijmegen. KvK-nr
+    niet doorzocht."
+founded_year:
+  value: 2018
+  source: site-2026-06
+  note: "DYA Nijmegen sinds 2018 (claim); YA-RYS sinds feb 2020. Oprichter Merel
+    Martens leidt sinds 2013/2014 op via Parimukti/WonderfulYoga in India."
 depth: listed
-last_verified: "2026-06-13"
+last_verified: "2026-06-25"
 sources:
   - id: site-2026-06
     type: website
-    url: https://www.dutchyogaacademy.com/
+    url: https://www.dutchyogaacademy.com/opleiding
     archived_url: https://web.archive.org/web/20260613075249/https://www.dutchyogaacademy.com/
-    captured: "2026-06-13"
-    note: "Wix-site; homepage bevat opleidingsbeschrijving; prijzen op aparte pagina
-      /data-prijzen (nog niet uitgelezen)"
+    captured: "2026-06-25"
+    note: >
+      200u Vinyasa Yoga Docentopleiding (Wix): inhoud (asana/pranayama,
+      alignment & adjustment, anatomie/fysiologie, meditatie, filosofie,
+      didactiek, sequencing, yoga business), team, weekendopzet, data 2026 (vol)
+      + 2027, kosten (vroegboekkorting €260, aanbetaling €500; geen basisbedrag
+      genoemd), groepsgrootte, eindopdracht/feedback, locatie Bodhi Yogashala.
     local_snapshot: data/archives/dutch-yoga-academy/site-2026-06-2026-06-13.pdf
   - id: ya-register-2026-06
     type: register
-    url: https://app.yogaalliance.org/directoryregistrants?type=School
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002qgT9AAI&sid=0013g000002qaTwAAI&name=Dutch-Yoga-Academy
     archived_url: null
-    captured: "2026-06-13"
-    local_snapshot: data/archives/dutch-yoga-academy/ya-register-2026-06-2026-06-13.pdf
+    captured: "2026-06-25"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Dutch Yoga
+      Academy', Nijmegen (Prins Hendrikstraat 16), RYS 200, First Registered
+      February 2020, rating 4.75/2, 0 training dates; teaching staff Merel
+      Martens (E-RYT500/YACEP)."
+    local_snapshot: data/archives/dutch-yoga-academy/ya-register-2026-06-2026-06-27.pdf
+  - id: ya-teacher-merel-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000234pbAAA
+    archived_url: null
+    captured: "2026-06-25"
+    note: >
+      YA-docentprofiel Merel Martens (E-RYT 500, YACEP; First Registered Feb
+      2014; 3115 teaching hours; talen EN/NL/DE/ES/FR). Oprichter Parimukti Yoga
+      & Meditation (voorheen WonderfulYoga), India (Goa & Dharamshala) —
+      bevestigt India-achtergrond.
+    local_snapshot: data/archives/dutch-yoga-academy/ya-teacher-merel-2026-06-2026-06-27.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
-    captured: "2026-06-13"
-    local_snapshot: data/archives/dutch-yoga-academy/crkbo-register-2026-06-2026-06-13.pdf
+    archived_url: null
+    query: "Dutch Yoga Academy"
+    captured: "2026-06-25"
+    note: >
+      Treffer "Dutch Yoga Academy, Odiliapeel, www.dutchyogaacademy.com"
+      (Instellingenregister), gevonden via Website-kolom. Register zonder
+      permalink; bewijs is de gefilterde snapshot; Wayback overgeslagen voor
+      crkbo.nl/Register/*.
+    local_snapshot: data/archives/dutch-yoga-academy/crkbo-register-2026-06-2026-06-27.pdf
 
 programs:
   - id: 200-vinyasa
     name: "200-uurs Vinyasa Yogadocentopleiding"
     url: https://www.dutchyogaacademy.com/opleiding
     format_label: "200"
-    style_claimed: "Vinyasa Flow (met ruimte voor eigen stijl: Dynamische Hatha /
-      Slow Flow); wetenschappelijk onderbouwde anatomie en fysiologie"
-    styles: [vinyasa]  # primair Vinyasa; Hatha/Slow Flow als variant "ruimte voor eigen stijl", niet co-equaal → geen tweede tag (§4.12)
+    style_claimed: "Vinyasa Flow (basis ook toepasbaar op Hatha/Gentle/Slow/Hatha
+      Flow); asana & pranayama (+ kriyas/bandhas), alignment & adjustment
+      (Iyengar/ Hanson Lasater/Van Leeuwen/Grilley-invloeden), anatomie &
+      fysiologie, meditatie, filosofie (Yoga Sutras), didactiek, sequencing,
+      yoga business"
+    styles: [ vinyasa ] # primair Vinyasa; Hatha/Slow Flow als variant "ruimte voor eigen stijl", niet co-equaal (§4.12)
     accreditation:
       - body: yoga_alliance
         label_claimed: "geregistreerd bij Yoga Alliance; 'voldoet aan de hoogste
           kwaliteitseisen van Yoga Alliance'"
-        verified: "yes"
+        verified: yes
         source: ya-register-2026-06
         note: >
           RYS 200 geverifieerd. Zelfde claim-formulering "Yoga Alliance een
           Amerikaanse organisatie die yogaopleidingen controleert en
           accrediteert" als bij Jai Yoga - terugkerend patroon (YA inspecteert
-          geen onderwijs). "Voldoet aan de hoogste kwaliteitseisen" is eveneens
-          claim-materiaal.
+          geen onderwijs). Lead teacher Merel Martens is E-RYT 500.
+      - body: crkbo
+        label_claimed: "(geen expliciete CRKBO-/btw-claim op de opleidingspagina)"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling 'Dutch Yoga Academy' (Odiliapeel) register-geverifieerd;
+          de site claimt CRKBO niet prominent."
     delivery:
       mode: in_person
       structure: weekends
       duration_months_min: 10
       language: nl
+    prerequisites_claimed: "ervaring/enthousiasme voor yoga; bij voorkeur 1-2 jaar
+      yoga-ervaring. Geschikt voor aankomend docent én verdieping."
     price:
       amount_eur: null
       vat: unknown
-      published: "yes"
-      includes: "syllabus, online cursus 'Anatomie & Fysiologie voor Yogadocenten'
-        (los EUR 250), boek 'Essential Yoga Therapy' (los EUR 25)"
-      note: "prijs op /data-prijzen, nog niet uitgelezen; vroegboekkorting genoemd;
-        overige literatuur zelf aanschaffen"
+      published: not_published
+      includes: >
+        10 opleidingsweekenden, Syllabus Theorie & Anatomie (80+ pp), Syllabus
+        Alignment (50 houdingen), boek 'Essential Yoga Therapy' (twv €25),
+        online cursus 'Applied Anatomy and Physiology' (twv €250), individueel
+        begeleidingstraject (intake- + voortgangsgesprek)
+      excludes: "literatuur (Ray Long, Eddie Stern, Van Kraalingen) — zelf aanschaffen"
+      note: >
+        BASISBEDRAG NIET NUMERIEK GEPUBLICEERD op de Data&Kosten-pagina: alleen
+        €260 vroegboekkorting (inschrijven voor november) + €500 aanbetaling
+        worden genoemd. Geen btw-vermelding → vat unknown (§4.11) ondanks CRKBO.
       source: site-2026-06
     hours_claimed:
       total: 200
@@ -84,33 +154,92 @@ programs:
       breakdown_published: not_published
       source: site-2026-06
       note: >
-        Geen urenverdeling gepubliceerd. Wel concreet feedbacksignaal: "twee
-        keer uitgebreid persoonlijke feedback op een opgenomen les" - begeleide
-        feedback op lesgeven, zij het op opnames i.p.v. live geobserveerd.
+        10 weekenden (za 12:00-18:00, zo 10:00-17:00) + ~3-5u zelfstudie/week.
+        Concreet feedbacksignaal: halverwege én aan het einde een OPGENOMEN les
+        die door de hoofddocent wordt beoordeeld + uitgebreide feedback (op
+        opnames, niet live geobserveerd). Geen geïsoleerd
+        contact-/lespraktijk-urental.
     group_size_claimed:
-      max: 20
+      min: 8
+      max: 21
       source: site-2026-06
-      note: "'we streven naar 18-20 mensen per groep'"
+      note: "Streven 18-21 deelnemers; training gaat door bij min. 8 (anders
+        aanbetaling retour)."
     assessment_described:
-      exists: not_published
+      exists: yes
+      final: yes
+      quote: "Om het certificaat te ontvangen vragen we je op het einde van de
+        opleiding een yogales op te nemen. Deze wordt door de hoofddocent
+        beoordeeld en van feedback voorzien."
+    contract:
+      cancellation_published: yes
+      refund_published: yes
+      source: site-2026-06
+      note: "14 dagen wettelijke bedenktijd (kosteloos); daarna aanbetaling (€500)
+        niet gerestitueerd; na aanvang geen annulering (opschorting mogelijk bij
+        ziekte/zwangerschap). DYA kan annuleren bij <8 aanmeldingen (volledige
+        terugbetaling)."
     track_record:
       first_seen_year: 2020
       source: ya-register-2026-06
-      note: "claimt 15+ jaar opleiden (India + NL), 300+ afgestudeerden; DYA Nijmegen
-        sinds 2018"
+      note: >
+        Claimt 15+ jaar opleiden (India + NL), 300+ afgestudeerden; DYA Nijmegen
+        sinds 2018; YA-RYS sinds 2020. Jaarlijks cohort (maart-december).
+    cohorts:
+      - id: vinyasa-2026-03
+        start: "2026-03"
+        end: "2026-12"
+        status: confirmed_ran
+        source: site-2026-06
+        language: nl
+        note: "21 mrt - 13 dec 2026, 10 weekenden; pagina markeert deze groep als VOL."
+      - id: vinyasa-2027-03
+        start: "2027-03"
+        end: "2027-12"
+        status: announced
+        source: site-2026-06
+        language: nl
+        note: "20 mrt - 19 dec 2027, 10 weekenden; inschrijven mogelijk."
+    teachers:
+      - person_id: merel-martens
+        role: "oprichter / hoofdtrainer (asana, alignment, anatomie)"
+      - person_id: lisanne-jansen
+        role: "docent (alignment & asanalab); eigenaar host-studio Bodhi Yogashala"
+      - person_id: wim-van-doorn
+        role: "docent (yogafilosofie)"
 
 people:
   - id: merel-martens
     name: "Merel Martens"
     trainings_claimed:
-      - label: "oprichter & hoofddocent; eigen yogaschool in India opgezet"
-        verified: unknown
-        source: site-2026-06
+      - label: "E-RYT 500, YACEP (Yoga Alliance; First Registered 2014, 3115 lesuren);
+          oprichter Parimukti/WonderfulYoga yogaschool in India (Goa &
+          Dharamshala)"
+        verified: yes
+        source: ya-teacher-merel-2026-06
     background:
       - field: "geneeskunde / gezondheidswetenschappen"
         credential: "studies Geneeskunde en Gezondheidswetenschappen; auteur 'Essential
           Yoga Therapy'"
         registry: other
+        verified: unknown
+        source: site-2026-06
+  - id: lisanne-jansen
+    name: "Lisanne Jansen"
+    background:
+      - field: "yoga"
+        credential: "eigenaresse Bodhi Yogashala Nijmegen (host-studio); begonnen als
+          fysiotherapeut; yoga- & sportdocent. Geeft alignment-/asanalablessen."
+        registry: other
+        verified: unknown
+        source: site-2026-06
+  - id: wim-van-doorn
+    name: "Wim van Doorn"
+    background:
+      - field: "yoga"
+        credential: "docent yogafilosofie binnen de opleiding; geeft
+          yogafilosofie-workshops."
+        registry: none
         verified: unknown
         source: site-2026-06
 
