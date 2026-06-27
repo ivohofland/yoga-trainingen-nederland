@@ -1,0 +1,188 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yoga-spot-amsterdam
+name: Yoga Spot Amsterdam
+aka: [ "Yoga Spot", "Yogaspot VOF" ]
+website: https://yogaspot.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Laan der Hesperiden 142 (Amsterdam Zuid)"
+    note: "studio + opleidingslocatie (klassikaal). 3-/4-daags retreat in
+      Winterswijk."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Yogaspot VOF"
+  checked: "2026-06-25"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "Yogaspot VOF", Amsterdam, www.yogaspot.nl
+    (2026-06-25). ZOEK-NUANCE: naam-zoek "Yoga Spot" (met spatie) → 0; gevonden
+    via de Website-kolom ("yogaspot") want geregistreerd als één woord "Yogaspot
+    VOF". De opleidingspagina stelt bovendien EXPLICIET "geregistreerd bij het
+    CRKBO en vrij van BTW" → price.vat = exempt_crkbo (register + expliciete
+    claim sluiten aan, §4.11).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Yoga Spot Amsterdam"
+    first_registered: "2019-12"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Yoga Spot Amsterdam" (Laan
+      der Hesperiden 142, Amsterdam; rating 4.0/1 review; First Registered
+      December 2019; bevestigd 2026-06-25). 0 training dates op YA (cohort loopt
+      via de site). ALLEEN RYS 200 (geen RYS 300/500): de 500u-route loopt via
+      gestapelde advanced modules met deelcertificaten (zie programma). Lead
+      teacher Margriet Verhagen (E-RYT 500, YACEP).
+legal:
+  legal_name: "Yogaspot VOF"
+  note: "CRKBO-Instellingsnaam (VOF), Amsterdam. KvK-nr niet doorzocht."
+founded_year:
+  value: 2019
+  source: ya-register-2026-06
+  note: "YA-RYS sinds dec 2019."
+depth: listed
+last_verified: "2026-06-25"
+sources:
+  - id: site-2026-06
+    type: website
+    url: https://yogaspot.nl/hatha-yoga-teacher-training/
+    archived_url: https://web.archive.org/web/20260627091949/https://yogaspot.nl/hatha-yoga-teacher-training/
+    captured: "2026-06-25"
+    note: >
+      200u Hatha (Flow) Yoga Teacher Training: inhoud, docenten (Lahma Muris &
+      Margriet Verhagen), YA + CRKBO/BTW-vrij claim, prijs €2950 incl. retreat,
+      data 2025-2026-cohort, toetsing/examens, 500u-vervolgmodules.
+    local_snapshot: data/archives/yoga-spot-amsterdam/site-2026-06-2026-06-27.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002piadAAA&sid=0013g000002noAUAAY&name=Yoga-Spot-Amsterdam
+    archived_url: null
+    captured: "2026-06-25"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga Spot
+      Amsterdam', Amsterdam, RYS 200, First Registered December 2019, 1 review,
+      0 training dates; teaching staff Margriet Verhagen (E-RYT500/YACEP)."
+    local_snapshot: data/archives/yoga-spot-amsterdam/ya-register-2026-06-2026-06-27.pdf
+  - id: ya-teacher-margriet-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000022ufYAAQ
+    archived_url: null
+    captured: "2026-06-25"
+    note: "YA-docentprofiel Margriet Verhagen (RYT, Amsterdam; First Registered
+      February 2013; talen EN/NL; YACEP)."
+    local_snapshot: data/archives/yoga-spot-amsterdam/ya-teacher-margriet-2026-06-2026-06-27.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Yogaspot"
+    captured: "2026-06-25"
+    note: >
+      Treffer "Yogaspot VOF, Amsterdam, www.yogaspot.nl" (Instellingenregister).
+      Gevonden via Website-kolom; naam-term is "Yogaspot" (één woord). Register
+      zonder permalink; bewijs is de gefilterde snapshot; Wayback overgeslagen
+      voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/yoga-spot-amsterdam/crkbo-register-2026-06-2026-06-27.pdf
+
+programs:
+  - id: 200-hatha-flow
+    name: "Hatha (Flow) Yoga Teacher Training (200u)"
+    url: https://yogaspot.nl/hatha-yoga-teacher-training/
+    format_label: "200"
+    style_claimed: "Hatha, Hatha Flow & Hatha Vinyasa Flow: zwaartepunt op asana's;
+      daarnaast holistische anatomie & fysiologie, pranayama, meditatie,
+      filosofie/ geschiedenis/spiritualiteit, mantra's, chakra's, teacher skills
+      + zakelijke aspecten van lesgeven"
+    styles: [ hatha, vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Geaccrediteerd door Yoga Alliance; na de 200u-training
+          gecertificeerd yogadocent (RYT 200)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS 200 geverifieerd; lead Margriet Verhagen is E-RYT 500."
+      - body: crkbo
+        label_claimed: "Geregistreerd bij het CRKBO en vrij van BTW"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling 'Yogaspot VOF' register-geverifieerd."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 8
+      language: nl
+    prerequisites_claimed: "minimaal 2 jaar wekelijks yoga (thuis of in groep);
+      goede beheersing van de Engelse taal vereist. Intakegesprek; deelname in
+      onderling overleg besloten. Geen vrijstellingen."
+    price:
+      amount_eur: 2950
+      vat: exempt_crkbo
+      published: yes
+      includes: "3-daags retreat in Winterswijk"
+      note: "€2950, incl. 3-daags retreat. EXPLICIET 'vrij van BTW' (CRKBO)."
+      source: site-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-2026-06
+      note: >
+        '200+ uur'. 11 lesweekenden (vr+za 13:30-18:30) + retreat (examens/
+        diploma-uitreiking) + reserveweekend voor herexamens. Daarnaast ~3u
+        studiebelasting + min. 2 yogalessen/week (met verslag); peer-teaching &
+        adjustments. Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "Weekend 10 ... theorie examen & examenvoorbereiding; Weekend 11 ...
+        anatomy theorie en praktijk examen weekend"
+    track_record:
+      first_seen_year: 2020
+      source: site-2026-06
+      note: "Reviews van HYTT-studenten 2020-2021; jaarlijkse najaarsstart. YA-RYS
+        sinds dec 2019."
+    cohorts:
+      - id: hatha-2025-10
+        start: "2025-10"
+        end: "2026-05"
+        status: confirmed_ran
+        source: site-2026-06
+        language: nl
+        note: "Start 10 okt 2025; 11 weekenden t/m examens + retreat 26-29 mei 2026
+          (Winterswijk); reserveweekend 11 jul 2026 voor herexamens. Geen
+          nieuwer cohort aangekondigd op de pagina."
+    teachers:
+      - person_id: margriet-verhagen
+        role: "hoofddocent"
+      - person_id: lahma-muris
+        role: "hoofddocent"
+
+people:
+  - id: margriet-verhagen
+    name: "Margriet Verhagen"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "hoofddocent Yoga Spot Amsterdam; E-RYT 500, YACEP (YA First
+          Registered feb 2013); decennia ervaring yoga/meditatie/persoonlijke
+          ontwikkeling"
+        registry: other
+        verified: yes
+        source: ya-teacher-margriet-2026-06
+  - id: lahma-muris
+    name: "Lahma Muris"
+    background:
+      - field: "yoga"
+        credential: "hoofddocent Yoga Spot Amsterdam; decennia ervaring yoga, meditatie
+          & persoonlijk ontwikkelingswerk"
+        registry: none
+        verified: unknown
+        source: site-2026-06
