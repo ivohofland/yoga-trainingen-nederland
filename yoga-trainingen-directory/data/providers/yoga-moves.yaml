@@ -47,15 +47,27 @@ registrations:
   - body: yoga_alliance
     identifier: "RYS 200"
     holder: "Pranayama (Marilou van Hoek)"
-    verified_in_register: unknown
+    first_registered: "2020-09"
+    verified_in_register: yes
     source: ya-register-pranayama-2026-06
     note: >
       HOLDER-SPECIMEN: de Ashtanga-opleiding (programma ashtanga-tt) wordt
       gehost door Yoga Moves maar gecertificeerd door Marilou van Hoeks eigen
       school "Pranayama" (pranayama.nl) — een aparte YA-RYS, niet de Yoga
       Moves-registratie. Diploma komt van Pranayama; btw-vrijstelling loopt via
-      Yoga Moves' CRKBO. Zie de open modelleer-vraag in de overdracht: dit
-      programma eventueel als eigen provider afsplitsen.
+      Yoga Moves' CRKBO.
+      HER-VERIFICATIE 2026-06-25 (plaatsingsbesluit gecontroleerd): het live
+      YA-profiel "Pranayama" is een ECHTE zelfstandige RYS (eigen adres Franz
+      Lehársingel, Utrecht — NIET het Yoga Moves-studioadres; First Registered
+      September 2020; 4.78/16 reviews; enige teaching staff Marilou van Hoek,
+      E-RYT 500/YACEP; 0 upcoming training dates). De Ashtanga-200u wordt echter
+      uitsluitend op yogamoves.nl gemarket en geboekt; pranayama.nl is een
+      brochure-site (slideshow) zonder eigen 200u-inschrijving (eerder alleen een
+      100u Sādhana Mentorship waargenomen). Volgens decision #9 (canonieke
+      marketing + booking = yogamoves.nl) blijft de Ashtanga-TT dus een programma
+      ONDER Yoga Moves, met Pranayama als holder-nuance. SPLITS-TRIGGER: zodra
+      pranayama.nl zelf een 200/300/500u-traject mét eigen inschrijving voert,
+      Pranayama als eigen provider-record afsplitsen.
 legal:
   legal_name: "Yoga Moves B.V."
 founded_year:
