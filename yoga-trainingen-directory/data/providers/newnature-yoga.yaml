@@ -1,0 +1,296 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: newnature-yoga
+name: NewNature Yoga
+aka: [ "NewNature Yoga Academy", "NewNature Academy" ]
+website: https://newnatureyoga.com
+status: active
+locations:
+  - city: Silvolde
+    address: "Kerkenstraat 6a"
+    note: >
+      YA-registratieadres. Het onderwijs is echter VOLLEDIG ONLINE & self-paced
+      (geen fysieke lesdagen). CRKBO-holder staat in Terborg (zie crkbo).
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "NewNature Yoga Academy"
+  checked: "2026-06-25"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: zoekterm "NewNature" → exact 1 treffer "NewNature
+    Yoga Academy, Terborg, www.newnatureyoga.nl" (2026-06-25).
+    HOLDER/LOCATIE-NUANCE: CRKBO-naam "NewNature Yoga Academy" te Terborg vs
+    YA-adres Silvolde. De site presenteert CRKBO als KEURMERK ("erkend door Yoga
+    Alliance en CRKBO ... staan garant voor hoogstaande kwaliteit"), maar
+    vermeldt GEEN btw-behandeling bij de €449-prijs → price.vat blijft unknown
+    (§4.11: CRKBO-registratie impliceert op zichzelf geen btw-vrijstelling;
+    alleen op directe observatie vastleggen).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "NewNature Yoga"
+    first_registered: "2019-07"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "NewNature Yoga" (Kerkenstraat
+      6a, Silvolde; rating 4.67/9 reviews, NPS 7.8; First Registered July 2019;
+      bevestigd 2026-06-25). 0 training dates gelijst — consistent met een
+      volledig online, self-paced aanbod zonder cohorten. Talen
+      NL/EN/FR/ES/TR/DE. Teaching staff: Dorien Bortels (E-RYT 500, RPYT, YACEP)
+      + Jack.
+legal:
+  legal_name: "NewNature Yoga Academy"
+  note: "CRKBO-Instellingsnaam (Terborg). Mede-opgericht door Dorien Bortels en
+    Jack; KvK-nr niet doorzocht."
+founded_year:
+  value: 2019
+  source: ya-register-2026-06
+  note: "YA-RYS sinds juli 2019."
+depth: listed
+last_verified: "2026-06-25"
+sources:
+  - id: site-hatha-2026-06
+    type: website
+    url: https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/
+    archived_url: https://web.archive.org/web/20260627084538/https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/
+    captured: "2026-06-25"
+    note: >
+      200u Hatha Yoga Docent Opleiding (volledig online, self-paced): 6 modules,
+      programma, prijs (€599 → €449), downloadbaar handboek, YA + CRKBO claim,
+      hoofddocent Dorien, gastdocent Yogi Madhav (Sivananda Hatha).
+    local_snapshot: data/archives/newnature-yoga/site-hatha-2026-06-2026-06-27.pdf
+  - id: site-yin-2026-06
+    type: website
+    url: https://newnatureyoga.com/200-uur-yin-yoga-opleiding/
+    archived_url: https://web.archive.org/web/20260627084732/https://newnatureyoga.com/200-uur-yin-yoga-opleiding/
+    captured: "2026-06-25"
+    note: >
+      200u Yin Yoga Docent Opleiding (volledig online, self-paced): 6 modules,
+      handboek 250 pp, prijs (€599 → €449), YA + CRKBO claim, Yin-lijn via
+      Bernie Clark (Dorien opgeleid door Bernie Clark).
+    local_snapshot: data/archives/newnature-yoga/site-yin-2026-06-2026-06-27.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pkN1AAI&sid=0013g000002npiWAAQ&name=NewNature-Yoga
+    archived_url: null
+    captured: "2026-06-25"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'NewNature
+      Yoga', Silvolde, RYS 200, First Registered July 2019, 0 training dates;
+      teaching staff Dorien Bortels (E-RYT500/RPYT/YACEP) + Jack."
+    local_snapshot: data/archives/newnature-yoga/ya-register-2026-06-2026-06-27.pdf
+  - id: ya-teacher-dorien-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023rDEAAY
+    archived_url: null
+    captured: "2026-06-25"
+    note: "YA-docentprofiel Dorien Bortels (E-RYT, Silvolde; Yin TT bij Bernie
+      Clark; teaching: Online Yoga Classes; First Registered July 2019)."
+    local_snapshot: data/archives/newnature-yoga/ya-teacher-dorien-2026-06-2026-06-27.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "NewNature"
+    captured: "2026-06-25"
+    note: >
+      "NewNature" → 1 treffer "NewNature Yoga Academy, Terborg,
+      www.newnatureyoga.nl" (Instellingenregister). Register zonder permalink;
+      bewijs is de gefilterde snapshot; Wayback overgeslagen voor
+      crkbo.nl/Register/*.
+    local_snapshot: data/archives/newnature-yoga/crkbo-register-2026-06-2026-06-27.pdf
+
+programs:
+  - id: 200-hatha-online
+    name: "Hatha Yoga Docent Opleiding (200u, online)"
+    url: https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/
+    format_label: "200"
+    style_claimed: "Hatha Yoga (Sivananda-lijn): meditatie & pranayama, yoga
+      filosofie (8-voudig pad, chakra's, karma), yoga anatomie, lesgeven &
+      ethiek, sequencing + 70+ asana's / 35 uitgewerkte asanalessen,
+      asanapraktijk incl. traditionele asanales met Indiase gastdocent Yogi
+      Madhav"
+    styles: [ hatha ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance erkend; internationaal erkend 200u Yoga Docent
+          certificaat, registreren als RYT 200 na afronding"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS 200 geverifieerd; lead teacher Dorien Bortels is E-RYT 500."
+      - body: crkbo
+        label_claimed: "Erkend door CRKBO"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling 'NewNature Yoga Academy' (Terborg)
+          register-geverifieerd."
+    delivery:
+      mode: online
+      structure: modular
+      language: nl
+    prerequisites_claimed: "geen; voor beginners én gevorderden, en voor wie de
+      eigen practice wil verdiepen"
+    price:
+      amount_eur: 449
+      variants:
+        - { label: "reguliere prijs", amount_eur: 599 }
+        - { label: "actieprijs (25% korting, t.t.v. capture)", amount_eur: 449 }
+      vat: unknown
+      published: yes
+      includes: >
+        6 modules incl. downloadbaar materiaal/handboek, regelmatige quizzen &
+        opdrachten, ondersteuning tijdens én na de opleiding, min. 2 jaar
+        onbeperkte toegang (verlengbaar), YA-erkend certificaat
+      note: >
+        €449 (van €599) als eenmalige aankoop (add-to-cart); termijnbetaling op
+        aanvraag. Geen btw-vermelding bij de prijs → vat unknown (§4.11),
+        ondanks CRKBO-Instelling.
+      source: site-hatha-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-hatha-2026-06
+      note: >
+        VOLLEDIG ONLINE & SELF-PACED: de "200 uur" is zelfstudie-materiaal
+        (videolessen, leesmateriaal, quizzen, opdrachten), geen live cohort of
+        geroosterde contacturen (YA-profiel toont 0 training dates).
+        Persoonlijke begeleiding op aanvraag (e-mail/telefoon/videobellen). LET
+        OP (descriptief, geen compliance-oordeel): de huidige YA-standaard STAAT
+        100% distance learning TOE, maar eist min. 15% synchroon = 30u voor een
+        RYS 200 (docent + studenten real-time samen, online of fysiek). Een
+        volledig pre-recorded/self-paced 200u zonder geroosterde synchrone
+        component haalt die 30u-synchroon-eis niet. De RYS dateert echter van
+        2019 en is mogelijk niet ge-up-levelt naar de elevated standaard
+        (legacy) — zie standards-era backlog-idee.
+    composition:
+      type: fixed_modular
+    assessment_described:
+      exists: yes
+      continuous: yes
+      quote: "Bij de module 'Yogales geven' zal je gevraagd worden om een yogales
+        samen te stellen en is er aan het einde van de module een 1 op 1
+        videogesprek waarbij je feedback krijgt op de door jou samengestelde
+        les"
+    track_record:
+      first_seen_year: 2019
+      source: ya-register-2026-06
+      note: >
+        RYS sinds 2019; doorlopende (continue) inschrijving — geen cohorten.
+        Recente YA-reviews (jun 2026) bevestigen dat de opleiding actief wordt
+        afgerond ('de videos, de uitleg ...').
+    teachers:
+      - person_id: dorien-bortels
+        role: "hoofddocent / mede-oprichter"
+      - person_id: yogi-madhav
+        role: "gastdocent (traditionele Indiase Hatha/Sivananda asanales)"
+
+  - id: 200-yin-online
+    name: "Yin Yoga Docent Opleiding (200u, online)"
+    url: https://newnatureyoga.com/200-uur-yin-yoga-opleiding/
+    format_label: "200"
+    style_claimed: "Yin Yoga (Bernie-Clark-lijn): meditatie & pranayama, filosofie,
+      anatomie, Yin lesgeven, Yin theorie (Yin & Yang/Taoïsme, 4 tattva's,
+      fascia, meridianen, chakra's/hormoonstelsel), Yin asanapraktijk"
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance erkend; 200u Yin Yoga Docent certificaat,
+          registreren als RYT 200 na afronding"
+        verified: yes
+        source: ya-register-2026-06
+        note: "School-RYS 200 geverifieerd; lead teacher Dorien Bortels is E-RYT 500."
+      - body: crkbo
+        label_claimed: "Erkend door CRKBO"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling 'NewNature Yoga Academy' (Terborg)
+          register-geverifieerd."
+    delivery:
+      mode: online
+      structure: modular
+      language: nl
+    prerequisites_claimed: "geen; voor beginners én gevorderden, en voor wie de
+      eigen Yin-practice wil verdiepen"
+    price:
+      amount_eur: 449
+      variants:
+        - { label: "reguliere prijs", amount_eur: 599 }
+        - { label: "actieprijs (t.t.v. capture)", amount_eur: 449 }
+      vat: unknown
+      published: yes
+      includes: >
+        6 modules incl. downloadbaar materiaal, handboek (250 pp), regelmatige
+        quizzen & opdrachten, ondersteuning tijdens én na de opleiding, min. 2
+        jaar onbeperkte toegang, YA-erkend certificaat
+      note: >
+        €449 (van €599) als eenmalige aankoop; termijnbetaling mogelijk. Geen
+        btw-vermelding bij de prijs → vat unknown (§4.11), ondanks
+        CRKBO-Instelling.
+      source: site-yin-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin-2026-06
+      note: >
+        VOLLEDIG ONLINE & SELF-PACED (gemiddeld 6-12 mnd, zelf te bepalen): "200
+        uur" = zelfstudie-materiaal (videolessen, leesmateriaal, opdrachten,
+        quizzen), geen live cohort/contacturen. Zelfde
+        elevated-standaard-kanttekening als bij de Hatha-opleiding (descriptief;
+        RYS legacy 2019).
+    composition:
+      type: fixed_modular
+    assessment_described:
+      exists: yes
+      continuous: yes
+      quote: "Na succesvol afronden van Yin Yoga Opleiding Online bij NewNature Yoga
+        krijg je een 200 uur Yin Yoga docenten certificaat, erkend door Yoga
+        Alliance"
+    track_record:
+      first_seen_year: 2019
+      source: ya-register-2026-06
+      note: "Doorlopende inschrijving; recente reviews (2025-2026) bevestigen actieve
+        afronding. Yin-pagina online sinds 2025 (nieuwere lijn naast Hatha)."
+    teachers:
+      - person_id: dorien-bortels
+        role: "hoofddocent / mede-oprichter"
+
+people:
+  - id: dorien-bortels
+    name: "Dorien Bortels"
+    trainings_claimed:
+      - label: "E-RYT 500, RPYT, YACEP (Yoga Alliance); Yin Yoga TT bij Bernie Clark;
+          opleiding/lesgeven in Nederland én India (Ashram)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "hoofddocent & mede-oprichter NewNature Yoga; E-RYT 500, RPYT,
+          YACEP; >20 jaar ervaring; Yin-lijn via Bernie Clark;
+          India-achtergrond"
+        registry: other
+        verified: yes
+        source: ya-teacher-dorien-2026-06
+  - id: jack
+    name: "Jack"
+    background:
+      - field: "yoga"
+        credential: "mede-oprichter NewNature Yoga (genoemd in cursistreviews als
+          'Dorien en Jack'); YA teaching staff (2e naam op profiel)."
+        registry: none
+        verified: unknown
+        source: ya-register-2026-06
+  - id: yogi-madhav
+    name: "Yogi Madhav"
+    background:
+      - field: "yoga"
+        credential: "Indiase gastdocent; traditionele Hatha Yoga in de leer van Swami
+          Sivananda (asanales binnen de Hatha-opleiding)."
+        registry: none
+        verified: unknown
+        source: site-hatha-2026-06
