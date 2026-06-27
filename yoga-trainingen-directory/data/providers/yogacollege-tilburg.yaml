@@ -1,0 +1,218 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yogacollege-tilburg
+name: Yogacollege Tilburg
+aka: [ "Yogacentrum Tilburg", "Yoga&Pilatescentrum Tilburg", "YCT" ]
+website: https://yogacentrumtilburg.nl
+status: active
+locations:
+  - city: Tilburg
+    address: "Dudokhof 79-01/79-02, 5041 EZ"
+    note: "studio + opleidingslocatie (klassikaal). Ook Yogahome Curacao genoemd."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Yogacentrum Tilburg (h.o.d.n. Yogacollege Tilburg)"
+  checked: "2026-06-25"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "Yogacentrum Tilburg H.O.D.N. Yogacollege
+    Tilburg", Tilburg, www.yogacollegetilburg.nl (2026-06-25).
+    H.O.D.N.-CONSTRUCTIE (handelend onder de naam): de KvK-entiteit is
+    Yogacentrum Tilburg, die onder de handelsnaam Yogacollege Tilburg de
+    opleidingen geeft (twee BV's: Yogacentrum Tilburg BV + Yogacollege Tilburg
+    BV). Aparte "Registratie CRKBO"-pagina op de site bevestigt registratie,
+    maar vermeldt GEEN btw-behandeling bij de prijs → price.vat blijft unknown
+    (§4.11), ondanks CRKBO-Instelling.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 500"
+    holder: "Yogacollege Tilburg"
+    first_registered: "2020-01"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 500 geverifieerd op het live YA-profiel "Yogacollege Tilburg"
+      (Dudokhof 79-02, Tilburg; rating 4.44/8 reviews; First Registered January
+      2020; bevestigd 2026-06-25). DESIGNATIE: badge-asset toont ALLEEN
+      RYS500.png (geen aparte RYS200/RYS300-badge) → één 'pure' RYS 500. LET OP
+      (descriptief): de site biedt een RYT 200-exit na jaar 1, wat normaliter
+      een RYS 200-designatie veronderstelt; alleen RYS 500 is zichtbaar.
+      Reviewers houden RYT 500. Lead teacher Marloes van Boxtel (E-RYT 500,
+      YACEP). 0 training dates op YA.
+legal:
+  legal_name: "Yogacentrum Tilburg BV"
+  note: "Twee BV's: Yogacentrum Tilburg BV (KvK-entiteit) + Yogacollege Tilburg
+    BV; CRKBO: Yogacentrum Tilburg h.o.d.n. Yogacollege Tilburg. KvK-nr niet
+    doorzocht."
+founded_year:
+  value: 2020
+  source: ya-register-2026-06
+  note: "YA-RYS sinds jan 2020."
+depth: listed
+last_verified: "2026-06-25"
+sources:
+  - id: site-opleiding-2026-06
+    type: website
+    url: https://yogacentrumtilburg.nl/ryt-500-allround-yogaopleiding/
+    archived_url: https://web.archive.org/web/20260627092603/https://yogacentrumtilburg.nl/ryt-500-allround-yogaopleiding/
+    captured: "2026-06-25"
+    note: >
+      RYT-500 Allround Yogaopleiding (2-jarig): structuur (jaar 1 = RYT 200,
+      jaar 2 = RYT 300), inhoud (klassieke hatha-basis + vinyasa flow), prijzen
+      per jaar + gebundeld, lesdagen, examens, opleidingseisen (HBO-niveau
+      gewenst). Nav: 'RYT-200/300 Allround Yogaopleiding'.
+    local_snapshot: data/archives/yogacollege-tilburg/site-opleiding-2026-06-2026-06-27.pdf
+  - id: site-crkbo-2026-06
+    type: website
+    url: https://yogacentrumtilburg.nl/registratie-crkbo/
+    archived_url: https://web.archive.org/web/20260627092655/https://yogacentrumtilburg.nl/registratie-crkbo/
+    captured: "2026-06-25"
+    note: "Eigen CRKBO-registratiepagina (bevestigt registratie; geen
+      btw-prijsvermelding)."
+    local_snapshot: data/archives/yogacollege-tilburg/site-crkbo-2026-06-2026-06-27.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjMpAAI&sid=0013g000002nlxaAAA&name=Yogacollege-Tilburg
+    archived_url: null
+    captured: "2026-06-25"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yogacollege
+      Tilburg', Tilburg, taal NL, First Registered January 2020, 0 training
+      dates, rating 4.44/8. Designatie-badge-asset = RYS500.png (enige).
+      Teaching staff Marloes van Boxtel (E-RYT500/YACEP).
+    local_snapshot: data/archives/yogacollege-tilburg/ya-register-2026-06-2026-06-27.pdf
+  - id: ya-teacher-marloes-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023aFwAAI
+    archived_url: null
+    captured: "2026-06-25"
+    note: "YA-docentprofiel Marloes van Boxtel (RYT, Dudokhof 79-01 Tilburg; First
+      Registered January 2020; YACEP)."
+    local_snapshot: data/archives/yogacollege-tilburg/ya-teacher-marloes-2026-06-2026-06-27.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Yogacollege"
+    captured: "2026-06-25"
+    note: >
+      Treffer "Yogacentrum Tilburg H.O.D.N. Yogacollege Tilburg, Tilburg,
+      www.yogacollegetilburg.nl" (Instellingenregister). Register zonder
+      permalink; bewijs is de gefilterde snapshot; Wayback overgeslagen voor
+      crkbo.nl/Register/*.
+    local_snapshot: data/archives/yogacollege-tilburg/crkbo-register-2026-06-2026-06-27.pdf
+
+programs:
+  - id: 500-allround
+    name: "Allround Yogaopleiding (2-jarig, RYT 200 → RYT 500)"
+    url: https://yogacentrumtilburg.nl/ryt-500-allround-yogaopleiding/
+    format_label: "500"
+    style_claimed: "Klassieke Hatha yoga als basis (incl. basis vinyasa flow);
+      yogafilosofie (achtvoudig pad van Patanjali / sutra's), anatomie &
+      fysiologie (incl. chakra-leer), asana, pranayama, didactiek, ethiek;
+      praktijk-dagdelen o.a. zwangerschapsyoga, Lu Jong, vinyasa flow, Critical
+      Alignment, hot yoga"
+    styles: [ hatha, vinyasa, multistyle ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Internationaal erkend Yoga Alliance certificaat: na jaar 1 RYT
+          200, na jaar 2 RYT 500"
+        verified: yes
+        source: ya-register-2026-06
+        note: >
+          School-designatie = RYS 500 (badge-asset RYS500.png; enige). De RYT
+          200-tussenexit na jaar 1 wordt geclaimd; alleen RYS 500 is in het
+          register zichtbaar (descriptieve nuance, geen oordeel).
+      - body: crkbo
+        label_claimed: "Geregistreerd in het CRKBO"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling Yogacentrum Tilburg h.o.d.n. Yogacollege Tilburg
+          register-geverifieerd."
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 24
+      language: nl
+    prerequisites_claimed: "HBO werk- en denkniveau gewenst; geschikt voor zowel
+      beginners als ervaren beoefenaars. Leerbeperking bespreekbaar."
+    price:
+      amount_eur: 4600
+      variants:
+        - { label: "jaar 1 (RYT 200)", amount_eur: 2350 }
+        - { label: "jaar 2 (RYT 300)", amount_eur: 2495 }
+        - { label: "beide jaren in 1x (RYT 500)", amount_eur: 4600 }
+        - { label: "early bird jaar 1 (voor 15 nov 2026)", amount_eur: 2150 }
+        - { label: "early bird jaar 2", amount_eur: 2350 }
+        - { label: "early bird beide jaren in 1x", amount_eur: 4400 }
+      vat: unknown
+      published: yes
+      excludes: "studiemateriaal (~€60/jaar; gratis bij gebruik online omgeving) +
+        verplicht yogaweekend (€265)"
+      note: >
+        Per jaar te betalen (jaar 1 €2350 / jaar 2 €2495) of gebundeld €4600;
+        early bird €4400. Betaling in 12 maandtermijnen (automatische incasso)
+        mogelijk. Na jaar 1 stoppen kan (200u-diploma). 'excl' op de site slaat
+        op studiemateriaal/yogaweekend, NIET op btw; geen btw-vermelding → vat
+        unknown.
+      source: site-opleiding-2026-06
+    hours_claimed:
+      total: 500
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-opleiding-2026-06
+      note: >
+        2-jarig: jaar 1 = 18 lesdagen (3 digitaal), jaar 2 = 21 lesdagen;
+        vrijdag 9:00-16:00. ~4-6u zelfstudie/week. 5 gratis yogalessen/maand
+        (studio of online). Geen geïsoleerd contact-/lespraktijk-urental
+        gepubliceerd.
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "Om af te studeren voltooi je met succes: een praktijkexamen [en] een
+        theorie-examen. Beide examens hebben herkansingsmogelijkheden."
+    track_record:
+      first_seen_year: 2020
+      source: ya-register-2026-06
+      note: "RYS sinds 2020; jaarlijkse start in januari. Reviewers houden RYT 500
+        (o.a. 2025-2026)."
+    cohorts:
+      - id: allround-2027-01
+        start: "2027-01"
+        status: announced
+        source: site-opleiding-2026-06
+        language: nl
+        note: "'Start elke januari'; early bird-deadline 15 nov 2026 wijst op een
+          januari-2027-cohort. Geen exacte datumlijst op de pagina (zie
+          planning-PDF)."
+    teachers:
+      - person_id: marloes-van-boxtel
+        role: "lead teacher / eigenaar"
+      - person_id: jasper
+        role: "docent / mede-oprichter"
+
+people:
+  - id: marloes-van-boxtel
+    name: "Marloes van Boxtel"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "lead teacher/eigenaar Yogacollege Tilburg; E-RYT 500, YACEP (YA
+          First Registered jan 2020)"
+        registry: other
+        verified: yes
+        source: ya-teacher-marloes-2026-06
+  - id: jasper
+    name: "Jasper"
+    background:
+      - field: "yoga"
+        credential: "docent/mede-oprichter Yogacollege Tilburg (genoemd in de
+          opleidingsvideo als 'Jasper en Marloes')"
+        registry: none
+        verified: unknown
+        source: site-opleiding-2026-06
