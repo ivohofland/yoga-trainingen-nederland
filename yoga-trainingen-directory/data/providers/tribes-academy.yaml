@@ -1,0 +1,543 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: tribes-academy
+name: Tribes Academy
+aka: [ "Tribes dance & yoga", "Tribes", "Tribes Studio" ]
+website: https://www.tribesacademy.nl
+status: active
+disclosure: >
+  De maker van deze gids (Ivo Hofland) geeft drop-in lessen bij Tribes in
+  Leiden, maar is niet betrokken bij de opleidingen van Tribes Academy.
+locations:
+  - city: Leiden
+    address: "Tribes Studio, Floris Versterlaan 61"
+    note: "hoofd-opleidingslocatie van de Modern Vinyasa-trainingen (15 min lopen
+      van Leiden CS)."
+  - city: Leiden
+    address: "Tribes Studio, Doezastraat 2A"
+    note: "tweede Tribes-studio; tevens het YA-registratieadres en de
+      Yin-leslocatie."
+  - city: null
+    note: >
+      Retreatlocaties: Yogabee (Domburg) voor de 200u Vinyasa; Laurettehoeve
+      (Tiengemeten) voor de 200u Yin; Boda Retreat Centre (Durbuy, Ardennen, BE)
+      en Yonshala (Morcenx, FR) voor de 300u.
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Tribes dance & yoga"
+  checked: "2026-06-27"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "Tribes dance & yoga", Leiden,
+    www.yourtribes.nl (2026-06-27, zoekterm "Tribes"). CRKBO-/btw-entiteit is de
+    studio (Tribes dance & yoga, yourtribes.nl); de academy (tribesacademy.nl,
+    "powered by Tribes Studio") draait de opleidingen daaronder. De 200u
+    Vinyasa-pagina stelt EXPLICIET "no VAT charged, CRKBO-registered" →
+    price.vat = exempt_crkbo voor die opleiding (§4.11). KvK 27378425
+    (academy-footer).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Tribes dance & yoga"
+    first_registered: "2023-10"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel (registrant "Tribes dance &
+      yoga", merk "Tribes Academy"; Doezastraat 2A, Leiden; rating 4.75/2
+      reviews; First Registered October 2023; bevestigd 2026-06-27). Teaching
+      staff Willemieke Verweij + Fanny Alavoine, beiden E-RYT 500, YACEP — lead
+      trainers voldoen aan de elevated lead-eis. 0 training dates op YA
+      (cohorten via de site).
+  - body: yoga_alliance
+    identifier: "RYS 300"
+    holder: "Tribes dance & yoga"
+    first_registered: "2023-10"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 300 bevestigd in de YA-directorylijst ("Tribes dance & yoga ... RYS®
+      200, RYS® 300, First Registered October 2023", 2026-06-27). Het profiel
+      toont één First-Registered-datum (okt 2023) voor beide designaties; aparte
+      per-niveau- data niet los vermeld.
+  - body: yoga_alliance
+    identifier: "RYS 200 (niet meer actief)"
+    holder: "Indra Paternotte (Yogindra)"
+    verified_in_register: no
+    source: ya-teacher-indra-absent-2026-06
+    note: >
+      HOLDER-/LAPSE-NUANCE (vgl. decision #9 + #10): de 200u Yin-opleiding wordt
+      geleid door Indra Paternotte, die op haar eigen site (yogindra.com) een YA
+      RYS-200 + YACEP-badge toont, maar NIET (meer) in het YA-docentregister
+      staat — zoekterm "Paternotte" gaf 0 treffers (2026-06-27). De Yin-TT wordt
+      daarom gecertificeerd onder de actieve RYS 200 van Tribes dance & yoga,
+      niet onder Indra's eigen (vervallen) RYS. Boeking + leslocatie lopen via
+      Tribes; daarom programma onder Tribes Academy, Indra als lead-teacher
+      holder-nuance.
+legal:
+  kvk: "27378425"
+  legal_name: "Tribes dance & yoga"
+  note: >
+    KvK 27378425 (academy-footer). CRKBO- én YA-holder is "Tribes dance & yoga"
+    (studio, yourtribes.nl); "Tribes Academy" (tribesacademy.nl) is de
+    opleidings-/marketing-/boekingsbrand waaronder readers zoeken en boeken
+    (§4.2).
+founded_year:
+  value: 2023
+  source: ya-register-2026-06
+  note: "YA-RYS (200 + 300) sinds okt 2023. De studio Tribes bestaat langer (Fanny
+    Alavoine doceert er sinds dec 2020)."
+depth: listed
+last_verified: "2026-06-27"
+sources:
+  - id: site-vinyasa200-2026-06
+    type: website
+    url: https://www.tribesacademy.nl/200-hour-modern-vinyasa
+    archived_url: https://web.archive.org/web/20260628055450/https://www.tribesacademy.nl/200-hour-modern-vinyasa
+    captured: "2026-06"
+    note: >
+      200u Modern Vinyasa TT (Wix): 6 weekenden Leiden + retreatweek, cohort 9
+      okt 2026 - 21 mrt 2027, €3150 ("no VAT charged, CRKBO-registered"), early
+      bird 15% (code Early200), leads Willemieke Verweij & Fanny Alavoine,
+      hands-on 16 lessen volgen / 2 assisteren / 4 observeren bij Studio Tribes,
+      eindtoets (open-book essay thuis + groeps-lesexamen), €500 aanbetaling, 3
+      termijnen (+5% admin), 2 boeken excl.
+    local_snapshot: data/archives/tribes-academy/site-vinyasa200-2026-06-2026-06-28.pdf
+  - id: site-yin200-2026-06
+    type: website
+    url: https://www.tribesacademy.nl/training/200-hour-yin-yoga
+    archived_url: https://web.archive.org/web/20260628055536/https://www.tribesacademy.nl/training/200-hour-yin-yoga
+    captured: "2026-06"
+    note: >
+      200u Yin Yoga TT (modulair, 4×50u: The Essence/Channels/Elements/Art):
+      lead Indra Paternotte + gastdocenten Willemieke Verweij & Robinson von
+      Grumbkow; modules los boekbaar (ook als continuing ed), start met elke
+      module, eigen tempo; 20% korting bij commitment aan volledige 200u binnen
+      3 jaar; leslocatie Tribes-studio's Leiden + retreat Tiengemeten;
+      certificaat YA na eindtoets & examen.
+    local_snapshot: data/archives/tribes-academy/site-yin200-2026-06-2026-06-28.pdf
+  - id: site-vinyasa300-2026-06
+    type: website
+    url: https://www.tribesacademy.nl/training/300-hour-modern-vinyasa
+    archived_url: https://web.archive.org/web/20260628055608/https://www.tribesacademy.nl/training/300-hour-modern-vinyasa
+    captured: "2026-06"
+    note: >
+      300u Modern Vinyasa TT "Level 2" (gevorderd): 2 retreats (75u, in lijst
+      beide 75u — intro noemt afwijkend "75h & 100h") + 6×25u modules; leads
+      Willemieke Verweij & Fanny Alavoine + gasten Joy Rae (sound) & Eddie van
+      Dongen (sound/mobility); retreats Boda (Ardennen, BE) + Yonshala (FR); los
+      boekbaar; diploma YA na assessments (10 lessen meedraaien / 2 assisteren /
+      1 les of workshop leiden met feedback / schriftelijke opdracht).
+    local_snapshot: data/archives/tribes-academy/site-vinyasa300-2026-06-2026-06-28.pdf
+  - id: site-yogindra-2026-06
+    type: website
+    url: https://www.yogindra.com/teacher-training/
+    archived_url: https://web.archive.org/web/20260628055637/https://www.yogindra.com/teacher-training/
+    captured: "2026-06"
+    note: >
+      Eigen marketingpagina van Indra Paternotte voor dezelfde 200u Yin-TT: de
+      "Enroll" / "How to Join"-knoppen verwijzen naar
+      tribesacademy.nl/training/200-hour-yin-yoga; "All modules take place at
+      the Tribes studio in Leiden"; toont RYS-200- + YACEP-badges; deelnemers
+      moeten 5 lessen bij Indra volgen (met 20% Tribes-korting). Documenteert de
+      host/teacher-relatie (decision #9): Indra markt op eigen site, Tribes is
+      de boekings- + certificeringsbrand.
+    local_snapshot: data/archives/tribes-academy/site-yogindra-2026-06-2026-06-28.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000qDYguAAG&sid=0013g00000phI1NAAU&name=Tribes-dance-and-yoga
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als registrant
+      "Tribes dance & yoga" / merk "Tribes Academy", Doezastraat 2A Leiden,
+      First Registered October 2023, rating 4.75/2 reviews; teaching staff
+      Willemieke Verweij (E-RYT 500, YACEP) + Fanny Alavoine (E-RYT 500, YACEP);
+      0 training dates. Designaties RYS 200 + RYS 300 bevestigd via de
+      directorylijst (keyword "Tribes").
+    local_snapshot: data/archives/tribes-academy/ya-register-2026-06-2026-06-28.pdf
+  - id: ya-teacher-fanny-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g000009FCJTAA4
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      YA-docentprofiel Fanny Alavoine (Leiden; teaches at Tribes dec 2020-heden;
+      First Registered August 2020; YACEP; talen EN/FR; 1000+ lesuren).
+      Designatie E-RYT 500 per het schoolprofiel (teaching staff).
+    local_snapshot: data/archives/tribes-academy/ya-teacher-fanny-2026-06-2026-06-28.pdf
+  - id: ya-teacher-willemieke-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000056n7oAAA
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      YA-docentprofiel Willemieke Verweij (Doezastraat 2A, Leiden; First
+      Registered August 2023; YACEP). Designatie E-RYT 500 per het schoolprofiel
+      (teaching staff). Achtergrond: dans (MA) + antropologie + somatics.
+    local_snapshot: data/archives/tribes-academy/ya-teacher-willemieke-2026-06-2026-06-28.pdf
+  - id: ya-teacher-indra-absent-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=Teacher&keyword=Paternotte
+    archived_url: null
+    query: "Paternotte"
+    captured: "2026-06"
+    note: >
+      Negatieve check: zoekterm "Paternotte" in het YA-docentregister → 0
+      treffers (2026-06-27). Bevestigt dat Indra Paternotte's eigen
+      YA-registratie momenteel niet actief/zichtbaar is (lapsed). Gefilterde
+      (lege) resultatenpagina is het bewijs.
+    local_snapshot: data/archives/tribes-academy/ya-teacher-indra-absent-2026-06-2026-06-28.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Tribes"
+    captured: "2026-06"
+    note: >
+      Treffer "Tribes dance & yoga, Leiden, www.yourtribes.nl"
+      (Instellingenregister, 1 item). Register zonder permalink; bewijs is de
+      gefilterde snapshot; Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/tribes-academy/crkbo-register-2026-06-2026-06-28.pdf
+
+programs:
+  - id: 200-modern-vinyasa
+    name: "200-hour Modern Vinyasa Teacher Training"
+    url: https://www.tribesacademy.nl/200-hour-modern-vinyasa
+    format_label: "200"
+    style_claimed: >
+      Modern Vinyasa: functionele & embodied anatomie, alignment-based
+      asana-studie (asana's gegroepeerd in families: backbends, forward bends,
+      etc. + compensatie/ modificatie), veilige & intelligente sequencing
+      (action-based blueprints), moderne perspectieven op traditionele filosofie
+      (historische context, geen voorgeschreven leefstijl), authentiek lesgeven
+      & presence.
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "official diploma recognized by Yoga Alliance; register as a
+          Certified Yoga Teacher (RYT 200)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Onder de RYS 200 van Tribes dance & yoga; leads Willemieke Verweij &
+          Fanny Alavoine, beiden E-RYT 500."
+      - body: crkbo
+        label_claimed: "no VAT charged, CRKBO-registered"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "Via Tribes dance & yoga (CRKBO-Instelling)."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 6
+      language: en
+    prerequisites_claimed: "min. 1 jaar consistente eigen praktijk (~2x/week, studio
+      of thuis); ook geschikt voor bewegingsdocenten (pilates/dans/barre) die
+      willen verbreden. Geen expertise vereist, wel bereidheid je comfortzone te
+      verlaten."
+    price:
+      amount_eur: 3150
+      vat: exempt_crkbo
+      published: yes
+      includes: >
+        alle trainingsweekenden, de retreat-/weekintensive en de handleidingen +
+        20% korting op class cards/passes/abonnementen bij Tribes
+      excludes: "2 boeken zelf aanschaffen (anatomie ~€18 + filosofie €10-20)"
+      note: >
+        €3150; early bird 15% korting (code Early200). €500 niet-restitueerbare
+        aanbetaling, restant voor aanvang. Betaling in 3 termijnen op aanvraag
+        (+5% administratiekosten). "No VAT charged, CRKBO-registered" →
+        exempt_crkbo.
+      source: site-vinyasa200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-vinyasa200-2026-06
+      note: >
+        6 weekenden (vr 18:00-20:00, za 12:00-20:00, zo 10:00-18:00) +
+        retreatweek. Hands-on: 16 lessen volgen, 2 assisteren, 4 observeren bij
+        Studio Tribes. Eindtoets: open-book essay (thuis) + groeps-lesexamen.
+        Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.
+    composition:
+      type: single_program
+    coherence_signals:
+      single_cohort_intake: yes
+      single_cohort_intake_note: "Eén cohort met vaste data (okt-mrt); niet los te instappen."
+      continuous_lead_teacher: yes
+      continuous_lead_teacher_note: "Willemieke Verweij & Fanny Alavoine leiden de
+        hele opleiding (gastdocenten aanvullend)."
+      integrative_assessment: yes
+      integrative_assessment_note: "Afsluitende eindtoets + groeps-lesexamen over de hele opleiding."
+      source: site-vinyasa200-2026-06
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "The final assessment includes a short open-book essay (done at home) and
+        a group teaching exam"
+    track_record:
+      first_seen_year: 2023
+      source: ya-register-2026-06
+      note: "RYS sinds okt 2023; meerdere eerdere cohorten via testimonials (o.a.
+        Olivia, ook YA-review sep 2025)."
+    cohorts:
+      - id: mv200-2026-10
+        start: "2026-10"
+        end: "2027-03"
+        status: announced
+        source: site-vinyasa200-2026-06
+        language: en
+        lead_teachers: [ willemieke-verweij, fanny-alavoine ]
+        note: >
+          9-11 okt, 13-15 nov, 11-13 dec 2026, 8-10 jan, 5-7 feb 2027, retreat
+          1-7 mrt 2027 (Yogabee, Domburg), afsluiting 20-21 mrt 2027. (De pagina
+          is intern inconsistent over de retreat-einddatum: 'Mar 1-7' vs 'ends
+          Mar 20'.)
+    teachers:
+      - person_id: willemieke-verweij
+        role: "co-lead teacher"
+      - person_id: fanny-alavoine
+        role: "co-lead teacher"
+
+  - id: 200-yin
+    name: "200-hour Yin Yoga Teacher Training (modulair)"
+    url: https://www.tribesacademy.nl/training/200-hour-yin-yoga
+    format_label: "200"
+    style_claimed: >
+      Yin Yoga, modulair (4×50u): The Essence (yin asana, anatomische
+      diversiteit & modificaties), The Channels (meridianen/TCM, yin als
+      energetische praktijk), The Elements/Spectrum (vijf elementen, chakra's,
+      emotionele balans, seizoenen), The Art (sequencing, intuïtie, art of touch
+      / lesgeven).
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "official diploma recognized by Yoga Alliance (RYT 200) na
+          afronding van alle vier de modules"
+        verified: yes
+        source: ya-register-2026-06
+        note: >
+          Gecertificeerd onder de RYS 200 van Tribes dance & yoga. Lead Indra
+          Paternotte's eigen YA RYS-200 is niet (meer) actief in het register
+          (zie registrations / ya-teacher-indra-absent).
+      - body: crkbo
+        label_claimed: "(geen expliciete btw-/CRKBO-vermelding op de Yin-pagina)"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "Zelfde CRKBO-Instelling (Tribes dance & yoga); de 200u Vinyasa-pagina
+          stelt 0% btw, maar de Yin/module-prijs + btw staan niet op deze
+          pagina."
+    delivery:
+      mode: in_person
+      structure: modular
+      language: en
+    prerequisites_claimed: "voor wie Yin wil lesgeven of de eigen praktijk wil
+      verdiepen; module 4 wordt aangeraden na min. één andere module en/of
+      enkele jaren Yin-ervaring. Niet-lesgevers welkom."
+    price:
+      amount_eur: null
+      vat: unknown
+      published: not_published
+      note: >
+        Elke module/retreat is los geprijsd (op de info-pagina per module); de
+        volledige 200u wordt niet als één bedrag gepubliceerd. 20% korting bij
+        commitment aan de volledige 200u binnen 3 jaar. Academy is
+        CRKBO-geregistreerd (Vinyasa-pagina: 0% btw), maar Yin/module-prijs +
+        btw niet vermeld → vat unknown (§4.11).
+      source: site-yin200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin200-2026-06
+      note: >
+        4×50u modules (The Essence/Channels/Elements/Art), elk los boekbaar (ook
+        als continuing ed); start met elke module, eigen tempo; 200u-certificaat
+        na alle vier. Eindtoets & examen. Per yogindra.com: deelnemers volgen 5
+        lessen bij Indra. Geen geïsoleerd contact-/lespraktijk-urental.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      required_sequence: no
+      required_sequence_note: "Start met elke module in elke volgorde; wel aangeraden
+        module 1 vóór 2, en 2 & 3 samen."
+      single_cohort_intake: no
+      single_cohort_intake_note: "Rolling/self-paced; modules los instapbaar."
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Elke 50u-module los boekbaar + als continuing-ed;
+        volledige RYS-200 na alle vier."
+      continuous_lead_teacher: yes
+      continuous_lead_teacher_note: "Indra Paternotte is de Yin-lead over de modules;
+        gastdocenten (Willemieke Verweij, Robinson von Grumbkow) aanvullend."
+      source: site-yin200-2026-06
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "Upon successfully completing the 200-hour Teacher Training, final
+        assessment & exam, you will receive the official diploma recognized by
+        Yoga Alliance"
+    track_record:
+      first_seen_year: 2023
+      source: site-yin200-2026-06
+      note: "Yin-modules draaien (testimonials Marja & Hannah die modules afrondden)."
+    cohorts:
+      - id: yin-elements-2026-09
+        start: "2026-09"
+        status: announced
+        source: site-yin200-2026-06
+        language: en
+        lead_teachers: [ indra-paternotte ]
+        note: "Module 'The Elements': 18&19, 25&26 sep, 9&10, 16&17 okt (Leiden, 50u).
+          Overige modules: start met elke module, self-paced."
+    teachers:
+      - person_id: indra-paternotte
+        role: "Yin lead teacher"
+      - person_id: willemieke-verweij
+        role: "gastdocent"
+
+  - id: 300-modern-vinyasa
+    name: "300-hour Modern Vinyasa Teacher Training (Level 2)"
+    url: https://www.tribesacademy.nl/training/300-hour-modern-vinyasa
+    format_label: "300"
+    style_claimed: >
+      Gevorderd Modern Vinyasa: asana-techniek via anatomie ("beyond the
+      surface"), functie-/intentie-gedreven sequencing ("beyond the structure"),
+      energetics / touch / communicatie (hands-on assists, sound, cueing), the
+      teacher's path (mentorship, reflectie) en authentiek lesgeven.
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "official diploma recognized by Yoga Alliance (RYT 300)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Onder de RYS 300 van Tribes dance & yoga; leads Willemieke Verweij &
+          Fanny Alavoine (+ gasten Joy Rae, Eddie van Dongen)."
+      - body: crkbo
+        label_claimed: "(geen expliciete btw-/CRKBO-vermelding op de 300u-pagina)"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "Zelfde CRKBO-Instelling (Tribes dance & yoga); module-prijs + btw niet op
+          de pagina vermeld."
+    delivery:
+      mode: in_person
+      structure: modular
+      language: en
+    prerequisites_claimed: "gecertificeerde yogadocenten (200u+) of docenten op weg
+      naar hun 300u; toegewijde, open practitioners die het groepsritme
+      respecteren."
+    price:
+      amount_eur: null
+      vat: unknown
+      published: not_published
+      note: >
+        Elke module/retreat los geprijsd (op de info-pagina per onderdeel); de
+        volledige 300u niet als één bedrag gepubliceerd. 20% korting bij
+        commitment aan de volledige 300u binnen 3 jaar. Geen btw-vermelding op
+        de pagina → vat unknown (§4.11).
+      source: site-vinyasa300-2026-06
+    hours_claimed:
+      total: 300
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-vinyasa300-2026-06
+      note: >
+        2 retreats (75u; intro noemt afwijkend "75h & 100h") + 6×25u modules.
+        Diploma-assessments: meedraaien in 10 lessen, 2 assisteren, 1
+        les/workshop leiden (geobserveerd + 1-op-1 feedback), schriftelijke
+        opdracht. Geen geïsoleerd contact-/lespraktijk-urental.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Elke module/retreat los boekbaar; telt mee voor de 300u."
+      continuous_lead_teacher: yes
+      continuous_lead_teacher_note: "Willemieke Verweij & Fanny Alavoine leiden de
+        modules (gastdocenten Joy Rae, Eddie van Dongen aanvullend)."
+      source: site-vinyasa300-2026-06
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "the following assessments must be completed to receive your diploma:
+        Practice in 10 classes ... Assist in 2 classes ... Lead 1 class or a
+        special workshop at Tribes ... Complete a written assessment"
+    track_record:
+      first_seen_year: 2023
+      source: ya-register-2026-06
+      note: "RYS 300 sinds okt 2023; modules gepland mrt 2026 - apr 2027."
+    cohorts:
+      - id: mv300-modules-2026
+        start: "2026-03"
+        status: announced
+        source: site-vinyasa300-2026-06
+        language: en
+        lead_teachers: [ willemieke-verweij, fanny-alavoine ]
+        note: >
+          Modulair (start met elke module): Mobility (20-22 mrt 2026), Essence
+          of Flow (6-12 apr 2026, Z-Frankrijk, 75u), Lived Anatomy (18-20 sep
+          2026), Sequencing (16-18 okt 2026), Touch (20-22 nov 2026), Somatics
+          (15-17 jan 2027), Breath (12-14 feb 2027), Essence of Presence (5-11
+          apr 2027, Ardennen, 75u).
+    teachers:
+      - person_id: willemieke-verweij
+        role: "co-lead teacher"
+      - person_id: fanny-alavoine
+        role: "co-lead teacher"
+
+people:
+  - id: willemieke-verweij
+    name: "Willemieke Verweij"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance teaching staff; eigen profiel First
+          Registered August 2023)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          co-lead Tribes Academy (200u + 300u Modern Vinyasa); achtergrond in
+          dans (MA) en antropologie + somatics; E-RYT 500, YACEP. Eigen
+          YA-docentprofiel is summier (First Registered aug 2023).
+        registry: other
+        verified: yes
+        source: ya-teacher-willemieke-2026-06
+  - id: fanny-alavoine
+    name: "Fanny Alavoine"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance teaching staff; eigen profiel First
+          Registered August 2020, 1000+ lesuren)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          co-lead Tribes Academy (200u + 300u Modern Vinyasa); doceert bij
+          Tribes sinds dec 2020; ex-wedstrijdklimster (lead climbing); nadruk op
+          anatomie, biomechanica & sequencing; talen EN/FR. E-RYT 500, YACEP.
+        registry: other
+        verified: yes
+        source: ya-teacher-fanny-2026-06
+  - id: indra-paternotte
+    name: "Indra Paternotte"
+    trainings_claimed:
+      - label: >
+          Yin lead teacher; claimt op yogindra.com een YA RYS-200 + YACEP en
+          8000+ lesuren / 20+ jaar ervaring, maar staat NIET (meer) in het YA-
+          docentregister — zoekterm "Paternotte" gaf 0 treffers (2026-06-27)
+        verified: no
+        source: ya-teacher-indra-absent-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          lead teacher van de 200u Yin-opleiding (markt onder eigen merk
+          Yogindra, yogindra.com; biedt daarnaast massages/coaching). Eigen
+          YA-RYS lijkt vervallen; de Yin-TT draait nu onder de RYS van Tribes
+          (decision #9/#10).
+        registry: other
+        verified: no
+        source: ya-teacher-indra-absent-2026-06
