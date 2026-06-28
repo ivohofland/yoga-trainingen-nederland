@@ -1,0 +1,356 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yoga-den
+name: Yoga Den Amsterdam
+aka: [ "Yoga Den", "Yoga Den Netherlands", "Yoga Den B.V." ]
+website: https://www.yogaden.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "Zeilstraat 34H, 1075 SJ"
+    note: "studio + YA-registratieadres."
+crkbo:
+  registered: unknown
+  checked: "2026-06-27"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: naam "Yoga Den" én website "yogaden" → 0 in het
+    Instellingenregister (2026-06-27). De 200u-opleiding is btw-belast (de
+    200u-pagina vermeldde "Pricing incl. VAT"), consistent met NIET CRKBO-
+    geregistreerd. KvK/juridische naam ("Yoga Den B.V.") + docentnamen niet in
+    het register doorzocht → registered unknown (niet no; §2.2/§4.11). price.vat
+    = incl.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Yoga Den Netherlands"
+    first_registered: "2023-11"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Yoga Den Amsterdam" /
+      registrant "Yoga Den Netherlands" (Zeilstraat 34h, Amsterdam; rating 5.0/7
+      reviews; First Registered November 2023; bevestigd 2026-06-27). 1 upcoming
+      training date (200H Vinyasa, 2026). LEAD-NUANCE: de 2026-200u is
+      TEAM-onderwezen ("Yoga Den E-RYT 500 Teachers"); de site stelt dat alle
+      docenten ≥500 RYT uur hebben. Individuele badge-niveaus wisselen: Bruce
+      Chung is badge- bevestigd E-RYT 500 maar zijn YA-profiel staat inmiddels
+      in België (Saint- Gilles); Xinia van Wijk's YA-profiel (XinYoga) toont
+      RYT/3836 lesuren + YACEP, geen expliciet E-RYT 500-badge. De
+      elevated-lead-eis is dus school-geclaimd (500+ team), niet per persoon
+      register-bevestigd.
+  - body: yoga_alliance
+    identifier: "RYS 500"
+    holder: "Yoga Den Netherlands"
+    first_registered: "2023-11"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 500 bevestigd in de YA-directorylijst ("Yoga Den Amsterdam ... RYS®
+      200, RYS® 500, First Registered November 2023", 2026-06-27) + RYS®
+      500-vermelding in de site-footer. Het 500u-traject is een modulaire route
+      bovenop de 200u (zie programma 500-pathway); modules staan als losse
+      pagina's op de site.
+legal:
+  legal_name: "Yoga Den B.V."
+  note: >
+    Footer: "2024, Yoga Den B.V." NAAMCOLLISIE: er bestaat ook een Amerikaanse
+    "Yoga Den Teacher Training School" (Florida; yoga-den.com; RYS 200 + RYS
+    300; YA First Registered mei 2005; 579 reviews) — een ANDERE YA-registrant.
+    De Nederlandse Yoga Den (Amsterdam, yogaden.nl) is apart geregistreerd.
+    KvK-nr niet doorzocht.
+founded_year:
+  value: 2023
+  source: ya-register-2026-06
+  note: "YA-RYS (200 + 500) sinds nov 2023. Internationaal docententeam
+    (NZ/VS/China/ Frankrijk/NL)."
+depth: listed
+last_verified: "2026-06-27"
+sources:
+  - id: site-ytt-200-2026-06
+    type: website
+    url: https://www.yogaden.nl/ytt/training/
+    archived_url: https://web.archive.org/web/20260628111806/https://www.yogaden.nl/ytt/training/
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) 200H Vinyasa YTT, editie 2026: "back for 2026",
+      TEAM-onderwezen door senior "Yoga Den E-RYT 500 Teachers" (Xinia, Sarah,
+      Lize, Anna, Sara, Tina, Soojin e.a.; internationaal, 120+ jaar
+      gecombineerde ervaring); 1-weekse intensive 14-20 sep + weekenden 2-4 okt
+      / 6-8 nov / 4-6 dec 2026; investering €3597 (super early bird tot €1500
+      korting vóór 15 mrt, €200 vóór 31 mrt — beide verlopen); standalone of als
+      onderdeel van de 500H. LET OP: een eerdere (gecachte) versie toonde de
+      2025-editie met Nino + Marokko-week — die is hier vervangen door de
+      2026-teamversie.
+    local_snapshot: data/archives/yoga-den/site-ytt-200-2026-06-2026-06-28.pdf
+  - id: site-ytt-overview-2026-06
+    type: website
+    url: https://www.yogaden.nl/ytt/
+    archived_url: https://web.archive.org/web/20260628111858/https://www.yogaden.nl/ytt/
+    captured: "2026-06"
+    note: >
+      Opleidingsoverzicht met de 500H-modulepagina's als losse trainingen: 100H
+      Advanced YTT, 50H Yin, 50H Advanced Asana & Ayurveda, 50H Ashtanga
+      Intensive, 50H Alignment, 50H Pilates, 50/100H Mentorship, 50H Pranayama &
+      Meditation, Restorative YTT, 50H Rocket. Alles in het Engels.
+    local_snapshot: data/archives/yoga-den/site-ytt-overview-2026-06-2026-06-28.pdf
+  - id: site-teachers-2026-06
+    type: website
+    url: https://www.yogaden.nl/teachers/
+    archived_url: https://web.archive.org/web/20260628111943/https://www.yogaden.nl/teachers/
+    captured: "2026-06"
+    note: >
+      Docentenpagina: "all certified with at least 500 RYT hours". Roster: Lize
+      (Hot/Vinyasa/Pilates/Yin/Ashtanga), Nick (KPJAYI & SYC L2 Authorized
+      Ashtanga, 500 E-RYT, student R. Sharath Jois), Anna (Vinyasa/Ashtanga),
+      Sara, Sarah (vinyasa/yin/hot/aerial), Bruce (mondiaal; thousands of
+      hours), Katie (500 RYT via YogaMazé), Miho (Ashtanga, geautoriseerd
+      Sharath Jois 2016), Xinia (Ashtanga L2 Authorization 2017; Yoga Diploma
+      Wellpark NZ 2014; BA Dance AUT).
+    local_snapshot: data/archives/yoga-den/site-teachers-2026-06-2026-06-28.pdf
+  - id: site-pricing-2026-06
+    type: website
+    url: https://www.yogaden.nl/pricing/
+    archived_url: https://web.archive.org/web/20260628112125/https://www.yogaden.nl/pricing/
+    captured: "2026-06"
+    note: >
+      Prijspagina betreft STUDIO-lidmaatschappen/classpacks (drop-in €25, maand
+      €125, 6-mnd €597, 12-mnd €1122, etc.), niet de opleidingsprijzen. Geen
+      btw-vermelding op deze pagina. (TT-prijs €3597 staat op de 200u-pagina.)
+    local_snapshot: data/archives/yoga-den/site-pricing-2026-06-2026-06-28.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=001Kf00000qEHdvIAG&sid=0013g00000tNXCkAAO&name=Yoga-Den-Amsterdam
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "Yoga Den
+      Amsterdam" / registrant "Yoga Den Netherlands", Zeilstraat 34h Amsterdam,
+      First Registered November 2023, rating 5.0/7 reviews; teaching staff (6)
+      incl. Bruce Chung (E-RYT 500, YACEP); 1 training date (200H Vinyasa,
+      2026). Designaties RYS 200 + RYS 500 bevestigd via de directorylijst
+      (keyword "Yoga Den"; NL-registrant onderscheiden van de US "Yoga Den",
+      yoga-den.com).
+    local_snapshot: data/archives/yoga-den/ya-register-2026-06-2026-06-28.pdf
+  - id: ya-teacher-xinia-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023Z4BAAU
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      YA-docentprofiel "XinYoga" (Xinia van Wijk; Titirangi, Auckland, NZ; First
+      Registered June 2015; 3836 lesuren; YACEP). Teaching experience zelf-
+      gerapporteerd en uitsluitend NZ/Bali/Fiji (Yoga Koh, Wild Self Yoga, Soul
+      Centre) — Yoga Den Amsterdam staat er NIET op (YA-experience is onvolledig
+      zelfrapportage). Bevestigd als Yoga Den 2026-faculty via de
+      docentenpagina.
+    local_snapshot: data/archives/yoga-den/ya-teacher-xinia-2026-06-2026-06-28.pdf
+  - id: ya-teacher-bruce-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=Teacher&keyword=Bruce%20Chung
+    archived_url: null
+    query: "Bruce Chung"
+    captured: "2026-06"
+    note: >
+      YA-docentregister: "Bruce Chung", Janson, Saint-Gilles (Brussel), België;
+      E-RYT 500, YACEP; First Registered August 2019. Staat nog op de Yoga
+      Den-docentenpagina (mondiaal docent) maar is YA-administratief in België —
+      niet genoemd op de huidige 200u-pagina.
+    local_snapshot: data/archives/yoga-den/ya-teacher-bruce-2026-06-2026-06-28.pdf
+  - id: pathway-image-2026-06
+    type: brochure
+    captured: "2026-06"
+    note: >
+      Door de gebruiker aangeleverde infographic "500H RYT PROGRAM PATHWAY":
+      200H Vinyasa als Foundational Module + modules (Advanced Vinyasa & Detroit
+      Flow 100u, Yin 50u, Ayurveda & Advanced Asana 100u, Restorative 50u,
+      Alignment 50u, Pranayama & Meditation 50u, Business Coaching/Mentorship
+      50/100u). Komt grotendeels overeen met de live modulepagina's
+      (site-ytt-overview), met kleine labelverschillen.
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Yoga Den / yogaden"
+    captured: "2026-06"
+    note: >
+      Negatieve check: naam "Yoga Den" → 0 én website-kolom "yogaden" → 0 in het
+      Instellingenregister (2026-06-27). Gefilterde (lege) snapshot is het
+      bewijs; Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/yoga-den/crkbo-register-2026-06-2026-06-28.pdf
+
+programs:
+  - id: 200-vinyasa
+    name: "200H Vinyasa Yoga Teacher Training"
+    url: https://www.yogaden.nl/ytt/training/
+    format_label: "200"
+    style_claimed: >
+      Vinyasa: posture breakdowns met nadruk op alignment & safety, intelligent
+      sequencing & creatief theming, geschiedenis & filosofie & Bhakti Yoga,
+      functionele anatomie & mobility, asana lab & alignment, meditatie &
+      pranayama, public speaking & leadership / persoonlijke ontwikkeling. Team-
+      onderwezen door internationale senior-docenten.
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200H Vinyasa Yoga Teacher Training, Yoga Alliance certified (RYT
+          200); te volgen als standalone of als onderdeel van de 500H RYT-route"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Onder de RYS 200 van Yoga Den Netherlands; 2026-editie team-onderwezen
+          door 'E-RYT 500 Teachers' (site claimt alle docenten ≥500 RYT)."
+    delivery:
+      mode: in_person
+      structure: mixed
+      duration_months_min: 4
+      language: en
+    prerequisites_claimed: "zowel aankomend docenten als wie de eigen praktijk wil
+      verdiepen ('not just for aspiring teachers')."
+    price:
+      amount_eur: 3597
+      vat: incl
+      published: yes
+      includes: "training + certificering + studiomembership tijdens de opleiding"
+      note: >
+        Investering €3597. Super early bird tot €1500 korting (vóór 15 mrt) en
+        €200 korting (vóór 31 mrt) — beide deadlines inmiddels verstreken. Btw:
+        de 200u-pagina vermeldde "Pricing incl. VAT"; studio is btw-belast
+        (niet-CRKBO) → vat = incl.
+      source: site-ytt-200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-ytt-200-2026-06
+      note: >
+        1-weekse intensive (14-20 sep) + 3 Amsterdam-weekenden (2-4 okt, 6-8
+        nov, 4-6 dec 2026). Locatie van de intensive niet gespecificeerd op de
+        2026-pagina (de 2025-editie deed een week in Marokko). Geen geïsoleerd
+        contact-/lespraktijk-urental.
+    composition:
+      type: single_program
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2023
+      source: ya-register-2026-06
+      note: >
+        YA-RYS sinds nov 2023; 7 YA-reviews (oudste dec 2024). 2026-editie is
+        team- onderwezen; de 2025-editie werd geleid door Nino (Marokko-week,
+        leerling van Sri Dharma Mittra) — gedocumenteerd via een eerdere
+        capture.
+    cohorts:
+      - id: vinyasa-2026-09
+        start: "2026-09"
+        end: "2026-12"
+        status: announced
+        source: site-ytt-200-2026-06
+        language: en
+        lead_teachers: [ xinia-van-wijk ]
+        note: >
+          Intensive 14-20 sep + weekenden 2-4 okt, 6-8 nov, 4-6 dec 2026. Team
+          o.l.v. senior-docenten: Xinia (van Wijk), Sarah, Lize, Anna, Sara,
+          Tina, Soojin e.a. (alle docenten ≥500 RYT per de site).
+    teachers:
+      - person_id: xinia-van-wijk
+        role: "senior teacher (200u 2026-team)"
+      - person_id: bruce-chung
+        role: "docent (mondiaal; YA-profiel nu België)"
+
+  - id: 500-pathway
+    name: "500H RYT Program Pathway (modulair)"
+    url: https://www.yogaden.nl/ytt/
+    format_label: "500"
+    style_claimed: >
+      Modulaire RYS 500-route: de 200H Vinyasa als foundational module + losse
+      modulepagina's: 100H Advanced YTT, 50H Yin, 50H Advanced Asana & Ayurveda,
+      50H Ashtanga Intensive, 50H Alignment, 50H Pilates, 50/100H Mentorship,
+      50H Pranayama & Meditation, Restorative YTT en 50H Rocket. Multistyle.
+    styles: [ multistyle, vinyasa, yin, ashtanga, restorative ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "RYS 500 (500-uurs route, modulair op de 200u-basis)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 500 register-/directory-geverifieerd + RYS® 500 in de site-footer."
+    delivery:
+      mode: in_person
+      structure: modular
+      language: en
+    prerequisites_claimed: "200H Vinyasa als foundational module; daarop bouw je de
+      modules tot 300/500 uur."
+    price:
+      amount_eur: null
+      vat: incl
+      published: not_published
+      note: >
+        Geen totaal- of per-module-bedrag op /ytt of /pricing (die pagina
+        betreft studiolidmaatschappen). vat = incl: zelfde btw-belaste entiteit
+        (Yoga Den B.V., niet-CRKBO). Exacte module-prijzen op de afzonderlijke
+        modulepagina's.
+      source: site-ytt-overview-2026-06
+    hours_claimed:
+      total: 500
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-ytt-overview-2026-06
+      note: >
+        200u (foundational) + modules (100H Advanced YTT, 50H Yin, 50H Advanced
+        Asana & Ayurveda, 50H Ashtanga Intensive, 50H Alignment, 50H Pilates,
+        50/100H Mentorship, 50H Pranayama & Meditation, Restorative YTT, 50H
+        Rocket). Geen geïsoleerd contact-/lespraktijk-urental.
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Elke module is een losse trainingspagina; samen
+        vormen ze de 500u-route (de 200u kan ook standalone)."
+      source: site-ytt-overview-2026-06
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2023
+      source: ya-register-2026-06
+      note: "RYS 500 sinds nov 2023; modulaire route met losse
+        module-/niche-trainingen."
+
+people:
+  - id: xinia-van-wijk
+    name: "Xinia van Wijk"
+    trainings_claimed:
+      - label: "XinYoga (Yoga Alliance, First Registered June 2015; 3836 lesuren;
+          YACEP); Ashtanga Level 2 Authorization (Mysore, Sharath Rangaswamy)
+          2017; Yoga Diploma Wellpark Natural Therapies College (NZ) 2014; BA
+          Dance (AUT)"
+        verified: yes
+        source: ya-teacher-xinia-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          senior-docent in het Yoga Den 2026-200u-team; achtergrond in dans,
+          yoga, pilates & performance coaching; reist naar Mysore (Ashtanga,
+          Sharath). YA- profiel (XinYoga) is in Nieuw-Zeeland geregistreerd
+          (3836 lesuren, YACEP); designatieniveau niet expliciet als E-RYT 500
+          in het profiel — de site claimt wel ≥500 RYT voor alle docenten.
+        registry: other
+        verified: yes
+        source: site-teachers-2026-06
+  - id: bruce-chung
+    name: "Bruce Chung"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance; First Registered August 2019)"
+        verified: yes
+        source: ya-teacher-bruce-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          mondiaal actief docent (Toronto/Singapore/HK/Dublin/Bangkok/Cape
+          Town); staat op de Yoga Den-docentenpagina en in de YA-teaching-staff
+          van de school, maar zijn eigen YA-profiel staat inmiddels in België
+          (Saint- Gilles, Brussel); niet genoemd op de huidige 2026-200u-pagina.
+        registry: other
+        verified: yes
+        source: ya-teacher-bruce-2026-06
