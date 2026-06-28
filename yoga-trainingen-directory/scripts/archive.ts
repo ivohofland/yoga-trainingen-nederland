@@ -272,8 +272,12 @@ async function main() {
       const query = item.get("query") as string | undefined;
       const excluded = /wayback-exclusie/i.test(note);
 
-      // 1. lokale kopie
-      const hasLocal = !!item.get("local_snapshot");
+      // 1. lokale kopie. "Al gearchiveerd" = het local_snapshot-pad is niet
+      //    alleen gedeclareerd in de YAML, maar het bestand bestaat ook echt.
+      //    Zo vult een gewone run pre-ingevulde-maar-ontbrekende kopieën aan
+      //    (zonder --force), terwijl bestaande snapshots overgeslagen blijven.
+      const declaredLocal = item.get("local_snapshot") as string | undefined;
+      const hasLocal = !!declaredLocal && fs.existsSync(path.join(process.cwd(), declaredLocal));
       if (!hasLocal || FORCE) {
         process.stdout.write(`  ${sourceId}: lokale kopie${query ? ` (filter: "${query}")` : ""}… `);
         try {
