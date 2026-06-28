@@ -1,0 +1,256 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: gian-instituut
+name: Gian Instituut
+aka: [ "Guru Gian", "Kundalini Yoga Club" ]
+website: https://gurugian.nl
+status: active
+locations:
+  - city: Groet
+    address: "Achterweg 9, 1873 HE Groet"
+    note: "HQ/contactadres (Gian Instituut, Jasper Kok); tevens YA-adres op het
+      schoolprofiel. Groet en Schoorl liggen in dezelfde gemeente Bergen (NH)."
+  - city: Schoorl
+    address: "Dopersduin, Oorsprongweg 3"
+    note: "residentiële opleidingslocatie van de RYS-200 lerarenopleiding (4
+      blokken, 16 overnachtingen). CRKBO-registratieplaats is óók Schoorl."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Gian"
+  checked: "2026-06-27"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "Gian", Schoorl, www.gurugian.nl
+    (2026-06-27, zoekterm "Gian" in het Instellingenregister). De footer van
+    gurugian.nl toont een CRKBO-Instelling-logo + KvK 34342492 + btw
+    NL001658312B73 — er worden dus ook btw-belaste producten verkocht (coaching,
+    online platform, shop). De opleidingspagina vermeldt GEEN btw-behandeling
+    bij de €4197-prijs → price.vat blijft unknown (§4.11), ondanks
+    CRKBO-Instelling.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Gian Instituut"
+    first_registered: "2023-10"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Gian Instituut" (Achterweg 9,
+      Groet; rating 5.0/1 review — Anne-Marij van Leengoed RYT 200, jan 2024;
+      First Registered October 2023; bevestigd 2026-06-27). 0 (upcoming én
+      totaal) training dates op YA; cohorten lopen via de site. LEAD-TRAINER
+      (descriptief): teaching staff toont één naam, Jasper Kok, expliciet als
+      "E-RYT 500, YACEP" — dus de lead trainer is E-RYT 500 en voldoet aan de
+      elevated RYS-200-lead-eis (sinds 2025-01), in tegenstelling tot bv. PoYoMi
+      (E-RYT 200). Jasper kreeg E-RYT 500 + RYS 200 in 2023 via het Yoga
+      Alliance Experienced Teacher Pathway (versnelde route op basis van
+      ervaring, niet via een voorafgaande RYS-opleiding) — signaal voor de
+      lead-trainer-/standards-metriek.
+legal:
+  kvk: "34342492"
+  legal_name: "Gian Instituut"
+  note: "KvK 34342492; btw NL001658312B73. CRKBO-Instelling 'Gian' (Schoorl).
+    Opgericht door Jasper Kok (Guru Gian)."
+founded_year:
+  value: 2015
+  source: site-ytt-2026-06
+  note: "Jasper Kok richtte Gian Instituut op in 2015 (start met de Kundalini Yoga
+    Coaching Level 1); de YA-RYS-200 dateert pas van okt 2023."
+depth: listed
+last_verified: "2026-06-27"
+sources:
+  - id: site-ytt-2026-06
+    type: website
+    url: https://gurugian.nl/ky-teachertraining/
+    archived_url: https://web.archive.org/web/20260628053240/https://gurugian.nl/ky-teachertraining/
+    captured: "2026-06"
+    note: >
+      "Kundalini Yoga Teacher Training Level 1 (Lerarenopleiding)" — de RYS-200
+      opleidingspagina: 200u / 1 jaar / 4 blokken (20 lesdagen: 2×4 + 1×5 + 1×7
+      dagen) / 16 overnachtingen, residentieel op Dopersduin (Schoorl), data 27
+      aug 2026 - 20 jun 2027, prijs €4197 all-in, max ~20 deelnemers, docenten
+      Jasper Kok + Guru Deva + Jasper Jansen + Lauren Grusenmeyer, eigen manuals
+      + Guru Rattana (niet de Aquarian Teacher), uitvoerige Yogi-Bhajan-/KRI-
+      distantiërings-Q&A. Bron voor het programma.
+    local_snapshot: data/archives/gian-instituut/site-ytt-2026-06-2026-06-28.pdf
+  - id: site-home-2026-06
+    type: website
+    url: https://gurugian.nl
+    archived_url: https://web.archive.org/web/20260628053316/https://gurugian.nl/
+    captured: "2026-06"
+    note: >
+      Homepage Guru Gian / Gian Instituut: footer met KvK 34342492, btw
+      NL001658312B73, CRKBO-Instelling-logo, adres Achterweg 9 Groet. Toont het
+      bredere Kundalini-ecosysteem (coaching, online platform Kundalini Yoga
+      Club, tantra, retraites) waarvan de RYS-200 YTT één onderdeel is.
+    local_snapshot: data/archives/gian-instituut/site-home-2026-06-2026-06-28.pdf
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000tNrkrAAC&name=Gian-Instituut
+    archived_url: null
+    captured: "2026-06"
+    note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Gian
+      Instituut', Groet (Achterweg 9), RYS 200, First Registered October 2023,
+      rating 5.0/1 review; teaching staff Jasper Kok (E-RYT 500, YACEP); 0
+      training dates. Gevonden via directory-zoekopdracht keyword 'Gian'."
+    local_snapshot: data/archives/gian-instituut/ya-register-2026-06-2026-06-28.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Gian"
+    captured: "2026-06"
+    note: >
+      Treffer "Gian, Schoorl, www.gurugian.nl" (Instellingenregister, 1 item).
+      Register zonder permalink; bewijs is de gefilterde snapshot; Wayback
+      overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/gian-instituut/crkbo-register-2026-06-2026-06-28.pdf
+
+programs:
+  - id: 200-ky-teachertraining
+    name: "Kundalini Yoga Teacher Training Level 1 (Lerarenopleiding, 200u)"
+    url: https://gurugian.nl/ky-teachertraining/
+    format_label: "200"
+    style_claimed: >
+      Kundalini Yoga "zoals onderwezen door Yogi Bhajan maar zonder dogma en
+      vrij gedoceerd" — moderne, open benadering die zich expliciet distantieert
+      van cult-/guru-verheerlijking en van Yogi Bhajan/KRI (kiest YA boven KRI-
+      certificering i.v.m. de Yogi-Bhajan-affaire; eigen manuals + Guru Rattana,
+      niet de Aquarian Teacher). Onderdelen: sadhana/persoonlijke beoefening,
+      werking van Kundalini Yoga (subtiele & fysieke anatomie, chakra's,
+      tattvas, gunas, kriya/meditatie/pranayama/bandha/mantra), geschiedenis van
+      Kundalini Yoga & Sikhisme, spirituele kant, rol & ethiek van de leraar,
+      business van het lesgeven.
+    styles: [ kundalini ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "RYS-200 uurs opleiding gecertificeerd door Yoga Alliance; één
+          van de eerste onafhankelijke Kundalini Yoga lerarenopleidingen"
+        verified: yes
+        source: ya-register-2026-06
+        note: >
+          RYS 200 geverifieerd in het register. Lead teacher Jasper Kok is E-RYT
+          500 (voldoet aan de elevated lead-trainer-eis). De school positioneert
+          het YA-certificaat expliciet als alternatief voor het KRI-certificaat
+          van de Yogi-Bhajan-organisaties.
+      - body: crkbo
+        label_claimed: "(CRKBO-Instelling-logo in de footer; geen expliciete btw-/CRKBO-
+          claim bij de opleidingsprijs)"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling 'Gian' (Schoorl) register-geverifieerd; de
+          opleidingspagina vermeldt CRKBO/btw niet bij de €4197-prijs."
+    delivery:
+      mode: in_person
+      structure: intensive
+      duration_months_min: 10
+      language: nl
+    prerequisites_claimed: "In principe toegankelijk voor iedereen met een open
+      mind; advies om eerst ~10 lessen te volgen. Bewust dat een Kundalini Yoga
+      opleiding intens en confronterend kan zijn; lichte fysieke/geestelijke
+      beperkingen in overleg."
+    price:
+      amount_eur: 4197
+      vat: unknown
+      published: yes
+      includes: >
+        de lerarenopleiding (NL), 16 overnachtingen in een 2-persoonskamer,
+        biologisch vegetarisch eten, 2 manuals (Engels), 1× 60 min persoonlijk
+        consult met Guru Gian, levenslang toegang tot de online leeromgeving van
+        de opleiding, 1 jaar gratis toegang tot de Kundalini Yoga Club (200+
+        kriyas/ meditaties)
+      excludes: "geen — gepresenteerd als all-in (studiemateriaal, overnachtingen,
+        eten inbegrepen)"
+      note: >
+        €4197 all-in; betaling in 6 of 12 termijnen mogelijk. Geen
+        btw-vermelding bij de prijs → vat unknown (§4.11), ondanks
+        CRKBO-Instelling.
+      source: site-ytt-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-ytt-2026-06
+      note: >
+        200u over 4 residentiële blokken (20 lesdagen: 2×4 + 1×5 + 1×7 dagen)
+        met een volle dagstructuur (05:30-08:00 ochtendpractice,
+        ochtend-/middag-/avond- programma). Tussen de blokken buddy-groepjes
+        (geen extra live bijeenkomsten). Geen geïsoleerd
+        contact-/lespraktijk-urental gepubliceerd; max 10% (2 dagen) verzuim
+        toegestaan (inhalen in een volgende opleiding).
+    group_size_claimed:
+      max: 20
+      source: site-ytt-2026-06
+      note: "Investeringstabel noemt maximum 20; Q&A noemt gemiddeld 20, meestal max
+        22, in uitzonderlijke gevallen 25."
+    composition:
+      type: single_program
+    assessment_described:
+      exists: not_published
+      quote: "Wij hebben dit certificaat ontvangen voor onze trainingen en daarmee
+        zijn E-RYT 500 en E-RYS 200 gecertificeerd door Yoga Alliance"
+    track_record:
+      first_seen_year: 2023
+      source: ya-register-2026-06
+      note: "YA-RYS sinds okt 2023 (1 review jan 2024). Gian Instituut bestaat sinds
+        2015, maar dat betrof aanvankelijk de Kundalini Yoga Coaching (geen
+        RYS-200)."
+    cohorts:
+      - id: ky-2026-08
+        start: "2026-08"
+        end: "2027-06"
+        status: announced
+        source: site-ytt-2026-06
+        language: nl
+        note: "4 blokken: 27-30 aug 2026, 8-12 nov 2026, 6-12 feb 2027, 17-20 jun 2027
+          (Dopersduin, Schoorl)."
+        lead_teachers: [ "jasper-kok" ]
+    teachers:
+      - person_id: jasper-kok
+        role: "hoofddocent / oprichter"
+
+claims:
+  - id: gian-ya-cert
+    scope: program:200-ky-teachertraining
+    quote: "RYS-200 uurs opleiding gecertificeerd door Yoga Alliance"
+    category: accreditation
+    source: site-ytt-2026-06
+  - id: gian-scope-of-practice
+    scope: program:200-ky-teachertraining
+    quote: "Hiermee kan je in iedere yoga studio Kundalini Yoga les geven"
+    category: scope_of_practice
+    source: site-ytt-2026-06
+  - id: gian-pranayama-health
+    scope: program:200-ky-teachertraining
+    quote: "[pranayama] vermindert angsten, onzekerheden, irritaties en depressies"
+    category: health_outcome
+    source: site-ytt-2026-06
+  - id: gian-lineage
+    scope: program:200-ky-teachertraining
+    quote: "Kundalini Yoga zoals onderwezen door Yogi Bhajan EN tegelijkertijd
+      Kundalini Yoga zoals ervaren door individuele beoefenaars"
+    category: lineage_authority
+    source: site-ytt-2026-06
+
+people:
+  - id: jasper-kok
+    name: "Jasper Kok (Guru Gian Singh)"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance, teaching staff op het schoolprofiel);
+          RYS 200 + E-RYT 500 verkregen in 2023 via het Experienced Teacher
+          Pathway"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          oprichter/hoofddocent Gian Instituut (sinds 2015); gecertificeerd
+          Kundalini Yoga docent + Yoga Therapeut; E-RYT 500 + YACEP. Verkreeg
+          E-RYT 500 en RYS 200 in 2023 via het Yoga Alliance Experienced Teacher
+          Pathway. Gepromoveerd econoom; oprichter van het online platform
+          Kundalini Yoga Club.
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
