@@ -185,6 +185,14 @@ programs:
       - person_id: leonie-van-der-linden
         role: "lead teacher / eigenaar"
 
+claims:
+  - id: poyomi-lineage
+    scope: program:200-awakening
+    quote: "Wij leren je de kundalini yoga volgens de oude tradities en niet volgens de
+      leer van Yogi Bhajan, in verband met zijn omstreden verleden"
+    category: lineage_authority
+    source: site-product-2026-06
+
 people:
   - id: leonie-van-der-linden
     name: "Leonie van der Linden"
