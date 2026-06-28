@@ -1,0 +1,214 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yogatreat
+name: Yogatreat
+aka: [ "Yogatreat Online Yin Yoga Teacher Training" ]
+website: https://www.yogatreat.eu
+status: active
+locations:
+  - city: Austerlitz
+    address: "Meester Ansinkweg 28"
+    note: >
+      YA- + CRKBO-registratieadres. De opleiding is ONLINE (pre-recorded + live
+      op Zoom); geen klassikale leslocatie. Opleidingssite is yogatreat.eu;
+      CRKBO/.nl staat op yogatreat.nl.
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Yogatreat"
+  checked: "2026-06-28"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "Yogatreat", Austerlitz, www.yogatreat.nl
+    (2026-06-28, zoekterm "yogatreat"). Als CRKBO-Instelling is de opleiding
+    btw-vrijgesteld → price.vat = exempt_crkbo (de prijs zelf staat niet op de
+    waitlist-pagina). KvK niet doorzocht.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Yogatreat"
+    first_registered: "2015-11"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "Yogatreat" (Meester Ansinkweg
+      28, Austerlitz; rating 4.73/22 reviews, NPS 8.6; First Registered November
+      2015; bevestigd 2026-06-28). Designatie-badge RYS200.png in de DOM.
+      Teaching staff José de Groot - de Haan (E-RYT 500, YACEP) + Jasmijn
+      Koelink (E-RYT 500, YACEP) — lead voldoet aan de elevated lead-eis. 0
+      training dates op YA (momenteel waitlist; 10e editie). Talen EN/ES/NL.
+legal:
+  legal_name: "Yogatreat"
+  note: >
+    Oprichter/lead José de Groot - de Haan (E-RYT 500, YACEP; internationaal
+    docent sinds 2006; 5814 lesuren). CROSS-PROVIDER: zij doceert óók bij
+    YogaEasy Academy — haar YA-docentprofiel linkt yogatreat.eu (live Zoom) én
+    yogaeasy.com (recorded). KvK niet doorzocht.
+founded_year:
+  value: 2015
+  source: ya-register-2026-06
+  note: "YA-RYS sinds nov 2015 (10e editie van de opleiding); José internationaal
+    docent sinds 2006."
+depth: listed
+last_verified: "2026-06-28"
+sources:
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phltAAA&sid=0013g000002nnKVAAY&name=Yogatreat
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "Yogatreat",
+      Meester Ansinkweg 28 Austerlitz, talen EN/ES/NL, First Registered November
+      2015, rating 4.73/22 reviews, NPS 8.6, 0 training dates; teaching staff
+      José de Groot - de Haan (E-RYT 500, YACEP) + Jasmijn Koelink (E-RYT 500,
+      YACEP). RYS 200 bevestigd via de badge-afbeelding (RYS200.png) in de DOM.
+    local_snapshot: data/archives/yogatreat/ya-register-2026-06-2026-06-28.pdf
+  - id: ya-teacher-jose-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000022VpoAAE
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      YA-docentprofiel "José de Groot - de Haan" (E-RYT 500, YACEP;
+      internationaal docent sinds 2006; First Registered January 2013; 5814
+      lesuren; talen EN/ES/NL). Teaching experience: "Online Yoga Classes" via
+      yogatreat.eu (live Zoom: yogatreat.eu/yin-yoga) + recorded klassen op
+      yogaeasy.com (teacher_options=176) — bevestigt de cross-provider link met
+      YogaEasy.
+    local_snapshot: data/archives/yogatreat/ya-teacher-jose-2026-06-2026-06-28.pdf
+  - id: site-yin200-2026-06
+    type: website
+    url: https://www.yogatreat.eu/online-yin-yoga-teacher-training
+    archived_url: https://web.archive.org/web/20260628161858/https://www.yogatreat.eu/online-yin-yoga-teacher-training
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) "Online Functional Yin Yoga Anatomy & Meridians
+      Teacher Training", 10e editie, 200u, 11 maanden, online + live Zoom.
+      "Training at a glance": 80u online learning (50u Yin & Anatomy + 30u Yin &
+      Meridians, pre-recorded) + live adjustment & teaching practice sessions
+      (Zoom) + live mentoring (whole-group + study-group) + maandelijkse 90-min
+      live Yin-les (verplicht, live of opname) + quizzes/homework/closure
+      assignments (e-learning). Functionele Yin (target areas, tension vs
+      compression; 5-element & meridiaan- theorie, Chi; pranayama & orbiting
+      energy; meditatie). Momenteel WAITLIST ("Starts soon"; geen open
+      inschrijfdatum of prijs op de pagina).
+    local_snapshot: data/archives/yogatreat/site-yin200-2026-06-2026-06-28.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "yogatreat"
+    captured: "2026-06"
+    note: >
+      Treffer "Yogatreat, Austerlitz, www.yogatreat.nl" (Instellingenregister).
+      Register zonder permalink; bewijs is de gefilterde snapshot; Wayback
+      overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/yogatreat/crkbo-register-2026-06-2026-06-28.pdf
+
+programs:
+  - id: 200-functional-yin
+    name: "Online Functional Yin Yoga Anatomy & Meridians Teacher Training (200u)"
+    url: https://www.yogatreat.eu/online-yin-yoga-teacher-training
+    format_label: "200"
+    style_claimed: >
+      Functional Yin Yoga (geleid door de ervaring van de asana, niet de
+      esthetiek; 'target areas', tension vs compression) + anatomie (variaties
+      in botten, gewrichten, spiergroepen, fascia, organen) + Oosterse
+      gezondheidsleer (Yoga Sutras, Taoisme, meridiaan-stimulatie & -theorie,
+      Chi, 5-elemententheorie) + meditatie & mindfulness + pranayama &
+      orbiting-energy-technieken + adjustments/ props + persoonlijke groei.
+      Talen EN/ES/NL.
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200 Hours, Yoga Alliance Certified (RYT 200)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 200 geverifieerd; lead José de Groot - de Haan is E-RYT 500."
+      - body: crkbo
+        label_claimed: "(CRKBO-Instelling; geen prijs/btw-vermelding op de waitlist-pagina)"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling 'Yogatreat' register-geverifieerd → opleiding
+          btw-vrijgesteld."
+    delivery:
+      mode: online
+      structure: mixed
+      duration_months_min: 11
+      language: en
+    prerequisites_claimed: "voor yogabeoefenaars én docenten die hun Yin-praktijk
+      willen verdiepen of Yin willen leren lesgeven; geen strikte ervaringseis
+      genoemd."
+    price:
+      amount_eur: null
+      vat: exempt_crkbo
+      published: not_published
+      note: >
+        Geen prijs op de pagina (momenteel waitlist / "accept applications
+        again"). Als CRKBO-Instelling is de opleiding btw-vrijgesteld → vat
+        exempt_crkbo.
+      source: site-yin200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin200-2026-06
+      note: >
+        "Training at a glance": 80u online learning (50u Yin & Anatomy + 30u Yin
+        & Meridians, pre-recorded) + live adjustment & teaching-practice sessies
+        (Zoom) + live mentoring (whole-group + study-group) + maandelijkse
+        90-min live Yin-les (verplicht) + quizzes/homework/closure assignments.
+        De volledige 200u-decompositie en de live-/lespraktijk-uren zijn niet
+        als getallen gepubliceerd.
+    composition:
+      type: single_program
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "Access José's e-learning platform to find and submit all of your
+        homework, complete quizzes and closure assignments"
+    track_record:
+      first_seen_year: 2015
+      source: ya-register-2026-06
+      note: >
+        10e editie; RYS sinds nov 2015; 22 YA-reviews (4.73, NPS 8.6). Momenteel
+        waitlist (geen open inschrijfdatum) — geen dated cohort opgenomen.
+    teachers:
+      - person_id: jose-de-groot-de-haan
+        role: "oprichter / lead teacher"
+      - person_id: jasmijn-koelink
+        role: "docent (YA teaching staff)"
+
+people:
+  - id: jose-de-groot-de-haan
+    name: "José de Groot - de Haan"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance; First Registered January 2013; 5814
+          lesuren; internationaal docent sinds 2006)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          oprichter/lead Yogatreat (online Functional Yin Yoga Anatomy &
+          Meridians, RYS sinds 2015); functionele-Yin/anatomie-specialist;
+          doceert óók (anatomie/ recorded) bij YogaEasy Academy. E-RYT 500,
+          YACEP; talen EN/ES/NL.
+        registry: other
+        verified: yes
+        source: ya-teacher-jose-2026-06
+  - id: jasmijn-koelink
+    name: "Jasmijn Koelink"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance teaching staff)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "teaching staff Yogatreat (E-RYT 500, YACEP)."
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
