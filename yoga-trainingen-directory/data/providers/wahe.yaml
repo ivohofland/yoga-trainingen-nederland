@@ -1,0 +1,417 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: wahe
+name: Wahé yoga en ayurveda academie
+aka: [ "Wahé by Gitty", "Wahé Academie", "Wahe Yoga en Ayurveda Academie" ]
+website: https://wahe-by-gitty.nl
+status: active
+locations:
+  - city: Baarn
+    address: "Laanplein 15, 3743 AA"
+    note: "eigen Wahé Academie-studio (centrum Baarn); tevens YA-registratieadres."
+crkbo:
+  registered: unknown
+  checked: "2026-06-28"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: naam "Wah" + website "wahe" → 0 in het Instellingenregister;
+    de lead/eigenaar "de Gier" → geen Gitty de Gier in het Docentenregister
+    (2026-06-28). Alle opleidingen zijn geprijsd "excl. btw" (€2495 / €1495) —
+    er WORDT dus btw geheven, een sterk signaal van NIET CRKBO-vrijgesteld. KvK-
+    juridische naam niet doorzocht → registered unknown (leunt naar no; §4.11).
+    price.vat = excl (directe observatie).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "Wahé yoga en ayurveda academie"
+    first_registered: "2024-05"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel (Laanplein 15, Baarn; 0
+      reviews / 0 training dates; First Registered May 2024; bevestigd
+      2026-06-28). Designatie- badges RYS200.png + RYS500.png in de DOM. Lead
+      Gitty de Gier (E-RYT 500, YACEP) — voldoet aan de elevated lead-eis.
+  - body: yoga_alliance
+    identifier: "RYS 500"
+    holder: "Wahé yoga en ayurveda academie"
+    first_registered: "2024-05"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 500 bevestigd via de designatie-badge (RYS500.png) op het profiel. Het
+      500u-traject is een GESTAPELDE leerroute: 200u Vinyasa & Ayurveda + 150u
+      Yin/ Lunar + 100u Restorative & Ayurveda + een komende module
+      (filosofie/pranayama/ meditatie) = 500u (zie programma 500-pathway + de
+      pagina "Opleidingsopbouw").
+legal:
+  legal_name: "Wahé yoga en ayurveda academie"
+  note: "Lead/eigenaar Gitty de Gier (YA: 'Wahe Gitty de Gier'). KvK-nr + exacte
+    juridische entiteit niet doorzocht."
+founded_year:
+  value: 2024
+  source: ya-register-2026-06
+  note: "YA-RYS (200 + 500) sinds mei 2024; Gitty de Gier YA-docent sinds sep 2023."
+depth: listed
+last_verified: "2026-06-28"
+sources:
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000F0RE5YAN&sid=001TR000005Q4rbYAC&name=Wahe-yoga-en-ayurveda-academie
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "Wahé yoga
+      en ayurveda academie", Laanplein 15 Baarn, taal NL, First Registered May
+      2024, 0 reviews / 0 training dates; teaching staff Wahe Gitty de Gier
+      (E-RYT 500, YACEP). Designaties RYS 200 + RYS 500 bevestigd via de
+      badge-afbeeldingen (RYS200.png + RYS500.png) in de DOM.
+    local_snapshot: data/archives/wahe/ya-register-2026-06-2026-06-28.pdf
+  - id: ya-teacher-gitty-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00001fvJwKAAU
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      YA-docentprofiel "Wahe Gitty de Gier" (3742 CH Baarn; First Registered
+      September 2023; YACEP). Designatie E-RYT 500 per het schoolprofiel
+      (teaching staff).
+    local_snapshot: data/archives/wahe/ya-teacher-gitty-2026-06-2026-06-28.pdf
+  - id: site-vinyasa200-2026-06
+    type: website
+    url: https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/
+    archived_url: https://web.archive.org/web/20260628114838/https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) 200u Vinyasa Flow & (Ayur)Vedische TT:
+      Ashtanga-based start → creatieve flows o.b.v. de 5 elementen; pijlers
+      Vinyasa Flow, adjustments,
+      pranayama/meditatie/mantra/Nataraj/Yin-restorative, Ayurveda & filosofie
+      (8-voudig pad, Bhagavad Gita, Patanjali, constitutie), yogic lifestyle. 11
+      blokken (vr+za 10:30-17:30) 11 sep 2026 - 29 mei 2027; 22 live dagen Baarn
+      + online; €2495 excl. btw, €500 aanbetaling; max 17. Team: Gitty (lead) +
+      gastdocenten Loed Rakels (pranayama/meditatie), Fleur Gunning (creative
+      sequencing), Sanne Louman (Ashtanga based Vinyasa), India Joy Prosser &
+      Yordi Rahmadi (mantra/muziek), Anouska Stokvis (anatomie, fysiotherapeut),
+      Daan Pels (jump through), Mirjam Visser (support).
+    local_snapshot: data/archives/wahe/site-vinyasa200-2026-06-2026-06-28.pdf
+  - id: site-yin150-2026-06
+    type: website
+    url: https://wahe-by-gitty.nl/lunar-flow-yin-pad/
+    archived_url: https://web.archive.org/web/20260628114920/https://wahe-by-gitty.nl/lunar-flow-yin-pad/
+    captured: "2026-06"
+    note: >
+      150u Yin Yoga & Lunar Flow TT, "diepgeworteld in de Vedische traditie":
+      Samkhya-filosofie (5 elementen, 7 chakra's), meridianen (TCM) kort, Free
+      Flow Prana sequences voor gewrichten/wervelkolom/heup. Lestijden
+      10:30-17:30. Data 2026/2027 (6 feb 2026 vol; 6 nov 2026
+      volgeboekt/wachtlijst). Prijs niet op de pagina vermeld.
+    local_snapshot: data/archives/wahe/site-yin150-2026-06-2026-06-28.pdf
+  - id: site-restorative100-2026-06
+    type: website
+    url: https://wahe-by-gitty.nl/restorative-yoga-opleiding/
+    archived_url: https://web.archive.org/web/20260628115001/https://wahe-by-gitty.nl/restorative-yoga-opleiding/
+    captured: "2026-06"
+    note: >
+      100u Restorative & Ayurveda Yoga TT: restorative + zelfonderzoek +
+      Ayurveda; props (bolsters/dekens/manduka/yin-matten). 4 weekenden (8 live
+      dagen): 13-14 nov, 4-5 dec 2026, 15-16 jan, 5-6 feb 2027 (10:30-17:30).
+      €1495 excl. btw, €250 aanbetaling.
+    local_snapshot: data/archives/wahe/site-restorative100-2026-06-2026-06-28.pdf
+  - id: site-overview-2026-06
+    type: website
+    url: https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Opleidingsoverzicht: 200u Vinyasa & Ayurveda, 150u Yin/Lunar, 100u
+      Restorative, + komende module "levendige yoga filosofie, pranayama en
+      meditatie". Beschrijft een YA-leerroute ("Opleidingsopbouw ... duidelijke
+      en flexibele leerroute") — basis voor de gestapelde RYS 500.
+    local_snapshot: data/archives/wahe/site-overview-2026-06-2026-06-28.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Wah / wahe / de Gier (Docenten)"
+    captured: "2026-06"
+    note: >
+      Negatieve check: naam "Wah" + website-kolom "wahe" → 0 in het
+      Instellingenregister; Docentenregister "Gier" → geen Gitty de Gier
+      (2026-06-28). Gefilterde (lege) snapshots zijn het bewijs; Wayback
+      overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/wahe/crkbo-register-2026-06-2026-06-28.pdf
+  - id: acm-consumentenprijs
+    type: other
+    url: https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden
+    archived_url: https://web.archive.org/web/20260628115211/https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden
+    captured: "2026-06"
+    note: >
+      ACM (Autoriteit Consument en Markt): een verkoopprijs aan consumenten moet
+      INCL. btw en eventuele bijkomende kosten worden getoond; alleen een
+      uitsluitend/onmiskenbaar B2B-aanbod mag excl. btw. Referentie voor de
+      prijspresentatie-observatie bij Wahé (geen juridisch oordeel van deze
+      gids).
+    local_snapshot: data/archives/wahe/acm-consumentenprijs-2026-06-28.pdf
+
+programs:
+  - id: 200-vinyasa-ayurveda
+    name: "200-uur Vinyasa Flow & Ayurveda Teacher Training"
+    url: https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/
+    format_label: "200"
+    style_claimed: >
+      Vinyasa Flow met Ashtanga-based opbouw (van vastere sequence naar
+      creatieve flows o.b.v. de 5 elementen) + adjustments + aanvullende
+      practices (pranayama, meditatie, mantra, Nataraj,
+      Yin/restorative/eindontspanning) + Ayurveda & yogafilosofie (8-voudig pad,
+      Bhagavad Gita, Patanjali, dosha/constitutie) + yogic lifestyle
+      (dinacharya). Nederlandstalig.
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200 uur, YA-geaccrediteerd (RYT 200)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Onder de RYS 200 van Wahé; lead Gitty de Gier is E-RYT 500."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 9
+      language: nl
+    prerequisites_claimed: "geen ervaring vereist; voor eigen verdieping én
+      aankomend docenten ('Yoga is voor iedereen, ook als je geen les wilt
+      geven')."
+    price:
+      amount_eur: 2495
+      vat: excl
+      published: yes
+      includes: "contacturen + uitgebreide online ondersteuning + theorie-/werkboek"
+      note: >
+        €2495 excl. btw (€500 aanbetaling; gespreide betaling bespreekbaar).
+        "Excl. btw" → er wordt btw geheven (geen CRKBO-vrijstelling waargenomen;
+        zie crkbo). OPVALLEND/SIGNAAL (geen juridisch oordeel): de prijs wordt
+        consument-gericht als "excl. btw" gecommuniceerd, terwijl de ACM-regel
+        is dat prijzen aan consumenten ALTIJD incl. btw getoond moeten worden —
+        alleen een uitsluitend/ onmiskenbaar B2B-aanbod mag excl. btw (zie bron
+        acm-consumentenprijs). De feitelijke prijs voor een consument is dus
+        ~€3019 (incl. 21% btw). Mogelijke B2B-redenering (afgestudeerden worden
+        zzp-yogadocent) weegt zwak: de opleiding wordt expliciet óók aan
+        niet-lesgevers / "eigen verdieping" aangeboden ("Yoga is voor iedereen,
+        ook als je geen les wilt geven"), dus geen "uitsluitend/onmiskenbaar"
+        B2B-aanbod.
+      source: site-vinyasa200-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-vinyasa200-2026-06
+      note: >
+        22 live dagen in Baarn (11 blokken, vr+za 10:30-17:30) + min. 20 min
+        eigen practice/dag + online leeromgeving + praktijkdagen. Geen
+        geïsoleerd contact-/lespraktijk-urental.
+    group_size_claimed:
+      max: 17
+      source: site-vinyasa200-2026-06
+      note: "Groep max 17 voor veel persoonlijke aandacht."
+    composition:
+      type: single_program
+    assessment_described:
+      exists: not_published
+    track_record:
+      first_seen_year: 2024
+      source: ya-register-2026-06
+      note: "YA-RYS sinds mei 2024; lopende cohorten (een opleidingsjaar net afgerond
+        per Instagram)."
+    cohorts:
+      - id: vinyasa-2026-09
+        start: "2026-09"
+        end: "2027-05"
+        status: announced
+        source: site-vinyasa200-2026-06
+        language: nl
+        lead_teachers: [ gitty-de-gier ]
+        note: >
+          11 blokken: 11-12 sep 2026 (openingsceremonie) t/m 28-29 mei 2027
+          (closing). "Was vol, maar door verschuiving 1 plek vrij." Daarnaast
+          een start-2027-cohort (datum nog onbekend, wachtlijst open).
+    teachers:
+      - person_id: gitty-de-gier
+        role: "lead teacher / oprichter"
+
+  - id: 150-yin-lunar
+    name: "150-uur Yin Yoga & Lunar Flow Teacher Training"
+    url: https://wahe-by-gitty.nl/lunar-flow-yin-pad/
+    format_label: "other"
+    style_claimed: >
+      Yin Yoga & Lunar Flow, "diepgeworteld in de Vedische traditie": Samkhya-
+      filosofie (5 elementen, 7 chakra's), meridianen (TCM) kort, Free Flow
+      Prana sequences voor gewrichten/wervelkolom/heup. Nederlandstalig.
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "150 uur Yin/Lunar (telt mee in de YA-leerroute naar RYS 500)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Onder de RYS van Wahé; onderdeel van de gestapelde 500u-route."
+    delivery:
+      mode: in_person
+      structure: weekends
+      language: nl
+    prerequisites_claimed: "voor eigen verdieping én aankomend docenten."
+    price:
+      amount_eur: null
+      vat: excl
+      published: not_published
+      note: "Prijs niet op de pagina vermeld; overige Wahé-opleidingen prijzen 'excl.
+        btw'."
+      source: site-yin150-2026-06
+    hours_claimed:
+      total: 150
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin150-2026-06
+      note: "Weekenden 10:30-17:30 in Baarn. Geen geïsoleerd contact-urental."
+    composition:
+      type: single_program
+    track_record:
+      first_seen_year: 2024
+      source: ya-register-2026-06
+      note: "Cohorten 6 feb 2026 (vol) en 6 nov 2026 (volgeboekt/wachtlijst)."
+    cohorts:
+      - id: yin-2026-11
+        start: "2026-11"
+        status: announced
+        source: site-yin150-2026-06
+        language: nl
+        lead_teachers: [ gitty-de-gier ]
+        note: "Start 6 nov 2026 (volgeboekt; wachtlijst). Eerdere start 6 feb 2026
+          (vol)."
+    teachers:
+      - person_id: gitty-de-gier
+        role: "lead teacher / oprichter"
+
+  - id: 100-restorative-ayurveda
+    name: "100-uur Restorative & Ayurveda Yoga Teacher Training"
+    url: https://wahe-by-gitty.nl/restorative-yoga-opleiding/
+    format_label: "other"
+    style_claimed: >
+      Restorative Yoga gecombineerd met zelfonderzoek en Ayurveda; nadruk op
+      rust, zelfkennis en de eenvoud van 'zijn'; veel props (bolsters, dekens,
+      blokken, meditatiekussens). Nederlandstalig.
+    styles: [ restorative ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "100 uur Restorative & Ayurveda (telt mee in de YA-leerroute naar
+          RYS 500)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Onder de RYS van Wahé; onderdeel van de gestapelde 500u-route."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 4
+      language: nl
+    prerequisites_claimed: "voor eigen verdieping of om zelf restorative aan te
+      bieden; iedereen welkom."
+    price:
+      amount_eur: 1495
+      vat: excl
+      published: yes
+      note: "€1495 excl. btw (~€1809 incl. 21% btw); €250 aanbetaling. Zelfde
+        excl-btw-presentatie als de 200u — zie de ACM-observatie daar +
+        acm-consumentenprijs."
+      source: site-restorative100-2026-06
+    hours_claimed:
+      total: 100
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-restorative100-2026-06
+      note: "8 live dagen (4 weekenden) 10:30-17:30 + min. 20 min eigen practice/dag."
+    composition:
+      type: single_program
+    track_record:
+      first_seen_year: 2024
+      source: ya-register-2026-06
+    cohorts:
+      - id: restorative-2026-11
+        start: "2026-11"
+        end: "2027-02"
+        status: announced
+        source: site-restorative100-2026-06
+        language: nl
+        lead_teachers: [ gitty-de-gier ]
+        note: "4 weekenden: 13-14 nov, 4-5 dec 2026, 15-16 jan, 5-6 feb 2027 (nog 1
+          plek)."
+    teachers:
+      - person_id: gitty-de-gier
+        role: "lead teacher / oprichter"
+
+  - id: 500-pathway
+    name: "RYS 500 leerroute (gestapeld)"
+    url: https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/
+    format_label: "500"
+    style_claimed: >
+      Gestapelde RYS 500-route uit de afzonderlijke Wahé-trainingen: 200u
+      Vinyasa & Ayurveda + 150u Yin/Lunar + 100u Restorative & Ayurveda + een
+      komende module (levendige yogafilosofie, pranayama & meditatie).
+      Multistyle.
+    styles: [ multistyle, vinyasa, yin, restorative ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "RYS 500 (YA-leerroute, gestapeld uit de losse opleidingen)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 500 badge-bevestigd; route beschreven op de Opleidingsopbouw-pagina."
+    delivery:
+      mode: in_person
+      structure: modular
+      language: nl
+    prerequisites_claimed: "stapel de losse Wahé-opleidingen tot 500 uur."
+    price:
+      amount_eur: null
+      vat: excl
+      published: not_published
+      note: "Geen totaalbedrag; som van de losse opleidingen (elk 'excl. btw')."
+      source: site-overview-2026-06
+    hours_claimed:
+      total: 500
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-overview-2026-06
+      note: "200 + 150 + 100 (+ komende ~50u filosofie/pranayama-module) = 500u."
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Elke opleiding (200/150/100) is los te volgen;
+        samen vormen ze de RYS 500-route."
+      source: site-overview-2026-06
+    track_record:
+      first_seen_year: 2024
+      source: ya-register-2026-06
+
+people:
+  - id: gitty-de-gier
+    name: "Gitty de Gier"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance teaching staff; eigen docentprofiel
+          'Wahe Gitty de Gier', First Registered September 2023)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          oprichter/lead teacher Wahé yoga en ayurveda academie (Baarn);
+          intensieve beoefening & studie van het Ashtanga-systeem
+          (Mysore-stijl), van waaruit ze creatieve Vinyasa-flows onderwijst;
+          sterke Ayurveda-inslag. E-RYT 500, YACEP.
+        registry: other
+        verified: yes
+        source: ya-teacher-gitty-2026-06
