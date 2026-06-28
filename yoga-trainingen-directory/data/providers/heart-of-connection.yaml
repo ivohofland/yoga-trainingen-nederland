@@ -1,0 +1,279 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: heart-of-connection
+name: The Heart of Connection
+aka: [ "Heart of Connection" ]
+website: https://theheartofconnection.com
+status: active
+locations:
+  - city: Amsterdam
+    note: "YA-registratieadres (Amsterdam). Oprichter/hoofddocent Selma van der
+      Graaf is gevestigd in Kotten (Achterhoek)."
+  - city: null
+    note: "Hof van Kairos — residentiële retreatlocatie in de natuur; alle
+      trainingsblokken (incl. verblijf + maaltijden) vinden hier plaats."
+crkbo:
+  registered: unknown
+  checked: "2026-06-28"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: website-kolom "heartofconnection" + naam "Heart of Conn" → 0
+    in het Instellingenregister; Docentenregister "Graaf" → geen Selma van der
+    Graaf (2026-06-28). Geen btw-vermelding bij de prijzen (€3500/€3895/€1800) →
+    price.vat unknown. KvK/juridische naam niet doorzocht → registered unknown
+    (§2.2/§4.11).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "The Heart of Connection"
+    first_registered: "2025-01"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "The Heart of Connection"
+      (Amsterdam; taal NL/EN; 0 reviews / 0 training dates; First Registered
+      January 2025; bevestigd 2026-06-28). Designatie-badge RYS200.png in de
+      DOM. LEAD-NUANCE (descriptief): lead/hoofddocent Selma van der Graaf is op
+      het YA-profiel "E-RYT 200, YACEP" — dus E-RYT op 200-niveau, NIET E-RYT
+      500. De RYS dateert van jan 2025 (elevated-standaard-tijdperk, dat sinds
+      2025-01 een E-RYT 500 als lead trainer verlangt). Geen oordeel; signaal
+      voor de lead- trainer-/standards-metriek (vgl. PoYoMi).
+legal:
+  legal_name: "The Heart of Connection"
+  note: >
+    Oprichter/hoofddocent Selma van der Graaf (YA-docent sinds mei 2021, 2195
+    lesuren). Cross-provider: Selma doceert óók bij Bluebirds Zuid (sinds jan
+    2024) en Yogaschool Noord (sinds okt 2022). KvK-nr niet doorzocht.
+founded_year:
+  value: 2023
+  source: ya-teacher-selma-2026-06
+  note: "The Heart of Connection bestaat blijkens Selma's YA-profiel sinds feb
+    2023; de YA-RYS dateert van jan 2025."
+depth: listed
+last_verified: "2026-06-28"
+sources:
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000TQhQPYA1&sid=001TR00000OhIbmYAF&name=The-Heart-of-Connection
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "The Heart
+      of Connection", Amsterdam, taal NL/EN, First Registered January 2025, 0
+      reviews / 0 training dates; teaching staff Selma van der Graaf (E-RYT 200,
+      YACEP). RYS 200 bevestigd via de badge-afbeelding (RYS200.png). About
+      noemt "200 hours Vinyasa Yoga teacher training, 8-month" — de site biedt
+      nu een Hatha 200u + een Yin 75u (de 'Vinyasa'-omschrijving is
+      generiek/ouder).
+    local_snapshot: data/archives/heart-of-connection/ya-register-2026-06-2026-06-28.pdf
+  - id: ya-teacher-selma-2026-06
+    type: register
+    url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000jrolBAAQ
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      YA-docentprofiel Selma van der Graaf (Kotten, NL; talen NL/EN; First
+      Registered May 2021; 2195 lesuren; YACEP; E-RYT 200 per het
+      schoolprofiel). Teaching experience: The Heart of Connection (feb
+      2023-heden), Bluebirds Zuid (jan 2024-heden), Yogaschool Noord (okt
+      2022-heden).
+    local_snapshot: data/archives/heart-of-connection/ya-teacher-selma-2026-06-2026-06-28.pdf
+  - id: site-hatha-2026-06
+    type: website
+    url: https://theheartofconnection.com/hatha-yoga-teacher-training/
+    archived_url: https://web.archive.org/web/20260628155232/https://theheartofconnection.com/hatha-yoga-teacher-training/
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) 200u Hatha Yoga TT op Hof van Kairos
+      (residentieel, 4 blokken: 16-18 okt + 16-22 nov + 11-13 dec 2026 + 11-17
+      jan 2027; weekenden vr 09:30-zo 17:00, weken ma 14:00-zo 11:00;
+      dagstructuur 07:30 sadhana - 20:00 avondprogramma). Curriculum:
+      hatha-fundament, asana/sequencing/ lesopbouw + assists/adjustments,
+      pranayama/meditatie/innerlijk werk,
+      filosofie/geschiedenis/mythologie/mantra/mudra/tantra/Ayurveda, lesgeven &
+      communicatie, anatomie/fysiologie/subtiele
+      anatomie/polyvagaaltheorie/trauma- informed yoga, ceremonies. ~3u
+      integratie/week + intervisie. Schriftelijk + praktisch examen. Early bird
+      €3500 (vóór 1 aug 2026) / regulier €3895 / 3×€1350; incl.
+      verblijf+maaltijden+manual+materiaal+certificaat. Team Selma (hoofddocent)
+      + Lútzen Schroor (ademwerk) + Brittany Mock (anatomie/mobiliteit).
+    local_snapshot: data/archives/heart-of-connection/site-hatha-2026-06-2026-06-28.pdf
+  - id: site-yin-2026-06
+    type: website
+    url: https://theheartofconnection.com/yin-teacher-training/
+    archived_url: https://web.archive.org/web/20260628155316/https://theheartofconnection.com/yin-teacher-training/
+    captured: "2026-06"
+    note: >
+      75u Yin Yoga TT, residentiële week 2-8 nov op Hof van Kairos; €1800 incl.
+      verblijf/maaltijden/manual/materiaal/certificaat; bruikbaar voor YA
+      Continuing Education hours (YACEP); voor docenten én serieuze beoefenaars.
+    local_snapshot: data/archives/heart-of-connection/site-yin-2026-06-2026-06-28.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "heartofconnection + Heart of Conn (Instellingen) + Graaf (Docenten)"
+    captured: "2026-06"
+    note: >
+      Negatieve check: website "heartofconnection" + naam "Heart of Conn" → 0 in
+      Instellingen; Docent "Graaf" → geen Selma van der Graaf (2026-06-28).
+      Gefilterde (lege) snapshots zijn het bewijs; Wayback overgeslagen voor
+      crkbo.nl/Register/*.
+    local_snapshot: data/archives/heart-of-connection/crkbo-register-2026-06-2026-06-28.pdf
+
+programs:
+  - id: 200-hatha
+    name: "200-uur Hatha Yoga Teacher Training"
+    url: https://theheartofconnection.com/hatha-yoga-teacher-training/
+    format_label: "200"
+    style_claimed: >
+      Hatha als fundament (traditie & kernprincipes; relatie adem-zenuwstelsel);
+      asana, sequencing & lesopbouw + assists/adjustments; pranayama, meditatie
+      & innerlijk werk; filosofie, yogageschiedenis, mythologie, mantra's,
+      mudra's, tantra & Ayurveda; lesgeven & (volwassen) communicatie; anatomie,
+      fysiologie, subtiele anatomie, polyvagaaltheorie & trauma-geïnformeerde
+      yoga; ceremonies. Sterke nadruk op persoonlijke ontwikkeling en lesgeven
+      vanaf dag één.
+    styles: [ hatha ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200-uur, wereldwijd erkend certificaat van Yoga Alliance (RYT
+          200) na schriftelijk + praktisch examen"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 200 geverifieerd; lead Selma van der Graaf is E-RYT 200 (zie
+          lead-nuance bij registrations)."
+    delivery:
+      mode: in_person
+      structure: intensive
+      duration_months_min: 4
+      language: nl
+    prerequisites_claimed: "voor wie yoga dieper wil begrijpen dan alleen als
+      fysieke practice; om docent te worden óf de eigen practice te verdiepen;
+      ook geschikt als lesgeven niet het hoofddoel is. Kleinschalige groep."
+    price:
+      amount_eur: 3895
+      variants:
+        - { label: "early bird (aanmelden vóór 1 aug 2026)", amount_eur: 3500 }
+        - { label: "regulier", amount_eur: 3895 }
+        - { label: "in 3 termijnen (3×€1350)", amount_eur: 4050 }
+      vat: unknown
+      published: yes
+      includes: "verblijf op Hof van Kairos (alle blokken), maaltijden, manual,
+        trainingsmateriaal en certificaat"
+      note: >
+        Regulier €3895; early bird €3500 (vóór 1 aug 2026); in 3 termijnen
+        €4050. Geen btw-vermelding → vat unknown (§4.11).
+      source: site-hatha-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-hatha-2026-06
+      note: >
+        4 residentiële blokken (2 weekenden + 2 weken) op Hof van Kairos;
+        dagstructuur 07:30 sadhana - 20:00 avondprogramma. ~3u
+        integratiewerk/week tussen de blokken + intervisie in oefengroepjes.
+        Geen geïsoleerd contact-/ lespraktijk-urental.
+    composition:
+      type: single_program
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "De opleiding wordt afgesloten met een schriftelijk en praktisch examen"
+    track_record:
+      first_seen_year: 2023
+      source: ya-teacher-selma-2026-06
+      note: "Merk sinds feb 2023, RYS sinds jan 2025; eerdere cohort(en) gelopen
+        blijkens studenttestimonials (Afra, Carlijn, Sorcha, Ingeborg)."
+    cohorts:
+      - id: hatha-2026-10
+        start: "2026-10"
+        end: "2027-01"
+        status: announced
+        source: site-hatha-2026-06
+        language: nl
+        lead_teachers: [ selma-van-der-graaf ]
+        note: "4 blokken: 16-18 okt, 16-22 nov, 11-13 dec 2026, 11-17 jan 2027 (Hof van
+          Kairos). Early bird vóór 1 aug 2026."
+    teachers:
+      - person_id: selma-van-der-graaf
+        role: "hoofddocent / oprichter"
+
+  - id: 75-yin
+    name: "75-uur Yin Yoga Teacher Training"
+    url: https://theheartofconnection.com/yin-teacher-training/
+    format_label: "other"
+    style_claimed: >
+      Yin Yoga ("niet om de perfecte houding, maar om ontspanning en ervaring"):
+      residentiële week waarin je leert zelfstandig yinlessen op te bouwen en te
+      begeleiden. Nederlandstalig.
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "75-uur; bruikbaar voor Yoga Alliance Continuing Education hours
+          (YACEP)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "Continuing-ed (YACEP), geen RYS-200-opleiding; Selma is YACEP."
+    delivery:
+      mode: in_person
+      structure: intensive
+      language: nl
+    prerequisites_claimed: "geen yogadocent-status of eerdere TT vereist; fijn als
+      je al eens Yin hebt beoefend. Voor docenten die zich willen verdiepen én
+      voor wie Yin beter wil begrijpen en doorgeven."
+    price:
+      amount_eur: 1800
+      vat: unknown
+      published: yes
+      includes: "verblijf, maaltijden, manual, trainingsmateriaal en certificaat"
+      note: "€1800; geen btw-vermelding → vat unknown (§4.11)."
+      source: site-yin-2026-06
+    hours_claimed:
+      total: 75
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yin-2026-06
+      note: "Residentiële week (ma-zo) op Hof van Kairos. Geen geïsoleerd
+        contact-urental."
+    composition:
+      type: single_program
+    track_record:
+      first_seen_year: 2023
+      source: ya-teacher-selma-2026-06
+    cohorts:
+      - id: yin-2026-11
+        start: "2026-11"
+        status: announced
+        source: site-yin-2026-06
+        language: nl
+        lead_teachers: [ selma-van-der-graaf ]
+        note: "2-8 november (residentiële week, Hof van Kairos)."
+    teachers:
+      - person_id: selma-van-der-graaf
+        role: "hoofddocent / oprichter"
+
+people:
+  - id: selma-van-der-graaf
+    name: "Selma van der Graaf"
+    trainings_claimed:
+      - label: "E-RYT 200, YACEP (Yoga Alliance; First Registered May 2021; 2195
+          lesuren)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          oprichter/hoofddocent The Heart of Connection (sinds feb 2023); E-RYT
+          200, YACEP, 2195 lesuren. Nadruk op trauma-geïnformeerde yoga,
+          ademwerk en een tantra-fundament. Doceert óók bij Bluebirds Zuid
+          (sinds jan 2024) en Yogaschool Noord (sinds okt 2022). LET OP: E-RYT
+          200 (niet E-RYT 500) — relevant voor de lead-trainer-eis van de
+          elevated RYS-200-standaard.
+        registry: other
+        verified: yes
+        source: ya-teacher-selma-2026-06
