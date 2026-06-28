@@ -1,0 +1,231 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yogaeasy
+name: YogaEasy Academy
+aka: [ "YogaEasy", "YogaEasy Academy - English", "YogaEasy 200hr Online YTT" ]
+website: https://studio.yogaeasy.com
+status: active
+locations:
+  - city: Amsterdam
+    address: "Joop Geesinkweg 901-999, 1114 AB"
+    note: >
+      YA-registratieadres. De opleiding is ONLINE (geen fysieke leslocatie).
+      YogaEasy is een (Duits) online-yogaplatform — © yogaeasy.com — dat ook
+      EkhartYoga (NL, Esther Ekhart) omvat; de Engelstalige Academy is
+      geregistreerd op dit Amsterdamse adres.
+crkbo:
+  registered: unknown
+  checked: "2026-06-28"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: website-kolom "yogaeasy" + "ekhart" en naam "Ekhart" → 0 in
+    het Instellingenregister (2026-06-28). YogaEasy is een Duitse
+    online-entiteit; geen NL CRKBO-registratie gevonden onder
+    merk/website/gelieerd merk. KvK/juridische naam niet doorzocht → registered
+    unknown (§2.2/§4.11). Geen btw-vermelding bij de €2500-prijs → price.vat
+    unknown (grensoverschrijdende online-cursus).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200"
+    holder: "YogaEasy Academy - English"
+    first_registered: "2024-10"
+    verified_in_register: yes
+    source: ya-register-2026-06
+    note: >
+      RYS 200 geverifieerd op het live YA-profiel "YogaEasy Academy - English"
+      (Joop Geesinkweg 901, Amsterdam; rating 5.0/5 reviews; First Registered
+      October 2024; bevestigd 2026-06-28). Designatie-badge RYS200.png in de
+      DOM. Teaching staff (7) incl. José de Groot - de Haan (E-RYT 500, YACEP)
+      en Esther Ekhart (E-RYT 500, YACEP); de opleiding noemt 8 docenten. 0
+      training dates op YA (cohorten via de site).
+legal:
+  legal_name: "YogaEasy (yogaeasy.com)"
+  note: >
+    YogaEasy is een Duits online-yogaplatform (München) dat EkhartYoga (NL)
+    omvat; YA-registratie "YogaEasy Academy - English" op een Amsterdams adres
+    (Joop Geesinkweg 901, het 'B. Amsterdam'-gebouw). Exacte juridische entiteit
+    (GmbH/ B.V.) + KvK niet geverifieerd.
+founded_year:
+  value: 2024
+  source: ya-register-2026-06
+  note: "YA-RYS sinds okt 2024; eerste YTT-cohort jan 2025 (per afgestudeerden-
+    testimonials). Het YogaEasy-platform zelf bestaat langer."
+depth: listed
+last_verified: "2026-06-28"
+sources:
+  - id: ya-register-2026-06
+    type: register
+    url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000O7UjVYAV&sid=001TR00000JpaWLYAZ&name=YogaEasy-Academy---English
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "YogaEasy
+      Academy - English", Joop Geesinkweg 901-999 Amsterdam, First Registered
+      October 2024, rating 5.0/5 reviews; teaching staff (7) incl. José de Groot
+      - de Haan (E-RYT 500, YACEP) + Esther Ekhart (E-RYT 500, YACEP). RYS 200
+      bevestigd via de badge-afbeelding (RYS200.png) in de DOM.
+    local_snapshot: data/archives/yogaeasy/ya-register-2026-06-2026-06-28.pdf
+  - id: site-academy-tt-2026-06
+    type: website
+    url: https://studio.yogaeasy.com/pages/academy-tt
+    archived_url: https://web.archive.org/web/20260628151247/https://studio.yogaeasy.com/pages/academy-tt
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) "Academy 200hr YTT": online Hatha Vinyasa 200u,
+      €2500 (eenmalig of betaalplan), start oktober 2026. GEPUBLICEERDE
+      uren-breakdown: 110u pre-recorded klassen + 30u live online lectures/Q&A +
+      10u small-group teaching practice + wekelijkse assignments/yogalessen;
+      live sessie elke do 18:00 CET; max 20 deelnemers; prereq min. 2 jaar
+      praktijk. 8 docenten: Esther Ekhart (meditatie/zenuwstelsel), David Lurey
+      (asana/ethics/ mantra & mudra), Tashi Dawa (asana/geschiedenis), Gemma
+      Vassallo (asana/ lesmethodiek/professional development), José de Groot
+      (functionele anatomie), Véronique Gauthier (pranayama), Marcel van de Vis
+      Heil (filosofie), Mirjam Wagner (fysiologie). Inclusief 1 jaar
+      YogaEasy-membership (5000+ classes), digitaal manual + workbook,
+      community-platform, gedetailleerde curriculum- download.
+    local_snapshot: data/archives/yogaeasy/site-academy-tt-2026-06-2026-06-28.pdf
+  - id: pdf-schedule-2026-06
+    type: brochure
+    url: https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf
+    archived_url: https://web.archive.org/web/20260628151316/https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf
+    captured: "2026-06"
+    note: "Downloadbare 'October 2026 — Live sessions schedule' (weekschema live
+      sessies + rustweken). Niet machine-gelezen; pointer."
+    local_snapshot: data/archives/yogaeasy/pdf-schedule-2026-06-2026-06-28.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "yogaeasy / ekhart (website) + Ekhart (naam)"
+    captured: "2026-06"
+    note: >
+      Negatieve check: website-kolom "yogaeasy" + "ekhart" en naam "Ekhart" → 0
+      in het Instellingenregister (2026-06-28). Gefilterde (lege) snapshots zijn
+      het bewijs; Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/yogaeasy/crkbo-register-2026-06-2026-06-28.pdf
+
+programs:
+  - id: 200-hatha-vinyasa
+    name: "200-uur Online Yoga Teacher Training (Hatha Vinyasa)"
+    url: https://studio.yogaeasy.com/pages/academy-tt
+    format_label: "200"
+    style_claimed: >
+      Hatha Vinyasa: asana, functionele anatomie, fysiologie & biomechanica,
+      pranayama, meditatie, zenuwstelsel-regulatie, yogageschiedenis &
+      filosofie, intelligent sequencing, ethics, mantras & mudras, en de
+      business/marketing van lesgeven. Onderwezen door 8 gespecialiseerde
+      docenten.
+    styles: [ hatha, vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "Yoga Alliance certified 200-hour (RYT 200)"
+        verified: yes
+        source: ya-register-2026-06
+        note: "RYS 200 geverifieerd; 8-koppig docententeam, leads José de Groot - de
+          Haan + Esther Ekhart (beiden E-RYT 500)."
+    delivery:
+      mode: online
+      structure: mixed
+      language: en
+    prerequisites_claimed: "min. 2 jaar consistente praktijk + leergierigheid;
+      geschikt voor aankomend docenten, bestaande docenten, verdiepende
+      practitioners en wellness-professionals. Deelnemers worden geselecteerd."
+    price:
+      amount_eur: 2500
+      vat: unknown
+      published: yes
+      includes: >
+        1 jaar YogaEasy-membership (5000+ classes), digitaal manual + workbook,
+        community-platform, doorlopende support van docenten + groepscoördinator
+      note: >
+        €2500 (eenmalig of betaalplan; betaalplan niet in elk land beschikbaar).
+        Geen btw-vermelding bij de prijs → vat unknown (§4.11).
+      source: site-academy-tt-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: 10
+      breakdown_published: yes
+      source: site-academy-tt-2026-06
+      note: >
+        GEPUBLICEERDE breakdown (transparantie-uitschieter): 110u pre-recorded
+        klassen + 30u live online lectures/Q&A + 10u small-group teaching
+        practice + wekelijkse assignments/yogalessen (~50u zelfstudie/integratie
+        tot 200u). ~15u inzet per week, rustweek elke 4-5 weken. De 30u
+        synchroon (live) komt overeen met de online-RYS200-eis (min. 15% / 30u
+        synchroon); de 10u begeleide lespraktijk is EXPLICIET vermeld — zeldzaam
+        in de markt (§5).
+    group_size_claimed:
+      max: 20
+      source: site-academy-tt-2026-06
+      note: "Cohort bewust max 20 voor persoonlijke feedback."
+    composition:
+      type: single_program
+    assessment_described:
+      exists: yes
+      continuous: yes
+      quote: "10 hours of small group teaching practice with fellow students ...
+        Online assignments to help assimilate your knowledge and assess your
+        level of understanding"
+    transparency:
+      syllabus_published: yes
+      hours_breakdown_published: yes
+      assessment_criteria_published: not_published
+      reading_list_published: yes
+      teacher_bios_published: yes
+      source: site-academy-tt-2026-06
+    track_record:
+      first_seen_year: 2024
+      last_confirmed_cohort: "2025-01"
+      source: site-academy-tt-2026-06
+      note: "YA-RYS okt 2024; cohort jan 2025 bevestigd via
+        afgestudeerden-testimonials (Christiane, Signe, Audrey)."
+    cohorts:
+      - id: ytt-2025-01
+        start: "2025-01"
+        status: confirmed_ran
+        source: site-academy-tt-2026-06
+        language: en
+        note: "Cohort jan 2025 — meerdere afgestudeerden-testimonials bevestigen dat het
+          liep."
+      - id: ytt-2026-10
+        start: "2026-10"
+        status: announced
+        source: site-academy-tt-2026-06
+        language: en
+        note: "Volgende cohort, start oktober 2026 (live sessies do 18:00 CET; zie
+          schedule-PDF)."
+    teachers:
+      - person_id: esther-ekhart
+        role: "docent (meditatie & zenuwstelsel); EkhartYoga-oprichter"
+      - person_id: jose-de-groot
+        role: "docent / lead (functionele anatomie)"
+
+people:
+  - id: esther-ekhart
+    name: "Esther Ekhart"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance teaching staff)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          oprichter van EkhartYoga (online-yogaplatform, NL), dat onder YogaEasy
+          valt; doceert meditatie & zenuwstelsel-regulatie in de YogaEasy-YTT.
+          E-RYT 500, YACEP.
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
+  - id: jose-de-groot
+    name: "José de Groot - de Haan"
+    trainings_claimed:
+      - label: "E-RYT 500, YACEP (Yoga Alliance teaching staff)"
+        verified: yes
+        source: ya-register-2026-06
+    background:
+      - field: "yoga"
+        credential: "docent functionele anatomie in de YogaEasy-YTT; E-RYT 500, YACEP."
+        registry: other
+        verified: yes
+        source: ya-register-2026-06
