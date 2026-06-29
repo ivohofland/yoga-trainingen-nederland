@@ -1,0 +1,234 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: adhouna
+name: Adhouna
+aka: [ "Centrum Adhouna", "Adhouna Yoga Brunssum" ]
+website: https://www.adhouna.nl
+status: active
+locations:
+  - city: Brunssum
+    address: "Centrum Adhouna"
+    note: "yoga-/welzijnscentrum in Brunssum (Limburg); leslocatie van de
+      opleidingen."
+crkbo:
+  registered: unknown
+  checked: "2026-06-28"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: naam "Adhouna" → 0 in het Instellingenregister (2026-06-28).
+    De opleidingen worden EXPLICIET "incl. BTW" geprijsd (Yin XL deel I €1420
+    incl. / €1173,55 excl. btw) — er WORDT dus btw geheven, consistent met NIET
+    CRKBO-vrijgesteld. KvK/juridische naam niet doorzocht → registered unknown
+    (leunt naar no); price.vat = incl (directe observatie).
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200 (geclaimd; niet in register)"
+    holder: "onbekend (Centrum Adhouna)"
+    verified_in_register: no
+    source: ya-search-2026-06
+    note: >
+      LAPSE/OVERCLAIM (decision #10): de opleidingspagina's tonen een
+      RYS-200-badge en "gecertificeerd door Yoga Alliance / leidt op tot RYT
+      200", maar "Adhouna" → 0 in de YA-scholendirectory (2026-06-28). De
+      geadverteerde cohorten liepen 28 sep 2024 - 15 nov 2025 (nu verstreken);
+      de RYS lijkt VERVALLEN en de badge staat nog op de site. Niet
+      register-verifieerbaar; mogelijk ooit actief onder een andere
+      (persoons-/entiteits)naam.
+legal:
+  legal_name: "Centrum Adhouna"
+  note: "Yoga-/welzijnscentrum Brunssum (Limburg); lead/eigenaar niet op de
+    opleidingspagina's genoemd. KvK niet doorzocht."
+depth: listed
+last_verified: "2026-06-28"
+sources:
+  - id: site-multistyle-2026-06
+    type: website
+    url: https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/
+    archived_url: https://web.archive.org/web/20260629190947/https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) "Multi Style Yoga Docent Opleiding 200 uur (Yoga
+      Alliance)": multistyle (Hatha/Yin/Ashtanga/Power/Vinyasa flow + kinder-/
+      zwangerschaps-/menstruatieyoga), filosofie, anatomie/fysiologie,
+      pranayama, mudra's/bandha's, mantra, meditatie, Ayurveda, lesopbouw &
+      lespraktijk; RYT 200; toegankelijk voor alle niveaus; ook een 100u-Hatha →
+      +100u → 200u-route. Brunssum, lesdagen 9:00-18:30. Pagina adverteert nog
+      de start 28 sep 2024 (nu verstreken); geen prijs op de pagina.
+    local_snapshot: data/archives/adhouna/site-multistyle-2026-06-2026-06-29.pdf
+  - id: site-yinxl-2026-06
+    type: website
+    url: https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
+    archived_url: https://web.archive.org/web/20260629191031/https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
+    captured: "2026-06"
+    note: >
+      LIVE "Yin Yoga XL Docent Opleiding 200 uur (Yoga Alliance)", in 2 delen:
+      Yin yoga (geschiedenis/principes/filosofie, anatomie, meridianen &
+      chakra's, pranayama, meditatie, Yin & Yang, lesopbouw/lespraktijk) +
+      mindfulness + "Anatomie van de Mind" + Yoga Nidra theorie & praktijk; RYT
+      200. Tarieven: Deel I €1420 incl. btw (€1173,55 excl.) + Deel II €1305
+      incl. btw (€1078,50 excl.) = €2725 incl. btw; incl. syllabus + examen;
+      herexamen €50; inschrijven per deel (Deel II bij voldoende
+      belangstelling). Brunssum, 10:00-18:00.
+    local_snapshot: data/archives/adhouna/site-yinxl-2026-06-2026-06-29.pdf
+  - id: overview-image-2026-06
+    type: brochure
+    captured: "2026-06"
+    note: >
+      Door de gebruiker aangeleverde opleidingsoverzicht-afbeelding (met
+      RYS-200- badge): Hatha yoga 100u (28 sep - 14 dec 2024); Multi Style yoga
+      TT 200u (28 sep 2024 - 5 apr 2025); Yin XL yoga TT 200u (29 mrt - 15 nov
+      2025); Yoga Nidra verdieping voor docenten 20u (10-11 aug 2024). Bron voor
+      de cohort-data.
+  - id: ya-search-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Adhouna
+    archived_url: null
+    query: "Adhouna (school)"
+    captured: "2026-06"
+    note: >
+      Negatieve YA-check: scholendirectory "Adhouna" → 0 (2026-06-28). Geen
+      actieve RYS; consistent met een vervallen registratie (de site toont nog
+      wel de RYS-200-badge). Gefilterde (lege) resultatenpagina is het bewijs.
+    local_snapshot: data/archives/adhouna/ya-search-2026-06-2026-06-29.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Adhouna"
+    captured: "2026-06"
+    note: >
+      Negatieve check: naam "Adhouna" → 0 in het Instellingenregister
+      (2026-06-28); de opleidingen worden incl. btw geprijsd (btw-belast, niet
+      CRKBO-vrijgesteld). Gefilterde (lege) snapshot is het bewijs; Wayback
+      overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/adhouna/crkbo-register-2026-06-2026-06-29.pdf
+
+programs:
+  - id: 200-multistyle
+    name: "Multi Style Yoga Docent Opleiding 200 uur"
+    url: https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/
+    format_label: "200"
+    style_claimed: >
+      Multistyle: principes van diverse yogavormen (Hatha, Yin, Ashtanga, Power,
+      Vinyasa flow) + filosofie, anatomie & fysiologie, pranayama, mudra's &
+      bandha's, mantra & chanting, meditatie, Ayurveda, kinderyoga,
+      zwangerschaps- & menstruatie- yoga, lesopbouw en lesgeven in de praktijk.
+      Uiteindelijk kies je je eigen stijl. Nederlandstalig.
+    styles: [ multistyle, hatha, yin, ashtanga, vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "gecertificeerd door Yoga Alliance; leidt op tot geregistreerd
+          Yoga Teacher (RYT 200)"
+        verified: no
+        source: ya-search-2026-06
+        note: "Geen actieve RYS gevonden ('Adhouna' → 0 in de YA-directory, 2026-06-28);
+          vervallen/overclaim — zie registrations."
+    delivery:
+      mode: in_person
+      structure: weekends
+      language: nl
+    prerequisites_claimed: "toegankelijk voor alle yoganiveaus, ook beginners. Ook
+      een 100u-Hatha → +100u → 200u-route."
+    price:
+      amount_eur: null
+      vat: incl
+      published: not_published
+      note: "Geen prijs op de Multi Style-pagina; de Yin XL-opleiding wordt incl. btw
+        geprijsd (btw-belast)."
+      source: site-multistyle-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-multistyle-2026-06
+      note: "Lesdagen 9:00-18:30 te Brunssum. 100u-Hatha-houders kunnen met +100u de
+        200u voltooien. Geen geïsoleerd contact-urental."
+    composition:
+      type: single_program
+    track_record:
+      first_seen_year: 2024
+      source: site-multistyle-2026-06
+      note: "Geadverteerd cohort sep 2024 - apr 2025."
+    cohorts:
+      - id: multistyle-2024-09
+        start: "2024-09"
+        end: "2025-04"
+        status: unknown
+        source: overview-image-2026-06
+        language: nl
+        note: >
+          Geadverteerd 28 sep 2024 - 5 apr 2025 (nu verstreken). Of het cohort
+          daadwerkelijk doorging is niet bevestigd (§8); de gebruiker vermoedt
+          van wel. Geen nieuw/komend cohort aangekondigd.
+
+  - id: 200-yin-xl
+    name: "Yin Yoga XL Docent Opleiding 200 uur"
+    url: https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
+    format_label: "200"
+    style_claimed: >
+      Yin Yoga (geschiedenis, principes & filosofie, anatomie & fysiologie,
+      meridianen & chakra's, Yin & Yang, pranayama, meditatie,
+      functie/groepering van houdingen, lesopbouw & lespraktijk) + mindfulness +
+      "Anatomie van de Mind" + Yoga Nidra (theorie & praktijk). In 2 delen.
+      Nederlandstalig.
+    styles: [ yin ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "gecertificeerd door Yoga Alliance; leidt op tot RYT 200"
+        verified: no
+        source: ya-search-2026-06
+        note: "Geen actieve RYS gevonden (zie registrations; vervallen/overclaim)."
+    delivery:
+      mode: in_person
+      structure: weekends
+      language: nl
+    prerequisites_claimed: "toegankelijk voor alle niveaus, ook beginners. Ook een
+      100u-Yin → +100u → 200u-route."
+    price:
+      amount_eur: 2725
+      variants:
+        - { label: "Deel I (incl. syllabus + examen)", amount_eur: 1420 }
+        - { label: "Deel II (incl. syllabus + examen)", amount_eur: 1305 }
+      vat: incl
+      published: yes
+      includes: "syllabus en examen (per deel)"
+      note: >
+        €2725 incl. btw totaal (Deel I €1420 / Deel II €1305, beide incl. btw);
+        herexamen €50. Inschrijven per deel; Deel II start na Deel I en gaat
+        door bij voldoende belangstelling.
+      source: site-yinxl-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-yinxl-2026-06
+      note: "2 delen, lesdagen 10:00-18:00 te Brunssum. 100u-Yin-houders kunnen met
+        +100u de 200u voltooien."
+    composition:
+      type: fixed_modular
+    coherence_signals:
+      modules_sold_separately: yes
+      modules_sold_separately_note: "Inschrijven per deel (Deel I, daarna Deel II);
+        Deel II gaat door bij voldoende belangstelling."
+      source: site-yinxl-2026-06
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "Dit is inclusief syllabus en examen"
+    track_record:
+      first_seen_year: 2025
+      source: site-yinxl-2026-06
+      note: "Geadverteerd cohort mrt - nov 2025."
+    cohorts:
+      - id: yinxl-2025-03
+        start: "2025-03"
+        end: "2025-11"
+        status: unknown
+        source: overview-image-2026-06
+        language: nl
+        note: >
+          Geadverteerd 29 mrt - 15 nov 2025 (nu verstreken); doorgang niet
+          bevestigd (§8). Geen nieuw/komend cohort aangekondigd.
