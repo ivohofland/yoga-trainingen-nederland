@@ -1,0 +1,260 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: yogaschool-noord
+name: Yogaschool Noord
+aka: [ "YSN", "Yogaschool Nooord" ]
+website: https://www.yogaschoolnoord.nl
+status: active
+locations:
+  - city: Amsterdam
+    address: "YSN NDSM, Plotterstraat 24"
+    note: "studio op de NDSM-werf (Amsterdam-Noord); leslocatie van de
+      Vinyasa-opleiding (en host van de Pure Energy Yin-cohorten)."
+crkbo:
+  registered: yes
+  register: instelling
+  holder: "Yogaschool Nooord"
+  checked: "2026-06-28"
+  source: crkbo-register-2026-06
+  note: >
+    Register-geverifieerd: Instelling "Yogaschool Nooord" (sic, drie o's),
+    Amsterdam, www.yogaschoolnoord.nl (2026-06-28). Beide opleidingspagina's
+    stellen EXPLICIET "Vrijgesteld van BTW door CRKBO" → price.vat =
+    exempt_crkbo.
+registrations:
+  - body: yoga_alliance
+    identifier: "RYS 200 (geclaimd; niet register-bevestigd)"
+    holder: "onbekend"
+    verified_in_register: no
+    source: ya-search-2026-06
+    note: >
+      De Vinyasa-opleiding adverteert "door Yoga Alliance gecertificeerd" en een
+      "Erkend Yoga Alliance diploma", maar er is GEEN RYS te vinden die dit
+      dekt: school "Yogaschool Noord" → 0 in de YA-scholendirectory; docent "van
+      Voorst" → 0; "Kaden" (mede-ontwikkelaar Sina Kaden) → alleen een US-docent
+      (2026-06-28). De enige YA-geregistreerde partij in beeld is Esther Scheen
+      / Pure Energy Yoga, die de YIN-opleiding certificeert (zie
+      pure-energy-yoga), niet de Vinyasa. De Vinyasa-YA-claim is dus niet
+      register-verifieerbaar — mogelijk via een niet-gevonden/vervallen holder
+      of een partner-RYS. FLAG (overclaim-risico).
+legal:
+  legal_name: "Yogaschool Nooord"
+  note: >
+    Founder/hoofddocent Esther van Voorst (niet in het YA-docentregister; geen
+    eigen RYS gevonden). De Vinyasa-opleiding is in 2017 mede-ontwikkeld met
+    Sina Kaden (Embodied Yoga; ook niet in het YA-register). HOST-RELATIE
+    (decision #9): Yogaschool Noord host + boekt óók de 200u YIN Yoga-opleiding
+    van Pure Energy Yoga (Esther Scheen) — de Amsterdam-cohorten; dat programma
+    is geregistreerd onder pure-energy-yoga en hier NIET gedupliceerd. Daarnaast
+    kleinere opleidingen (Hands-on Adjustment 20u, Yoga Nidra 40u, Pre Teacher
+    Training 10u, Zwangerschapsyoga 50u) — buiten fase-1 scope (§2). KvK niet
+    doorzocht.
+founded_year:
+  value: 2017
+  source: site-vinyasa-2026-06
+  note: "De Vinyasa-opleiding is in 2017 ontwikkeld (Esther van Voorst + Sina
+    Kaden); oprichtingsjaar van de studio zelf niet apart geverifieerd."
+depth: listed
+last_verified: "2026-06-28"
+sources:
+  - id: site-vinyasa-2026-06
+    type: website
+    url: https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding
+    archived_url: https://web.archive.org/web/20260628173433/https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) 200u Vinyasa Yoga TT, lead Esther van Voorst
+      (mede-ontwikkeld 2017 met Sina Kaden). 8 weekenden / 24 lesdagen + 4
+      verplichte intervisiedagen, start 23 okt 2026 - 16 mei 2027, NDSM
+      Amsterdam (vr 17-21, za 11:30-18:30, zo 12:30-19:30). €2997 early bird
+      (tot 1 aug) / €3497; "Vrijgesteld van BTW door CRKBO". Curriculum: asana
+      (100+), alignment/ adjustments, meditatie
+      (Vipassana/Kundalini/Osho/Chakra/Mantra), methodologie, vinyasa
+      sequencing, functionele anatomie, stemtraining/didactiek, tantra &
+      zelfontwikkeling, pranayama, filosofie (Hatha Yoga Pradipika, Bhagavad
+      Gita), Ayurveda, ontspanning, chakra's/energie, voeding (sattvic),
+      inquiry, marketing + dans/ademwerk/ceremonies. 4 masterclasses (Anatomie,
+      Zwangerschap, Breathwork, Dansimprovisatie). Schriftelijk + praktisch
+      examen. Claimt "door Yoga Alliance gecertificeerd" + "Erkend Yoga Alliance
+      diploma".
+    local_snapshot: data/archives/yogaschool-noord/site-vinyasa-2026-06-2026-06-28.pdf
+  - id: site-yin-2026-06
+    type: website
+    url: https://www.yogaschoolnoord.nl/yin-yoga-opleiding
+    archived_url: https://web.archive.org/web/20260628173559/https://www.yogaschoolnoord.nl/yin-yoga-opleiding
+    captured: "2026-06"
+    note: >
+      200u Yin Yoga-opleiding (4×50u modules: Anatomie / Energie-meridianen /
+      Myofascial release (MyoYin) / Energiewerk-Qi Gong), "ontwikkeld in
+      samenwerking met Esther Scheen (Pure Energy Yoga)"; inhoudelijke vragen
+      via esther@pureenergyyoga.nl; €847-€2897, "Vrijgesteld van BTW door
+      CRKBO". DIT programma = Pure Energy's Yin (Grilley-lijn) — geregistreerd
+      onder pure-energy-yoga; Yogaschool Noord is host/booking-home voor de
+      Amsterdam- cohorten. Hier niet als eigen programma opgenomen (decision
+      #9).
+    local_snapshot: data/archives/yogaschool-noord/site-yin-2026-06-2026-06-28.pdf
+  - id: site-voorwaarden-2026-06
+    type: website
+    url: https://www.yogaschoolnoord.nl/voorwaarden-opleidingen
+    archived_url: null
+    captured: "2026-06"
+    note: "Algemene voorwaarden opleidingen: studieovereenkomst (volledige
+      studieduur), bedenktijd, inschrijving & annulering."
+    local_snapshot: data/archives/yogaschool-noord/site-voorwaarden-2026-06-2026-06-28.pdf
+  - id: ya-search-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Yogaschool%20Noord
+    archived_url: null
+    query: "Yogaschool Noord (school); van Voorst (teacher); Kaden (teacher)"
+    captured: "2026-06"
+    note: >
+      Negatieve YA-check: scholendirectory "Yogaschool Noord" → 0;
+      docentdirectory "van Voorst" → 0; "Kaden" → alleen Kris Kaden (US), geen
+      Sina Kaden (2026-06-28). Onderbouwt dat de Vinyasa-YA-claim niet
+      register-verifieerbaar is. Gefilterde (lege) resultatenpagina's zijn het
+      bewijs.
+    local_snapshot: data/archives/yogaschool-noord/ya-search-2026-06-2026-06-28.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "yogaschoolnoord"
+    captured: "2026-06"
+    note: >
+      Treffer "Yogaschool Nooord, Amsterdam, www.yogaschoolnoord.nl"
+      (Instellingenregister). Register zonder permalink; bewijs is de gefilterde
+      snapshot; Wayback overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/yogaschool-noord/crkbo-register-2026-06-2026-06-28.pdf
+
+programs:
+  - id: 200-vinyasa
+    name: "200-uur Vinyasa Yoga Teacher Training"
+    url: https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding
+    format_label: "200"
+    style_claimed: >
+      Vinyasa, met een curriculum opgebouwd langs de chakra's: asana (100+
+      houdingen), alignment/adjustments/contra-indicaties, meditatie (Vipassana/
+      Kundalini/Osho/Chakra/Mantra), methodologie & didactiek, vinyasa
+      sequencing, functionele anatomie, stemtraining, tantra & zelfontwikkeling,
+      pranayama, filosofie (Hatha Yoga Pradipika, Bhagavad Gita), Ayurveda,
+      ontspanning, chakra's & energie (nadi's, vayus, koshas), voeding
+      (sattvic), inquiry, marketing — plus dans, ademwerk en ceremonies. 4
+      masterclasses. Nederlandstalig.
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "door Yoga Alliance gecertificeerde docentenopleiding; Erkend
+          Yoga Alliance diploma na succesvolle afronding"
+        verified: unknown
+        source: ya-search-2026-06
+        note: >
+          NIET register-verifieerbaar: geen RYS gevonden voor de school, voor
+          lead Esther van Voorst, of voor mede-ontwikkelaar Sina Kaden
+          (2026-06-28). Claim verbatim vastgelegd; mogelijk via een
+          niet-gevonden/vervallen holder of partner-RYS. Overclaim-risico — zie
+          registrations.
+      - body: crkbo
+        label_claimed: "Vrijgesteld van BTW door CRKBO"
+        verified: yes
+        source: crkbo-register-2026-06
+        note: "CRKBO-Instelling 'Yogaschool Nooord' register-geverifieerd."
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 8
+      language: nl
+    prerequisites_claimed: "geschikt voor alle niveaus; enige yoga-ervaring is
+      handig maar niet vereist. Voor wie docent wil worden óf de eigen practice
+      wil verdiepen ('ook als lesgeven niet je doel is')."
+    price:
+      amount_eur: 3497
+      variants:
+        - { label: "early bird (tot 1 aug 2026)", amount_eur: 2997 }
+        - { label: "regulier (na 1 aug)", amount_eur: 3497 }
+      vat: exempt_crkbo
+      published: yes
+      note: "Early bird €2997 (tot 1 aug 2026), daarna €3497. 'Vrijgesteld van BTW
+        door CRKBO' → exempt_crkbo."
+      source: site-vinyasa-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-vinyasa-2026-06
+      note: >
+        200u over 8 weekenden / 24 lesdagen (vr 17-21, za 11:30-18:30, zo
+        12:30-19:30) + 4 verplichte intervisie-/oefendagen (3u, zelf in te
+        plannen) + eigen practice/reflectie tussen de weekenden. Geen geïsoleerd
+        contact-/ lespraktijk-urental.
+    composition:
+      type: single_program
+    assessment_described:
+      exists: yes
+      final: yes
+      quote: "We sluiten de opleiding af met een schriftelijk en praktisch examen"
+    contract:
+      cancellation_published: yes
+      refund_published: yes
+      source: site-voorwaarden-2026-06
+      note: "Studieovereenkomst voor de volledige studieduur; bedenktijd +
+        annuleringsregeling op de voorwaardenpagina."
+    track_record:
+      first_seen_year: 2017
+      source: site-vinyasa-2026-06
+      note: "Opleiding ontwikkeld 2017 (van Voorst + Sina Kaden), 5 jaar door van
+        Voorst gegeven; 'meer dan 200 studenten gingen je voor'."
+    cohorts:
+      - id: vinyasa-2026-10
+        start: "2026-10"
+        end: "2027-05"
+        status: announced
+        source: site-vinyasa-2026-06
+        language: nl
+        lead_teachers: [ esther-van-voorst ]
+        note: >
+          8 weekenden: 23-25 okt, 20-22 nov, 18-20 dec 2026, 15-17 jan, 19-21
+          feb, 26-28 mrt, 23-25 apr, 14-16 mei 2027 (YSN NDSM Amsterdam). Early
+          bird tot 1 aug 2026.
+    teachers:
+      - person_id: esther-van-voorst
+        role: "founder / hoofddocent"
+      - person_id: sina-kaden
+        role: "gastdocent (masterclass anatomie) + mede-ontwikkelaar"
+
+people:
+  - id: esther-van-voorst
+    name: "Esther van Voorst"
+    trainings_claimed:
+      - label: "founder/hoofddocent Yogaschool Noord; ~20 jaar yoga. NIET in het
+          YA-docentregister (zoekterm 'van Voorst' → 0, 2026-06-28)"
+        verified: no
+        source: ya-search-2026-06
+    background:
+      - field: "yoga"
+        credential: >
+          founder Yogaschool Noord en hoofddocent van de Vinyasa-opleiding (in
+          2017 mede-ontwikkeld met Sina Kaden, 5 jaar gegeven). Werk
+          geïnspireerd door ademwerk, bio-energetisch werk, tantra,
+          bekkenbewustzijn en lichaamsgerichte therapie; nadruk op belichaming
+          en intuïtie ('embody your truth, move from within'). Geen
+          YA-registratie gevonden.
+        registry: none
+        verified: no
+        source: site-vinyasa-2026-06
+  - id: sina-kaden
+    name: "Sina Kaden"
+    trainings_claimed:
+      - label: "mede-ontwikkelaar van de Vinyasa-opleiding (2017); fysiotherapie-
+          achtergrond; eigen merk Embodied Yoga (embodiedyoga.nl). NIET in het
+          YA-docentregister (zoekterm 'Kaden' → enkel een US-docent,
+          2026-06-28)"
+        verified: no
+        source: ya-search-2026-06
+    background:
+      - field: "yoga"
+        credential: "gastdocent anatomie-masterclass; fysiotherapeut; focus op
+          stabiliteit, mobiliteit en aanpassingsvermogen."
+        registry: none
+        verified: no
+        source: site-vinyasa-2026-06
