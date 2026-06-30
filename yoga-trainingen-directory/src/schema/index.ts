@@ -184,7 +184,13 @@ export type Claim = z.infer<typeof Claim>;
 
 export const Person = strictObject({
   id: slug,
+  /** Publicly used name — often a yogic/spiritual (dharma) name (spec §4.7). */
   name: z.string(),
+  /** Civil/registered name when it differs from `name` and is publicly
+   *  self-disclosed or register-evidenced. The verification anchor: registers
+   *  (YA/CRKBO/KvK/BIG) key on this, not the dharma name. Record only when the
+   *  teacher made it public — never de-anonymize (AVG, §3/§4.7). */
+  legal_name: z.string().optional(),
   trainings_claimed: z
     .array(
       strictObject({

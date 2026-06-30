@@ -399,7 +399,8 @@ programs:
 
 people:
   - id: gitty-de-gier
-    name: "Gitty de Gier"
+    name: "Wahe Gitty de Gier"
+    legal_name: "Gitty de Gier"
     trainings_claimed:
       - label: "E-RYT 500, YACEP (Yoga Alliance teaching staff; eigen docentprofiel
           'Wahe Gitty de Gier', First Registered September 2023)"

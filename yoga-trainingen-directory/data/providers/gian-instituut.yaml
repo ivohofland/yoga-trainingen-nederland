@@ -236,7 +236,8 @@ claims:
 
 people:
   - id: jasper-kok
-    name: "Jasper Kok (Guru Gian Singh)"
+    name: "Guru Gian Singh"
+    legal_name: "Jasper Kok"
     trainings_claimed:
       - label: "E-RYT 500, YACEP (Yoga Alliance, teaching staff op het schoolprofiel);
           RYS 200 + E-RYT 500 verkregen in 2023 via het Experienced Teacher
