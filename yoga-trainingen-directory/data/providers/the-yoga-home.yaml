@@ -1,0 +1,210 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: the-yoga-home
+name: The Yoga Home
+aka: [ "Mindful Seva Institute" ]
+website: https://www.theyogahome.nl
+status: active
+locations:
+  - city: Eindhoven
+    address: "Gestelsestraat 62, 5615 LG"
+    note: "studio The Yoga Home, Eindhoven. Juridische/betaal-entiteit: Mindful Seva
+      Institute."
+crkbo:
+  registered: unknown
+  checked: "2026-06-29"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: naam "Yoga Home", naam "Mindful Seva" en website "theyogahome"
+    → 0 in het Instellingenregister (2026-06-29). Geen btw-vermelding bij de
+    €2795-prijs → price.vat unknown (§4.11). KvK/juridische naam niet doorzocht
+    → registered unknown (leunt naar no).
+registrations:
+  - body: yoga_alliance
+    identifier: "200 uur 'Yoga Allianz' (geclaimd; niet in register)"
+    holder: "onbekend"
+    verified_in_register: no
+    source: ya-search-2026-06
+    note: >
+      OVERCLAIM/ONGEREGISTREERD: de TT-pagina vermeldt "YOGA ALLIANZ" en "200
+      uur Yoga Allianz" — let op, gespeld als 'Allianz', niet 'Alliance'. Geen
+      RYS te vinden: school "Yoga Home" → 8 wereldwijde treffers maar GEEN
+      NL/Eindhoven (o.a. Nepal); juridische entiteit "Mindful Seva" → 0; de
+      hoofddocenten staan alleen onder yogic namen (Durga, Kesharini) en zijn
+      niet in het register vindbaar (bevestigd door de gebruiker). Niet
+      register-verifieerbaar.
+legal:
+  legal_name: "Mindful Seva Institute"
+  note: >
+    Betaal-/juridische entiteit "Mindful Seva Institute" (bankrek. NL44 TRIO
+    ...); studio The Yoga Home te Eindhoven. Hoofddocenten gebruiken yogic namen
+    (Durga Devi = Esther per Instagram durgadevi_esther; Kesharini) —
+    burgerlijke namen grotendeels onbekend, wat register-/credential-verificatie
+    bemoeilijkt. KvK niet doorzocht.
+depth: listed
+last_verified: "2026-06-29"
+sources:
+  - id: site-tt-2026-06
+    type: website
+    url: https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/
+    archived_url: https://web.archive.org/web/20260630084309/https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) "200Hr Bhakti Vinyasa Teacher Training — YOGA
+      ALLIANZ": Integrated Approach (Jivamukti Yoga, Hatha, de Yoga Sutra's van
+      Patanjali, Bhakti Yoga) met Shastra/Sound/teaching skills/Sadhana; asana
+      in vinyasa flow + pranayama/kriya/meditatie + Dharma talks + hands-on
+      assists + mantra/harmonium. Start 14 nov 2026; 6 weekenden (9:00-17:00)
+      t/m apr 2027 + 6-daagse residentiële immersion 2-7 mei 2027. €2795 regular
+      (incl. manual, chantbook, basis-harmoniumles, 5 overnachtingen +
+      maaltijden immersion, thuisopdrachten, graduation, persoonlijke
+      begeleiding). Verplichte literatuur (Sharon Gannon & David Life /
+      Jivamukti, Radhanath Swami, Prabhupada Bhagavad Gita, Satchidananda Yoga
+      Sutra's, Hatha Yoga Pradipika, Iyengar). Hoofddocenten Durga + Kesharini.
+      Betaling aan Mindful Seva Institute.
+    local_snapshot: data/archives/the-yoga-home/site-tt-2026-06-2026-06-30.pdf
+  - id: yogibit-event-2026-06
+    type: website
+    url: https://theyogahome.yogibit.nl/web/nl/events/4678
+    archived_url: https://web.archive.org/web/20260630084407/https://theyogahome.yogibit.nl/web/nl/events/4678
+    captured: "2026-06"
+    note: "Yogibit boekings-/eventpagina voor het 2026-cohort (event 4678). Pointer;
+      niet diep uitgelezen."
+    local_snapshot: data/archives/the-yoga-home/yogibit-event-2026-06-2026-06-30.pdf
+  - id: ya-search-2026-06
+    type: register
+    url: https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Yoga%20Home
+    archived_url: null
+    query: "Yoga Home (school); Mindful Seva (school)"
+    captured: "2026-06"
+    note: >
+      Negatieve YA-check: "Yoga Home" → 8 scholen wereldwijd, geen NL/Eindhoven;
+      "Mindful Seva" → 0 (2026-06-29). Geen RYS voor de studio of de juridische
+      entiteit; de docenten gebruiken yogic namen en zijn niet in het register
+      vindbaar.
+    local_snapshot: data/archives/the-yoga-home/ya-search-2026-06-2026-06-30.pdf
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Yoga Home / Mindful Seva / theyogahome"
+    captured: "2026-06"
+    note: >
+      Negatieve check: naam "Yoga Home" + naam "Mindful Seva" + website
+      "theyogahome" → 0 in het Instellingenregister (2026-06-29). Gefilterde
+      (lege) snapshots zijn het bewijs; Wayback overgeslagen voor
+      crkbo.nl/Register/*.
+    local_snapshot: data/archives/the-yoga-home/crkbo-register-2026-06-2026-06-30.pdf
+
+programs:
+  - id: 200-bhakti-vinyasa
+    name: "200-uur Bhakti Vinyasa Teacher Training"
+    url: https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/
+    format_label: "200"
+    style_claimed: >
+      Bhakti Vinyasa met een "Integrated Approach": elementen uit Jivamukti
+      Yoga, Hatha Yoga, de Yoga Sutra's van Patanjali en Bhakti Yoga. Pijlers:
+      Shastra (geschriften), Sound (muziek/mantra/harmonium), teaching
+      skills/didactiek en daily Sadhana. Praktijk: asana in vinyasa flow,
+      pranayama, kriya's, meditatie, Dharma talks, hands-on assists, mantra
+      zingen. Sterke devotionele/Jivamukti- lijn (Sharon Gannon & David Life;
+      Radhanath Swami/Prabhupada-literatuur). Nederlandstalig.
+    styles: [ vinyasa ]
+    accreditation:
+      - body: yoga_alliance
+        label_claimed: "200 uur Yoga Allianz (sic); 'YOGA ALLIANZ'"
+        verified: no
+        source: ya-search-2026-06
+        note: >
+          Gespeld als 'Allianz' (niet 'Alliance'). Geen RYS gevonden voor de
+          studio, de entiteit (Mindful Seva) of de docenten — niet
+          register-verifieerbaar (zie registrations).
+    delivery:
+      mode: in_person
+      structure: weekends
+      duration_months_min: 6
+      language: nl
+    prerequisites_claimed: "voor verdieping van je yoga practice en
+      zelfontwikkeling; ook geschikt als je niet van plan bent les te gaan
+      geven."
+    price:
+      amount_eur: 2795
+      vat: unknown
+      published: yes
+      includes: >
+        opleidingsmanual, chantbook, basis-harmoniumles, 5 overnachtingen +
+        maaltijden tijdens de immersion, thuisopdrachten, graduation en
+        persoonlijke begeleiding
+      excludes: "verplichte literatuur (boekenlijst Jivamukti/Bhakti) zelf aanschaffen"
+      note: >
+        €2795 regular; betaling aan Mindful Seva Institute (betaalregeling op
+        aanvraag). Geen btw-vermelding → vat unknown (§4.11).
+      source: site-tt-2026-06
+    hours_claimed:
+      total: 200
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-tt-2026-06
+      note: >
+        6 weekenden (za-zo 9:00-17:00) + een 6-daagse residentiële immersion
+        (2-7 mei 2027) + voorbereidende/thuisopdrachten. Geen geïsoleerd
+        contact-/lespraktijk- urental.
+    composition:
+      type: single_program
+    assessment_described:
+      exists: yes
+      quote: "thuisopdrachten, graduation en persoonlijke begeleiding door
+        hoofddocenten"
+    track_record:
+      first_seen_year: 2026
+      source: site-tt-2026-06
+      note: "Cohort 'TT26' (start nov 2026); eerdere edities niet geverifieerd."
+    cohorts:
+      - id: bhakti-2026-11
+        start: "2026-11"
+        end: "2027-05"
+        status: announced
+        source: site-tt-2026-06
+        language: nl
+        lead_teachers: [ durga-devi ]
+        note: >
+          6 weekenden: 14-15 nov, 12-13 dec 2026, 9-10 jan, 6-7 feb, 6-7 mrt,
+          3-4 apr 2027 + residentiële immersion 2-7 mei 2027. Start 14 nov 2026.
+    teachers:
+      - person_id: durga-devi
+        role: "hoofddocent"
+      - person_id: kesharini
+        role: "hoofddocent"
+
+people:
+  - id: durga-devi
+    name: "Durga Devi"
+    legal_name: "Esther"
+    trainings_claimed:
+      - label: "hoofddocent The Yoga Home; yogic naam Durga / Durga Devi (burgerlijke
+          naam Esther, zelf-gepubliceerd via Instagram @durgadevi_esther). NIET
+          in het YA-docentregister."
+        verified: no
+        source: ya-search-2026-06
+    background:
+      - field: "yoga"
+        credential: "hoofddocent van de Bhakti Vinyasa TT; Jivamukti-/Bhakti-lijn
+          (devotioneel). Opereert onder yogic naam; geen YA-/CRKBO-spoor
+          gevonden."
+        registry: none
+        verified: no
+        source: site-tt-2026-06
+  - id: kesharini
+    name: "Kesharini"
+    trainings_claimed:
+      - label: "hoofddocent The Yoga Home (yogic naam); burgerlijke naam onbekend. Niet
+          in het YA-docentregister."
+        verified: no
+        source: ya-search-2026-06
+    background:
+      - field: "yoga"
+        credential: "hoofddocent Bhakti Vinyasa TT; opereert onder yogic naam."
+        registry: none
+        verified: no
+        source: site-tt-2026-06
