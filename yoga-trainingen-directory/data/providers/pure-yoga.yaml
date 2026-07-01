@@ -1,0 +1,350 @@
+# yaml-language-server: $schema=../provider.schema.json
+id: pure-yoga
+name: Pure Yoga
+aka: [ "Pureyoga", "Pureteacher", "Pureteacher Yoga Teacher Foundation Course" ]
+website: https://www.pureyoga.nl
+status: active
+# LET OP — naamcollisie: dit is NIET "Pure Energy Yoga" (pureenergyyoga.nl, Esther
+# Scheen, Yin/YA-RYS, eigen record pure-energy-yoga). Pure Yoga / Pureteacher is een
+# andere organisatie: all-round Hatha-opleiding van Rineke Vierhoven & Pepijn van
+# Sandijk, geaccrediteerd bij Yoga Alliance PROFESSIONALS (UK), niet de US Yoga Alliance.
+locations:
+  - city: Breda
+    note: "leslocatie cohort 2021."
+  - city: Drenthe
+    note: "leslocatie cohort 2022 (provincie; exacte plaats niet gespecificeerd)."
+  - city: Zwolle
+    note: "leslocatie meest recente cohort 2023. Opleiding draait op wisselende
+      leslocaties per cohort; geen vaste hoofdvestiging gepubliceerd."
+crkbo:
+  registered: unknown
+  checked: "2026-06-30"
+  source: crkbo-register-2026-06
+  note: >
+    Geen treffer: naam "Pureyoga" en website "pureyoga" → 0 in het
+    Instellingenregister; docent "Vierhoven" → 0 in het Docentenregister
+    (2026-06-30). De opleiding wordt EXPLICIET incl. 9% btw geprijsd (€3.885,50
+    excl. / €4.235,20 incl.) — er wordt dus btw geheven, consistent met NIET
+    CRKBO-vrijgesteld. LEUNT STERK NAAR no, maar blijft unknown: de
+    KvK-/juridische naam is niet doorzocht en §4.11 reserveert registered: no
+    voor een gedocumenteerde zoektocht op legal name (KvK) + persoonsnamen (een
+    merknaam-miss of btw-inferentie alleen blijft unknown). price.vat = incl
+    (directe observatie).
+registrations:
+  - body: other
+    identifier: "Yoga Alliance Professionals (YAP) — 'Approved Training Provider'
+      (RYT 200-pathway)"
+    holder: "Pureyoga (lead: Rineke Vierhoven, Senior Teacher YAP)"
+    verified_in_register: unknown
+    source: site-accreditatie-2026-06
+    note: >
+      LET OP: de accreditatie is bij YOGA ALLIANCE PROFESSIONALS (YAP, gevestigd
+      in het VK) — een aparte, commerciële body, NIET de US Yoga Alliance
+      (app.yogaalliance.org) die wij elders register-verifiëren. Na de
+      Pureteacher 200u kan de cursist zich bij YAP registreren als Registered
+      Yoga Teacher (membership). Pureyoga afficheert zich als "Approved Training
+      Provider" van YAP en lead-docent Rineke Vierhoven als YAP "Senior
+      Teacher". Claim verbatim vastgelegd; niet onafhankelijk in het
+      YAP-register gecontroleerd (verified_in_register unknown). Een afwezigheid
+      in de US YA is hier GEEN overclaim-signaal — het is een andere body.
+  - body: vyn
+    identifier: "VYN-lidmaatschap lead-docent"
+    holder: "Rineke Vierhoven (docent)"
+    verified_in_register: unknown
+    source: site-docenten-2026-06
+    note: >
+      Lead-docent Rineke Vierhoven is volgens de docentenpagina lid van de
+      Vereniging Yogadocenten Nederland (VYN). Persoonlijk docentlidmaatschap,
+      geen school-/opleidingsregistratie; niet in het VYN-register geverifieerd.
+legal:
+  legal_name: "onbekend (Pureyoga)"
+  note: >
+    Opleiding verzorgd door Rineke Vierhoven (Senior Teacher YAP; VYN-lid;
+    achtergrond in de medische wereld, mindfulness, HartFocus, massage) en haar
+    partner Pepijn van Sandijk (onderwijskundige achtergrond). Juridische naam /
+    KvK niet doorzocht → legal_name onbekend.
+depth: listed
+last_verified: "2026-06-30"
+sources:
+  - id: site-pureteacher-2026-06
+    type: website
+    url: https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher
+    archived_url: https://web.archive.org/web/20260630134409/https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher
+    captured: "2026-06"
+    note: >
+      LIVE (browser-gerenderd) "Pureteacher — erkende 200 uur Yoga docenten
+      opleiding, erkend door de Yoga Alliance Professionals". All-round Hatha
+      Yoga docent; tweejarige opzet, 200 contacturen, 39 lesdagen verdeeld over
+      4 modules: I De basis (Asana, yoga-anatomie, instructie) 10 dagen; II
+      Praktiseren (lesgeven in 4 stijlen: Klassieke Hatha, moderne Hatha, Yin,
+      Vinyasa) 16 dagen; III De essentie (Pranayama, Meditatie, Adjustments,
+      Vedische Filosofie) 10 dagen; IV Vaardigheid (eind-assessments) 3 dagen.
+      Curriculum incl. Vedische filosofie & Patañjali-sūtra's, anatomie/
+      fysiologie/ kinesiologie, therapeutische werking, adjustments & props,
+      didactiek groepslessen, "beginner's mind".
+    local_snapshot: data/archives/pure-yoga/site-pureteacher-2026-06-2026-06-30.pdf
+  - id: site-opbouw-2026-06
+    type: website
+    url: https://www.pureyoga.nl/site/index.php/opbouw-en-thema-s-pt
+    archived_url: null
+    captured: "2026-06"
+    note: "Module-/thema-opbouw van de Pureteacher (modules I-IV met onderliggende
+      thema-pagina's); bron voor de modulestructuur."
+    local_snapshot: data/archives/pure-yoga/site-opbouw-2026-06-2026-06-30.pdf
+  - id: site-prijzen-2026-06
+    type: website
+    url: https://www.pureyoga.nl/site/index.php/prijzen-pt
+    archived_url: https://web.archive.org/web/20260630134621/https://www.pureyoga.nl/site/index.php/prijzen-pt
+    captured: "2026-06"
+    note: >
+      Prijzen (vanaf 18 jan 2025): volledige opleiding (4 modules) €3.885,50
+      excl. btw / €4.235,20 incl. 9% btw. Per module mogelijk: Module I
+      €1.235,50 excl. / €1.346,70 incl.; Module II €1.896,00 excl. / €2.066,64
+      incl.; Module III €1.235,50 excl. / €1.346,70 incl.; Module IV inbegrepen
+      na succesvol afronden van I-III. Betaling in termijnen mogelijk.
+      OPMERKING: het lage 9%-btw-tarief wordt toegepast (niet het
+      21%-standaardtarief); consumentenprijs wordt incl. btw getoond
+      (ACM-conform).
+    local_snapshot: data/archives/pure-yoga/site-prijzen-2026-06-2026-06-30.pdf
+  - id: site-docenten-2026-06
+    type: website
+    url: https://www.pureyoga.nl/site/index.php/docenten-pt
+    archived_url: https://web.archive.org/web/20260630134715/https://www.pureyoga.nl/site/index.php/docenten-pt
+    captured: "2026-06"
+    note: >
+      Docenten: Rineke Vierhoven (Senior Teacher, geaccrediteerd bij Yoga
+      Alliance Professionals; lid Vereniging Yogadocenten Nederland; achtergrond
+      medische wereld, mindfulness, HartFocus, massage) verzorgt min. 30 van de
+      39 lesdagen; Pepijn van Sandijk (onderwijskundige achtergrond, partner van
+      Rineke) verzorgt de overige ~9 lesdagen.
+    local_snapshot: data/archives/pure-yoga/site-docenten-2026-06-2026-06-30.pdf
+  - id: site-leerdoelen-2026-06
+    type: website
+    url: https://www.pureyoga.nl/site/index.php/leerdoelen-en-toetsing
+    archived_url: null
+    captured: "2026-06"
+    note: >
+      Leerdoelen & toetsing: toepassen van yogaprincipes/-filosofie, inspreken &
+      begeleiden, didactiek + basisanatomie, opzetten van een gebalanceerde les
+      (asana/warming-up/pranayama/meditatie/ontspanning + Vedische filosofie,
+      adjustments, props), en begeleiden van cursisten met
+      blessures/beperkingen. Eind-assessments in Module IV.
+    local_snapshot: data/archives/pure-yoga/site-leerdoelen-2026-06-2026-06-30.pdf
+  - id: site-deelname-2026-06
+    type: website
+    url: https://www.pureyoga.nl/site/index.php/deelname-pt
+    archived_url: https://web.archive.org/web/20260630134953/https://www.pureyoga.nl/site/index.php/deelname-pt
+    captured: "2026-06"
+    note: >
+      Toelatingsvoorwaarden: toegankelijk voor beginners t/m gevorderden &
+      docenten; fysiek/emotioneel veeleisend; schriftelijk intake-assessment +
+      intake-gesprek mogelijk. Vereisten: min. 2 jaar eigen yogabeoefening; het
+      is een VEREISTE om naast de opleiding yogalessen bij een yogadocent te
+      blijven volgen; diepe leerwens; vrij van (zware) blessures.
+    local_snapshot: data/archives/pure-yoga/site-deelname-2026-06-2026-06-30.pdf
+  - id: site-accreditatie-2026-06
+    type: website
+    url: https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher
+    archived_url: https://web.archive.org/web/20260630135042/https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher
+    captured: "2026-06"
+    note: >
+      "Erkende 200u docentenopleiding Pureteacher": Pureyoga afficheert zich als
+      "Approved Training Provider" van Yoga Alliance Professionals (wereldwijd
+      erkend, leden op elk continent). Na de Pureteacher 200u kan de cursist
+      zich als Registered Yoga Teacher met YAP-membership registreren. Bron voor
+      de YAP-claim (los van de US Yoga Alliance).
+    local_snapshot: data/archives/pure-yoga/site-accreditatie-2026-06-2026-06-30.pdf
+  - id: lesdata-image-2026-06
+    type: brochure
+    captured: "2026-06"
+    note: >
+      Door de gebruiker aangeleverde "Lesdata, tijden en locatie"-afbeelding van
+      de site: 200u-opleiding + modules per cohort: Cohort 2021 Breda (Module
+      II/III/IV 2021 Breda), Cohort 2022 Drenthe (Module I 2022 Drenthe), Cohort
+      2023 Zwolle (Module I/II 2023 Zwolle). Alle getoonde cohorten liggen in
+      het verleden (laatste = 2023 Zwolle); geen 2024-2026-cohort getoond. Bron
+      voor de cohort-data.
+  - id: crkbo-register-2026-06
+    type: register
+    url: https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
+    query: "Pureyoga (instelling, naam + website); Vierhoven (docent)"
+    captured: "2026-06"
+    note: >
+      Negatieve check: "Pureyoga" (naam én website) → 0 in het
+      Instellingenregister; "Vierhoven" → 0 in het Docentenregister
+      (2026-06-30). De opleiding wordt incl. 9% btw geprijsd (btw-belast, niet
+      CRKBO-vrijgesteld). Gefilterde (lege) snapshots zijn het bewijs; Wayback
+      overgeslagen voor crkbo.nl/Register/*.
+    local_snapshot: data/archives/pure-yoga/crkbo-register-2026-06-2026-06-30.pdf
+
+modules:
+  - id: mod-1-basis
+    name: "Module I — De basis (Asana-beoefening, yoga-anatomie en instructie)"
+    days_claimed: 10
+    type: core_pedagogy
+    note: "Bron: site-pureteacher-2026-06."
+  - id: mod-2-praktiseren
+    name: "Module II — Praktiseren (lesgeven in 4 stijlen: Klassieke Hatha, moderne
+      Hatha, Yin, Vinyasa)"
+    days_claimed: 16
+    type: core_pedagogy
+    note: "Bron: site-pureteacher-2026-06."
+  - id: mod-3-essentie
+    name: "Module III — De essentie (Pranayama, Meditatie, Adjustments, Vedische
+      Filosofie)"
+    days_claimed: 10
+    type: core_pedagogy
+    note: "Bron: site-pureteacher-2026-06."
+  - id: mod-4-vaardigheid
+    name: "Module IV — Vaardigheid (eind-assessments)"
+    days_claimed: 3
+    type: core_pedagogy
+    note: "Bron: site-pureteacher-2026-06."
+
+programs:
+  - id: 200-pureteacher
+    name: "Pureteacher 200-uur Yoga Teacher Foundation Course"
+    url: https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher
+    format_label: "200"
+    style_claimed: >
+      All-round Hatha Yoga: je leert lesgeven in vier yogastijlen — Klassieke
+      Hatha Yoga, moderne Hatha Yoga, Yin Yoga en Vinyasa (Power) Yoga — plus
+      Vedische (yoga)filosofie & de Sūtra's van Patañjali, anatomie/fysiologie/
+      kinesiologie gericht op asana (alignment, indicaties/contra-indicaties,
+      adjustments, hulpmiddelen), therapeutische werking van yoga, pranayama,
+      meditatie/mindfulness, ontspanning en didactiek voor groepslessen. Nadruk
+      op zelf beoefenen en een 'beginner's mind'. Nederlandstalig.
+    styles: [ hatha, yin, vinyasa ]
+    accreditation:
+      - body: other
+        label_claimed: "internationaal erkende 200 uur opleiding, erkend door /
+          'Approved Training Provider' van Yoga Alliance Professionals (RYT
+          200)"
+        verified: unknown
+        source: site-accreditatie-2026-06
+        note: >
+          Yoga Alliance PROFESSIONALS (YAP, VK) — aparte body, niet de US Yoga
+          Alliance. Claim verbatim; niet onafhankelijk in het YAP-register
+          gecontroleerd. Zie registrations.
+    delivery:
+      mode: in_person
+      structure: modular
+      duration_months_min: 24
+      language: nl
+    prerequisites_claimed: >
+      Toegankelijk voor beginners t/m gevorderden en docenten. Vereisten: min. 2
+      jaar eigen yogabeoefening; het is een VEREISTE om naast de opleiding
+      yogalessen bij een yogadocent te blijven volgen; vrij van zware blessures;
+      schriftelijk intake-assessment + intake-gesprek mogelijk.
+      Fysiek/emotioneel veeleisend programma.
+    price:
+      amount_eur: 4235.20
+      vat: incl
+      published: yes
+      note: >
+        €4.235,20 incl. 9% btw (= €3.885,50 excl.) voor de volledige opleiding
+        (4 modules). Per module ook mogelijk: I €1.346,70 incl.; II €2.066,64
+        incl.; III €1.346,70 incl.; IV inbegrepen na afronden I-III. Betaling in
+        termijnen mogelijk. Opmerkelijk: 9% laag btw-tarief (niet 21%); prijs
+        wordt incl. btw getoond (ACM-conform). Prijzen vanaf 18 jan 2025.
+      source: site-prijzen-2026-06
+    hours_claimed:
+      total: 200
+      contact: 200
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: not_published
+      source: site-pureteacher-2026-06
+      note: >
+        De site noemt "200 contacturen" over ca. 2 jaar, verdeeld over 39
+        lesdagen (Module I 10 + II 16 + III 10 + IV 3), naast eigen oefen-/
+        studie-uren. De 200u zijn dus geframed als contacturen; de
+        zelfstudie-uren en een geïsoleerd lespraktijk-/supervised-teaching-getal
+        zijn niet als getallen gepubliceerd.
+    composition:
+      type: fixed_modular
+      modules: [ mod-1-basis, mod-2-praktiseren, mod-3-essentie, mod-4-vaardigheid ]
+    assessment_described:
+      exists: yes
+      continuous: yes
+      final: yes
+      quote: "Module IV — Vaardigheid: eind-assessments; daarnaast schriftelijk
+        intake-assessment en doorlopend werken aan leerdoelen tijdens de
+        themadagen."
+    track_record:
+      first_seen_year: 2021
+      source: lesdata-image-2026-06
+      note: "Bekende cohorten: 2021 Breda, 2022 Drenthe, 2023 Zwolle. Laatste getoonde
+        cohort 2023; geen 2024-2026-cohort op de getoonde lesdata."
+    cohorts:
+      - id: cohort-2021-breda
+        start: "2021-01"
+        status: unknown
+        source: lesdata-image-2026-06
+        language: nl
+        note: >
+          Cohort 2021 te Breda. LET OP: alleen het jaartal staat op de getoonde
+          lesdata; de exacte startmaand is niet gepubliceerd — "2021-01" is een
+          schema-placeholder (YYYY-MM verplicht), GEEN geclaimde januari-start.
+          De lesdata tonen Module II/III/IV voor dit cohort (tweejarige
+          doorloop), wat doorgang suggereert; afronding niet bevestigd (§8) →
+          status unknown.
+      - id: cohort-2022-drenthe
+        start: "2022-01"
+        status: unknown
+        source: lesdata-image-2026-06
+        language: nl
+        note: >
+          Cohort 2022 in Drenthe (Module I getoond). Startmaand niet
+          gepubliceerd; "2022-01" is een placeholder (alleen jaartal bekend).
+          Doorgang niet bevestigd (§8).
+      - id: cohort-2023-zwolle
+        start: "2023-01"
+        status: unknown
+        source: lesdata-image-2026-06
+        language: nl
+        note: >
+          Cohort 2023 te Zwolle (Module I/II getoond) — meest recente getoonde
+          cohort. Startmaand niet gepubliceerd; "2023-01" is een placeholder
+          (alleen jaartal bekend). Geen nieuwer/komend cohort zichtbaar;
+          opleiding mogelijk tussen cohorten of dormant. Doorgang niet bevestigd
+          (§8).
+    teachers:
+      - person_id: rineke-vierhoven
+        role: "Senior Teacher / hoofddocent (min. 30 van 39 lesdagen)"
+      - person_id: pepijn-van-sandijk
+        role: "docent (ca. 9 lesdagen; onderwijskundige)"
+
+people:
+  - id: rineke-vierhoven
+    name: "Rineke Vierhoven"
+    trainings_claimed:
+      - label: "Senior Teacher, geaccrediteerd bij Yoga Alliance Professionals (YAP);
+          lid Vereniging Yogadocenten Nederland (VYN). Niet in de US
+          YA-/CRKBO-registers gevonden (YAP/VYN niet onafhankelijk
+          register-geverifieerd)."
+        verified: unknown
+        source: site-docenten-2026-06
+    background:
+      - field: "yoga"
+        credential: "hoofddocent Pureteacher; YAP Senior Teacher; VYN-lid; achtergrond
+          in mindfulness, HartFocus en massage-technieken, en in de medische
+          wereld."
+        registry: other
+        verified: unknown
+        source: site-docenten-2026-06
+  - id: pepijn-van-sandijk
+    name: "Pepijn van Sandijk"
+    trainings_claimed:
+      - label: "mededocent Pureteacher (ca. 9 lesdagen); onderwijskundige achtergrond;
+          partner van Rineke Vierhoven."
+        verified: unknown
+        source: site-docenten-2026-06
+    background:
+      - field: "onderwijs"
+        credential: "onderwijskundige; verzorgt de didactische/onderwijskundige inbreng
+          van de opleiding."
+        registry: none
+        verified: unknown
+        source: site-docenten-2026-06
