@@ -44,6 +44,10 @@ export const nl = {
   postcodePlaceholder: "postcode, bijv. 3512",
   postcodeInvalid: "Geen geldige Nederlandse postcode.",
   postcodeUnknown: "Deze postcode kennen we niet.",
+  // The PC4 table is lazy-loaded; that import can fail (offline, cache miss,
+  // a stale chunk after a deploy). It must SAY so — a filter that silently
+  // does nothing is worse than one that admits it broke.
+  postcodeLookupFailed: "De postcodetabel kon niet worden geladen. Probeer het opnieuw.",
   postcodeNote:
     "De postcode blijft in uw browser — er wordt niets verstuurd. " +
     "Coördinaten uit open data van CBS/PDOK.",
@@ -67,6 +71,15 @@ export const nl = {
   filterUnder3000: "onder €3.000",
   filterFrom3000: "€3.000 en hoger",
   filterPriceNotPublished: "niet gepubliceerd",
+
+  // €/contactuur, when there is no computable value. The first two are FINDINGS
+  // about the provider (they are only ever used when the record's own quad says
+  // `not_published`); the last two are GAPS in our record and are worded as
+  // such. Never swap them — see pphQuad() in presenters.ts.
+  pphPriceNotPublished: "prijs niet gepubliceerd",
+  pphHoursNotPublished: "contacturen niet gepubliceerd",
+  pphPriceNotInRecord: "prijs ontbreekt in ons record",
+  pphHoursNotInRecord: "contacturen ontbreken in ons record",
 
   colProgramme: "Opleiding",
   colFormat: "Format",

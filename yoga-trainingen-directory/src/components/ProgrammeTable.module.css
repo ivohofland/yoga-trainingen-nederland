@@ -184,13 +184,29 @@
   margin-top: 6px;
 }
 
+/*
+ * A disclosure is NOT a quad. It is the researcher declaring a relationship —
+ * a statement about US, not a finding about the provider.
+ *
+ * It used to use --finding, which made amber mean two different things at once
+ * ("the provider does not publish this" AND "we have a tie to this provider").
+ * --finding and --gap are quad tokens and belong to Quad.module.css alone; see
+ * the docblock in Quad.tsx.
+ *
+ * So: a stamp. Ink on paper, mono caps, thin ink border — prominent, and
+ * unmistakably not the finding colour.
+ */
 .disclosure {
+  display: inline-block;
   font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--finding);
-  margin-top: 6px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 2px 6px;
+  margin-top: 8px;
 }
 
 .cell {

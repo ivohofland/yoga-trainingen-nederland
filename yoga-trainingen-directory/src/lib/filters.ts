@@ -50,6 +50,13 @@ const byName = (a: Row, b: Row) =>
   a.providerName.localeCompare(b.providerName, "nl") ||
   a.programName.localeCompare(b.programName, "nl");
 
+/**
+ * NOTE on the numeric sorts below (`pph`, `distance`): when BOTH rows lack a
+ * value, `Infinity - Infinity` is NaN, and NaN is falsy — so the `||` falls
+ * through to the `byName` tiebreak. That is intentional, not an accident: two
+ * rows with nothing to compare are ordered by name, which is stable and total.
+ * (Returning NaN from a comparator is undefined behaviour; this never does.)
+ */
 export function sortRows(rows: Row[], key: SortKey): Row[] {
   const out = [...rows]; // never mutate the caller's array
   switch (key) {

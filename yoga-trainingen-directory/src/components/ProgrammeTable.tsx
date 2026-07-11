@@ -21,9 +21,15 @@ interface Chip {
 
 type RadiusKm = 25 | 50 | 100 | null;
 
+const DEFAULT_SORT: SortKey = "upcoming";
+
+/** A postcode is only wrong once it is long enough to be wrong: "3", "35" and
+ *  "351" are an unfinished postcode, not an invalid one. */
+const PC4_LENGTH = 4;
+
 export function ProgrammeTable({ rows, providerCount }: Props) {
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
-  const [sort, setSort] = useState<SortKey>("upcoming");
+  const [sort, setSort] = useState<SortKey>(DEFAULT_SORT);
 
   // Location. `origin` is resolved asynchronously because the 4,070-row PC4
   // table is lazy-imported — it costs nothing for visitors who never use this.
@@ -33,29 +39,48 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
   const [geoError, setGeoError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!postcode.trim()) {
+    const raw = postcode.trim();
+    if (!raw) {
       setOrigin(null);
       setGeoError(null);
       return;
     }
-    const pc4 = parsePostcode(postcode);
+    const pc4 = parsePostcode(raw);
     if (!pc4) {
       setOrigin(null);
-      setGeoError(nl.postcodeInvalid);
+      // Don't shout at someone who is still typing.
+      setGeoError(raw.length >= PC4_LENGTH ? nl.postcodeInvalid : null);
       return;
     }
     let cancelled = false;
-    pc4Centroid(pc4).then((c) => {
-      if (cancelled) return;
-      setOrigin(c);
-      setGeoError(c ? null : nl.postcodeUnknown);
-      // Distance is the useful default the moment we know where they are.
-      if (c) setSort((s) => (s === "upcoming" ? "distance" : s));
-    });
+    pc4Centroid(pc4)
+      .then((c) => {
+        if (cancelled) return;
+        setOrigin(c);
+        setGeoError(c ? null : nl.postcodeUnknown);
+        // Distance is the useful default the moment we know where they are.
+        if (c) setSort((s) => (s === DEFAULT_SORT ? "distance" : s));
+      })
+      .catch(() => {
+        // The lazy chunk failed to load. Say so: a location filter that
+        // silently does nothing — no origin, radius chips dead — is the worst
+        // of the options, because the visitor cannot tell it is broken.
+        if (cancelled) return;
+        setOrigin(null);
+        setGeoError(nl.postcodeLookupFailed);
+      });
     return () => {
       cancelled = true;
     };
   }, [postcode]);
+
+  // Sort state must not outlive the chip that set it. When the origin goes away
+  // (postcode cleared or invalidated), "afstand" leaves the chip list — leaving
+  // `sort` on it would highlight no chip at all and silently fall back to name
+  // order.
+  useEffect(() => {
+    if (!origin) setSort((s) => (s === "distance" ? DEFAULT_SORT : s));
+  }, [origin]);
 
   const filtered = useMemo(() => filterRows(rows as Row[], filters), [rows, filters]);
 
@@ -78,7 +103,7 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
   const clearAll = () => {
     setFilters(EMPTY_FILTERS);
     setPostcode("");
-    setSort("upcoming");
+    setSort(DEFAULT_SORT);
   };
 
   // Chip sets are derived from the data, not hard-coded: `online` exists in the
@@ -157,8 +182,12 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
       <div className={styles.cell}>
         <Quad state={r.pricePublished}>{r.priceDisplay}</Quad>
       </div>
-      <div className={styles.cellSmall}>
-        {r.pph != null ? `€ ${r.pph.toFixed(2).replace(".", ",")}` : <Quad state="not_published" />}
+      {/* Both the string and the quad come from the presenter. The quad comes from
+          the RECORD, never from the mere absence of a value: see pphQuad() in
+          presenters.ts. Rendering `not_published` here for every null would
+          publish OUR research gaps as accusations against named businesses. */}
+      <div className={styles.cellSmall} title={r.pphCaveat ?? undefined}>
+        {r.pphDisplay ?? <Quad state={r.pphState} />}
       </div>
       <div className={styles.cellSmall}>
         {r.registers.length === 0 ? (
@@ -190,8 +219,8 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
       <div className={styles.filters}>
         {/* Location — a training attended over nine months of weekends is chosen
             on travel distance, not on municipality. */}
-        <div className={styles.group}>
-          <div className={styles.groupLabel}>{nl.filterLocation}</div>
+        <div className={styles.group} role="group" aria-labelledby="filter-location-label">
+          <div className={styles.groupLabel} id="filter-location-label">{nl.filterLocation}</div>
           <div className={styles.chips}>
             <input
               type="text"
@@ -200,6 +229,8 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
               onChange={(e) => setPostcode(e.target.value)}
               placeholder={nl.postcodePlaceholder}
               aria-label={nl.filterLocation}
+              aria-invalid={geoError != null}
+              aria-describedby={geoError ? "geo-error" : "geo-note"}
               className={styles.postcode}
             />
             {radii.map((r) => (
@@ -207,7 +238,10 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
                 key={String(r.value)}
                 type="button"
                 onClick={() => setRadius(r.value)}
-                aria-pressed={radius === r.value}
+                // A disabled chip is not "pressed": without an origin there is
+                // no radius in effect, and claiming one would be a lie to a
+                // screen reader.
+                aria-pressed={origin != null && radius === r.value}
                 disabled={!origin}
                 className={radius === r.value && origin ? styles.chipActive : styles.chip}
               >
@@ -216,15 +250,15 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
             ))}
           </div>
           {geoError ? (
-            <div className={styles.geoError}>{geoError}</div>
+            <div className={styles.geoError} id="geo-error" role="alert">{geoError}</div>
           ) : (
-            <div className={styles.geoNote}>{nl.postcodeNote}</div>
+            <div className={styles.geoNote} id="geo-note">{nl.postcodeNote}</div>
           )}
         </div>
 
         {groups.map((g) => (
-          <div key={g.key} className={styles.group}>
-            <div className={styles.groupLabel}>{g.label}</div>
+          <div key={g.key} className={styles.group} role="group" aria-labelledby={`filter-${g.key}-label`}>
+            <div className={styles.groupLabel} id={`filter-${g.key}-label`}>{g.label}</div>
             <div className={styles.chips}>
               {g.chips.map((c) => (
                 <button
@@ -243,8 +277,8 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
       </div>
 
       <div className={styles.sortBar}>
-        <div className={styles.sortGroup}>
-          <span className={styles.groupLabel}>{nl.sortLabel}</span>
+        <div className={styles.sortGroup} role="group" aria-labelledby="sort-label">
+          <span className={styles.groupLabel} id="sort-label">{nl.sortLabel}</span>
           {sorts.map((s) => (
             <button
               key={s.key}
@@ -257,7 +291,10 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
             </button>
           ))}
         </div>
-        <div className={styles.resultLine}>
+        {/* Every filter, sort and radius change rewrites the whole list below.
+            Announce the new count — otherwise the change is invisible to anyone
+            not looking at the list. */}
+        <div className={styles.resultLine} aria-live="polite">
           {nl.resultLine(shownCount, rows.length, provShown, providerCount)}
           {groups4 && groups4.farCount > 0 && (
             // Excluded rows are COUNTED, never silently dropped.

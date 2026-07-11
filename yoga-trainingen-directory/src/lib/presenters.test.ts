@@ -1,11 +1,14 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./dataset";
-import { toListingRows, datasetStats } from "./presenters";
+import { toListingRows, datasetStats, pphQuad } from "./presenters";
 import { nl } from "./strings";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z"); // fixed — never let a test depend on the wall clock
+
+const programOf = (providerId: string, programId: string) =>
+  providers.find((p) => p.id === providerId)!.programs.find((p) => p.id === programId)!;
 
 test("every programme in the dataset becomes exactly one row", () => {
   const rows = toListingRows(providers, NOW);
@@ -60,6 +63,76 @@ test("a programme with no computable price-per-contact-hour carries a caveat, no
     } else {
       assert.ok(r.pph > 0, `programme ${r.programId} has a non-positive pph`);
     }
+  }
+});
+
+/* ---------- €/contactuur: our gaps are never published as their omissions ---------- */
+
+test("PPH: the cell never accuses a provider of not publishing something the record does not say they withheld", () => {
+  // THE rule (CLAUDE.md, spec §4). `not_published` is a finding about a NAMED
+  // BUSINESS; `unknown` is a gap in OUR research. The €/contactuur cell may
+  // only claim `not_published` when the field that actually blocks the
+  // calculation literally says `not_published` in the record.
+  const rows = toListingRows(providers, NOW);
+  for (const r of rows) {
+    if (r.pph != null) {
+      assert.equal(r.pphState, "yes", `programme ${r.programId} has a value but does not say so`);
+      // The presenter owns the money format (nl-NL: "€ 12,50"), not the component.
+      assert.match(r.pphDisplay ?? "", /^€\s?\d[\d.]*,\d{2}$/,
+        `programme ${r.programId} formats its €/contactuur as "${r.pphDisplay}"`);
+      continue;
+    }
+    assert.equal(r.pphDisplay, null, `programme ${r.programId} renders a €/contactuur it does not have`);
+    const program = programOf(r.providerId, r.programId);
+    // The blocker: no amount → the price is what's missing; else the hours are.
+    const blocker =
+      program.price.amount_eur == null
+        ? program.price.published
+        : program.hours_claimed.breakdown_published;
+    if (r.pphState === "not_published") {
+      assert.equal(blocker, "not_published",
+        `${r.providerId}/${r.programId}: the site says "niet gepubliceerd" but the record's own ` +
+        `blocking field says "${blocker}" — that publishes OUR gap as an accusation against a named business`);
+    }
+    assert.ok(r.pphState === "not_published" || r.pphState === "unknown",
+      `${r.providerId}/${r.programId}: a missing €/contactuur may only be a finding or a gap, got "${r.pphState}"`);
+  }
+});
+
+test("PPH: a record that says the provider DOES publish the hours is a gap in our data, never a finding", () => {
+  // These three publish a price AND publish an hours breakdown — the contact
+  // hours are simply missing from OUR record. Calling that "niet gepubliceerd"
+  // would be a false statement about a named business, contradicted by the very
+  // record the page is rendered from.
+  const contradictory = [
+    ["yogaeasy", "200-hatha-vinyasa"],
+    ["yogic-life", "ryt200-multistyle"],
+    ["yogic-life", "ryt300-multistyle"],
+  ] as const;
+  const rows = toListingRows(providers, NOW);
+  for (const [providerId, programId] of contradictory) {
+    const program = programOf(providerId, programId);
+    // guard: if the data is fixed one day, this test must not quietly pass on a
+    // programme that no longer has the shape it is here to pin.
+    assert.equal(program.price.published, "yes");
+    assert.equal(program.hours_claimed.breakdown_published, "yes");
+    assert.equal(program.hours_claimed.contact, null);
+
+    assert.equal(pphQuad(program), "unknown",
+      `${providerId}/${programId}: the record says the provider publishes both — the missing value is ours`);
+    const row = rows.find((r) => r.providerId === providerId && r.programId === programId)!;
+    assert.equal(row.pphState, "unknown");
+    assert.notEqual(row.pphState, "not_published");
+  }
+});
+
+test("PPH: the caveat never contradicts the quad it sits next to", () => {
+  const rows = toListingRows(providers, NOW);
+  for (const r of rows) {
+    if (r.pph != null || r.pphState !== "unknown") continue;
+    assert.ok(r.pphCaveat && !/niet gepubliceerd/.test(r.pphCaveat),
+      `${r.providerId}/${r.programId}: the cell is a gap but its caveat "${r.pphCaveat}" ` +
+      `asserts the provider withheld something`);
   }
 });
 
