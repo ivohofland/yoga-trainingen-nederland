@@ -38,8 +38,13 @@
 | `src/lib/strings.ts` | Every NL user-facing string, one object. |
 | `src/lib/presenters.ts` | Pure `Provider[]` → `ListingRow[]` / `ProviderView`. All display strings. |
 | `src/lib/presenters.test.ts` | Locks the editorial invariants in the presenters. |
-| `src/lib/filters.ts` | Pure filter + sort over `ListingRow[]`. |
-| `src/lib/filters.test.ts` | Locks filter coverage and sort ordering. |
+| `src/lib/filters.ts` | Pure filter, sort, and distance-partition over `ListingRow[]`. |
+| `src/lib/filters.test.ts` | Locks filter coverage, sort ordering, and that the distance filter drops nothing. |
+| `scripts/build-geo.ts` | Regenerates the geo tables from PDOK/CBS. Run by hand; output committed. |
+| `src/data/city-centroids.json` | Provider cities → lat/lon/province. Sourced, dated. |
+| `src/data/pc4-centroids.json` | 4,070 Dutch PC4 → lat/lon. Sourced, dated. Lazy-imported. |
+| `src/lib/geo.ts` | Haversine, city/postcode lookup. Distance is derived, never stored. |
+| `src/lib/geo.test.ts` | Locks the distance maths and the "unplaceable → null, never 0" rule. |
 | `src/components/Quad.tsx` + `.module.css` | The only quad → pixels mapping. |
 | `src/components/ProgrammeTable.tsx` + `.module.css` | `"use client"` — the only client component. Filters, sort, rows. |
 | `src/components/record/*.tsx` + `.module.css` | Server components for the record page sections. |
@@ -481,8 +486,12 @@ export interface ListingRow {
 export interface DatasetStats { providers: number; programs: number; pphComputable: number; lastVerified: string | null }
 export function toListingRows(providers: Provider[], now?: Date): ListingRow[]
 export function datasetStats(providers: Provider[]): DatasetStats
-export function topCities(rows: ListingRow[], n?: number): string[]
 ```
+
+`ListingRow.cities` carries the raw city names. It does **not** carry a distance:
+distance depends on where the *visitor* is, so it is computed in the client
+island (Task 4) against the geo tables from Task 3b. Derived at render, never
+stored.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -492,7 +501,7 @@ Create `src/lib/presenters.test.ts`:
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./dataset";
-import { toListingRows, datasetStats, topCities } from "./presenters";
+import { toListingRows, datasetStats } from "./presenters";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z"); // fixed — never let a test depend on the wall clock
@@ -583,14 +592,13 @@ test("presenters are pure — they never mutate the dataset", () => {
   assert.equal(JSON.stringify(providers), before, "a presenter mutated its input");
 });
 
-test("topCities is deterministic and returns real cities", () => {
+test("every row carries its raw city names, for the distance filter to place", () => {
   const rows = toListingRows(providers, NOW);
-  const a = topCities(rows);
-  const b = topCities(rows);
-  assert.deepEqual(a, b, "topCities is not deterministic");
-  assert.equal(a.length, 4);
-  const all = new Set(rows.flatMap((r) => r.cities));
-  for (const c of a) assert.ok(all.has(c), `${c} is not a city in the dataset`);
+  for (const r of rows) {
+    const provider = providers.find((p) => p.id === r.providerId)!;
+    const expected = [...new Set(provider.locations.map((l) => l.city).filter((c): c is string => c != null))];
+    assert.deepEqual(r.cities, expected, `${r.providerId} lost or invented a city`);
+  }
 });
 ```
 
@@ -637,14 +645,33 @@ export const nl = {
   sortPph: "€ / contactuur",
   sortVerified: "laatst geverifieerd",
 
-  filterCity: "Stad",
   filterFormat: "Uren-format",
   filterLanguage: "Voertaal",
   filterMode: "Uitvoering",
   filterRegister: "Registerstatus",
   filterPrice: "Prijs (gepubliceerd)",
-  filterElsewhere: "elders",
   filterOwnFormat: "eigen vorm",
+
+  // Location + radius (spec §6.3). Replaces the design's four-city chip list.
+  filterLocation: "Afstand",
+  postcodePlaceholder: "postcode, bijv. 3512",
+  postcodeInvalid: "Geen geldige Nederlandse postcode.",
+  postcodeUnknown: "Deze postcode kennen we niet.",
+  postcodeNote:
+    "De postcode blijft in uw browser — er wordt niets verstuurd. " +
+    "Coördinaten uit open data van CBS/PDOK.",
+  radius25: "25 km",
+  radius50: "50 km",
+  radius100: "100 km",
+  radiusAll: "heel NL",
+  sortDistance: "afstand",
+  distanceAway: (km: number) => `${km.toLocaleString("nl-NL", { maximumFractionDigits: 0 })} km`,
+
+  // Headings for what distance cannot describe (spec §6.4). Nothing is hidden.
+  groupOnline: "Online — afstand niet van toepassing",
+  groupUnplaceable: "Locatie niet vermeld — wij kunnen deze niet plaatsen",
+  farExcluded: (n: number) =>
+    `${n} ${n === 1 ? "opleiding valt" : "opleidingen vallen"} buiten deze straal.`,
   filterYaVerified: "YA register-geverifieerd",
   filterCrkbo: "CRKBO-geregistreerd",
   filterUnder3000: "onder €3.000",
@@ -958,23 +985,11 @@ export function datasetStats(providers: Provider[]): DatasetStats {
     lastVerified: providers.map((p) => p.last_verified).sort().at(-1) ?? null,
   };
 }
-
-/**
- * The n cities carrying the most programmes, for the filter chips. Derived, not
- * hard-coded: the design hard-coded four, but the dataset holds 44 (including
- * one in Austria). Ties break alphabetically so the output is deterministic.
- */
-export function topCities(rows: ListingRow[], n = 4): string[] {
-  const count = new Map<string, number>();
-  for (const r of rows) {
-    for (const c of r.cities) count.set(c, (count.get(c) ?? 0) + 1);
-  }
-  return [...count.entries()]
-    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "nl"))
-    .slice(0, n)
-    .map(([city]) => city);
-}
 ```
+
+There is no `topCities`. The design's four-city chip list is replaced by the
+location + radius filter (Task 3b, spec §6.3): `ListingRow.cities` carries the
+raw names, and the client island places them.
 
 - [ ] **Step 5: Run the tests and make sure they pass**
 
@@ -998,6 +1013,338 @@ too — the design hard-coded four cities, the dataset holds 44."
 
 ---
 
+## Task 3b: Geo reference data (city + PC4 centroids)
+
+Replaces the design's hard-coded four-city chip list with a location + radius filter (spec §6.3).
+
+**This touches no provider YAML and no schema.** Coordinates are a fact about the Netherlands, not about a provider. `locations[].city` stays exactly as it is; distance is derived at render (spec §6).
+
+**Files:**
+- Create: `scripts/build-geo.ts`, `src/data/city-centroids.json`, `src/data/pc4-centroids.json`, `src/lib/geo.ts`, `src/lib/geo.test.ts`
+
+**Interfaces:**
+- Produces:
+
+```ts
+export interface Centroid { lat: number; lon: number }
+export function distanceKm(a: Centroid, b: Centroid): number       // haversine
+export function cityCentroid(city: string): Centroid | null        // from city-centroids.json
+export function nearestKm(cities: string[], origin: Centroid): number | null
+export function parsePostcode(input: string): string | null        // "3512 KT" | "3512kt" | "3512" → "3512"
+export async function pc4Centroid(pc4: string): Promise<Centroid | null> // lazy-imports the 4,070-row table
+```
+
+- [ ] **Step 1: Write the generator script**
+
+Create `scripts/build-geo.ts`. It is run by hand (`npx tsx scripts/build-geo.ts`), not on every build — its output is committed, like an archived source. Both sources were verified live during design.
+
+```ts
+/**
+ * Generates the geo reference tables. Run by hand; the output is COMMITTED.
+ *
+ *   npx tsx scripts/build-geo.ts
+ *
+ * These are facts about the Netherlands, not facts about a provider — so they
+ * live in src/data/, never in a provider record, and no schema knows about
+ * them. Distance itself is derived at render and never stored (spec §6).
+ *
+ * Sources (open, Dutch government, no API key):
+ *   cities — PDOK Locatieserver   https://api.pdok.nl/bzk/locatieserver
+ *   PC4    — CBS Postcode4 / PDOK https://service.pdok.nl/cbs/postcode4/2023
+ */
+import fs from "node:fs";
+import path from "node:path";
+import { loadDataset } from "../src/lib/dataset";
+
+const OUT = path.join(process.cwd(), "src", "data");
+const RETRIEVED = new Date().toISOString().slice(0, 10);
+
+const LOCATIESERVER = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/free";
+const PC4_WFS =
+  "https://service.pdok.nl/cbs/postcode4/2023/wfs/v1_0?service=WFS&version=2.0.0" +
+  "&request=GetFeature&typeName=postcode4&outputFormat=application/json" +
+  "&srsName=EPSG:4326&propertyName=postcode,geom&count=1000";
+
+/** "POINT(5.12723144 52.08832478)" → { lat, lon } */
+function parsePoint(wkt: string): { lat: number; lon: number } {
+  const m = /POINT\(([-\d.]+) ([-\d.]+)\)/.exec(wkt);
+  if (!m) throw new Error(`unparseable point: ${wkt}`);
+  return { lat: round(Number(m[2])), lon: round(Number(m[1])) };
+}
+
+const round = (n: number) => Math.round(n * 1e4) / 1e4;
+
+/** Signed-area centroid of a ring. Exact enough that no PC4 lands in the wrong town. */
+function ringCentroid(ring: number[][]): [number, number] {
+  let x = 0, y = 0, a = 0;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [x0, y0] = ring[j];
+    const [x1, y1] = ring[i];
+    const f = x0 * y1 - x1 * y0;
+    a += f;
+    x += (x0 + x1) * f;
+    y += (y0 + y1) * f;
+  }
+  a *= 0.5;
+  if (!a) return [ring[0][0], ring[0][1]];
+  return [x / (6 * a), y / (6 * a)];
+}
+
+async function buildCities() {
+  const { providers, errors } = loadDataset();
+  if (errors.length) throw new Error(`dataset invalid:\n${errors.join("\n")}`);
+
+  const cities = [
+    ...new Set(providers.flatMap((p) => p.locations.map((l) => l.city)).filter((c): c is string => c != null)),
+  ].sort();
+
+  const table: Record<string, { lat: number; lon: number; provincie?: string }> = {};
+  const missed: string[] = [];
+
+  for (const city of cities) {
+    const url = `${LOCATIESERVER}?q=${encodeURIComponent(city)}&fq=type:woonplaats&rows=1&fl=weergavenaam,centroide_ll`;
+    const res = await fetch(url);
+    const doc = (await res.json())?.response?.docs?.[0];
+    if (!doc?.centroide_ll) {
+      missed.push(city);
+      continue;
+    }
+    const { lat, lon } = parsePoint(doc.centroide_ll);
+    // "Sinderen, Oude IJsselstreek, Gelderland" → province is the last part.
+    const provincie = String(doc.weergavenaam).split(",").pop()?.trim();
+    table[city] = { lat, lon, provincie };
+    await new Promise((r) => setTimeout(r, 120)); // be polite to a free public API
+  }
+
+  // A city we cannot place is a GAP, and must be visible as one — never silently
+  // dropped. It will render under "locatie niet vermeld".
+  if (missed.length) console.warn(`could not geocode: ${missed.join(", ")}`);
+
+  fs.mkdirSync(OUT, { recursive: true });
+  fs.writeFileSync(
+    path.join(OUT, "city-centroids.json"),
+    JSON.stringify(
+      { _source: { url: LOCATIESERVER, name: "PDOK Locatieserver", retrieved: RETRIEVED }, cities: table },
+      null,
+      2,
+    ),
+  );
+  console.log(`cities: ${Object.keys(table).length} geocoded, ${missed.length} missed`);
+}
+
+async function buildPc4() {
+  const table: Record<string, [number, number]> = {};
+  // The WFS caps at 1000 features per request — page through.
+  for (let start = 0; start < 5000; start += 1000) {
+    const res = await fetch(`${PC4_WFS}&startIndex=${start}`);
+    const gj = await res.json();
+    if (!gj.features?.length) break;
+    for (const f of gj.features) {
+      const g = f.geometry;
+      if (!g) continue;
+      const polys = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
+      let best: number[][] | null = null;
+      let bestLen = -1;
+      for (const p of polys) if (p[0].length > bestLen) { bestLen = p[0].length; best = p[0]; }
+      if (!best) continue;
+      const [lon, lat] = ringCentroid(best);
+      table[String(f.properties.postcode)] = [round(lat), round(lon)];
+    }
+  }
+  fs.writeFileSync(
+    path.join(OUT, "pc4-centroids.json"),
+    JSON.stringify({
+      _source: { url: PC4_WFS, name: "CBS Postcode4 via PDOK WFS (2023)", retrieved: RETRIEVED },
+      pc4: table,
+    }),
+  );
+  console.log(`pc4: ${Object.keys(table).length} centroids`);
+}
+
+await buildCities();
+await buildPc4();
+```
+
+- [ ] **Step 2: Run it**
+
+Run: `npx tsx scripts/build-geo.ts`
+
+Expected: `cities: 44 geocoded, 0 missed` (a couple of misses is acceptable — they render as *locatie niet vermeld*), then `pc4: 4070 centroids`.
+
+Sanity-check the output before trusting it:
+
+```bash
+npx tsx -e 'import t from "./src/data/pc4-centroids.json"; for (const pc of ["1011","3512","7065","9711","6211"]) console.log(pc, (t as any).pc4[pc]);'
+```
+
+Expected (verified during design — if these drift, something is wrong):
+```
+1011 [ 52.3725, 4.9058 ]   Amsterdam centrum
+3512 [ 52.0907, 5.124 ]    Utrecht centrum
+7065 [ 51.9174, 6.4485 ]   Sinderen — matches the Locatieserver city geocode to 4 dp
+9711 [ 53.2163, 6.5694 ]   Groningen centrum
+6211 [ 50.8503, 5.6897 ]   Maastricht centrum
+```
+
+- [ ] **Step 3: Write the failing test**
+
+Create `src/lib/geo.test.ts`:
+
+```ts
+import { test } from "node:test";
+import assert from "node:assert/strict";
+import { distanceKm, cityCentroid, nearestKm, parsePostcode } from "./geo";
+import { loadDataset } from "./dataset";
+
+test("distanceKm is a real haversine, not a euclidean fudge", () => {
+  // Amsterdam centraal → Utrecht centraal is ~35 km as the crow flies.
+  const ams = { lat: 52.3791, lon: 4.9003 };
+  const utr = { lat: 52.0907, lon: 5.124 };
+  const d = distanceKm(ams, utr);
+  assert.ok(d > 33 && d < 38, `expected ~35 km, got ${d}`);
+  assert.equal(distanceKm(ams, ams), 0);
+  assert.equal(Math.round(distanceKm(ams, utr)), Math.round(distanceKm(utr, ams)), "not symmetric");
+});
+
+test("every city in the dataset has a centroid, or is honestly unplaceable", () => {
+  const { providers } = loadDataset();
+  const cities = [...new Set(providers.flatMap((p) => p.locations.map((l) => l.city)).filter((c): c is string => c != null))];
+  const missing = cities.filter((c) => cityCentroid(c) == null);
+  // A miss is allowed — it renders under "locatie niet vermeld" — but it must
+  // be rare, and it must be a deliberate, visible gap rather than a surprise.
+  assert.ok(missing.length <= 2, `too many unplaceable cities: ${missing.join(", ")}`);
+});
+
+test("a provider with several locations matches on its NEAREST one", () => {
+  // Balanzs runs the same training in Den Haag, Utrecht and Rotterdam.
+  const utrecht = cityCentroid("Utrecht");
+  assert.ok(utrecht);
+  const d = nearestKm(["Den Haag", "Utrecht", "Rotterdam"], utrecht);
+  assert.ok(d != null && d < 1, `expected ~0 km from Utrecht to itself, got ${d}`);
+});
+
+test("nearestKm returns null when no city can be placed — never 0, never Infinity", () => {
+  // 0 would mean "right here" and Infinity would sort it as far away. Both lie.
+  assert.equal(nearestKm([], { lat: 52, lon: 5 }), null);
+  assert.equal(nearestKm(["Nergenshuizen"], { lat: 52, lon: 5 }), null);
+});
+
+test("parsePostcode accepts what Dutch people actually type", () => {
+  assert.equal(parsePostcode("3512 KT"), "3512");
+  assert.equal(parsePostcode("3512kt"), "3512");
+  assert.equal(parsePostcode("3512"), "3512");
+  assert.equal(parsePostcode(" 1011 "), "1011");
+  assert.equal(parsePostcode("nonsense"), null);
+  assert.equal(parsePostcode("123"), null, "a 3-digit code is not a postcode");
+  assert.equal(parsePostcode("0999"), null, "Dutch postcodes start at 1000");
+});
+```
+
+- [ ] **Step 4: Run to verify it fails**
+
+Run: `npx tsx --test src/lib/geo.test.ts`
+
+Expected: FAIL — `Cannot find module './geo'`.
+
+- [ ] **Step 5: Write geo.ts**
+
+Create `src/lib/geo.ts`:
+
+```ts
+/**
+ * Distance. Reference tables (src/data/*.json) are facts about the Netherlands,
+ * generated by scripts/build-geo.ts from open Dutch government sources and
+ * committed with their retrieval date. No provider record knows about them, and
+ * a distance is never stored — it is derived at render (spec §6).
+ */
+import cityData from "../data/city-centroids.json";
+
+export interface Centroid {
+  lat: number;
+  lon: number;
+}
+
+const CITIES = cityData.cities as Record<string, { lat: number; lon: number; provincie?: string }>;
+
+const R_EARTH_KM = 6371;
+const rad = (deg: number) => (deg * Math.PI) / 180;
+
+export function distanceKm(a: Centroid, b: Centroid): number {
+  const dLat = rad(b.lat - a.lat);
+  const dLon = rad(b.lon - a.lon);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return Math.round(2 * R_EARTH_KM * Math.asin(Math.sqrt(h)) * 10) / 10;
+}
+
+export function cityCentroid(city: string): Centroid | null {
+  const c = CITIES[city];
+  return c ? { lat: c.lat, lon: c.lon } : null;
+}
+
+/**
+ * Distance to the nearest placeable city. null when none can be placed — NOT 0
+ * (which would mean "right here") and NOT Infinity (which would sort it as far
+ * away). Both would be lies; null makes it a visible gap.
+ */
+export function nearestKm(cities: string[], origin: Centroid): number | null {
+  const found = cities.map(cityCentroid).filter((c): c is Centroid => c != null);
+  if (!found.length) return null;
+  return Math.min(...found.map((c) => distanceKm(origin, c)));
+}
+
+/** "3512 KT" | "3512kt" | "3512" → "3512". Dutch PC4 runs 1000–9999. */
+export function parsePostcode(input: string): string | null {
+  const m = /^\s*(\d{4})\s*[a-z]{0,2}\s*$/i.exec(input);
+  if (!m) return null;
+  const pc4 = m[1];
+  return Number(pc4) >= 1000 ? pc4 : null;
+}
+
+/**
+ * Lazy — the 4,070-row table (32 KB gzipped) is only fetched when a visitor
+ * actually uses the location filter. Everyone else pays nothing.
+ */
+export async function pc4Centroid(pc4: string): Promise<Centroid | null> {
+  const mod = await import("../data/pc4-centroids.json");
+  const table = (mod.default as { pc4: Record<string, [number, number]> }).pc4;
+  const hit = table[pc4];
+  return hit ? { lat: hit[0], lon: hit[1] } : null;
+}
+```
+
+- [ ] **Step 6: Run the tests and make sure they pass**
+
+Run: `npx tsx --test src/lib/geo.test.ts`
+
+Expected: PASS — `# pass 5`, `# fail 0`.
+
+You may need `"resolveJsonModule": true` in `tsconfig.json` under `compilerOptions`. Add it if TypeScript complains about importing JSON.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add scripts/build-geo.ts src/data src/lib/geo.ts src/lib/geo.test.ts tsconfig.json
+git commit -m "Add geo reference data: city and PC4 centroids
+
+Replaces the design's hard-coded four-city chip list with the filter
+people actually need — a training attended over nine months of weekends
+is chosen on travel distance, not on municipality. The dataset holds 44
+cities, one of them in Austria.
+
+No schema change: coordinates are a fact about the Netherlands, not
+about a provider, so they live in src/data/ with their source and
+retrieval date. Distance is derived at render, never stored.
+
+Both tables come from open Dutch government sources (PDOK Locatieserver,
+CBS Postcode4). The PC4 table is lazy-imported only when the location
+filter is used, so it costs nothing for anyone who doesn't. No runtime
+third-party call — same reason the fonts are self-hosted."
+```
+
+---
+
 ## Task 4: Filters, sort, and the listing page
 
 **Files:**
@@ -1006,18 +1353,27 @@ too — the design hard-coded four cities, the dataset holds 44."
 - Modify: `app/layout.tsx`, `app/page.tsx`
 
 **Interfaces:**
-- Consumes: `ListingRow`, `topCities`, `datasetStats` from `src/lib/presenters.ts`; `<Quad>`; `nl` from strings.
+- Consumes: `ListingRow`, `datasetStats` from `src/lib/presenters.ts`; `Centroid`, `nearestKm`, `parsePostcode`, `pc4Centroid` from `src/lib/geo.ts`; `<Quad>`; `nl` from strings.
 - Produces:
 
 ```ts
+export type Row = ListingRow & { distanceKm?: number }
 export interface Filters {
-  city: string | null; format: string | null; language: string | null;
+  format: string | null; language: string | null;
   mode: string | null; register: string | null; price: string | null;
-}
+}                                              // NOTE: no `city` — see Task 3b
 export const EMPTY_FILTERS: Filters
-export type SortKey = "upcoming" | "alphabetical" | "pph" | "verified"
-export function filterRows(rows: ListingRow[], f: Filters, cities: string[]): ListingRow[]
-export function sortRows(rows: ListingRow[], key: SortKey): ListingRow[]
+export type SortKey = "upcoming" | "alphabetical" | "pph" | "verified" | "distance"
+export function filterRows(rows: Row[], f: Filters): Row[]
+export function sortRows(rows: Row[], key: SortKey): Row[]
+
+export interface DistanceGroups {
+  near: Row[];            // within the radius, each carrying distanceKm
+  farCount: number;       // outside it — COUNTED, never silently dropped
+  online: Row[];          // delivery.mode === "online": distance does not apply
+  unplaceable: Row[];     // no city we can place
+}
+export function partitionByDistance(rows: Row[], origin: Centroid, radiusKm: number | null): DistanceGroups
 ```
 
 - [ ] **Step 1: Write the failing test**
@@ -1028,16 +1384,17 @@ Create `src/lib/filters.test.ts`:
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./dataset";
-import { toListingRows, topCities } from "./presenters";
-import { EMPTY_FILTERS, filterRows, sortRows, type Filters } from "./filters";
+import { toListingRows } from "./presenters";
+import { cityCentroid } from "./geo";
+import { EMPTY_FILTERS, filterRows, sortRows, partitionByDistance } from "./filters";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z");
 const ROWS = toListingRows(providers, NOW);
-const CITIES = topCities(ROWS);
+const UTRECHT = cityCentroid("Utrecht")!;
 
 test("no filters returns everything", () => {
-  assert.equal(filterRows(ROWS, EMPTY_FILTERS, CITIES).length, ROWS.length);
+  assert.equal(filterRows(ROWS, EMPTY_FILTERS).length, ROWS.length);
 });
 
 test("every delivery mode in the data is reachable by a filter", () => {
@@ -1045,7 +1402,7 @@ test("every delivery mode in the data is reachable by a filter", () => {
   // `online` — those programmes must not be unreachable.
   const modes = new Set(ROWS.map((r) => r.mode));
   for (const mode of modes) {
-    const got = filterRows(ROWS, { ...EMPTY_FILTERS, mode }, CITIES);
+    const got = filterRows(ROWS, { ...EMPTY_FILTERS, mode });
     assert.ok(got.length > 0, `mode '${mode}' matches nothing — programmes are unreachable`);
     assert.ok(got.every((r) => r.mode === mode));
   }
@@ -1054,31 +1411,80 @@ test("every delivery mode in the data is reachable by a filter", () => {
 test("every format in the data is reachable by a filter", () => {
   const formats = new Set(ROWS.map((r) => r.formatLabel));
   for (const format of formats) {
-    const got = filterRows(ROWS, { ...EMPTY_FILTERS, format }, CITIES);
+    const got = filterRows(ROWS, { ...EMPTY_FILTERS, format });
     assert.ok(got.length > 0, `format '${format}' matches nothing`);
   }
 });
 
-test("the 'elders' city filter catches every city outside the top four", () => {
-  const elsewhere = filterRows(ROWS, { ...EMPTY_FILTERS, city: "__elders__" }, CITIES);
-  for (const r of elsewhere) {
-    assert.ok(!r.cities.some((c) => CITIES.includes(c)),
-      `${r.programId} is in a top-four city but matched 'elders'`);
-  }
-  // Together, the four chips plus 'elders' must cover every row that has a city.
-  const inTop = ROWS.filter((r) => r.cities.some((c) => CITIES.includes(c)));
-  const withCity = ROWS.filter((r) => r.cities.length > 0);
-  assert.equal(inTop.length + elsewhere.filter((r) => r.cities.length > 0).length, withCity.length);
-});
-
 test("the price filter never matches a programme whose price is not published", () => {
   for (const band of ["under3000", "from3000"]) {
-    const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band }, CITIES);
+    const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
     assert.ok(got.every((r) => r.priceAmount != null),
       `price band '${band}' matched a programme with no published price`);
   }
-  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" }, CITIES);
+  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" });
   assert.ok(notPub.every((r) => r.priceAmount == null));
+});
+
+/* ---------- distance (spec §6.3/§6.4) ---------- */
+
+test("DISTANCE: nothing is ever silently dropped", () => {
+  // The whole point. A radius filter that deletes rows it cannot place is the
+  // same failure as the design's missing `online` chip.
+  const g = partitionByDistance(ROWS, UTRECHT, 25);
+  const accounted = g.near.length + g.farCount + g.online.length + g.unplaceable.length;
+  assert.equal(accounted, ROWS.length,
+    `${ROWS.length - accounted} rows vanished from the distance partition`);
+});
+
+test("DISTANCE: online programmes are kept, never distance-filtered", () => {
+  const g = partitionByDistance(ROWS, UTRECHT, 25);
+  const onlineRows = ROWS.filter((r) => r.mode === "online");
+  assert.equal(g.online.length, onlineRows.length, "an online programme was distance-filtered away");
+  assert.ok(g.near.every((r) => r.mode !== "online"), "an online row leaked into the distance results");
+});
+
+test("DISTANCE: providers we cannot place are kept and labelled, not dropped", () => {
+  const g = partitionByDistance(ROWS, UTRECHT, 25);
+  for (const r of g.unplaceable) {
+    assert.equal(r.distanceKm, undefined, "an unplaceable row was given a distance");
+  }
+  assert.ok(g.near.every((r) => typeof r.distanceKm === "number"),
+    "a matched row has no distance");
+});
+
+test("DISTANCE: the radius is honoured, and rows outside it are COUNTED", () => {
+  const g = partitionByDistance(ROWS, UTRECHT, 25);
+  assert.ok(g.near.every((r) => (r.distanceKm as number) <= 25), "a row beyond 25 km matched");
+  const wide = partitionByDistance(ROWS, UTRECHT, 100);
+  assert.ok(wide.near.length >= g.near.length, "a wider radius returned fewer rows");
+  assert.ok(g.farCount > 0, "expected some programmes beyond 25 km of Utrecht");
+});
+
+test("DISTANCE: 'heel NL' (null radius) excludes nobody who can be placed", () => {
+  const g = partitionByDistance(ROWS, UTRECHT, null);
+  assert.equal(g.farCount, 0, "'heel NL' excluded someone");
+});
+
+test("DISTANCE: a multi-location provider matches on its NEAREST location", () => {
+  // Balanzs runs the same training in Den Haag, Utrecht and Rotterdam.
+  const g = partitionByDistance(ROWS, UTRECHT, 100);
+  const balanzs = g.near.find((r) => r.providerId === "balanzs");
+  assert.ok(balanzs, "Balanzs should be within 100 km of Utrecht");
+  assert.ok((balanzs.distanceKm as number) < 5,
+    `expected Balanzs to match on its Utrecht location, got ${balanzs.distanceKm} km`);
+});
+
+test("SORT: by distance puts the nearest first, and rows without one last", () => {
+  const g = partitionByDistance(ROWS, UTRECHT, null);
+  const sorted = sortRows([...g.near, ...g.online], "distance");
+  const d = sorted.map((r) => r.distanceKm).filter((x): x is number => x != null);
+  assert.deepEqual(d, [...d].sort((a, b) => a - b), "distances are not ascending");
+  const firstUndefined = sorted.findIndex((r) => r.distanceKm == null);
+  if (firstUndefined !== -1) {
+    assert.ok(sorted.slice(firstUndefined).every((r) => r.distanceKm == null),
+      "a row with a distance appears after one without");
+  }
 });
 
 test("SORT: programmes without a computable €/contactuur sort LAST, never first", () => {
@@ -1115,18 +1521,20 @@ test("SORT: A–Z is stable and alphabetical by provider then programme", () => 
 });
 
 test("sort never drops or duplicates a row", () => {
-  for (const key of ["upcoming", "alphabetical", "pph", "verified"] as const) {
+  for (const key of ["upcoming", "alphabetical", "pph", "verified", "distance"] as const) {
     const sorted = sortRows(ROWS, key);
     assert.equal(sorted.length, ROWS.length, `sort '${key}' changed the row count`);
     assert.equal(new Set(sorted.map((r) => r.href)).size, ROWS.length, `sort '${key}' duplicated a row`);
   }
 });
 
-test("filter and sort are pure — they never mutate their input", () => {
+test("filter, sort and partition are pure — they never mutate their input", () => {
   const before = ROWS.map((r) => r.href).join("|");
   sortRows(ROWS, "pph");
-  filterRows(ROWS, { ...EMPTY_FILTERS, mode: "online" } as Filters, CITIES);
+  filterRows(ROWS, { ...EMPTY_FILTERS, mode: "online" });
+  partitionByDistance(ROWS, UTRECHT, 25);
   assert.equal(ROWS.map((r) => r.href).join("|"), before, "input array was mutated");
+  assert.ok(ROWS.every((r) => !("distanceKm" in r)), "partitionByDistance mutated the source rows");
 });
 ```
 
@@ -1142,14 +1550,20 @@ Create `src/lib/filters.ts`:
 
 ```ts
 /**
- * Pure filter + sort over ListingRow[]. Kept out of the React component so the
- * editorial ordering rules (a programme that publishes no hours must not top a
- * price ranking) can be tested without rendering anything.
+ * Pure filter, sort and distance-partition over ListingRow[]. Kept out of the
+ * React component so the editorial ordering rules can be tested without
+ * rendering anything:
+ *
+ *   - a programme that publishes no hours must not top a price ranking;
+ *   - a radius filter must never silently delete a row it cannot place.
  */
 import type { ListingRow } from "./presenters";
+import { nearestKm, type Centroid } from "./geo";
 
+export type Row = ListingRow & { distanceKm?: number };
+
+/** No `city`: the design's chip list is replaced by location + radius (spec §6.3). */
 export interface Filters {
-  city: string | null;
   format: string | null;
   language: string | null;
   mode: string | null;
@@ -1158,7 +1572,6 @@ export interface Filters {
 }
 
 export const EMPTY_FILTERS: Filters = {
-  city: null,
   format: null,
   language: null,
   mode: null,
@@ -1166,18 +1579,10 @@ export const EMPTY_FILTERS: Filters = {
   price: null,
 };
 
-/** Sentinel for "any city outside the derived top four". */
-export const ELSEWHERE = "__elders__";
+export type SortKey = "upcoming" | "alphabetical" | "pph" | "verified" | "distance";
 
-export type SortKey = "upcoming" | "alphabetical" | "pph" | "verified";
-
-export function filterRows(rows: ListingRow[], f: Filters, cities: string[]): ListingRow[] {
+export function filterRows(rows: Row[], f: Filters): Row[] {
   return rows.filter((r) => {
-    if (f.city === ELSEWHERE) {
-      if (r.cities.some((c) => cities.includes(c))) return false;
-    } else if (f.city && !r.cities.includes(f.city)) {
-      return false;
-    }
     if (f.format && r.formatLabel !== f.format) return false;
     if (f.language && r.language !== f.language) return false;
     if (f.mode && r.mode !== f.mode) return false;
@@ -1192,11 +1597,11 @@ export function filterRows(rows: ListingRow[], f: Filters, cities: string[]): Li
   });
 }
 
-const byName = (a: ListingRow, b: ListingRow) =>
+const byName = (a: Row, b: Row) =>
   a.providerName.localeCompare(b.providerName, "nl") ||
   a.programName.localeCompare(b.programName, "nl");
 
-export function sortRows(rows: ListingRow[], key: SortKey): ListingRow[] {
+export function sortRows(rows: Row[], key: SortKey): Row[] {
   const out = [...rows]; // never mutate the caller's array
   switch (key) {
     case "alphabetical":
@@ -1210,13 +1615,66 @@ export function sortRows(rows: ListingRow[], key: SortKey): ListingRow[] {
     case "pph":
       // Nulls LAST. A programme that publishes no hours must not top a price
       // ranking — that would reward not publishing.
-      return out.sort(
-        (a, b) => (a.pph ?? Infinity) - (b.pph ?? Infinity) || byName(a, b),
-      );
+      return out.sort((a, b) => (a.pph ?? Infinity) - (b.pph ?? Infinity) || byName(a, b));
     case "verified":
       // Most recently verified first.
       return out.sort((a, b) => b.lastVerified.localeCompare(a.lastVerified) || byName(a, b));
+    case "distance":
+      // No distance sorts LAST — never first, which would imply "right here".
+      return out.sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity) || byName(a, b));
   }
+}
+
+export interface DistanceGroups {
+  /** Within the radius. Each row carries its distanceKm. */
+  near: Row[];
+  /** Outside it. COUNTED, and shown in the result line — never silently dropped. */
+  farCount: number;
+  /** delivery.mode === "online": distance does not apply to them. */
+  online: Row[];
+  /** No city we can place. A gap in our record, not a reason to hide them. */
+  unplaceable: Row[];
+}
+
+/**
+ * Splits rows against a visitor's location.
+ *
+ * A radius filter that deletes what it cannot describe is the same failure as
+ * the design's missing `online` chip: the rows are gone and the reader never
+ * learns they existed. So nothing is dropped — everything lands in exactly one
+ * group, and the caller renders each group with a heading that says why.
+ *
+ * There is deliberately NO "residential" group. It would mean inferring
+ * residency from `delivery.structure: "intensive"`, and the schema has no such
+ * field — that is the invention the spec forbids.
+ *
+ * radiusKm === null means "heel NL": everything placeable is near.
+ */
+export function partitionByDistance(
+  rows: Row[],
+  origin: Centroid,
+  radiusKm: number | null,
+): DistanceGroups {
+  const near: Row[] = [];
+  const online: Row[] = [];
+  const unplaceable: Row[] = [];
+  let farCount = 0;
+
+  for (const r of rows) {
+    if (r.mode === "online") {
+      online.push({ ...r });
+      continue;
+    }
+    const km = nearestKm(r.cities, origin);
+    if (km == null) {
+      unplaceable.push({ ...r });
+      continue;
+    }
+    if (radiusKm == null || km <= radiusKm) near.push({ ...r, distanceKm: km });
+    else farCount++;
+  }
+
+  return { near: sortRows(near, "distance"), farCount, online, unplaceable };
 }
 ```
 
@@ -1426,6 +1884,56 @@ Create `src/components/ProgrammeTable.module.css`:
   border-color: var(--ink);
 }
 
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.postcode {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 4px 10px;
+  width: 140px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.geoNote {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 260px;
+}
+
+.geoError {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--error);
+  max-width: 260px;
+}
+
+.distance {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* Rows distance cannot describe. Visible, and told why. */
+.groupHeading {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 36px 0 0;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--ink);
+}
+
 .sortBar {
   display: flex;
   flex-wrap: wrap;
@@ -1567,17 +2075,17 @@ Create `src/components/ProgrammeTable.tsx`:
 ```tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { nl } from "@/lib/strings";
 import { Quad } from "./Quad";
-import { EMPTY_FILTERS, ELSEWHERE, filterRows, sortRows, type Filters, type SortKey } from "@/lib/filters";
+import { EMPTY_FILTERS, filterRows, sortRows, partitionByDistance, type Filters, type Row, type SortKey } from "@/lib/filters";
+import { parsePostcode, pc4Centroid, type Centroid } from "@/lib/geo";
 import type { ListingRow } from "@/lib/presenters";
 import styles from "./ProgrammeTable.module.css";
 
 interface Props {
   rows: ListingRow[];
-  cities: string[];
   providerCount: number;
 }
 
@@ -1586,17 +2094,67 @@ interface Chip {
   label: string;
 }
 
-export function ProgrammeTable({ rows, cities, providerCount }: Props) {
+type RadiusKm = 25 | 50 | 100 | null;
+
+export function ProgrammeTable({ rows, providerCount }: Props) {
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [sort, setSort] = useState<SortKey>("upcoming");
 
-  const shown = useMemo(
-    () => sortRows(filterRows(rows, filters, cities), sort),
-    [rows, filters, cities, sort],
+  // Location. `origin` is resolved asynchronously because the 4,070-row PC4
+  // table is lazy-imported — it costs nothing for visitors who never use this.
+  const [postcode, setPostcode] = useState("");
+  const [radius, setRadius] = useState<RadiusKm>(50);
+  const [origin, setOrigin] = useState<Centroid | null>(null);
+  const [geoError, setGeoError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!postcode.trim()) {
+      setOrigin(null);
+      setGeoError(null);
+      return;
+    }
+    const pc4 = parsePostcode(postcode);
+    if (!pc4) {
+      setOrigin(null);
+      setGeoError(nl.postcodeInvalid);
+      return;
+    }
+    let cancelled = false;
+    pc4Centroid(pc4).then((c) => {
+      if (cancelled) return;
+      setOrigin(c);
+      setGeoError(c ? null : nl.postcodeUnknown);
+      // Distance is the useful default the moment we know where they are.
+      if (c) setSort((s) => (s === "upcoming" ? "distance" : s));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [postcode]);
+
+  const filtered = useMemo(() => filterRows(rows as Row[], filters), [rows, filters]);
+
+  // Without a location: one flat list. With one: four groups, and NOTHING is
+  // dropped — see spec §6.4.
+  const groups4 = useMemo(
+    () => (origin ? partitionByDistance(filtered, origin, radius) : null),
+    [filtered, origin, radius],
   );
+
+  const flat = useMemo(() => sortRows(filtered, sort), [filtered, sort]);
+  const shown = groups4 ? sortRows(groups4.near, sort) : flat;
+  const shownCount = groups4
+    ? groups4.near.length + groups4.online.length + groups4.unplaceable.length
+    : flat.length;
 
   const toggle = (group: keyof Filters, value: string) =>
     setFilters((f) => ({ ...f, [group]: f[group] === value ? null : value }));
+
+  const clearAll = () => {
+    setFilters(EMPTY_FILTERS);
+    setPostcode("");
+    setSort("upcoming");
+  };
 
   // Chip sets are derived from the data, not hard-coded: `online` exists in the
   // dataset and the design omitted it, which would have made those programmes
@@ -1606,14 +2164,6 @@ export function ProgrammeTable({ rows, cities, providerCount }: Props) {
   const languages = [...new Set(rows.map((r) => r.language).filter((l): l is NonNullable<typeof l> => l != null))].sort();
 
   const groups: { key: keyof Filters; label: string; chips: Chip[] }[] = [
-    {
-      key: "city",
-      label: nl.filterCity,
-      chips: [
-        ...cities.map((c) => ({ value: c, label: c })),
-        { value: ELSEWHERE, label: nl.filterElsewhere },
-      ],
-    },
     {
       key: "format",
       label: nl.filterFormat,
@@ -1643,18 +2193,110 @@ export function ProgrammeTable({ rows, cities, providerCount }: Props) {
     },
   ];
 
+  // The distance sort only exists once we know where the visitor is.
   const sorts: { key: SortKey; label: string }[] = [
+    ...(origin ? [{ key: "distance" as const, label: nl.sortDistance }] : []),
     { key: "upcoming", label: nl.sortUpcoming },
     { key: "alphabetical", label: nl.sortAlphabetical },
     { key: "pph", label: nl.sortPph },
     { key: "verified", label: nl.sortVerified },
   ];
 
-  const provShown = new Set(shown.map((r) => r.providerId)).size;
+  const radii: { value: RadiusKm; label: string }[] = [
+    { value: 25, label: nl.radius25 },
+    { value: 50, label: nl.radius50 },
+    { value: 100, label: nl.radius100 },
+    { value: null, label: nl.radiusAll },
+  ];
+
+  const provShown = new Set(
+    (groups4 ? [...groups4.near, ...groups4.online, ...groups4.unplaceable] : flat).map((r) => r.providerId),
+  ).size;
+
+  const renderRow = (r: Row) => (
+    <Link key={r.href} href={r.href} className={styles.row}>
+      <div>
+        <div className={styles.provider}>
+          <span className={styles.providerName}>{r.providerName}</span> · {r.providerCityDisplay}
+        </div>
+        <div className={styles.programName}>{r.programName}</div>
+        {r.styleClaimed && <div className={styles.style}>{r.styleClaimed}</div>}
+        {r.nextCohort && <div className={styles.cohort}>{r.nextCohort.label}</div>}
+        {r.hasDisclosure && <div className={styles.disclosure}>{nl.disclosureLabel}</div>}
+      </div>
+      <div className={styles.cell}>
+        {r.formatDisplay}
+        {r.distanceKm != null && <div className={styles.distance}>{nl.distanceAway(r.distanceKm)}</div>}
+      </div>
+      <div className={styles.cellSmall}>{r.deliveryDisplay}</div>
+      <div className={styles.cell}>
+        <Quad state={r.pricePublished}>{r.priceDisplay}</Quad>
+      </div>
+      <div className={styles.cellSmall}>
+        {r.pph != null ? `€ ${r.pph.toFixed(2).replace(".", ",")}` : <Quad state="not_published" />}
+      </div>
+      <div className={styles.cellSmall}>
+        {r.registers.length === 0 ? (
+          <Quad state="unknown" />
+        ) : (
+          r.registers.map((reg, i) => (
+            <div key={i}>
+              {reg.body} <Quad state={reg.verified} />
+            </div>
+          ))
+        )}
+      </div>
+    </Link>
+  );
+
+  const columnHead = (
+    <div className={styles.head}>
+      <div>{nl.colProgramme}</div>
+      <div>{nl.colFormat}</div>
+      <div>{nl.colDelivery}</div>
+      <div>{nl.colPrice}</div>
+      <div>{nl.colPph}</div>
+      <div>{nl.colRegister}</div>
+    </div>
+  );
 
   return (
     <>
       <div className={styles.filters}>
+        {/* Location — a training attended over nine months of weekends is chosen
+            on travel distance, not on municipality. */}
+        <div className={styles.group}>
+          <div className={styles.groupLabel}>{nl.filterLocation}</div>
+          <div className={styles.chips}>
+            <input
+              type="text"
+              inputMode="numeric"
+              value={postcode}
+              onChange={(e) => setPostcode(e.target.value)}
+              placeholder={nl.postcodePlaceholder}
+              aria-label={nl.filterLocation}
+              className={styles.postcode}
+            />
+            {radii.map((r) => (
+              <button
+                key={String(r.value)}
+                type="button"
+                onClick={() => setRadius(r.value)}
+                aria-pressed={radius === r.value}
+                disabled={!origin}
+                className={radius === r.value && origin ? styles.chipActive : styles.chip}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          {geoError ? (
+            <div className={styles.geoError}>{geoError}</div>
+          ) : (
+            <div className={styles.geoNote}>{nl.postcodeNote}</div>
+          )}
+        </div>
+
         {groups.map((g) => (
           <div key={g.key} className={styles.group}>
             <div className={styles.groupLabel}>{g.label}</div>
@@ -1691,66 +2333,58 @@ export function ProgrammeTable({ rows, cities, providerCount }: Props) {
           ))}
         </div>
         <div className={styles.resultLine}>
-          {nl.resultLine(shown.length, rows.length, provShown, providerCount)}
+          {nl.resultLine(shownCount, rows.length, provShown, providerCount)}
+          {groups4 && groups4.farCount > 0 && (
+            // Excluded rows are COUNTED, never silently dropped.
+            <div>{nl.farExcluded(groups4.farCount)}</div>
+          )}
         </div>
       </div>
 
-      <div className={styles.head}>
-        <div>{nl.colProgramme}</div>
-        <div>{nl.colFormat}</div>
-        <div>{nl.colDelivery}</div>
-        <div>{nl.colPrice}</div>
-        <div>{nl.colPph}</div>
-        <div>{nl.colRegister}</div>
-      </div>
+      {columnHead}
+      {shown.map(renderRow)}
 
-      {shown.map((r) => (
-        <Link key={r.href} href={r.href} className={styles.row}>
-          <div>
-            <div className={styles.provider}>
-              <span className={styles.providerName}>{r.providerName}</span> · {r.providerCityDisplay}
-            </div>
-            <div className={styles.programName}>{r.programName}</div>
-            {r.styleClaimed && <div className={styles.style}>{r.styleClaimed}</div>}
-            {r.nextCohort && <div className={styles.cohort}>{r.nextCohort.label}</div>}
-            {r.hasDisclosure && <div className={styles.disclosure}>{nl.disclosureLabel}</div>}
-          </div>
-          <div className={styles.cell}>{r.formatDisplay}</div>
-          <div className={styles.cellSmall}>{r.deliveryDisplay}</div>
-          <div className={styles.cell}>
-            <Quad state={r.pricePublished}>{r.priceDisplay}</Quad>
-          </div>
-          <div className={styles.cellSmall}>
-            {r.pph != null ? `€ ${r.pph.toFixed(2).replace(".", ",")}` : <Quad state="not_published" />}
-          </div>
-          <div className={styles.cellSmall}>
-            {r.registers.length === 0 ? (
-              <Quad state="unknown" />
-            ) : (
-              r.registers.map((reg, i) => (
-                <div key={i}>
-                  {reg.body} <Quad state={reg.verified} />
-                </div>
-              ))
-            )}
-          </div>
-        </Link>
-      ))}
+      {/* What distance cannot describe. Kept visible, under a heading that says
+          why — spec §6.4. */}
+      {groups4 && groups4.online.length > 0 && (
+        <>
+          <div className={styles.groupHeading}>{nl.groupOnline}</div>
+          {sortRows(groups4.online, sort).map(renderRow)}
+        </>
+      )}
 
-      {shown.length === 0 && (
+      {groups4 && groups4.unplaceable.length > 0 && (
+        <>
+          <div className={styles.groupHeading}>{nl.groupUnplaceable}</div>
+          {sortRows(groups4.unplaceable, sort).map(renderRow)}
+        </>
+      )}
+
+      {shownCount === 0 && (
         <div className={styles.empty}>
           {nl.noResults}{" "}
-          <button type="button" className={styles.chip} onClick={() => setFilters(EMPTY_FILTERS)}>
+          <button type="button" className={styles.chip} onClick={clearAll}>
             {nl.clearFilters}
           </button>
         </div>
       )}
+
+      <p className={styles.footnote}>{nl.postcodeNote}</p>
     </>
   );
 }
 ```
 
-Note the €/contactuur cell: when `pph` is null it renders `<Quad state="not_published" />` — because `pricePerContactHour()` returns null precisely when the provider did not publish the hours or the price. That IS a finding.
+Two things to get right here:
+
+**The €/contactuur cell** renders `<Quad state="not_published" />` when `pph` is
+null — because `pricePerContactHour()` returns null precisely when the provider
+did not publish the hours or the price. That IS a finding.
+
+**Nothing disappears when a location is set.** `partitionByDistance` returns four
+groups; the online and unplaceable ones render below the matched rows under
+their own headings, and the count of programmes beyond the radius is stated in
+the result line. A visitor never silently loses a row they were never told about.
 
 - [ ] **Step 7: Write the listing page**
 
@@ -1763,10 +2397,9 @@ Replace `app/page.tsx` entirely:
  * render invalid data. Only the filter/sort island below is client-side.
  */
 import { loadDataset } from "@/lib/dataset";
-import { toListingRows, datasetStats, topCities } from "@/lib/presenters";
+import { toListingRows, datasetStats, formatMonth } from "@/lib/presenters";
 import { ProgrammeTable } from "@/components/ProgrammeTable";
 import { nl } from "@/lib/strings";
-import { formatMonth } from "@/lib/presenters";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -1775,7 +2408,6 @@ export default function Home() {
 
   const rows = toListingRows(providers);
   const stats = datasetStats(providers);
-  const cities = topCities(rows);
 
   return (
     <main>
@@ -1789,7 +2421,7 @@ export default function Home() {
       <p className={styles.intro}>{nl.intro}</p>
       <p className={styles.legend}>{nl.legend}</p>
 
-      <ProgrammeTable rows={rows} cities={cities} providerCount={stats.providers} />
+      <ProgrammeTable rows={rows} providerCount={stats.providers} />
 
       <p className={styles.footnote}>{nl.priceFootnote(stats.pphComputable, stats.programs)}</p>
     </main>
@@ -2832,12 +3464,19 @@ Run: `npm run dev` and check each in turn:
 
 1. `/` — 77 rows, 48 providers. Sort by *€ / contactuur*: exactly 7 rows show a number, ascending, and they come first.
 2. Filter *Uitvoering → online*: 5 rows. (The design would have made these unreachable.)
-3. Filter to something impossible (e.g. *online* + *€3.000 en hoger* + a small city) → the empty state with a working **Filters wissen** button.
-4. Click a row → lands on the record, scrolled to that programme.
-5. `/aanbieder/arhanta-yoga` — CRKBO note beside the CRKBO row; coherence signals present.
-6. Find the one provider with a `disclosure` and confirm the bordered block renders: `npx tsx -e 'import {loadDataset} from "./src/lib/dataset"; console.log(loadDataset().providers.filter(p=>p.disclosure).map(p=>p.id))'`
-7. `/methodologie` — full document.
-8. Anywhere on the site: nothing amber that isn't a `not_published` finding; every "nog niet onderzocht" is grey italic.
+3. **Location.** Type `3512` (Utrecht centre), radius 25 km:
+   - Matched rows are sorted nearest-first and each shows its km.
+   - Balanzs appears at ~0 km — it matched on its **Utrecht** location, not Den Haag.
+   - Below the matched rows: an **"Online — afstand niet van toepassing"** heading with the 5 online programmes, and a **"Locatie niet vermeld"** heading if any provider cannot be placed.
+   - The result line states how many programmes fall **outside** the radius. Nothing vanishes without being counted.
+   - Open devtools → Network. The PC4 chunk loads **only** after you type a postcode, and there is **no request to any third-party host**.
+4. Type nonsense (`abcd`) → *"Geen geldige Nederlandse postcode."*, and the radius chips are disabled.
+5. Filter to something impossible (e.g. *online* + *€3.000 en hoger*) → the empty state with a working **Filters wissen** button.
+6. Click a row → lands on the record, scrolled to that programme.
+7. `/aanbieder/arhanta-yoga` — CRKBO note beside the CRKBO row; coherence signals present.
+8. Find the one provider with a `disclosure` and confirm the bordered block renders: `npx tsx -e 'import {loadDataset} from "./src/lib/dataset"; console.log(loadDataset().providers.filter(p=>p.disclosure).map(p=>p.id))'`
+9. `/methodologie` — full document.
+10. Anywhere on the site: nothing amber that isn't a `not_published` finding; every "nog niet onderzocht" is grey italic.
 
 - [ ] **Step 4: Confirm the API export is unchanged**
 
@@ -2869,14 +3508,21 @@ Expect a clean tree. If `public/data/v1/providers.json` was regenerated identica
 | §3.4 disclosure, coherence_signals, transparency | 3 (flag), 5 (all three render) |
 | §4 three-state quad | 2 (the invariant + its test) |
 | §5 architecture, routes | 4, 5, 6 |
-| §6 presenter mapping | 3, 5 |
+| §6.1 listing row mapping | 3 |
+| §6.2 filters and sort | 4 |
+| §6.3 location + distance, geo reference data | **3b** |
+| §6.4 what distance cannot describe | **3b** (`partitionByDistance`), 4 (the group headings) |
+| §6.5 provider record mapping | 5 |
 | §7 CSS Modules + tokens + next/font | 2 (tokens), 4 (fonts) |
 | §8 error handling — build fails on invalid data | 1 (gate), 4 (page throws) |
 | §9 node:test as a build gate | 1 |
 
-**Deviations from the spec, discovered in the data and corrected here:**
+**Deviations from the design, discovered in the data and corrected here:**
 
-1. **`online` is a delivery mode** (5 programmes). The spec inherited the design's `in_person`/`hybrid`-only filter. The filter chips are now *derived from the data*, so no programme can become unreachable. Tested.
-2. **Counts.** The design hard-coded "2 of 15"; the real figures are 7 of 77 and will change. Everything is derived via `datasetStats()`. Tested.
-3. **City chips.** The design hard-coded Amsterdam/Utrecht/Rotterdam/Den Haag. The dataset holds 44 cities, one of them in Austria. `topCities()` derives the four with the most programmes, ties broken alphabetically for determinism. Tested.
-4. **`transparency` exists on only 4 of 77 programmes** and `coherence_signals` on 25. Most render as six/five gaps. This is correct and honest, but it means the record pages will look sparse — expected, not a bug.
+1. **`online` is a delivery mode** (5 programmes). The design's filter offered only `in_person`/`hybrid`. The chips are now *derived from the data*, so no programme can become unreachable. Tested.
+2. **Counts.** The design hard-coded "2 of 15"; the real figures are 7 of 77 and move with every record. Everything is derived via `datasetStats()`. Tested.
+3. **The city chip list is gone.** The design hard-coded four cities; the dataset holds 44, one in Austria. Replaced with location + radius (Task 3b) — the filter someone choosing a nine-month weekend training actually needs. No schema change: coordinates are a fact about the Netherlands, not about a provider.
+4. **No "residential" distance group.** An earlier draft proposed one; the schema has no `residential` field, so it would have meant inferring residency from `structure: "intensive"`. Cut, under the same rule that cut the rest of the design's inventions.
+5. **`transparency` exists on only 4 of 77 programmes** and `coherence_signals` on 25. Most render as five/six gaps. Correct and honest, but the record pages will look sparse — expected, not a bug.
+
+**Known follow-up:** `nl.githubUrl` in `src/lib/strings.ts` is a placeholder — this repo currently has **no git remote**. Either set the real URL or drop the footer link; do not ship a dead one.
