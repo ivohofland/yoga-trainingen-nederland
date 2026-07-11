@@ -169,12 +169,21 @@
   line-height: 1.35;
 }
 
+/*
+ * The style the provider CLAIMS ("Hatha & Vinyasa") — a fact, read straight off
+ * the record.
+ *
+ * It was --muted + italic, which is pixel-for-pixel the .gap treatment in
+ * Quad.module.css (--gap holds the same value as --muted, and adds italic). The
+ * whole site trains the reader's eye on grey-italic = "nog niet onderzocht", and
+ * then set a fact in it. Ink — quieter than the programme name above it, but
+ * unmistakably something we know.
+ */
 .style {
   font-size: 12.5px;
-  color: var(--muted);
+  color: var(--ink-2);
   line-height: 1.4;
   margin-top: 2px;
-  font-style: italic;
 }
 
 .cohort {
@@ -242,14 +251,9 @@
   color: var(--muted);
 }
 
-.footnote {
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.7;
-  color: var(--muted);
-  max-width: 780px;
-  margin: 20px 0 0;
-}
+/* No `.footnote` here. The price footnote belongs to the page, not the table —
+   it lives in app/page.module.css, and this file once carried a second, identical
+   copy of it. Two spellings of one style is how the page ends up rendering both. */
 
 @media (max-width: 860px) {
   .grid {

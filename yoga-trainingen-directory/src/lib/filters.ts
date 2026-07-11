@@ -38,7 +38,8 @@ export type UnplacedRow = ListingRow & { distanceKm?: never };
 
 export type Row = NearRow | UnplacedRow;
 
-/** No `city`: the design's chip list is replaced by location + radius (spec §6.3). */
+/** No `city`: the design's chip list is replaced by location + radius — see
+ *  docs/superpowers/plans/2026-07-11-public-listing.md. */
 export interface Filters {
   format: string | null;
   language: string | null;

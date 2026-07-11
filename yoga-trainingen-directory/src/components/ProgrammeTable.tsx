@@ -22,6 +22,7 @@ interface Chip {
 type RadiusKm = 25 | 50 | 100 | null;
 
 const DEFAULT_SORT: SortKey = "upcoming";
+const DEFAULT_RADIUS: RadiusKm = 50;
 
 /** A postcode is only wrong once it is long enough to be wrong: "3", "35" and
  *  "351" are an unfinished postcode, not an invalid one. */
@@ -34,7 +35,7 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
   // Location. `origin` is resolved asynchronously because the 4,070-row PC4
   // table is lazy-imported — it costs nothing for visitors who never use this.
   const [postcode, setPostcode] = useState("");
-  const [radius, setRadius] = useState<RadiusKm>(50);
+  const [radius, setRadius] = useState<RadiusKm>(DEFAULT_RADIUS);
   const [origin, setOrigin] = useState<Centroid | null>(null);
   const [geoError, setGeoError] = useState<string | null>(null);
 
@@ -53,15 +54,21 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
       return;
     }
     let cancelled = false;
-    pc4Centroid(pc4)
-      .then((c) => {
+    // TWO arguments, not `.then(…).catch(…)`. Chained, the catch also sees any
+    // throw from inside the success body above — a React state-update error, a
+    // future bug in this handler — and reports it to the visitor as "de
+    // postcodetabel kon niet worden geladen": a specific, confident, false
+    // diagnosis of a table that loaded perfectly well. The rejection handler must
+    // only ever see the one thing it can honestly speak for: the import failing.
+    pc4Centroid(pc4).then(
+      (c) => {
         if (cancelled) return;
         setOrigin(c);
         setGeoError(c ? null : nl.postcodeUnknown);
         // Distance is the useful default the moment we know where they are.
         if (c) setSort((s) => (s === DEFAULT_SORT ? "distance" : s));
-      })
-      .catch((err: unknown) => {
+      },
+      (err: unknown) => {
         // The lazy chunk failed to load. Say so: a location filter that
         // silently does nothing — no origin, radius chips dead — is the worst
         // of the options, because the visitor cannot tell it is broken. And log
@@ -71,7 +78,8 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
         if (cancelled) return;
         setOrigin(null);
         setGeoError(nl.postcodeLookupFailed);
-      });
+      },
+    );
     return () => {
       cancelled = true;
     };
@@ -88,7 +96,7 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
   const filtered = useMemo(() => filterRows(rows as Row[], filters), [rows, filters]);
 
   // Without a location: one flat list. With one: four groups, and NOTHING is
-  // dropped — see spec §6.4.
+  // dropped — see docs/superpowers/plans/2026-07-11-public-listing.md.
   const groups4 = useMemo(
     () => (origin ? partitionByDistance(filtered, origin, radius) : null),
     [filtered, origin, radius],
@@ -103,9 +111,16 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
   const toggle = (group: keyof Filters, value: string) =>
     setFilters((f) => ({ ...f, [group]: f[group] === value ? null : value }));
 
+  // "Filters wissen" must clear EVERY filter — the radius included. It is a
+  // filter (it decides which rows are `near` and which are merely counted as
+  // "buiten deze straal"), and it survived a clear: narrow to 25 km, clear,
+  // type a new postcode, and the list silently reapplied the 25 km the visitor
+  // believes they just cleared — with no chip left highlighted to say so, because
+  // the chips are disabled until an origin exists.
   const clearAll = () => {
     setFilters(EMPTY_FILTERS);
     setPostcode("");
+    setRadius(DEFAULT_RADIUS);
     setSort(DEFAULT_SORT);
   };
 
@@ -319,11 +334,16 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
         </div>
       </div>
 
-      {columnHead}
+      {/* The header belongs to the rows beneath it. With a postcode whose radius
+          catches nothing, `near` is empty while `online` and `unplaceable` are
+          not — and the header floated above no rows at all, promising a table
+          that was not there, immediately above two groups that have headings of
+          their own. */}
+      {shown.length > 0 && columnHead}
       {shown.map(renderRow)}
 
       {/* What distance cannot describe. Kept visible, under a heading that says
-          why — spec §6.4. */}
+          why — docs/superpowers/plans/2026-07-11-public-listing.md. */}
       {groups4 && groups4.online.length > 0 && (
         <>
           <div className={styles.groupHeading}>{nl.groupOnline}</div>

@@ -81,7 +81,7 @@ test("a programme with no computable price-per-contact-hour carries a caveat, no
 
 /* ---------- €/contactuur: the cell says what the record says. No more, no less ----------
  *
- * THE rule (CLAUDE.md, spec §4). `not_published` is a FINDING about a NAMED
+ * THE rule (CLAUDE.md, spec §2.2). `not_published` is a FINDING about a NAMED
  * BUSINESS — we looked, they do not state it. `unknown` is a GAP in OUR OWN
  * research. Collapsing either into the other is forbidden, and the two failures
  * are symmetrical:
@@ -736,12 +736,18 @@ test("RECORD: disclosure is always carried through when present", () => {
 
 test("RECORD: a source with no public archive is marked, not hidden", () => {
   // The publication bar: records below it are marked, never dropped.
+  //
+  // Asserted against the RECORD, never against a mirror field on the view: the
+  // view used to carry `archivePublic`/`archiveLocal` booleans that no page read,
+  // and a test comparing the view's booleans to the view's own string would have
+  // agreed with itself while both drifted away from the YAML.
   for (const p of providers) {
     const view = toProviderView(p);
     assert.equal(view.sources.length, p.sources.length, `${p.id} dropped a source`);
     for (const [i, s] of p.sources.entries()) {
-      assert.equal(view.sources[i].archivePublic, s.archived_url != null);
-      assert.equal(view.sources[i].archiveLocal, s.local_snapshot != null);
+      const archived = s.archived_url != null || s.local_snapshot != null;
+      assert.equal(view.sources[i].archiveSlots != null, archived,
+        `${p.id}/${s.id}: the archive slots do not match the record`);
     }
   }
 });
@@ -1020,10 +1026,19 @@ test("RECORD: every source shows BOTH halves of the publication bar", () => {
   // halves that exist let a half-met bar read as a met one — the site claiming a
   // standard it does not meet, on the page whose job is to be honest about that.
   // Both slots, always; a missing half is a "—", never silence.
+  //
+  // Every assertion reads the RECORD (`archived_url`, `local_snapshot`) and holds
+  // the rendered string to it. The view carries no second copy of those two facts
+  // to check against — that is the point: one spelling, and the test compares it
+  // to the YAML rather than to itself.
   const seen = new Set<string>();
   for (const p of providers) {
-    for (const s of toProviderView(p).sources) {
-      if (!s.archivePublic && !s.archiveLocal) {
+    const view = toProviderView(p);
+    for (const [i, rec] of p.sources.entries()) {
+      const s = view.sources[i];
+      const hasPublic = rec.archived_url != null;
+      const hasLocal = rec.local_snapshot != null;
+      if (!hasPublic && !hasLocal) {
         assert.equal(s.archiveSlots, null, `${p.id}/${s.id}: nothing archived, yet it prints a slot line`);
         seen.add("neither");
         continue;
@@ -1034,12 +1049,12 @@ test("RECORD: every source shows BOTH halves of the publication bar", () => {
       assert.ok(slots.includes(nl.archivePublic) && slots.includes(nl.archiveLocal),
         `${p.id}/${s.id}: "${slots}" hides a half of the bar`);
       assert.ok(
-        slots.includes(`${nl.archivePublic} ${s.archivePublic ? nl.archivePresent : nl.archiveAbsent}`),
-        `${p.id}/${s.id}: the public-archive slot misreports (archived_url ${s.archivePublic})`);
+        slots.includes(`${nl.archivePublic} ${hasPublic ? nl.archivePresent : nl.archiveAbsent}`),
+        `${p.id}/${s.id}: the public-archive slot misreports (archived_url ${hasPublic})`);
       assert.ok(
-        slots.includes(`${nl.archiveLocal} ${s.archiveLocal ? nl.archivePresent : nl.archiveAbsent}`),
-        `${p.id}/${s.id}: the local-copy slot misreports (local_snapshot ${s.archiveLocal})`);
-      seen.add(`${s.archivePublic}/${s.archiveLocal}`);
+        slots.includes(`${nl.archiveLocal} ${hasLocal ? nl.archivePresent : nl.archiveAbsent}`),
+        `${p.id}/${s.id}: the local-copy slot misreports (local_snapshot ${hasLocal})`);
+      seen.add(`${hasPublic}/${hasLocal}`);
     }
   }
   // all four shapes exist in the dataset — none of the branches above is dead

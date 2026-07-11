@@ -25,9 +25,25 @@ export function distanceKm(a: Centroid, b: Centroid): number {
   return Math.round(2 * R_EARTH_KM * Math.asin(Math.sqrt(h)) * 10) / 10;
 }
 
+/**
+ * A coordinate we can actually compute with. The reference tables are generated
+ * and committed, so a corrupt entry (a null, a string, a NaN from a truncated
+ * write) is a real possibility — and it does not stay contained: it flows into
+ * distanceKm(), which returns NaN, and NaN passes `km == null ? unplaceable : near`
+ * and, under "heel NL" (`radiusKm == null`), lands the row in `near` carrying
+ * `distanceKm: NaN`. The cell then prints "NaN km" beside a named business.
+ *
+ * An unusable coordinate is the same thing as no coordinate: the row is
+ * unplaceable, and it renders under "Locatie niet vermeld" — a visible gap, which
+ * is what it is.
+ */
+function usable(c: { lat: number; lon: number } | undefined): c is Centroid {
+  return c != null && Number.isFinite(c.lat) && Number.isFinite(c.lon);
+}
+
 export function cityCentroid(city: string): Centroid | null {
   const c = CITIES[city];
-  return c ? { lat: c.lat, lon: c.lon } : null;
+  return usable(c) ? { lat: c.lat, lon: c.lon } : null;
 }
 
 /**
@@ -57,5 +73,10 @@ export async function pc4Centroid(pc4: string): Promise<Centroid | null> {
   const mod = await import("../data/pc4-centroids.json");
   const table = (mod.default as unknown as { pc4: Record<string, [number, number]> }).pc4;
   const hit = table[pc4];
-  return hit ? { lat: hit[0], lon: hit[1] } : null;
+  if (!hit) return null;
+  const c = { lat: hit[0], lon: hit[1] };
+  // Same rule as cityCentroid: an unusable coordinate is no coordinate. Here it
+  // is the visitor's own origin, so every distance on the page would be NaN —
+  // "postcode onbekend" is the honest answer, not a table full of "NaN km".
+  return usable(c) ? c : null;
 }

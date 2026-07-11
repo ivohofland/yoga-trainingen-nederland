@@ -113,10 +113,17 @@
   margin: 26px 0 4px;
 }
 
+/*
+ * The note under a section heading ("Geen oordeel samenhang: hoog/laag…").
+ *
+ * Not italic, for the same reason .style in ProgrammeTable.module.css is not:
+ * --gap is --muted + italic, so muted-italic is the exact rendering of "nog niet
+ * onderzocht". These lines are the opposite of a gap — they are the site
+ * explaining what it is about to show — and they must not be dressed as one.
+ */
 .subNote {
   font-size: 13px;
-  color: var(--muted);
-  font-style: italic;
+  color: var(--ink-2);
   margin: 0 0 10px;
 }
 

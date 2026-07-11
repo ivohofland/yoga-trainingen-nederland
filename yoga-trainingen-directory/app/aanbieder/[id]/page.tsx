@@ -65,12 +65,21 @@ function Claim({ claim, showScope }: { claim: ClaimView; showScope: boolean }) {
       {/* The schema REQUIRES a claim's source: it is what makes it a recorded
           claim rather than an assertion of our own. It is shown. */}
       <Cite source={claim.source} />
-      {/* Layer 3. Separated from the quote and stamped with the methodology
-          version it was made under. */}
+      {/* Layer 3. Separated from the quote, and stamped with BOTH the methodology
+          version it was made under and the month it was made. /methodologie
+          promises the reader "een bron én een datum"; an analysis is the one thing
+          on this page that is OURS rather than the provider's, so when we formed it
+          is precisely what a reader needs in order to weigh it. The record carries
+          `reviewed` and the view has always passed it through — it simply reached
+          no pixel. */}
       {claim.analysis && (
         <div className={styles.analysis}>
           <div className={styles.analysisLabel}>
-            {nl.analysisLabel(claim.analysis.status, claim.analysis.methodologyVersion)}
+            {nl.analysisLabel(
+              claim.analysis.status,
+              formatMonth(claim.analysis.reviewed),
+              claim.analysis.methodologyVersion,
+            )}
           </div>
           <p className={styles.analysisBody}>{claim.analysis.note}</p>
         </div>

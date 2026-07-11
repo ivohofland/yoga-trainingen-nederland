@@ -1,7 +1,7 @@
 /**
- * Every user-facing string, in one place. NL-only for now (spec §3.2): all
- * record notes in the dataset are Dutch, so the site is Dutch. Adding EN later
- * means adding a second keyed object here — not a refactor.
+ * Every user-facing string, in one place. NL-only for now: all record notes in
+ * the dataset are Dutch, so the site is Dutch. Adding EN later means adding a
+ * second keyed object here — not a refactor.
  *
  * No user-facing string may be inlined in a component.
  */
@@ -47,7 +47,8 @@ export const nl = {
   hourSuffix: "u",
   monthsSuffix: "mnd",
 
-  // Location + radius (spec §6.3). Replaces the design's four-city chip list.
+  // Location + radius. Replaces the design's four-city chip list — see
+  // docs/superpowers/plans/2026-07-11-public-listing.md.
   filterLocation: "Afstand",
   postcodePlaceholder: "postcode, bijv. 3512",
   postcodeInvalid: "Geen geldige Nederlandse postcode.",
@@ -66,7 +67,8 @@ export const nl = {
   sortDistance: "afstand",
   distanceAway: (km: number) => `${km.toLocaleString("nl-NL", { maximumFractionDigits: 0 })} km`,
 
-  // Headings for what distance cannot describe (spec §6.4). Nothing is hidden.
+  // Headings for what distance cannot describe. Nothing is hidden — see
+  // docs/superpowers/plans/2026-07-11-public-listing.md.
   groupOnline: "Online — afstand niet van toepassing",
   groupUnplaceable: "Locatie niet vermeld — wij kunnen deze niet plaatsen",
   // Short inline label for a provider's city cell — distinct from
@@ -141,7 +143,10 @@ export const nl = {
     "Letterlijk geciteerd in de brontaal. Beweringen zijn genoteerd als bewering — nooit als feit.",
   claimScopeProvider: "over de aanbieder",
   claimScopeModule: (id: string) => `over module ${id}`,
-  secSources: "Bronnen",
+  // No `secSources: "Bronnen"` here: the sources section is headed by
+  // sourcesHeading(), which carries the two archive counts. A bare "Bronnen"
+  // constant beside it is a second heading nothing renders — and an invitation
+  // to render the one that omits the counts.
   pubBar:
     "Publicatielat: elke kritisch geciteerde bron heeft zowel een publiek archief als een " +
     "gedateerde lokale kopie. Records die de lat niet halen worden gemarkeerd, niet verborgen.",
@@ -189,6 +194,19 @@ export const nl = {
 
   priceIncludes: "inclusief",
   priceExcludes: "exclusief",
+  /** A base price plus N variants — the count includes the base itself. */
+  priceVariants: (n: number) => `${n} varianten`,
+  groupSizeMin: (n: number) => `min ${n}`,
+  groupSizeMax: (n: number) => `max ${n}`,
+  /**
+   * The cohort line. Both surfaces build it HERE — the listing's next-cohort cell
+   * and the record page's Cohorten row — and both must name the status: an
+   * announced cohort is not a cohort that ran (§8), and a bare date reads as one
+   * that does.
+   */
+  cohortLabel: (month: string, status: string) => `${month} — ${status}`,
+  /** The same line on the listing, where it is the NEXT start rather than a log entry. */
+  nextCohortLabel: (month: string, status: string) => `start ${month} — ${status}`,
   hoursTotal: "totaal",
   hoursContact: "contact",
   hoursSelfStudy: "zelfstudie",
@@ -202,7 +220,13 @@ export const nl = {
   holderLabel: "houder",
   registerLabel: "register",
   checkedLabel: "gecontroleerd",
-  analysisLabel: (status: string, version: string) => `analyse · ${status} · methodologie ${version}`,
+  // The analysis stamp. It carries the date the analysis was MADE, not just the
+  // methodology version: /methodologie promises the reader "een bron én een
+  // datum", and an analysis is the one thing on the page that is ours rather than
+  // the provider's — so when we formed it is exactly what a reader needs to weigh
+  // it. `reviewed` was carried into the view and rendered nowhere.
+  analysisLabel: (status: string, reviewed: string, version: string) =>
+    `analyse · ${status} · beoordeeld ${reviewed} · methodologie ${version}`,
 
   crkboRegister: { instelling: "instelling", docent: "docent" } as const,
 

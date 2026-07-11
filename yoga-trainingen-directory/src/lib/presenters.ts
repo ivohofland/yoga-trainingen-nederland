@@ -94,12 +94,12 @@ export interface DatasetStats {
   /**
    * The verification window across the whole corpus — BOTH ends, never one.
    *
-   * This was the max, printed as "records geverifieerd jul 2026". 46 of 48
-   * records are 2026-06 and two are 2026-07: the header claimed for the corpus
-   * what was true of two records, and re-verifying a single record next year
-   * would have re-dated all 48 on the strength of one. A max cannot help but
-   * overstate — it is the freshest thing we hold, presented as the state of
-   * everything.
+   * This was the max, printed as "records geverifieerd jul 2026". When this was
+   * written, 46 of 48 records were 2026-06 and two were 2026-07: the header
+   * claimed for the corpus what was true of two records, and re-verifying a
+   * single record next year would have re-dated all 48 on the strength of one. A
+   * max cannot help but overstate — it is the freshest thing we hold, presented
+   * as the state of everything.
    *
    * The oldest end is the only honest floor ("every record is at least this
    * fresh"), so it is always shown; the newest is shown with it, as a range, so
@@ -171,7 +171,7 @@ function deliveryDisplay(d: Program["delivery"]): string {
 function priceDisplay(p: Program["price"]): string | null {
   if (p.amount_eur == null) return null;
   const base = `${formatEuro(p.amount_eur)} · ${nl.vat[p.vat]}`;
-  const extra = p.variants?.length ? ` · ${p.variants.length + 1} varianten` : "";
+  const extra = p.variants?.length ? ` · ${nl.priceVariants(p.variants.length + 1)}` : "";
   return base + extra;
 }
 
@@ -194,7 +194,7 @@ function pphBlocker(program: Program): { field: "price" | "hours"; published: Qu
  * A value is missing from our record. Some *_published quad governs whether it
  * could have been there at all. What may the page SAY about the absence?
  *
- * (CLAUDE.md, spec §4): `not_published` is a FINDING ABOUT A NAMED BUSINESS —
+ * (CLAUDE.md, spec §2.2): `not_published` is a FINDING ABOUT A NAMED BUSINESS —
  * "we looked; they do not state it". `unknown` is a GAP IN OUR OWN RESEARCH.
  * Publishing a gap as a finding is an accusation we did not earn; publishing a
  * finding as a gap disowns research we did do and sourced. Both are wrong. So
@@ -203,9 +203,9 @@ function pphBlocker(program: Program): { field: "price" | "hours"; published: Qu
  *
  * Those fields are all called *published*, and on such a field `no` and
  * `not_published` mean the same thing about the provider: they do not publish
- * it. `no` is not contradictory — it is a researched, sourced finding (five
- * programmes carry it, each with a note like "Geen prijs gepubliceerd op de
- * 300u-pagina"). Both therefore license the amber finding.
+ * it. `no` is not contradictory — it is a researched, sourced finding (when this
+ * was written, five programmes carried it, each with a note like "Geen prijs
+ * gepubliceerd op de 300u-pagina"). Both therefore license the amber finding.
  *
  * `yes` is the genuinely contradictory case: the record says the provider DOES
  * publish it, yet the value is missing from our record anyway — three
@@ -327,7 +327,7 @@ function nextCohort(program: Program, now: Date): NextCohort | null {
   return {
     start: c.start.slice(0, 7),
     status: c.status,
-    label: `start ${formatMonth(c.start.slice(0, 7))} — ${nl.cohortStatus[c.status]}`,
+    label: nl.nextCohortLabel(formatMonth(c.start.slice(0, 7)), nl.cohortStatus[c.status]),
   };
 }
 
@@ -552,14 +552,19 @@ export interface SourceView {
   url: string | null;
   captured: string;
   note: string | null;
-  archivePublic: boolean;
-  archiveLocal: boolean;
   /**
    * BOTH slots, always — "publiek ✓ · lokaal —". The publication bar is *both* a
    * public archive AND a dated local copy, so showing only the halves we have
-   * lets a source that meets half the bar read as if it met all of it (104 of
-   * 220 sources actually meet it; 108 more carried a quiet single ✓). Null when
-   * NEITHER exists: the page prints the below-the-bar stamp instead.
+   * lets a source that meets half the bar read as if it met all of it (when this
+   * was written, 104 of 220 sources actually met it, and 108 more carried a quiet
+   * single ✓). Null when NEITHER exists: the page prints the below-the-bar stamp
+   * instead.
+   *
+   * This is the ONLY archive state on the view. It used to sit beside two
+   * booleans (`archivePublic` / `archiveLocal`) that no surface read — the page
+   * branches on this string — and two spellings of one fact can only ever drift
+   * apart. Whoever needs the halves separately reads the record's `archived_url`
+   * and `local_snapshot`, which are the fact itself.
    *
    * Not a quad, and deliberately not phrased as one: this is a fact about OUR
    * record, not a finding about the provider. Many local-only sources are
@@ -611,7 +616,7 @@ export interface ProviderView {
   sourcesArchivedLocal: number;
 }
 
-/** An absent optional object is a gap, never a finding (spec §4). */
+/** An absent optional object is a gap, never a finding (spec §2.2). */
 function q(v: Quad | undefined): Quad {
   return v ?? "unknown";
 }
@@ -714,8 +719,9 @@ const CONTRACT_LABELS: Record<ContractQuadKey, string> = nl.contract;
  * place (<Quad>); the only way to keep that true is to hand the page the quads
  * themselves.
  *
- * Rendered on EVERY programme, like coherence and transparency: 12 of 77 records
- * carry a `contract` object at all, and the emptiness is itself worth seeing.
+ * Rendered on EVERY programme, like coherence and transparency: when this was
+ * written, 12 of 77 records carried a `contract` object at all, and the emptiness
+ * is itself worth seeing.
  *
  * `min_participants` is the odd one: its quad is `clause` ("is there such a
  * clause?") and it may carry a number with it. The number rides as the row's
@@ -868,8 +874,8 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   rows.push(fact(
     nl.rowGroupSize,
     joinDot([
-      program.group_size_claimed?.min != null && `min ${program.group_size_claimed.min}`,
-      program.group_size_claimed?.max != null && `max ${program.group_size_claimed.max}`,
+      program.group_size_claimed?.min != null && nl.groupSizeMin(program.group_size_claimed.min),
+      program.group_size_claimed?.max != null && nl.groupSizeMax(program.group_size_claimed.max),
     ]),
     program.group_size_claimed?.note,
     program.group_size_claimed?.source,
@@ -1006,7 +1012,7 @@ export function toProviderView(p: Provider): ProviderView {
         id: c.id,
         start: c.start,
         status: c.status,
-        label: `${formatMonth(c.start.slice(0, 7))} — ${nl.cohortStatus[c.status]}`,
+        label: nl.cohortLabel(formatMonth(c.start.slice(0, 7)), nl.cohortStatus[c.status]),
         note: c.note ?? null,
         source: c.source, // required by the schema (spec §8)
       })),
@@ -1026,8 +1032,6 @@ export function toProviderView(p: Provider): ProviderView {
       url: s.url ?? null,
       captured: s.captured,
       note: s.note ?? null,
-      archivePublic: s.archived_url != null,
-      archiveLocal: s.local_snapshot != null,
       archiveSlots: archiveSlots(s),
     })),
     sourcesArchivedPublic: p.sources.filter((s) => s.archived_url != null).length,

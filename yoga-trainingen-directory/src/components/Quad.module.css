@@ -1,4 +1,4 @@
-/* The ONLY place a quad value becomes pixels. See spec §4. */
+/* The ONLY place a quad value becomes pixels. See spec §2.2. */
 .fact {
   color: var(--ink);
 }

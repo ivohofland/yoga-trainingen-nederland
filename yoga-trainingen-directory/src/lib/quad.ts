@@ -1,7 +1,7 @@
 /**
  * Quad state → semantic class + NL label.
  *
- * THE rule of this project (spec §4, CLAUDE.md): `not_published` and `unknown`
+ * THE rule of this project (spec §2.2, CLAUDE.md): `not_published` and `unknown`
  * must never render identically.
  *
  *   not_published — we looked; the provider does not state it. A FINDING.
@@ -46,7 +46,7 @@ function unhandledQuad(v: never): never {
 }
 
 export function quadClass(v: Quad | undefined | null): QuadClass {
-  // An absent optional object is a gap, never a finding (spec §4) — decided here,
+  // An absent optional object is a gap, never a finding (spec §2.2) — decided here,
   // separately, so that the switch below stays exhaustive over Quad itself.
   if (v == null) return "gap";
   switch (v) {

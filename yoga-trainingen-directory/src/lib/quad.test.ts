@@ -12,7 +12,7 @@ import { Quad } from "../schema";
 const ALL: Quad[] = [...Quad.options];
 
 test("THE RULE: not_published and unknown never render identically", () => {
-  // spec §4 / CLAUDE.md. `not_published` is a finding about the provider;
+  // spec §2.2 / CLAUDE.md. `not_published` is a finding about the provider;
   // `unknown` is a gap in our research. Collapsing them publishes our own
   // gaps as findings about named businesses. This test must never be deleted.
   assert.notEqual(quadClass("not_published"), quadClass("unknown"));

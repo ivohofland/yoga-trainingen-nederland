@@ -28,7 +28,7 @@ npm install
 npx playwright install chromium   # once, only needed for the archive script
 npm run validate          # parse + integrity-check every record; run after EVERY edit to data/
 npm run dev               # local site on :3000
-npm run build             # runs validate first, then next build — refuses to build on invalid data
+npm run build             # gen-schema → validate → test → export-json → next build; refuses to build on invalid data
 npm run export-json       # writes the validated dataset to public/data/v1/providers.json (this is the API)
 npm run archive -- --all  # local snapshots + Wayback for sources missing them (run locally; needs network + chromium)
 npm test                  # unit tests (node:test); locks the quad/editorial invariants

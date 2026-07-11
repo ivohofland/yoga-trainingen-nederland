@@ -190,7 +190,7 @@ test("REGISTER: the CRKBO chip matches only CRKBO-registered schools", () => {
     "the CRKBO filter dropped a registered programme");
 });
 
-/* ---------- distance (spec §6.3/§6.4) ---------- */
+/* ---------- distance (docs/superpowers/plans/2026-07-11-public-listing.md) ---------- */
 
 test("DISTANCE: nothing is ever silently dropped", () => {
   // The whole point. A radius filter that deletes rows it cannot place is the

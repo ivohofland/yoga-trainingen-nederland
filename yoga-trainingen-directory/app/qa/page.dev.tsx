@@ -1,11 +1,16 @@
 /**
- * Internal QA / review dashboard — a read-only authoring aid (NOT published).
- * Surfaces, per record, what still needs work: open `unknown` gaps,
- * unarchived sources (below the publication bar), completeness, depth, and
- * how stale last_verified is. Also lists every relevant link per record —
- * website, program/module URLs, and each source's live / archive / local copy —
- * so a review pass can click straight through. It never writes — by design
- * there is no edit UI (see ../../technical-todo.md, "Decisions"); records stay
+ * Internal QA / review dashboard — a read-only authoring aid, and one that the
+ * build CANNOT emit: the file is `page.dev.tsx`, and `pageExtensions` admits
+ * `.dev.tsx` in development only. Not published is a fact about the build here,
+ * not a promise in a comment (see PUBLISHED_BUILD below, which is the belt to
+ * that brace).
+ *
+ * Surfaces, per record, what still needs work: open `unknown` gaps, unarchived
+ * sources (below the publication bar), completeness, depth, and how stale
+ * last_verified is. Also lists every relevant link per record — website,
+ * program/module URLs, and each source's live / archive / local copy — so a
+ * review pass can click straight through. It never writes — by design there is no
+ * edit UI (see technical-todo.md at the REPO ROOT, "Decisions"); records stay
  * files-in-git.
  */
 import { notFound } from "next/navigation";
