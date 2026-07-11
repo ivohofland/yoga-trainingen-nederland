@@ -284,21 +284,35 @@ third-party font request from a Dutch public site (AVG).
 
 ## 9. Testing
 
-The repo currently has no test runner; `npm run validate` is the gate. This work
-introduces logic worth testing: `presenters.ts` is pure, and it encodes the §4
-editorial invariant.
+The repo had no test runner; `npm run validate` was the only gate. This work
+introduces logic that warrants one: `presenters.ts` is pure, and it is where the
+§4 editorial invariant is encoded.
 
-Proposal: add `node:test` via `tsx --test` (no new dependency — both are already
-present) covering:
+**Decided:** adopt `node:test` run via `tsx --test` — no new dependency, both are
+already in `devDependencies`. Add `npm test`, and make `npm run build` run it
+after `validate`, so the build refuses to ship on a broken editorial invariant
+exactly as it already refuses to ship on invalid data.
 
-1. the quad mapping — `not_published` and `unknown` never produce the same class;
-2. `pricePerContactHour` nulls sort last, never first;
-3. an `announced` cohort is never labelled as one that ran;
-4. a provider with `disclosure` set always renders it.
+```json
+"test":  "tsx --test src/**/*.test.ts",
+"build": "npm run gen-schema && npm run validate && npm test && npm run export-json && next build"
+```
 
-This is a new repo convention and should be confirmed before it is adopted. If
-rejected, `npm run validate` remains the only gate and the invariants rest on
-the `<Quad>` component being the single mapping point.
+Tests are written **test-first** and cover the invariants, not the markup:
+
+1. **The quad mapping is total and injective on state.** `not_published` and
+   `unknown` never map to the same class. This is the §4 rule, and it is the
+   single most important test in the repo.
+2. `unknown` never renders wording that reads as a finding about a provider.
+3. `pricePerContactHour()` nulls sort **last** under the €/contactuur sort, never
+   first — a programme that publishes no hours must not top a price ranking.
+4. A cohort with `status: announced` is never labelled as one that ran (spec §8).
+5. A provider with `disclosure` set always renders it (the methodology's promise).
+6. Presenters are pure: the same `Provider` always yields the same view-model,
+   and no presenter mutates its input.
+
+`CLAUDE.md` must be updated: the line *"There is no test runner, linter, or
+single-test command — `npm run validate` is the gate"* is no longer true.
 
 ## 10. Out of scope / deferred
 
@@ -312,4 +326,4 @@ the `<Quad>` component being the single mapping point.
 
 ## 11. Open questions
 
-None blocking. §9 (testing convention) is the one item wanting confirmation.
+None. §9 (adopting `node:test`) was confirmed 2026-07-11.
