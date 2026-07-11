@@ -31,10 +31,17 @@ npm run dev               # local site on :3000
 npm run build             # runs validate first, then next build — refuses to build on invalid data
 npm run export-json       # writes the validated dataset to public/data/v1/providers.json (this is the API)
 npm run archive -- --all  # local snapshots + Wayback for sources missing them (run locally; needs network + chromium)
+npm test                  # unit tests (node:test); locks the quad/editorial invariants
 ```
 
-There is no test runner, linter, or single-test command — `npm run validate`
-is the gate that everything passes through.
+`npm test` runs the unit tests (`node:test` via `tsx --test`, no extra
+dependency). There is no linter. Both `validate` and `test` are build gates —
+`npm run build` runs them in order and refuses to build if either fails.
+
+The tests exist to lock the *editorial* invariants, not to chase coverage. The
+one that matters most is in `src/lib/quad.test.ts`: `not_published` (a finding)
+and `unknown` (a gap) must never render identically. `src/components/Quad.tsx`
+is the only place a quad value becomes pixels — keep it that way.
 
 Archive script flags: `npm run archive -- <provider-id> [...ids]`,
 `--all`, `--force` (re-archive sources that already have a copy),
