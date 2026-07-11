@@ -179,12 +179,32 @@ export function formatEuro2(n: number): string {
   return EUR2.format(n);
 }
 
-/** "2026-09" → "sep 2026". Month-precision only; never invents a day. */
+const MONTHS = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
+
+/**
+ * "2026-09" → "sep 2026". Month-precision only; never invents a day.
+ *
+ * It used to fall back to the raw input, so a malformed month printed ITSELF:
+ * "2026-13" appeared on the page, under "Cohorten", as the start date of a
+ * training someone might plan a year around. A date the reader cannot parse is not
+ * a smaller failure than a crash — it is the same failure, published.
+ *
+ * Every caller feeds it a schema-validated YYYY-MM (a cohort start, a
+ * last_verified, a last_confirmed_cohort), so a value that does not parse did not
+ * come from the data: it came from a bug in the slicing above it. Fail loudly, at
+ * build time, where the build gate can catch it — the identical rule as
+ * unhandledQuad in quad.ts.
+ */
 export function formatMonth(ym: string): string {
-  const MONTHS = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"];
   const [y, m] = ym.split("-");
-  const idx = Number(m) - 1;
-  return MONTHS[idx] ? `${MONTHS[idx]} ${y}` : ym;
+  const name = MONTHS[Number(m) - 1];
+  if (!name || !/^\d{4}$/.test(y ?? "")) {
+    throw new Error(
+      `formatMonth: "${ym}" is not a YYYY-MM month. Rendering it verbatim would publish a malformed ` +
+        `date to a reader; the input is schema-validated, so this is a bug above this call, not data.`,
+    );
+  }
+  return `${name} ${y}`;
 }
 
 function cityDisplay(p: Provider): string {
@@ -192,9 +212,41 @@ function cityDisplay(p: Provider): string {
   return cities.length ? [...new Set(cities)].join(" · ") : nl.cityNotListed;
 }
 
-function formatDisplay(f: Program["format_label"]): string {
-  if (f === "other" || f === "none") return nl.filterOwnFormat;
+/**
+ * The hour-format label a programme carries — and `none` is NOT one.
+ *
+ * `other` and `none` both used to render "eigen vorm" ("own form"), stamped in
+ * fact ink. For `other` that is what the record says: the programme uses an hour
+ * format outside 200/300/500. For `none` it is an INVENTED CLAIM — `none` means
+ * the programme carries no hour-format label AT ALL, and "they use their own form"
+ * is a statement about a named business that the record does not make. It is not
+ * even the honest opposite: we are not told they have a form of their own.
+ *
+ * It also collapsed two disjoint filter sets into two identical-looking chips: a
+ * reader would have met "eigen vorm" twice in one chip row, each returning
+ * different programmes, with nothing on screen to tell them apart. No record uses
+ * `none` today — which is precisely why both bugs were invisible.
+ *
+ * `none` now says what the record says: there is no label. Which is a fact about
+ * the PROGRAMME, not a gap in our research (`format_label` is required by the
+ * schema — a programme with no label is recorded as `none`, not left un-set).
+ */
+export function formatDisplay(f: Program["format_label"]): string {
+  if (f === "other") return nl.formatOther;
+  if (f === "none") return nl.formatNone;
   return `${f} ${nl.hourSuffix}`;
+}
+
+/**
+ * The same label, shortened for a filter chip ("200", not "200 u"). Exported
+ * because the chip list is DERIVED FROM THE DATA in filters.ts — see chipGroups —
+ * and a chip whose label does not distinguish it from the chip beside it is a
+ * filter the reader cannot use.
+ */
+export function formatChipLabel(f: Program["format_label"]): string {
+  if (f === "other") return nl.formatOther;
+  if (f === "none") return nl.formatNone;
+  return f;
 }
 
 function deliveryDisplay(d: Program["delivery"]): string {

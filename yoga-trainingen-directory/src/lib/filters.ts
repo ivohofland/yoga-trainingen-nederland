@@ -6,9 +6,10 @@
  *   - a programme that publishes no hours must not top a price ranking;
  *   - a radius filter must never silently delete a row it cannot place.
  */
-import type { ListingRow } from "./presenters";
+import { formatChipLabel, type ListingRow } from "./presenters";
 import type { PriceBand } from "./rules";
-import { nearestKm, type Centroid } from "./geo";
+import { placeCities, type Centroid } from "./geo";
+import { nl } from "./strings";
 
 /**
  * A row we PLACED: it is `distanceKm` from the visitor, and the component prints
@@ -148,8 +149,18 @@ export interface DistanceGroups {
   farCount: number;
   /** delivery.mode === "online": distance does not apply to them, so they cannot carry one. */
   online: UnplacedRow[];
-  /** No city we can place. A gap in our record, not a reason to hide them. */
-  unplaceable: UnplacedRow[];
+  /**
+   * The record holds no city. What the row's own city cell already says.
+   *
+   * This and `noCentroid` were ONE group, `unplaceable`, under one heading:
+   * "Locatie niet vermeld — wij kunnen deze niet plaatsen". See Placement in
+   * geo.ts — over a provider who DID state a city, that heading is a false
+   * statement about a named business.
+   */
+  noCity: UnplacedRow[];
+  /** The record holds a city; our centroid table does not. OUR gap, and the
+   *  heading over it must say so — never "locatie niet vermeld". */
+  noCentroid: UnplacedRow[];
 }
 
 /**
@@ -183,7 +194,8 @@ export function partitionByDistance(
 ): DistanceGroups {
   const near: NearRow[] = [];
   const online: UnplacedRow[] = [];
-  const unplaceable: UnplacedRow[] = [];
+  const noCity: UnplacedRow[] = [];
+  const noCentroid: UnplacedRow[] = [];
   let farCount = 0;
 
   for (const r of rows) {
@@ -191,12 +203,19 @@ export function partitionByDistance(
       online.push(unplaced(r));
       continue;
     }
-    const km = nearestKm(r.cities, origin);
-    if (km == null) {
-      unplaceable.push(unplaced(r));
+    // placeCities(), not nearestKm(): a row with no distance must say WHICH kind
+    // of nothing it is, because the two get different headings and only one of
+    // them is a statement about the provider. See Placement in geo.ts.
+    const p = placeCities(r.cities, origin);
+    if (p.kind === "no_city") {
+      noCity.push(unplaced(r));
       continue;
     }
-    if (radiusKm == null || km <= radiusKm) near.push({ ...r, distanceKm: km });
+    if (p.kind === "no_centroid") {
+      noCentroid.push(unplaced(r));
+      continue;
+    }
+    if (radiusKm == null || p.km <= radiusKm) near.push({ ...r, distanceKm: p.km });
     else farCount++;
   }
 
@@ -204,5 +223,163 @@ export function partitionByDistance(
   // visitor's chosen key, which is not always distance), so sorting here was work
   // that was always thrown away — and it quietly implied a guarantee callers must
   // not lean on. `near` carries each row's distanceKm; ordering is the caller's.
-  return { near, farCount, online, unplaceable };
+  return { near, farCount, online, noCity, noCentroid };
 }
+
+/* ---------- The chip list, and the group list. Both DERIVED, both TESTED ----------
+ *
+ * These two lived in ProgrammeTable.tsx, where nothing could test them, and both
+ * are load-bearing in the same way: they decide WHAT THE READER CAN SEE AND REACH.
+ * filterRows and partitionByDistance were tested to death — and neither test could
+ * see that a programme the filter matches perfectly is unreachable because no chip
+ * offers it, or that a row the partition faithfully keeps is never rendered because
+ * a JSX block does not exist.
+ */
+
+/**
+ * A chip's `value` is a value of THE FILTER IT BELONGS TO — never a bare string.
+ *
+ * `Chip { value: string }` let a typo compile and return zero rows, and on this
+ * site an empty band is not a neutral outcome: an empty "niet gepubliceerd" price
+ * band READS AS AN EDITORIAL CLAIM — "no provider withholds a price" — asserted to
+ * the visitor by a misspelling nobody could see. The chip lists are pinned to
+ * `Filters` at construction (see `group()`), so a value no row can ever hold is a
+ * compile error.
+ */
+export interface Chip<K extends keyof Filters> {
+  value: NonNullable<Filters[K]>;
+  label: string;
+}
+
+export interface FilterGroup<K extends keyof Filters = keyof Filters> {
+  key: K;
+  label: string;
+  chips: Chip<K>[];
+}
+
+/** Pins each group's chips to ITS filter's union — this is where a typo fails. */
+const group = <K extends keyof Filters>(key: K, label: string, chips: Chip<K>[]): FilterGroup<K> => ({
+  key,
+  label,
+  chips,
+});
+
+const distinct = <T,>(xs: T[]): T[] => [...new Set(xs)];
+
+/**
+ * THE CHIP LIST — derived from the rows, never hard-coded.
+ *
+ * This is the original design bug of this project, and it was still one edit away:
+ * the chip list read `const modes = ["in_person", "hybrid"]`, the dataset holds
+ * five `online` programmes, and those five were unreachable through the UI —
+ * present in the data, matched by the filter, offered to nobody. filterRows is
+ * tested against every mode in the data (it passes), but REACHABILITY needs a
+ * CHIP, and the chips were derived inside the component where no test could look.
+ * Hard-code them back and all 97 tests still pass.
+ *
+ * So it is pure, it is here, and it is tested both ways: every distinct value in
+ * the data has a chip, and every chip matches at least one row (a chip that
+ * matches nothing is the other half of the same bug — an empty result the reader
+ * reads as an editorial claim).
+ *
+ * `register` and `price` are deliberately NOT derived from the rows: they are
+ * editorial statements, not values the data enumerates. See the price note below.
+ */
+export function chipGroups(rows: ListingRow[]): FilterGroup[] {
+  const formats = distinct(rows.map((r) => r.formatLabel)).sort();
+  const modes = distinct(rows.map((r) => r.mode)).sort();
+  const languages = distinct(rows.map((r) => r.language).filter((l): l is NonNullable<typeof l> => l != null)).sort();
+
+  return [
+    // formatChipLabel, not a ternary on `other`: `other` and `none` both rendered
+    // "eigen vorm", so two chips over DISJOINT sets looked identical in one row.
+    group("format", nl.filterFormat, formats.map((f) => ({ value: f, label: formatChipLabel(f) }))),
+    group("language", nl.filterLanguage, languages.map((l) => ({ value: l, label: l.toUpperCase() }))),
+    group("mode", nl.filterMode, modes.map((m) => ({ value: m, label: nl.mode[m] }))),
+    group("register", nl.filterRegister, [
+      { value: "ya", label: nl.filterYaVerified },
+      { value: "crkbo", label: nl.filterCrkbo },
+    ]),
+    // Three chips, not four. `amount_not_in_record` — the five programmes that
+    // publish a price we have not captured — is deliberately NOT offered: a price
+    // band is a statement ("it costs this much", "they publish no price"), and
+    // about those five we can honestly make neither. They are OUR gap, and they are
+    // visible in the unfiltered list, where a reader meets them as "nog niet
+    // onderzocht". See PriceBand in rules.ts.
+    group("price", nl.filterPrice, [
+      { value: "under3000", label: nl.filterUnder3000 },
+      { value: "from3000", label: nl.filterFrom3000 },
+      { value: "none_published", label: nl.filterPriceNotPublished },
+    ]),
+  ];
+}
+
+/** A section of the listing: a heading (null for the main list, which has the
+ *  column header instead) and the rows under it, sorted and ready to render. */
+export interface ListingGroup {
+  key: "main" | "online" | "no_city" | "no_centroid";
+  heading: string | null;
+  rows: Row[];
+}
+
+export interface ListingView {
+  /** Every group with rows in it, in render order. Empty groups are omitted. */
+  groups: ListingGroup[];
+  /** Rows outside the radius: COUNTED, never silently dropped. */
+  farCount: number;
+  /** Rows the reader can actually see — the sum of the groups above. */
+  shownCount: number;
+  /** Distinct providers among them. */
+  providerCount: number;
+}
+
+/**
+ * THE GROUP LIST — the whole listing, render-ready, so that "nothing is silently
+ * dropped" is a property of what the PAGE SHOWS and not merely of what a function
+ * returns.
+ *
+ * partitionByDistance provably keeps every row, and it was tested that way. But the
+ * page rendered `online` and `noCity` only from two conditional JSX blocks, and the
+ * excluded count from a third: delete any one of them and those rows vanish from the
+ * page while the function still faithfully returns them, with no test failing. The
+ * guarantee was proven one layer below the layer that could break it.
+ *
+ * Now the component maps over this and renders nothing of its own. Every row in →
+ * exactly one group out, or counted in farCount. There is no third possibility, and
+ * the test asserts the arithmetic.
+ */
+export function listingView(
+  rows: Row[],
+  origin: Centroid | null,
+  radiusKm: number | null,
+  sort: SortKey,
+): ListingView {
+  // No location: one flat list, no headings, nothing excluded.
+  if (!origin) {
+    const groups: ListingGroup[] = rows.length
+      ? [{ key: "main", heading: null, rows: sortRows(rows, sort) }]
+      : [];
+    return { groups, farCount: 0, shownCount: rows.length, providerCount: providersIn(rows) };
+  }
+
+  const p = partitionByDistance(rows, origin, radiusKm);
+  const sections: ListingGroup[] = [
+    { key: "main", heading: null, rows: sortRows(p.near, sort) },
+    // What distance cannot describe. Kept VISIBLE, each under a heading that says
+    // why — and the two "no distance" reasons are two headings, because only one of
+    // them is a statement about the provider (see Placement in geo.ts).
+    { key: "online", heading: nl.groupOnline, rows: sortRows(p.online, sort) },
+    { key: "no_city", heading: nl.groupNoCity, rows: sortRows(p.noCity, sort) },
+    { key: "no_centroid", heading: nl.groupNoCentroid, rows: sortRows(p.noCentroid, sort) },
+  ];
+  const groups = sections.filter((g) => g.rows.length > 0);
+  const shown = groups.reduce((n, g) => n + g.rows.length, 0);
+  return {
+    groups,
+    farCount: p.farCount,
+    shownCount: shown,
+    providerCount: providersIn(groups.flatMap((g) => g.rows)),
+  };
+}
+
+const providersIn = (rows: Row[]): number => new Set(rows.map((r) => r.providerId)).size;

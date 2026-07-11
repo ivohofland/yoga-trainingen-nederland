@@ -62,6 +62,27 @@ export function quadClass(v: Quad | undefined | null): QuadClass {
   }
 }
 
+/**
+ * THE decision <Quad> makes, and the whole of it: does this cell show the value we
+ * hold, or the state word instead?
+ *
+ * It lived inside the component as `quadClass(state) === "fact" && children != null`
+ * — one line, and both halves of it load-bearing:
+ *
+ *   - drop `=== "fact"` and a `not_published` cell renders its children: a FINDING
+ *     rendered as the value it is a finding about (the bug that ate six providers'
+ *     verbatim assessment quotes, in reverse);
+ *   - drop `children != null` and a fact with nothing to show renders an empty
+ *     span — a cell that says nothing at all where "ja" or a price belongs.
+ *
+ * Untestable in there without a React renderer, and this project adds none. Out
+ * here it is four lines of truth table, and the component is left with nothing to
+ * get wrong.
+ */
+export function showsValue(v: Quad | undefined | null, hasValue: boolean): boolean {
+  return quadClass(v) === "fact" && hasValue;
+}
+
 const LABEL: Record<Quad, string> = {
   yes: "ja",
   no: "nee",

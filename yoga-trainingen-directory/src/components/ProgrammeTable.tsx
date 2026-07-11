@@ -1,10 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { nl } from "@/lib/strings";
 import { Quad } from "./Quad";
-import { EMPTY_FILTERS, filterRows, sortRows, partitionByDistance, type Filters, type Row, type SortKey } from "@/lib/filters";
+import {
+  EMPTY_FILTERS,
+  chipGroups,
+  filterRows,
+  listingView,
+  type Filters,
+  type Row,
+  type SortKey,
+} from "@/lib/filters";
 import { parsePostcode, pc4Centroid, type Centroid } from "@/lib/geo";
 import { nextCohortLabel, type ListingRow } from "@/lib/presenters";
 import styles from "./ProgrammeTable.module.css";
@@ -13,34 +21,6 @@ interface Props {
   rows: ListingRow[];
   providerCount: number;
 }
-
-/**
- * A chip's `value` is a value of THE FILTER IT BELONGS TO — never a bare string.
- *
- * `Chip { value: string }` let a typo compile and return zero rows, and on this
- * site an empty band is not a neutral outcome: an empty "niet gepubliceerd" price
- * band READS AS AN EDITORIAL CLAIM — "no provider withholds a price" — asserted to
- * the visitor by a misspelling nobody could see. Now the chip lists are pinned to
- * `Filters` at construction (see `group()`), so a value that no row can ever hold
- * is a compile error.
- */
-interface Chip<K extends keyof Filters> {
-  value: NonNullable<Filters[K]>;
-  label: string;
-}
-
-interface FilterGroup<K extends keyof Filters = keyof Filters> {
-  key: K;
-  label: string;
-  chips: Chip<K>[];
-}
-
-/** Pins each group's chips to ITS filter's union — this is where a typo now fails. */
-const group = <K extends keyof Filters>(key: K, label: string, chips: Chip<K>[]): FilterGroup<K> => ({
-  key,
-  label,
-  chips,
-});
 
 type RadiusKm = 25 | 50 | 100 | null;
 
@@ -118,23 +98,21 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
 
   const filtered = useMemo(() => filterRows(rows as Row[], filters), [rows, filters]);
 
-  // Without a location: one flat list. With one: four groups, and NOTHING is
-  // dropped — see docs/superpowers/plans/2026-07-11-public-listing.md.
-  const groups4 = useMemo(
-    () => (origin ? partitionByDistance(filtered, origin, radius) : null),
-    [filtered, origin, radius],
+  // The WHOLE listing, render-ready: without a location one flat list, with one a
+  // group per reason, and NOTHING dropped. The component below renders exactly
+  // what this returns and decides nothing itself — the "nothing is silently
+  // dropped" guarantee used to live in partitionByDistance while the page showed
+  // two of its groups from two conditional JSX blocks, so deleting a block deleted
+  // the rows from the page with the guarantee still passing. See listingView.
+  const view = useMemo(
+    () => listingView(filtered, origin, radius, sort),
+    [filtered, origin, radius, sort],
   );
 
-  const flat = useMemo(() => sortRows(filtered, sort), [filtered, sort]);
-  const shown = groups4 ? sortRows(groups4.near, sort) : flat;
-  const shownCount = groups4
-    ? groups4.near.length + groups4.online.length + groups4.unplaceable.length
-    : flat.length;
-
   // The cast is confined to this one line, and it is safe by construction: `group()`
-  // above has already pinned every chip's value to its own filter's union, so the
-  // only pairs that reach here are ones TypeScript has checked. (A computed key
-  // widens the spread's type; nothing narrower is expressible without a cast.)
+  // in filters.ts has already pinned every chip's value to its own filter's union,
+  // so the only pairs that reach here are ones TypeScript has checked. (A computed
+  // key widens the spread's type; nothing narrower is expressible without a cast.)
   const toggle = <K extends keyof Filters>(key: K, value: NonNullable<Filters[K]>) =>
     setFilters((f) => ({ ...f, [key]: f[key] === value ? null : value }) as Filters);
 
@@ -151,37 +129,11 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
     setSort(DEFAULT_SORT);
   };
 
-  // Chip sets are derived from the data, not hard-coded: `online` exists in the
-  // dataset and the design omitted it, which would have made those programmes
-  // unreachable.
-  const formats = [...new Set(rows.map((r) => r.formatLabel))].sort();
-  const modes = [...new Set(rows.map((r) => r.mode))].sort();
-  const languages = [...new Set(rows.map((r) => r.language).filter((l): l is NonNullable<typeof l> => l != null))].sort();
-
-  const groups: FilterGroup[] = [
-    group(
-      "format",
-      nl.filterFormat,
-      formats.map((f) => ({ value: f, label: f === "other" || f === "none" ? nl.filterOwnFormat : f })),
-    ),
-    group("language", nl.filterLanguage, languages.map((l) => ({ value: l, label: l.toUpperCase() }))),
-    group("mode", nl.filterMode, modes.map((m) => ({ value: m, label: nl.mode[m] }))),
-    group("register", nl.filterRegister, [
-      { value: "ya", label: nl.filterYaVerified },
-      { value: "crkbo", label: nl.filterCrkbo },
-    ]),
-    // Three chips, not four. `amount_not_in_record` — the five programmes that
-    // publish a price we have not captured — is deliberately NOT offered: a price
-    // band is a statement ("it costs this much", "they publish no price"), and
-    // about those five we can honestly make neither. They are OUR gap, and they are
-    // visible in the unfiltered list, where a reader meets them as "nog niet
-    // onderzocht". See PriceBand in rules.ts.
-    group("price", nl.filterPrice, [
-      { value: "under3000", label: nl.filterUnder3000 },
-      { value: "from3000", label: nl.filterFrom3000 },
-      { value: "none_published", label: nl.filterPriceNotPublished },
-    ]),
-  ];
+  // DERIVED FROM THE DATA, in a pure function, under test: `online` exists in the
+  // dataset and the original design hard-coded a chip list without it, which made
+  // those five programmes unreachable through the UI. Derived here in the component
+  // it was correct but unprovable — hard-code it back and all 97 tests passed.
+  const groups = useMemo(() => chipGroups(rows), [rows]);
 
   // The distance sort only exists once we know where the visitor is.
   const sorts: { key: SortKey; label: string }[] = [
@@ -198,10 +150,6 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
     { value: 100, label: nl.radius100 },
     { value: null, label: nl.radiusAll },
   ];
-
-  const provShown = new Set(
-    (groups4 ? [...groups4.near, ...groups4.online, ...groups4.unplaceable] : flat).map((r) => r.providerId),
-  ).size;
 
   const renderRow = (r: Row) => (
     <Link key={r.href} href={r.href} className={styles.row}>
@@ -350,39 +298,28 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
             Announce the new count — otherwise the change is invisible to anyone
             not looking at the list. */}
         <div className={styles.resultLine} aria-live="polite">
-          {nl.resultLine(shownCount, rows.length, provShown, providerCount)}
-          {groups4 && groups4.farCount > 0 && (
+          {nl.resultLine(view.shownCount, rows.length, view.providerCount, providerCount)}
+          {view.farCount > 0 && (
             // Excluded rows are COUNTED, never silently dropped.
-            <div>{nl.farExcluded(groups4.farCount)}</div>
+            <div>{nl.farExcluded(view.farCount)}</div>
           )}
         </div>
       </div>
 
-      {/* The header belongs to the rows beneath it. With a postcode whose radius
-          catches nothing, `near` is empty while `online` and `unplaceable` are
-          not — and the header floated above no rows at all, promising a table
-          that was not there, immediately above two groups that have headings of
-          their own. */}
-      {shown.length > 0 && columnHead}
-      {shown.map(renderRow)}
+      {/* EVERY group listingView returns, and nothing else. The main list gets the
+          column header (it has no heading of its own); every other group gets the
+          heading that says why distance cannot describe it. This used to be three
+          hand-written conditional blocks — delete one and its rows silently left
+          the page while partitionByDistance went on returning them, with the whole
+          suite green. There is now nothing here to delete: the groups are data. */}
+      {view.groups.map((g) => (
+        <Fragment key={g.key}>
+          {g.heading == null ? columnHead : <div className={styles.groupHeading}>{g.heading}</div>}
+          {g.rows.map(renderRow)}
+        </Fragment>
+      ))}
 
-      {/* What distance cannot describe. Kept visible, under a heading that says
-          why — docs/superpowers/plans/2026-07-11-public-listing.md. */}
-      {groups4 && groups4.online.length > 0 && (
-        <>
-          <div className={styles.groupHeading}>{nl.groupOnline}</div>
-          {sortRows(groups4.online, sort).map(renderRow)}
-        </>
-      )}
-
-      {groups4 && groups4.unplaceable.length > 0 && (
-        <>
-          <div className={styles.groupHeading}>{nl.groupUnplaceable}</div>
-          {sortRows(groups4.unplaceable, sort).map(renderRow)}
-        </>
-      )}
-
-      {shownCount === 0 && (
+      {view.shownCount === 0 && (
         <div className={styles.empty}>
           {nl.noResults}{" "}
           <button type="button" className={styles.chip} onClick={clearAll}>

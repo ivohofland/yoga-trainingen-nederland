@@ -8,7 +8,7 @@ import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 // The SCHEMA, as a value — the contract test walks its shape rather than
 // hard-coding the key list it is supposed to be guarding. See SCHEMA_CONTRACT_KEYS.
-import { Program, Quad } from "../schema";
+import { Program, Quad, type Cohort, type Provider } from "../schema";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z"); // fixed — never let a test depend on the wall clock
@@ -22,6 +22,39 @@ test("every programme in the dataset becomes exactly one row", () => {
   assert.equal(rows.length, programCount);
 });
 
+/* ---------- Cohorts: an announced cohort is not one that ran, and a cancelled one is neither ----------
+ *
+ * Two of the three statuses the listing can show do not occur in today's data:
+ * NO cohort anywhere is `cancelled`, and every "next" cohort happens to be
+ * `announced`. So both branches are invariants that pass only because the
+ * triggering data is absent — and an invariant that holds because nothing tests it
+ * is not an invariant. Both triggers are manufactured below.
+ */
+
+/** A cohort we choose the status of. Its `source` is borrowed from a real record:
+ *  the schema requires one, and a cohort without a source is not a cohort (§8). */
+const SOURCE = providers.flatMap((p) => p.programs).find((p) => p.cohorts?.length)!.cohorts![0].source;
+const cohort = (id: string, start: string, status: Cohort["status"]): Cohort => ({
+  id,
+  start,
+  status,
+  source: SOURCE,
+});
+
+/** A real, valid provider with its cohorts replaced — everything else about the
+ *  record stays exactly as the schema (and the loader) validated it. */
+const withCohorts = (cohorts: Cohort[]): Provider => {
+  const base = providers.find((p) => p.id === "balanzs")!;
+  return {
+    ...base,
+    id: "synthetic",
+    programs: [{ ...base.programs[0], id: "synthetic-program", cohorts }],
+  };
+};
+
+const nextOf = (cohorts: Cohort[]) =>
+  toListingRows([withCohorts(cohorts)], NOW).find((r) => r.providerId === "synthetic")!.nextCohort;
+
 test("an announced cohort is never labelled as one that ran", () => {
   // spec §8: recording an announcement as if it happened is the central trap.
   // "confirmed_ran" cohorts really did run — their Dutch label legitimately
@@ -30,8 +63,18 @@ test("an announced cohort is never labelled as one that ran", () => {
   // month has fully passed). The invariant this guards is narrower than "no
   // cohort ever mentions running": only an ANNOUNCED cohort must never be
   // presented as one that ran.
-  const rows = toListingRows(providers, NOW);
+  //
+  // Every "next" cohort in today's data is `announced`, so the confirmed_ran branch
+  // below was DEAD CODE: it asserted nothing, and the anti-vacuity guard at the
+  // bottom could not have noticed. A confirmed_ran cohort with a future start is
+  // perfectly legal (see above) — so one is manufactured here, and BOTH directions
+  // are now guarded.
+  const rows = [
+    ...toListingRows(providers, NOW),
+    ...toListingRows([withCohorts([cohort("ran", "2026-09", "confirmed_ran")])], NOW),
+  ];
   let announced = 0;
+  let ran = 0;
   for (const r of rows) {
     if (!r.nextCohort) continue;
     const { status } = r.nextCohort;
@@ -52,24 +95,78 @@ test("an announced cohort is never labelled as one that ran", () => {
     if (status === "confirmed_ran") {
       assert.match(label, /gedraaid/,
         `programme ${r.programId} confirms a cohort ran but the label doesn't say so`);
+      assert.doesNotMatch(label, /aangekondigd/,
+        `programme ${r.programId} presents a cohort that RAN as a mere announcement`);
+      ran++;
     }
   }
-  // Every "next cohort" the listing shows is `announced` — a next cohort is by
-  // definition one that has not run yet — so the `confirmed_ran` branch above is
-  // DEAD CODE here, and this test can only guard the announced direction. The nine
-  // confirmed_ran cohorts appear on the record page, which builds its own label:
-  // see the record cohort test, which is where that direction is actually tested.
-  assert.ok(announced > 0, "no announced cohort in the listing — this test tests nothing");
+  // ANTI-VACUITY, both ways. Either branch going quiet means this test has stopped
+  // guarding the direction it names — which is exactly what had happened.
+  assert.ok(announced > 0, "no announced cohort in the listing — the trap direction is untested");
+  assert.ok(ran > 0, "no confirmed_ran cohort reaches the listing label — that branch is dead code again");
+});
+
+test("COHORT: a CANCELLED cohort is never offered as the eerstvolgende start", () => {
+  // No cohort in the dataset is `cancelled`, so the `status !== "cancelled"` guard
+  // in nextCohort() has no test: DELETE IT and 97/97 still pass. The day a
+  // cancelled cohort is recorded — and recording one is the whole point of having
+  // the status — the listing offers it as the next start, sorts it as upcoming, and
+  // labels it "eerstvolgende start sep 2026 — geannuleerd": a training presented to
+  // a reader as the one to sign up for, in the row that says it is not happening.
+  //
+  // A cancelled run is not an upcoming run. So: manufacture the trigger.
+  const next = nextOf([
+    cohort("dead", "2026-08", "cancelled"),   // sooner — and it is not happening
+    cohort("alive", "2026-09", "announced"),  // the one a reader can actually attend
+  ]);
+  assert.ok(next, "the announced cohort was dropped along with the cancelled one");
+  assert.equal(next.start, "2026-09",
+    `the listing offers a CANCELLED cohort (2026-08) as the eerstvolgende start. It is not going to run.`);
+  assert.equal(next.status, "announced");
+  assert.doesNotMatch(nextCohortLabel(next), /geannuleerd/);
+
+  // And with nothing but a cancelled run ahead, there is NO next start — the
+  // programme must say so, not advertise a cohort that was called off.
+  assert.equal(nextOf([cohort("dead", "2026-08", "cancelled")]), null,
+    "a programme whose only upcoming cohort is CANCELLED is offered as one that starts in August");
+
+  // A cancelled run in the past is equally not a next start (it is filtered by date
+  // as well — belt and braces, and the belt is the one under test).
+  assert.equal(nextOf([cohort("old", "2026-01", "cancelled")]), null);
+
+  // The guard is on `cancelled` ALONE: an announced cohort in the same position is
+  // still offered. (Without this, deleting the whole `.filter(...)` — rather than
+  // just the status clause — would pass the assertions above.)
+  assert.equal(nextOf([cohort("alive", "2026-08", "announced")])?.start, "2026-08");
+});
+
+test("COHORT: the cancelled status has its own word — it never borrows another's", () => {
+  // If a cancelled cohort ever DOES reach a label (it does, on the record page,
+  // where cancelled runs are part of the track record), it must read as cancelled.
+  const label = cohortLabel({ start: "2026-08", status: "cancelled" });
+  assert.match(label, /geannuleerd/, "a cancelled cohort is not described as cancelled");
+  assert.doesNotMatch(label, /aangekondigd|gedraaid/,
+    "a cancelled cohort is presented as one that is announced or that ran");
+  assert.ok(label.includes(formatMonth("2026-08")), "the label lost its date");
 });
 
 test("next cohort is never in the past", () => {
+  // The bound is DERIVED from NOW, not hard-coded. `>= "2026-07"` had to be
+  // hand-kept in step with the fixed clock above: move NOW to 2027 and the
+  // assertion silently weakens to a tautology every row passes, while the test goes
+  // on looking like it guards something. A test whose expectation is a copy of a
+  // constant it is testing against guards that constant, not the code.
+  const CURRENT_YM = NOW.toISOString().slice(0, 7);
   const rows = toListingRows(providers, NOW);
+  let checked = 0;
   for (const r of rows) {
     if (r.nextCohort) {
-      assert.ok(r.nextCohort.start >= "2026-07",
-        `programme ${r.programId} offers a next cohort of ${r.nextCohort.start}, which is past`);
+      assert.ok(r.nextCohort.start >= CURRENT_YM,
+        `programme ${r.programId} offers a next cohort of ${r.nextCohort.start}, which is before ${CURRENT_YM}`);
+      checked++;
     }
   }
+  assert.ok(checked > 0, "no programme has a next cohort at all — this test tests nothing");
 });
 
 test("a programme with no computable price-per-contact-hour carries a caveat, not a zero", () => {
@@ -1328,4 +1425,119 @@ test("RECORD: every programme has a stable anchor id matching its listing href",
       assert.equal(row.href, `/aanbieder/${p.id}#programma-${prog.id}`);
     }
   }
+});
+
+/* ---------- formatMonth: a date the reader cannot parse is a date we should not print ---------- */
+
+test("formatMonth renders a Dutch month, and REFUSES a month that is not one", () => {
+  // Untested, and its fallback returned the raw input: a malformed "2026-13"
+  // printed ITSELF onto the page, under the heading "Cohorten", as the start date
+  // of a training a reader might plan a year around. Every caller feeds it a
+  // schema-validated YYYY-MM, so a value that does not parse is a bug in the
+  // slicing above the call — not data — and it must fail where the build gate can
+  // see it, not render quietly.
+  assert.equal(formatMonth("2026-01"), "jan 2026");
+  assert.equal(formatMonth("2026-09"), "sep 2026");
+  assert.equal(formatMonth("2026-12"), "dec 2026");
+
+  // The boundaries, which an off-by-one in the month index moves silently: a cohort
+  // starting in January would be printed as December of the year before.
+  assert.match(formatMonth("2027-01"), /jan 2027/);
+  assert.notEqual(formatMonth("2026-01"), formatMonth("2026-12"));
+
+  for (const bad of ["2026-13", "2026-00", "2026", "", "20261-01", "not-a-month", "2026-1x"]) {
+    assert.throws(() => formatMonth(bad), /not a YYYY-MM month/,
+      `formatMonth("${bad}") rendered something instead of failing — a malformed date, published`);
+  }
+});
+
+/* ---------- Registerstatus: the listing column and the record page are ONE claim ---------- */
+
+test("REGISTER: the listing's Registerstatus column and the record's accreditation block agree", () => {
+  // The identical class of bug as the listing-vs-record PRICE bug that already
+  // SHIPPED: two surfaces of one site, rendering the same fact about the same named
+  // business from two independent derivations, and nothing comparing them. There
+  // the listing printed a bare "ja" in fact ink while the record page said "nog
+  // niet onderzocht" about the same programme.
+  //
+  // Registerstatus is the other column with exactly that shape — `registers` on the
+  // listing row, `accreditation` on the provider view — and nothing pinned them
+  // together. A register status is a claim about whether a named school is on a
+  // public register; the two pages must not be able to answer it differently.
+  let chips = 0;
+  let verified = 0;
+  let notVerified = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    const rows = toListingRows([p], NOW);
+    for (const prog of p.programs) {
+      const listing = rows.find((r) => r.programId === prog.id)!;
+      const record = view.programs.find((v) => v.id === prog.id)!;
+
+      assert.equal(listing.registers.length, record.accreditation.length,
+        `${p.id}/${prog.id}: the listing shows ${listing.registers.length} register(s) and the record ` +
+        `page shows ${record.accreditation.length}`);
+
+      listing.registers.forEach((chip, i) => {
+        const acc = record.accreditation[i];
+        assert.equal(chip.bodyKey, acc.bodyKey,
+          `${p.id}/${prog.id}: the listing names register "${chip.bodyKey}" where the record names ` +
+          `"${acc.bodyKey}"`);
+        assert.equal(chip.body, acc.body, `${p.id}/${prog.id}: the two pages give the register two names`);
+        // The claimed label is the provider's OWN words ("RYS 200") — verbatim on
+        // both pages, or one of them is paraphrasing a named business (spec §3).
+        assert.equal(chip.label, acc.label,
+          `${p.id}/${prog.id}: the listing quotes the register claim as "${chip.label}" and the record ` +
+          `page as "${acc.label}"`);
+        // THE claim: is this school actually on the register?
+        assert.equal(chip.verified, acc.verified,
+          `${p.id}/${prog.id}: the listing's Registerstatus says "${chip.verified}" and the record page's ` +
+          `accreditation block says "${acc.verified}" — one site, one programme, two contradictory claims ` +
+          `about whether a named business is on a public register`);
+        // …and both come from the RECORD, not from either page's own derivation.
+        const raw = prog.accreditation[i];
+        assert.equal(chip.verified, raw.verified,
+          `${p.id}/${prog.id}: the listing re-derived a register status instead of rendering the record's`);
+        assert.equal(chip.label, raw.label_claimed);
+
+        chips++;
+        if (chip.verified === "yes") verified++;
+        if (chip.verified === "no" || chip.verified === "not_published") notVerified++;
+      });
+    }
+  }
+  assert.ok(chips > 0, "no programme shows a register status at all — this test tests nothing");
+  assert.ok(verified > 0, "no register status is verified any more — that direction is untested");
+  assert.ok(notVerified > 0,
+    "no register claim is unverified any more — the direction where the two pages could libel a school " +
+    "(claimed, not found in the register) is untested");
+});
+
+test("REGISTER: the YA state the filter uses is the state the row's own column shows", () => {
+  // `yaVerified` is what the register CHIP filters on, and the Registerstatus column
+  // is what the reader SEES. They are derived from the same chips by construction —
+  // this pins that they cannot come apart, on every row, including the rows where
+  // the school is on the YA register but THIS programme is not (the six that the
+  // provider-level derivation wrongly swept in).
+  let fromChips = 0;
+  let noYaChip = 0;
+  for (const r of toListingRows(providers, NOW)) {
+    const ya = r.registers.filter((c) => c.bodyKey === "yoga_alliance");
+    if (!ya.length) {
+      // No YA chip in the column → we have not established that this programme is
+      // registered. A GAP, never a finding, and never "verified".
+      assert.equal(r.yaVerified, "unknown",
+        `${r.providerId}/${r.programId}: the Registerstatus column shows no Yoga Alliance entry at all, ` +
+        `yet the row's YA state is "${r.yaVerified}" — a claim made from nothing`);
+      noYaChip++;
+      continue;
+    }
+    if (r.yaVerified === "yes") {
+      assert.ok(ya.some((c) => c.verified === "yes"),
+        `${r.providerId}/${r.programId}: the row claims YA-verified while every YA entry in its own ` +
+        `column says otherwise`);
+    }
+    fromChips++;
+  }
+  assert.ok(fromChips > 0 && noYaChip > 0, "one of the two directions is no longer exercised by the data");
 });

@@ -47,14 +47,56 @@ export function cityCentroid(city: string): Centroid | null {
 }
 
 /**
+ * WHY a row has no distance — because `null` conflated two different statements,
+ * and one of them was about a named business.
+ *
+ * `nearestKm` returns null both when the record holds NO city at all and when it
+ * holds a city we cannot geocode. The listing printed one heading over both:
+ * "Locatie niet vermeld — wij kunnen deze niet plaatsen". Over the second kind
+ * that is a FALSE STATEMENT ABOUT A NAMED BUSINESS — the provider did state a
+ * location, our tables simply do not hold it — printed directly above a row whose
+ * own city cell shows the very location the heading says was not given.
+ *
+ * The two are not the same kind of thing at all:
+ *
+ *   no_city     — the record holds no city. A fact about the RECORD, and what the
+ *                 row's own city cell already says ("locatie niet vermeld").
+ *   no_centroid — the record holds a city; OUR centroid table does not. A GAP IN
+ *                 OUR DATA, and it must be worded as ours. The cities are carried
+ *                 along so a heading (or a bug report) can name what we missed.
+ *
+ * Today no provider is either — which is exactly why this was safe to get wrong,
+ * and exactly why it is pinned by a test that manufactures both.
+ */
+export type Placement =
+  | { kind: "placed"; km: number }
+  | { kind: "no_city" }
+  | { kind: "no_centroid"; cities: string[] };
+
+/**
+ * Place a row's cities against an origin, and SAY WHICH KIND OF NOTHING it is when
+ * it cannot be placed. The distance is to the nearest placeable city — never 0
+ * ("right here") and never Infinity ("far away"); both would be lies.
+ */
+export function placeCities(cities: string[], origin: Centroid): Placement {
+  if (!cities.length) return { kind: "no_city" };
+  const found = cities.map(cityCentroid).filter((c): c is Centroid => c != null);
+  // A city we hold and cannot place is our miss, not their omission.
+  if (!found.length) return { kind: "no_centroid", cities };
+  return { kind: "placed", km: Math.min(...found.map((c) => distanceKm(origin, c))) };
+}
+
+/**
  * Distance to the nearest placeable city. null when none can be placed — NOT 0
  * (which would mean "right here") and NOT Infinity (which would sort it as far
  * away). Both would be lies; null makes it a visible gap.
+ *
+ * Callers that must SAY something to a reader about the null want placeCities()
+ * above: the two reasons for it are not interchangeable.
  */
 export function nearestKm(cities: string[], origin: Centroid): number | null {
-  const found = cities.map(cityCentroid).filter((c): c is Centroid => c != null);
-  if (!found.length) return null;
-  return Math.min(...found.map((c) => distanceKm(origin, c)));
+  const p = placeCities(cities, origin);
+  return p.kind === "placed" ? p.km : null;
 }
 
 /** "3512 KT" | "3512kt" | "3512" → "3512". Dutch PC4 runs 1000–9999. */

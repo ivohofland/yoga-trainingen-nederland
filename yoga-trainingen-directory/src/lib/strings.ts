@@ -43,7 +43,14 @@ export const nl = {
   filterMode: "Uitvoering",
   filterRegister: "Registerstatus",
   filterPrice: "Prijs (gepubliceerd)",
-  filterOwnFormat: "eigen vorm",
+  // `other` — the programme uses an hour format outside 200/300/500. That is what
+  // the record says, so this is what the page says.
+  formatOther: "eigen vorm",
+  // `none` — the programme carries NO hour-format label. It used to render "eigen
+  // vorm" too, which invents a claim the record does not make (they are not said
+  // to have a form of their own), and made two chips over disjoint sets look
+  // identical. See formatDisplay() in presenters.ts.
+  formatNone: "geen uren-label",
   hourSuffix: "u",
   monthsSuffix: "mnd",
 
@@ -70,9 +77,16 @@ export const nl = {
   // Headings for what distance cannot describe. Nothing is hidden — see
   // docs/superpowers/plans/2026-07-11-public-listing.md.
   groupOnline: "Online — afstand niet van toepassing",
-  groupUnplaceable: "Locatie niet vermeld — wij kunnen deze niet plaatsen",
+  // ONE heading used to cover both reasons a row has no distance:
+  // "Locatie niet vermeld — wij kunnen deze niet plaatsen". Over a provider who
+  // DID state a city that our tables cannot geocode, that is a false statement
+  // about a named business — printed directly above a row whose own city cell
+  // shows the location the heading says was never given. The two reasons are now
+  // two groups, and the second one owns the miss as ours. See Placement in geo.ts.
+  groupNoCity: "Locatie niet vermeld — het record noemt geen plaats",
+  groupNoCentroid: "Plaats wél vermeld, maar niet in onze locatiedata — een gat in ons onderzoek",
   // Short inline label for a provider's city cell — distinct from
-  // groupUnplaceable above, which is a section heading with longer wording.
+  // groupNoCity above, which is a section heading with longer wording.
   cityNotListed: "locatie niet vermeld",
   farExcluded: (n: number) =>
     `${n} ${n === 1 ? "opleiding valt" : "opleidingen vallen"} buiten deze straal.`,
