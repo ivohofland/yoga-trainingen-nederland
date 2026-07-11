@@ -1,0 +1,48 @@
+.prose {
+  max-width: 680px;
+  padding-top: 36px;
+}
+
+.prose h1 {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 8px;
+}
+
+.prose h2 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 40px 0 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+}
+
+.prose p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink);
+  margin: 0 0 18px;
+}
+
+.prose strong {
+  font-weight: 600;
+}
+
+.prose em {
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--ink);
+  margin: 44px 0 20px;
+}
+
+/* The changelog line at the foot. */
+.prose hr + p {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+}
