@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./dataset";
-import { toListingRows, datasetStats, pphQuad, toProviderView } from "./presenters";
+import { toListingRows, datasetStats, formatMonth, pphQuad, priceQuad, toProviderView } from "./presenters";
+import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 
 const { providers } = loadDataset();
@@ -197,10 +198,17 @@ test("PPH: the €/contactuur cell never contradicts the Prijs cell in its own r
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
     if (r.pph != null || r.priceAmount != null) continue; // the price is the blocker
-    if (r.pricePublished === "no" || r.pricePublished === "not_published") {
+    if (saysNotPublished(r.priceState)) {
       assert.equal(r.pphState, "not_published",
-        `${r.providerId}/${r.programId}: the Prijs cell states "${r.pricePublished}" as researched, ` +
+        `${r.providerId}/${r.programId}: the Prijs cell states "${r.priceState}" as researched, ` +
         `but the €/contactuur cell calls the same fact "${r.pphState}"`);
+    }
+    // And the other way: where the Prijs cell is OUR gap, the €/contactuur cell
+    // derived from that same absent number must not accuse the provider either.
+    if (r.priceState === "unknown") {
+      assert.equal(r.pphState, "unknown",
+        `${r.providerId}/${r.programId}: the Prijs cell admits the amount is a gap in OUR record, ` +
+        `but the €/contactuur cell blames the provider for the same missing number ("${r.pphState}")`);
     }
   }
 });
@@ -241,18 +249,99 @@ test("PPH: every caveat string in strings.ts is reachable", () => {
 });
 
 test("a price that is not published never renders as a number", () => {
-  // pricePublished is quad-state (yes | no | not_published | unknown, spec's
-  // quad-state convention); an amount is only legitimate when it is "yes" —
-  // "no", "not_published", and "unknown" must all carry neither a number nor
-  // a rendered price string.
+  // The record's `price.published` is quad-state; an amount is only legitimate
+  // when it says "yes". "no", "not_published" and "unknown" must all carry
+  // neither a number nor a rendered price string. (The invariant is on the
+  // RECORD field, not on the rendered quad: the five gap rows render "unknown"
+  // precisely BECAUSE they have no amount, so asserting it of the rendered quad
+  // would be circular.)
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
-    if (r.pricePublished !== "yes") {
+    const published = programOf(r.providerId, r.programId).price.published;
+    if (published !== "yes") {
       assert.equal(r.priceAmount, null,
-        `programme ${r.programId} has an amount despite pricePublished=${r.pricePublished}`);
+        `programme ${r.programId} has an amount despite price.published=${published}`);
       assert.equal(r.priceDisplay, null,
-        `programme ${r.programId} renders a price despite pricePublished=${r.pricePublished}`);
+        `programme ${r.programId} renders a price despite price.published=${published}`);
     }
+  }
+});
+
+/* ---------- Prijs: the listing and the record are ONE claim, or they are a lie ---------- */
+
+test("PRICE: the listing row's price quad IS the record page's price quad — every programme", () => {
+  // The test that would have caught it. The listing set `pricePublished` to the
+  // raw `price.published` while the record page applied the finding-vs-gap rule,
+  // so on five programmes the two pages of this one site stated OPPOSITE things
+  // about the same named business: the listing a bare "ja" in fact ink, the
+  // record "nog niet onderzocht" in grey. Nothing compared them, so nothing broke.
+  //
+  // They must now be the same value from the same function — for all 77, not for
+  // the five we happen to know about.
+  const rows = toListingRows(providers, NOW);
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      const listing = rows.find((r) => r.providerId === p.id && r.programId === prog.id)!;
+      const record = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.colPrice)!;
+      assert.equal(listing.priceState, record.state,
+        `${p.id}/${prog.id}: the listing says the price is "${listing.priceState}" and the record page ` +
+        `says "${record.state}" — one site, one programme, two contradictory claims about a named business`);
+      assert.equal(listing.priceState, priceQuad(prog),
+        `${p.id}/${prog.id}: the listing re-derived the price quad instead of calling priceQuad()`);
+      // and the same value, too — a matching quad over a differing number is no
+      // better than a differing quad
+      assert.equal(listing.priceDisplay, record.value,
+        `${p.id}/${prog.id}: the listing and the record render different prices`);
+    }
+  }
+});
+
+test("PRICE: a quad rendered as a FACT always has a value to show — never a bare “ja”", () => {
+  // <Quad> renders its children only for a fact WITH children, and falls through
+  // to the state word otherwise. So a fact-class quad with nothing to show prints
+  // a naked "ja" — an established fact, asserted, with no fact behind it. That is
+  // what the five gap programmes printed on the listing.
+  const rows = toListingRows(providers, NOW);
+  for (const r of rows) {
+    if (quadClass(r.priceState) !== "fact") continue;
+    if (r.priceState === "no") continue; // "nee, zij publiceren geen prijs" — the value IS the word
+    assert.ok(r.priceDisplay != null,
+      `${r.providerId}/${r.programId}: the Prijs cell is a fact ("${r.priceState}") with nothing to show — ` +
+      `it renders a bare “ja”, asserting a price our record does not hold`);
+  }
+});
+
+test("PRICE: the five programmes that publish a price we do not hold are OUR gap, on BOTH pages", () => {
+  // Named, because the accusation would be named. The record says each of these
+  // DOES publish a price; the amount is missing from our record. Amber
+  // ("niet gepubliceerd") on either page is a false statement about them.
+  const ourGaps = [
+    ["aalo-yoga-academie", "yin-yang-ryt200"],
+    ["aalo-yoga-academie", "yin-ryt200"],
+    ["de-blikopener", "hatha-raja-opleiding"],
+    ["sanayou", "200-online"],
+    ["yoga-academie-nederland", "300-hatha-verdieping"],
+  ] as const;
+  const rows = toListingRows(providers, NOW);
+  for (const [providerId, programId] of ourGaps) {
+    const prog = programOf(providerId, programId);
+    // guard: if the data is completed one day, this test must not quietly pass on
+    // a programme that no longer has the shape it is here to pin.
+    assert.equal(prog.price.published, "yes", `${providerId}/${programId} no longer publishes a price`);
+    assert.equal(prog.price.amount_eur ?? null, null, `${providerId}/${programId} now has an amount`);
+
+    const listing = rows.find((r) => r.providerId === providerId && r.programId === programId)!;
+    const record = toProviderView(providers.find((p) => p.id === providerId)!)
+      .programs.find((v) => v.id === programId)!
+      .rows.find((r) => r.label === nl.colPrice)!;
+
+    assert.equal(listing.priceState, "unknown",
+      `${providerId}/${programId}: the listing states "${listing.priceState}" — the record says they DO ` +
+      `publish a price, so the missing amount is ours`);
+    assert.equal(record.state, "unknown");
+    assert.ok(!saysNotPublished(listing.priceState),
+      `${providerId}/${programId}: our own gap, published as a finding about a named business`);
   }
 });
 
@@ -279,7 +368,32 @@ test("stats are derived from the data, never hard-coded", () => {
   assert.equal(stats.providers, providers.length);
   assert.equal(stats.programs, providers.reduce((n, p) => n + p.programs.length, 0));
   assert.ok(stats.pphComputable <= stats.programs);
-  assert.match(stats.lastVerified ?? "", /^\d{4}-\d{2}/);
+  assert.match(stats.verifiedOldest ?? "", /^\d{4}-\d{2}/);
+  assert.match(stats.verifiedNewest ?? "", /^\d{4}-\d{2}/);
+});
+
+test("STATS: the freshness line never dates the corpus by its freshest record", () => {
+  // It printed the MAX: "records geverifieerd jul 2026", when 46 of 48 records
+  // were jun 2026 and two were jul. One re-verification next year would have
+  // re-dated all 48. The stat now carries BOTH ends, and the oldest — the floor
+  // every record clears — is the one that anchors the line.
+  const stats = datasetStats(providers);
+  const all = providers.map((p) => p.last_verified).sort();
+  assert.equal(stats.verifiedOldest, all[0], "the oldest verification is not the oldest in the data");
+  assert.equal(stats.verifiedNewest, all.at(-1), "the newest verification is not the newest in the data");
+  assert.ok(new Set(all.map((d) => d.slice(0, 7))).size > 1,
+    "every record shares one verification month — this test would prove nothing");
+
+  const line = nl.statVerified(
+    formatMonth(stats.verifiedOldest!.slice(0, 7)),
+    formatMonth(stats.verifiedNewest!.slice(0, 7)),
+  );
+  const oldest = formatMonth(all[0].slice(0, 7));
+  assert.ok(line.includes(oldest),
+    `the freshness line "${line}" omits the oldest record (${oldest}) — it overstates`);
+  // A single month in the line, when the corpus spans two, IS the overstatement.
+  assert.notEqual(line, nl.statVerified(formatMonth(all.at(-1)!.slice(0, 7)), formatMonth(all.at(-1)!.slice(0, 7))),
+    "the freshness line reads as if every record were verified in the newest month");
 });
 
 test("presenters are pure — they never mutate the dataset", () => {

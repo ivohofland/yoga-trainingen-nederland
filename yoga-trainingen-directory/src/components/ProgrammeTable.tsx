@@ -182,8 +182,13 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
         {r.distanceKm != null && <div className={styles.distance}>{nl.distanceAway(r.distanceKm)}</div>}
       </div>
       <div className={styles.cellSmall}>{r.deliveryDisplay}</div>
+      {/* The quad comes from the presenter — priceQuad(), the SAME function the
+          provider record's Prijs row calls. Handing the raw `price.published`
+          here rendered a bare "ja" in fact ink on the five programmes that
+          publish a price we do not hold, while their record pages rendered the
+          gap correctly: two pages of one site, opposite claims, same programme. */}
       <div className={styles.cell}>
-        <Quad state={r.pricePublished}>{r.priceDisplay}</Quad>
+        <Quad state={r.priceState}>{r.priceDisplay}</Quad>
       </div>
       {/* Both the string and the quad come from the presenter. The quad comes from
           the RECORD, never from the mere absence of a value: see pphQuad() in

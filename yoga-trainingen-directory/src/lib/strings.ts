@@ -14,7 +14,15 @@ export const nl = {
   statProviders: "aanbieders",
   statPrograms: "opleidingen",
   statRegisters: "getoetst aan openbare registers (CRKBO, Yoga Alliance, VYN)",
-  statVerified: (d: string) => `records geverifieerd ${d}`,
+  // The verification WINDOW, both ends — never the newest alone. "records
+  // geverifieerd jul 2026" was the max over 48 records of which 46 were jun 2026:
+  // a claim about the corpus carried by two records, and one re-verification next
+  // year would have re-dated all 48. A range cannot overstate: the oldest end is
+  // the floor every record clears.
+  statVerified: (oldest: string, newest: string) =>
+    oldest === newest
+      ? `records geverifieerd ${oldest}`
+      : `records geverifieerd ${oldest}–${newest}`,
 
   intro:
     "Een feitelijk overzicht van yoga-docentenopleidingen, samengesteld uit " +

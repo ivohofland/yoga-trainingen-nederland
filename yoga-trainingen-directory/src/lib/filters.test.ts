@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./dataset";
 import { toListingRows } from "./presenters";
+import { saysNotPublished } from "./quad";
 import { cityCentroid } from "./geo";
 import { EMPTY_FILTERS, filterRows, sortRows, partitionByDistance, type Row } from "./filters";
 
@@ -9,6 +10,11 @@ const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z");
 const ROWS = toListingRows(providers, NOW);
 const UTRECHT = cityCentroid("Utrecht")!;
+
+/** The record behind a row — a filter's claim is checked against the RECORD, never
+ *  against the predicate the filter itself is built from. */
+const programOf = (providerId: string, programId: string) =>
+  providers.find((p) => p.id === providerId)!.programs.find((p) => p.id === programId)!;
 
 test("no filters returns everything", () => {
   assert.equal(filterRows(ROWS, EMPTY_FILTERS).length, ROWS.length);
@@ -35,48 +41,144 @@ test("every format in the data is reachable by a filter", () => {
   }
 });
 
-test("the price filter never matches a programme whose price is not published", () => {
+test("PRICE: the two amount bands match only programmes with a published amount", () => {
   for (const band of ["under3000", "from3000"]) {
     const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
     assert.ok(got.every((r) => r.priceAmount != null),
       `price band '${band}' matched a programme with no published price`);
   }
-  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" });
-  assert.ok(notPub.every((r) => r.priceAmount == null));
 });
 
-test("the price bands honour the €3.000 boundary in both directions", () => {
+test("PRICE: 'niet gepubliceerd' selects the FINDING — never “we hold no amount”", () => {
+  // The band is an accusation, so it must be made of findings ONLY. It selected
+  // on `priceAmount == null` — a fact about OUR record, not about the provider —
+  // and so returned 24 rows where only 19 are findings: it told the reader that
+  // AALO Yoga Academie, de Blikopener, SanaYou and Yoga Academie Nederland
+  // publish no price, while our own record (and their own record page, and the
+  // Prijs cell in the very row the filter returned) says they do.
+  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" });
+  assert.ok(notPub.length > 0, "the 'niet gepubliceerd' band matches nothing at all");
+
+  for (const r of notPub) {
+    // What the row itself RENDERS in its Prijs cell must be the finding the band
+    // claims. A row cannot sit in an accusation and deny it in its own cell.
+    assert.ok(saysNotPublished(r.priceState),
+      `${r.providerId}/${r.programId}: the "niet gepubliceerd" band asserts this provider publishes no ` +
+      `price, but the row's own Prijs cell says "${r.priceState}" — a false statement about a named business`);
+    // and the record agrees, not just the row
+    const published = programOf(r.providerId, r.programId).price.published;
+    assert.ok(published === "not_published" || published === "no",
+      `${r.providerId}/${r.programId}: the record says price.published is "${published}"`);
+  }
+
+  // Nothing dropped, either: every genuine finding is reachable through the band.
+  assert.equal(notPub.length, ROWS.filter((r) => saysNotPublished(r.priceState)).length,
+    "the 'niet gepubliceerd' band dropped a genuine finding");
+  // Both literal values that mean "they do not publish it" are in there — the
+  // band is not secretly just one of them.
+  assert.ok(notPub.some((r) => r.priceState === "not_published"), "no 'not_published' row in the band");
+  assert.ok(notPub.some((r) => r.priceState === "no"), "no 'no' row in the band — that finding is unreachable");
+});
+
+test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no band", () => {
   const under = filterRows(ROWS, { ...EMPTY_FILTERS, price: "under3000" });
   const from = filterRows(ROWS, { ...EMPTY_FILTERS, price: "from3000" });
+  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" });
   assert.ok(under.length > 0 && from.length > 0, "a price band matches nothing at all");
   assert.ok(under.every((r) => (r.priceAmount as number) < 3000),
     "'onder €3.000' matched a programme costing €3.000 or more");
   assert.ok(from.every((r) => (r.priceAmount as number) >= 3000),
     "'€3.000 en hoger' matched a programme costing less than €3.000");
-  // and the three bands partition the dataset — nobody is filtered into nowhere
-  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" });
-  assert.equal(under.length + from.length + notPub.length, ROWS.length,
-    "the price bands do not account for every programme");
+
+  // The bands used to be asserted as a partition of all 77 rows. They are not one,
+  // and forcing them to be is precisely how the five gap rows ended up inside an
+  // accusation: every row had to land in SOME band, so the leftover bucket took
+  // them. A price band is a statement — "it costs this much", "they publish no
+  // price" — and about these five we can honestly make neither. They are OUR gap;
+  // they belong in no band, and they are visible in the unfiltered list, where a
+  // reader meets them as "nog niet onderzocht".
+  const ourGaps = ROWS.filter((r) => r.priceState === "unknown");
+  assert.ok(ourGaps.length > 0, "no programme is a price gap any more — this test tests nothing");
+  for (const g of ourGaps) {
+    for (const band of ["under3000", "from3000", "not_published"] as const) {
+      const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
+      assert.ok(!got.some((r) => r.href === g.href),
+        `${g.providerId}/${g.programId} is a gap in OUR record, yet the '${band}' band claims it`);
+    }
+  }
+
+  // Nothing else is lost: the three bands plus our gaps account for every row.
+  assert.equal(under.length + from.length + notPub.length + ourGaps.length, ROWS.length,
+    "the price bands and the gaps do not account for every programme");
+  // The bands are disjoint — no row is counted in two.
+  const hrefs = [...under, ...from, ...notPub].map((r) => r.href);
+  assert.equal(new Set(hrefs).size, hrefs.length, "a programme appears in two price bands");
 });
 
-test("the register filter matches only verified/registered programmes", () => {
+test("REGISTER: the YA chip agrees with the Registerstatus cell it sits next to", () => {
   const ya = filterRows(ROWS, { ...EMPTY_FILTERS, register: "ya" });
   assert.ok(ya.length > 0, "no programme is YA register-verified — the chip matches nothing");
-  assert.ok(ya.every((r) => r.yaVerified === "yes"),
-    "the YA filter matched a provider whose registration is not verified in the register");
+
+  // Yoga Alliance registers per programme (per RYS), and the column shows the
+  // PROGRAMME's accreditation. The filter read `provider.registrations` instead —
+  // a fact about the school — and so returned six programmes whose own
+  // Registerstatus cell said "nog niet onderzocht": a filter asserting a
+  // programme is register-verified, next to a cell saying we never checked.
+  //
+  // So the test is not `yaVerified === "yes"` (the implementation checking
+  // itself). It is: whatever the ROW RENDERS must back the claim the chip makes.
+  for (const r of ya) {
+    const chip = r.registers.find((c) => c.bodyKey === "yoga_alliance");
+    assert.ok(chip,
+      `${r.providerId}/${r.programId}: returned by "YA register-geverifieerd", but the row shows no ` +
+      `Yoga Alliance register status at all — the filter asserts what the cell does not`);
+    assert.equal(chip.verified, "yes",
+      `${r.providerId}/${r.programId}: the YA chip in this row renders "${chip.verified}", yet the filter ` +
+      `claims it is register-verified`);
+    // and it is the programme's accreditation that says so, not the provider's
+    const prog = programOf(r.providerId, r.programId);
+    assert.ok(prog.accreditation.some((a) => a.body === "yoga_alliance" && a.verified === "yes"),
+      `${r.providerId}/${r.programId}: no verified Yoga Alliance accreditation on the PROGRAMME`);
+  }
+
+  // Nothing verified is dropped, and "not verified" is never "verified": a claim
+  // we could not confirm must not be reachable through a filter that says we did.
   assert.equal(ya.length, ROWS.filter((r) => r.yaVerified === "yes").length,
     "the YA filter dropped a verified programme");
+  assert.ok(ya.every((r) => r.yaVerified !== "not_published" && r.yaVerified !== "unknown"));
 
+  // The rows the old provider-level filter wrongly swept in are gone: each is a
+  // programme of a YA-registered school that carries no verified YA accreditation
+  // of its own.
+  const schoolYaButNotThisProgramme = ROWS.filter((r) => {
+    const p = providers.find((x) => x.id === r.providerId)!;
+    const schoolVerified = p.registrations.some(
+      (reg) => reg.body === "yoga_alliance" && reg.verified_in_register === "yes",
+    );
+    return schoolVerified && r.yaVerified !== "yes";
+  });
+  assert.ok(schoolYaButNotThisProgramme.length > 0,
+    "no programme separates the school-level fact from the programme-level one — this test tests nothing");
+  for (const r of schoolYaButNotThisProgramme) {
+    assert.ok(!ya.some((x) => x.href === r.href),
+      `${r.providerId}/${r.programId}: the school is on the YA register, but THIS programme is not — ` +
+      `the chip must not claim a programme-level fact from a school-level one`);
+  }
+});
+
+test("REGISTER: the CRKBO chip matches only CRKBO-registered schools", () => {
+  // CRKBO registers institutions and teachers, not programmes — this chip is a
+  // property of the SCHOOL and says so. There is no Registerstatus cell for it to
+  // contradict.
   const crkbo = filterRows(ROWS, { ...EMPTY_FILTERS, register: "crkbo" });
   assert.ok(crkbo.length > 0, "no programme is CRKBO-registered — the chip matches nothing");
-  assert.ok(crkbo.every((r) => r.crkboRegistered === "yes"),
-    "the CRKBO filter matched a provider that is not CRKBO-registered");
+  for (const r of crkbo) {
+    const p = providers.find((x) => x.id === r.providerId)!;
+    assert.equal(p.crkbo.registered, "yes",
+      `${r.providerId}: the CRKBO filter matched a school that is not CRKBO-registered`);
+  }
   assert.equal(crkbo.length, ROWS.filter((r) => r.crkboRegistered === "yes").length,
     "the CRKBO filter dropped a registered programme");
-
-  // "not verified" is never "verified": a claim we could not confirm must not
-  // be reachable through a filter that says we did.
-  assert.ok(ya.every((r) => r.yaVerified !== "not_published" && r.yaVerified !== "unknown"));
 });
 
 /* ---------- distance (spec §6.3/§6.4) ---------- */

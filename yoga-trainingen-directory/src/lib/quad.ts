@@ -41,3 +41,28 @@ const LABEL: Record<Quad, string> = {
 export function quadLabel(v: Quad | undefined | null): string {
   return LABEL[v ?? "unknown"];
 }
+
+/**
+ * Does this quad say "we looked; the provider does not publish it"? — i.e. is it
+ * a FINDING about a named business, as opposed to a value (`yes`) or a gap in our
+ * own research (`unknown`)?
+ *
+ * On every *_published field in the schema, `no` and `not_published` say the same
+ * thing about the provider, and both are researched and sourced. `unknown` never
+ * does, and must never be filtered, counted or coloured as though it did.
+ *
+ * This equivalence is written down ONCE, here, and every consumer calls it:
+ * presenters' finding-vs-gap rule (missingBecause), the price filter's
+ * "niet gepubliceerd" band. The band used to re-derive it as `priceAmount == null`
+ * — "we hold no amount", a fact about OUR record — and so told readers that four
+ * named businesses publish no price while our own record said they do. That
+ * duplication was the bug.
+ *
+ * It lives in quad.ts rather than presenters.ts for a reason the type system will
+ * not enforce: presenters.ts reaches dataset.ts (node:fs), so the client-side
+ * filter island cannot import a *value* from it — only a type. This module
+ * imports nothing but a type, so the one rule is reachable from both sides.
+ */
+export function saysNotPublished(v: Quad | undefined | null): boolean {
+  return v === "not_published" || v === "no";
+}

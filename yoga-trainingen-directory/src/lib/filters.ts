@@ -6,7 +6,12 @@
  *   - a programme that publishes no hours must not top a price ranking;
  *   - a radius filter must never silently delete a row it cannot place.
  */
+// TYPE-only from presenters: presenters.ts reaches dataset.ts (node:fs) and this
+// module is bundled into the client filter island, so a value import from it
+// breaks the build. The rule the price band needs therefore lives in quad.ts,
+// which imports nothing but a type — see saysNotPublished.
 import type { ListingRow } from "./presenters";
+import { saysNotPublished } from "./quad";
 import { nearestKm, type Centroid } from "./geo";
 
 export type Row = ListingRow & { distanceKm?: number };
@@ -35,13 +40,26 @@ export function filterRows(rows: Row[], f: Filters): Row[] {
     if (f.format && r.formatLabel !== f.format) return false;
     if (f.language && r.language !== f.language) return false;
     if (f.mode && r.mode !== f.mode) return false;
+    // Yoga Alliance is per-programme (per RYS). `yaVerified` is derived from the
+    // row's OWN register chips — the ones the Registerstatus column renders — so
+    // the chip cannot return a row whose visible cell contradicts it. Reading
+    // `provider.registrations` here instead returned six programmes whose own
+    // cell said "nog niet onderzocht" from a filter asserting the opposite.
     if (f.register === "ya" && r.yaVerified !== "yes") return false;
+    // CRKBO registers institutions, not programmes: a property of the school, and
+    // the chip says so in as many words ("CRKBO-geregistreerd").
     if (f.register === "crkbo" && r.crkboRegistered !== "yes") return false;
-    // Price bands operate on published amounts only. "not_published" is its own
-    // band — it is a finding, and it is filterable as one.
+    // The two amount bands operate on published amounts only.
     if (f.price === "under3000" && !(r.priceAmount != null && r.priceAmount < 3000)) return false;
     if (f.price === "from3000" && !(r.priceAmount != null && r.priceAmount >= 3000)) return false;
-    if (f.price === "not_published" && r.priceAmount != null) return false;
+    // "niet gepubliceerd" selects the FINDING — what our record says about the
+    // provider — and never "we hold no amount", which is a fact about OUR record.
+    // The two are not the same set: five programmes publish a price we simply do
+    // not have. Selecting on `priceAmount == null` swept them in and told the
+    // reader that four named businesses publish no price, while our own record —
+    // and their own record page — said they do. `priceState` is priceQuad(): the
+    // same value the row renders in its own Prijs cell.
+    if (f.price === "not_published" && !saysNotPublished(r.priceState)) return false;
     return true;
   });
 }
@@ -130,5 +148,9 @@ export function partitionByDistance(
     else farCount++;
   }
 
-  return { near: sortRows(near, "distance"), farCount, online, unplaceable };
+  // Unsorted, deliberately: every caller sorts the group it renders (by the
+  // visitor's chosen key, which is not always distance), so sorting here was work
+  // that was always thrown away — and it quietly implied a guarantee callers must
+  // not lean on. `near` carries each row's distanceKm; ordering is the caller's.
+  return { near, farCount, online, unplaceable };
 }

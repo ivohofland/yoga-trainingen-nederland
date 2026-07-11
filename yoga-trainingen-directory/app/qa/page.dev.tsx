@@ -8,9 +8,22 @@
  * there is no edit UI (see ../../technical-todo.md, "Decisions"); records stay
  * files-in-git.
  */
+import { notFound } from "next/navigation";
 import { loadDataset, providerQa } from "@/lib/dataset";
 
 export const metadata = { title: "QA / review — interne werklijst" };
+
+/**
+ * "NOT published" was a comment, not a fact: this is an App Router page, so
+ * `next build` prerendered it and it would have shipped — the researcher's
+ * internal work-list (every open `unknown` gap, per-provider completeness,
+ * unarchived-source counts, staleness flags) served on the public site.
+ *
+ * It stays a first-class page in development and does not exist in production.
+ * There is no secret here worth protecting with an env var or a header check;
+ * the requirement is simply that the build cannot emit it.
+ */
+const PUBLISHED_BUILD = process.env.NODE_ENV === "production";
 
 const STALE_MONTHS = 6;
 
@@ -36,6 +49,8 @@ function Lnk({
 }
 
 export default function Qa() {
+  if (PUBLISHED_BUILD) notFound();
+
   const { providers, errors } = loadDataset();
   if (errors.length > 0) throw new Error(`Dataset invalid:\n${errors.join("\n")}`);
 

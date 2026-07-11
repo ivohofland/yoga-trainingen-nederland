@@ -5,7 +5,7 @@
  * renders, and nothing else.
  */
 import { bundleDelta, pricePerContactHour } from "./dataset";
-import { quadClass } from "./quad";
+import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 import type { Cohort, Program, Provider, Quad, Source } from "../schema";
 
@@ -15,7 +15,18 @@ export interface NextCohort {
   label: string;
 }
 
+/** The schema's accreditation body key — the raw value, not its Dutch label. */
+type AccreditationBody = Program["accreditation"][number]["body"];
+
 export interface RegisterChip {
+  /**
+   * The schema key, alongside the Dutch label the chip renders. A filter that
+   * wants "this row shows a Yoga Alliance register status" must select on THIS —
+   * matching on the rendered label would make a display string load-bearing, and
+   * reaching past the chip to a provider-level field is what let the register
+   * filter and the register column state opposite things (see yaVerified).
+   */
+  bodyKey: AccreditationBody;
   body: string;
   label: string;
   verified: Quad;
@@ -36,7 +47,14 @@ export interface ListingRow {
   language: "nl" | "en" | "mixed" | null;
   deliveryDisplay: string;
   priceAmount: number | null;
-  pricePublished: Quad;
+  /**
+   * What the Prijs cell is ALLOWED to say — priceQuad(), the same function the
+   * provider record's Prijs row uses. NOT the raw `price.published`: on the five
+   * programmes that publish a price we do not hold, the raw field renders a bare
+   * "ja" in fact ink while the record page says, correctly, "nog niet onderzocht".
+   * The row carries the quad, never the raw field, so no consumer can re-derive it.
+   */
+  priceState: Quad;
   priceDisplay: string | null;
   pph: number | null;
   /**
@@ -49,8 +67,20 @@ export interface ListingRow {
   /** What the €/contactuur cell is ALLOWED to say when `pph` is null. See pphQuad. */
   pphState: Quad;
   pphCaveat: string | null;
+  /** The Registerstatus column, exactly as rendered: the PROGRAMME's accreditation. */
   registers: RegisterChip[];
+  /**
+   * CRKBO is a register of institutions and teachers — it is a fact about the
+   * SCHOOL, not about this programme, and the chip that filters on it says so
+   * ("CRKBO-geregistreerd"). It is deliberately not shown in the Registerstatus
+   * column, so there is nothing for it to contradict.
+   */
   crkboRegistered: Quad;
+  /**
+   * Yoga Alliance is per-programme (per RYS), so this is derived from `registers`
+   * above — from what the row SHOWS, never from `provider.registrations`. The
+   * filter and the column cannot disagree because they read the same value.
+   */
   yaVerified: Quad;
   nextCohort: NextCohort | null;
   lastVerified: string;
@@ -61,7 +91,23 @@ export interface DatasetStats {
   providers: number;
   programs: number;
   pphComputable: number;
-  lastVerified: string | null;
+  /**
+   * The verification window across the whole corpus — BOTH ends, never one.
+   *
+   * This was the max, printed as "records geverifieerd jul 2026". 46 of 48
+   * records are 2026-06 and two are 2026-07: the header claimed for the corpus
+   * what was true of two records, and re-verifying a single record next year
+   * would have re-dated all 48 on the strength of one. A max cannot help but
+   * overstate — it is the freshest thing we hold, presented as the state of
+   * everything.
+   *
+   * The oldest end is the only honest floor ("every record is at least this
+   * fresh"), so it is always shown; the newest is shown with it, as a range, so
+   * the span is visible rather than collapsed to a single flattering date. When
+   * both ends fall in the same month the range degenerates to that one month.
+   */
+  verifiedOldest: string | null;
+  verifiedNewest: string | null;
 }
 
 const EUR = new Intl.NumberFormat("nl-NL", {
@@ -172,13 +218,57 @@ function pphBlocker(program: Program): { field: "price" | "hours"; published: Qu
  * price amount — routes through here. The rule is stated ONCE.
  */
 function missingBecause(published: Quad): Quad {
-  return published === "not_published" || published === "no" ? "not_published" : "unknown";
+  return saysNotPublished(published) ? "not_published" : "unknown";
 }
 
 /** The quad the €/contactuur cell may render when there is no computable value. */
 export function pphQuad(program: Program): Quad {
   if (pricePerContactHour(program).value != null) return "yes";
   return missingBecause(pphBlocker(program).published);
+}
+
+/**
+ * The record says the provider publishes a price, and we do not hold the amount.
+ * Five programmes are exactly this shape (aalo-yoga-academie/yin-yang-ryt200,
+ * aalo-yoga-academie/yin-ryt200, de-blikopener/hatha-raja-opleiding,
+ * sanayou/200-online, yoga-academie-nederland/300-hatha-verdieping).
+ */
+function priceAmountIsOurGap(program: Program): boolean {
+  return program.price.published === "yes" && program.price.amount_eur == null;
+}
+
+/**
+ * THE price quad — what any surface, anywhere, may say about a programme's price.
+ * The listing cell, the record row and the price filter all call THIS. There is
+ * no second derivation, and no consumer is given the raw `price.published` to
+ * re-derive one from: that duplication WAS the bug.
+ *
+ * It says what the record says — `yes`/`no`/`not_published`/`unknown`, verbatim —
+ * with exactly one correction, and it runs in the direction that protects the
+ * provider: when the record says they DO publish a price but our record holds no
+ * amount, the missing value is OURS. A "ja" with no number promises a fact we do
+ * not hold; and the finding-vs-gap rule (see missingBecause) says a value missing
+ * from a field the provider does publish is a gap in our research, never an
+ * omission by them. So it is downgraded to `unknown`.
+ *
+ * `no` is deliberately NOT rewritten to `not_published` here (as missingBecause
+ * does for a *derived* value): on the Prijs cell itself, `no` is the record's own
+ * researched, sourced word about that very field — "nee, zij publiceren geen
+ * prijs" — and it stays. Both `no` and `not_published` are findings, so anything
+ * selecting the finding must accept both: that is saysNotPublished() in quad.ts,
+ * which the price filter calls. Neither is a gap.
+ *
+ * The two failures this prevented, both live before this function existed:
+ *   - the listing printed a bare "ja" in fact ink on all five gap programmes,
+ *     while their own record pages printed "nog niet onderzocht" — the same site
+ *     stating opposite things about the same programme;
+ *   - the "niet gepubliceerd" price band selected on `amount == null`, sweeping
+ *     those five in and telling the reader that AALO Yoga Academie, de Blikopener,
+ *     SanaYou and Yoga Academie Nederland publish no price. Our own record says
+ *     they do. That is a false statement about a named business.
+ */
+export function priceQuad(program: Program): Quad {
+  return priceAmountIsOurGap(program) ? "unknown" : program.price.published;
 }
 
 /**
@@ -222,20 +312,36 @@ function nextCohort(program: Program, now: Date): NextCohort | null {
   };
 }
 
-function registers(provider: Provider, program: Program): RegisterChip[] {
+function registers(program: Program): RegisterChip[] {
   return program.accreditation.map((a) => ({
+    bodyKey: a.body,
     body: nl.body[a.body],
     label: a.label_claimed,
     verified: a.verified,
   }));
 }
 
-function yaVerified(provider: Provider): Quad {
-  const ya = provider.registrations.filter((r) => r.body === "yoga_alliance");
+/**
+ * The Yoga Alliance state THIS ROW DISPLAYS, read from the very chips the
+ * Registerstatus column renders — never from `provider.registrations`.
+ *
+ * Yoga Alliance registers a school per RYS, per programme: a provider-level
+ * registration says nothing about whether THIS programme is on the register.
+ * Filtering on the provider fact while the column showed the programme fact let
+ * the "YA register-geverifieerd" chip return six rows whose own cell read "nog
+ * niet onderzocht" — the filter and the cell next to it asserting opposite
+ * things about a named business, on the same screen.
+ *
+ * `unknown` when the row shows no YA chip at all: we have not established that
+ * this programme is registered. That is a gap, and it is not filterable as a
+ * verification.
+ */
+function yaVerified(chips: RegisterChip[]): Quad {
+  const ya = chips.filter((c) => c.bodyKey === "yoga_alliance");
   if (!ya.length) return "unknown";
-  if (ya.some((r) => r.verified_in_register === "yes")) return "yes";
-  if (ya.some((r) => r.verified_in_register === "no")) return "no";
-  if (ya.some((r) => r.verified_in_register === "not_published")) return "not_published";
+  if (ya.some((c) => c.verified === "yes")) return "yes";
+  if (ya.some((c) => c.verified === "no")) return "no";
+  if (ya.some((c) => c.verified === "not_published")) return "not_published";
   return "unknown";
 }
 
@@ -246,6 +352,7 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
     for (const program of provider.programs) {
       const pph = pricePerContactHour(program);
       const pphState = pphQuad(program);
+      const chips = registers(program);
       rows.push({
         providerId: provider.id,
         providerName: provider.name,
@@ -261,15 +368,15 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
         language: program.delivery.language ?? null,
         deliveryDisplay: deliveryDisplay(program.delivery),
         priceAmount: program.price.amount_eur ?? null,
-        pricePublished: program.price.published,
+        priceState: priceQuad(program),
         priceDisplay: priceDisplay(program.price),
         pph: pph.value,
         pphDisplay: pph.value != null ? formatEuro2(pph.value) : null,
         pphState,
         pphCaveat: pphCaveatFor(program, pphState),
-        registers: registers(provider, program),
+        registers: chips,
         crkboRegistered: provider.crkbo.registered,
-        yaVerified: yaVerified(provider),
+        yaVerified: yaVerified(chips),
         nextCohort: nextCohort(program, now),
         lastVerified: provider.last_verified,
         hasDisclosure: provider.disclosure != null,
@@ -281,11 +388,14 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
 
 export function datasetStats(providers: Provider[]): DatasetStats {
   const programs = providers.flatMap((p) => p.programs);
+  const verified = providers.map((p) => p.last_verified).sort();
   return {
     providers: providers.length,
     programs: programs.length,
     pphComputable: programs.filter((p) => pricePerContactHour(p).value != null).length,
-    lastVerified: providers.map((p) => p.last_verified).sort().at(-1) ?? null,
+    // Both ends. Never just the newest — see DatasetStats.
+    verifiedOldest: verified[0] ?? null,
+    verifiedNewest: verified.at(-1) ?? null,
   };
 }
 
@@ -449,19 +559,17 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   rows.push(fact(nl.rowStyle, program.style_claimed));
   rows.push(fact(nl.colDelivery, deliveryDisplay(program.delivery)));
 
-  // "Prijs: ja" with no amount is a promise the row cannot keep — and worse, it
-  // asserts as an established fact something our record does not hold. Five
-  // programmes are this shape. The record says the provider DOES publish a price
-  // and we simply do not have the number: by the same rule as everywhere else,
-  // that missing value is OURS, so it is a gap — and the note says so, rather
-  // than leaving the reader to infer an omission by the provider.
-  const priceAmountIsOurGap = program.price.published === "yes" && program.price.amount_eur == null;
+  // The listing's Prijs cell renders priceQuad() too — the same function, not a
+  // second reading of the same field. "Prijs: ja" with no amount is a promise the
+  // row cannot keep, and it asserts as an established fact something our record
+  // does not hold; the note says whose gap that is, rather than leaving the reader
+  // to infer an omission by the provider.
   rows.push({
     label: nl.colPrice,
     value: priceDisplay(program.price),
-    state: priceAmountIsOurGap ? "unknown" : program.price.published,
+    state: priceQuad(program),
     note: joinDot([
-      priceAmountIsOurGap && nl.priceAmountNotInRecord,
+      priceAmountIsOurGap(program) && nl.priceAmountNotInRecord,
       program.price.includes && `${nl.priceIncludes}: ${program.price.includes}`,
       program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
       program.price.note,

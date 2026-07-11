@@ -22,7 +22,16 @@ export default function Home() {
         <span>{stats.providers} {nl.statProviders}</span>
         <span>{stats.programs} {nl.statPrograms}</span>
         <span>{nl.statRegisters}</span>
-        {stats.lastVerified && <span>{nl.statVerified(formatMonth(stats.lastVerified.slice(0, 7)))}</span>}
+        {/* Both ends of the verification window. The newest alone would let two
+            fresh records date the whole corpus — see DatasetStats. */}
+        {stats.verifiedOldest && stats.verifiedNewest && (
+          <span>
+            {nl.statVerified(
+              formatMonth(stats.verifiedOldest.slice(0, 7)),
+              formatMonth(stats.verifiedNewest.slice(0, 7)),
+            )}
+          </span>
+        )}
       </div>
 
       <p className={styles.intro}>{nl.intro}</p>
