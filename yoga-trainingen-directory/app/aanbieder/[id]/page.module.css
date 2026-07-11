@@ -185,6 +185,34 @@
   margin-top: 4px;
 }
 
+/*
+ * The citation beside a fact: a link down to that source in the Bronnen section.
+ * The methodology promises "Bij elk gegeven staat een bron … je kunt elke bron
+ * zelf naslaan", so every sourced field carries one.
+ *
+ * NOT a quad, and it must never look like one: --finding and --gap say something
+ * about the PROVIDER, and a citation says only where we got the fact. It is
+ * provenance, not an accusation — so it borrows the existing muted/mono idiom of
+ * .note, one step smaller, underlined only on hover. It has to be legible enough
+ * to click and quiet enough to ignore.
+ */
+.cite {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--rule-2);
+  margin-top: 4px;
+}
+
+.cite:hover,
+.cite:focus-visible {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
 .claim {
   max-width: 780px;
   margin: 14px 0;
@@ -230,20 +258,34 @@
   margin: 0;
 }
 
+/*
+ * Also the landing target of every .cite link on the page (id="bron-<source-id>").
+ * scroll-margin-top keeps the row clear of the viewport edge when jumped to, and
+ * :target tints the row the reader asked for — the same --hover the analysis block
+ * uses. Quiet, and pointedly not a quad colour: nothing here is a finding.
+ */
 .srcRow {
   display: grid;
-  grid-template-columns: 110px minmax(180px, 1fr) 230px;
+  grid-template-columns: 150px minmax(180px, 1fr) 230px;
   gap: 16px;
   padding: 7px 0;
   border-top: 1px dotted var(--rule-dot);
   align-items: baseline;
   max-width: 880px;
+  scroll-margin-top: 24px;
 }
 
+.srcRow:target {
+  background: var(--hover);
+}
+
+/* The source's own id — the string a .cite link names, so a reader who follows
+   one lands on a row that says the id they clicked. */
 .srcKind {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--muted);
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
 }
 
 .srcCaptured {

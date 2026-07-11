@@ -132,9 +132,15 @@ export const nl = {
     "Geen oordeel “samenhang: hoog/laag”. De signalen staan er; u weegt zelf.",
   secTransparency: "Wat de aanbieder publiceert",
   secContract: "Voorwaarden",
-  secClaims: "Beweringen in het record",
+  // Beweringen staan bij het ding waarover ze gaan. Een bewering met scope
+  // `program:300-advance` onder de 200u-opleiding lezen is misattributie — het
+  // record verankert de scope, dus de pagina doet dat ook (zie claimsByScope).
+  secClaims: "Beweringen over de aanbieder",
+  secClaimsProgramme: "Beweringen over deze opleiding",
   claimsNote:
     "Letterlijk geciteerd in de brontaal. Beweringen zijn genoteerd als bewering — nooit als feit.",
+  claimScopeProvider: "over de aanbieder",
+  claimScopeModule: (id: string) => `over module ${id}`,
   secSources: "Bronnen",
   pubBar:
     "Publicatielat: elke kritisch geciteerde bron heeft zowel een publiek archief als een " +
@@ -149,6 +155,15 @@ export const nl = {
     "gedateerde kopie in ons eigen dossier. Een “—” betekent dat die helft er niet is. " +
     "Sommige registers zijn JS-gerenderd of uitgesloten van Wayback; daar is de lokale " +
     "kopie de enige mogelijke vastlegging.",
+  // The citation beside a fact. The methodology promises "Bij elk gegeven staat
+  // een bron en een datum" and "je kunt elke bron zelf naslaan" — so every
+  // sourced field carries a link to the source entry at the bottom of the page,
+  // by the source's own id. Deliberately quiet, and deliberately NOT a quad
+  // colour: provenance is not an accusation. It is mono/muted, like a footnote
+  // marker, because that is what it is.
+  sourceCite: (id: string) => `bron: ${id}`,
+  sourceCiteTitle: (id: string) => `Bron ${id} — spring naar de bronnenlijst onderaan deze pagina`,
+
   notArchived: "nog niet gearchiveerd",
   archivePublic: "publiek",
   archiveLocal: "lokaal",
@@ -276,14 +291,25 @@ export const nl = {
     teacher_bios_published: "Docentbio’s",
   } as const,
 
-  // Three quads, three rows — never one sentence. Joining quad LABELS into a
-  // string and handing it to the page as a single fact strips a finding of its
-  // colour and would render a gap as a fact. The keys are the schema's.
+  // One quad, one row — never one sentence. Joining quad LABELS into a string and
+  // handing it to the page as a single fact strips a finding of its colour and
+  // would render a gap as a fact.
+  //
+  // The keys ARE the schema's, and presenters.ts type-checks that: CONTRACT_LABELS
+  // is typed `Record<ContractQuadKey, string>` against the schema's own contract
+  // shape, so a quad-bearing key in the schema with no label here is a COMPILE
+  // ERROR. It was not, and `min_participants` — the clause under which a training
+  // someone has paid for gets cancelled — was researched, sourced and rendered
+  // nowhere for exactly that reason.
   contract: {
     cancellation_published: "Annuleringsvoorwaarden",
     refund_published: "Terugbetalingsregeling",
+    min_participants: "Minimum aantal deelnemers",
     installments_published: "Betaling in termijnen",
   } as const,
+
+  /** The `value` beside contract.min_participants.clause, when the record holds one. */
+  minParticipants: (n: number) => `minimaal ${n} deelnemers`,
 
   footLeft: "Geen totaalscores. Geen ranglijsten. Geen affiliate-links. Geen betaalde plaatsing.",
   footRight: "Onderzoek door Ivo Hofland",

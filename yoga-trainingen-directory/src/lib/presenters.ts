@@ -7,7 +7,7 @@
 import { bundleDelta, pricePerContactHour } from "./dataset";
 import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
-import type { Cohort, Program, Provider, Quad, Source } from "../schema";
+import type { Claim, Cohort, Program, Provider, Quad, Source } from "../schema";
 
 export interface NextCohort {
   start: string;
@@ -243,32 +243,48 @@ function priceAmountIsOurGap(program: Program): boolean {
  * no second derivation, and no consumer is given the raw `price.published` to
  * re-derive one from: that duplication WAS the bug.
  *
- * It says what the record says — `yes`/`no`/`not_published`/`unknown`, verbatim —
- * with exactly one correction, and it runs in the direction that protects the
- * provider: when the record says they DO publish a price but our record holds no
- * amount, the missing value is OURS. A "ja" with no number promises a fact we do
- * not hold; and the finding-vs-gap rule (see missingBecause) says a value missing
- * from a field the provider does publish is a gap in our research, never an
- * omission by them. So it is downgraded to `unknown`.
+ * It says what the record says, with exactly TWO corrections. Both run in the
+ * direction that protects the reader from a claim the page cannot keep:
  *
- * `no` is deliberately NOT rewritten to `not_published` here (as missingBecause
- * does for a *derived* value): on the Prijs cell itself, `no` is the record's own
- * researched, sourced word about that very field — "nee, zij publiceren geen
- * prijs" — and it stays. Both `no` and `not_published` are findings, so anything
- * selecting the finding must accept both: that is saysNotPublished() in quad.ts,
- * which the price filter calls. Neither is a gap.
+ * 1. `yes` with no amount → `unknown`. The record says they DO publish a price
+ *    but our record holds no number. A "ja" with no number promises a fact we do
+ *    not hold; and the finding-vs-gap rule (see missingBecause) says a value
+ *    missing from a field the provider does publish is a gap in OUR research,
+ *    never an omission by them. Five programmes are this shape.
  *
- * The two failures this prevented, both live before this function existed:
- *   - the listing printed a bare "ja" in fact ink on all five gap programmes,
- *     while their own record pages printed "nog niet onderzocht" — the same site
- *     stating opposite things about the same programme;
- *   - the "niet gepubliceerd" price band selected on `amount == null`, sweeping
- *     those five in and telling the reader that AALO Yoga Academie, de Blikopener,
- *     SanaYou and Yoga Academie Nederland publish no price. Our own record says
- *     they do. That is a false statement about a named business.
+ * 2. `no` → `not_published`. `price.published` is a *_published field, and on
+ *    such a field `no` and `not_published` say the identical thing about the
+ *    provider — "wij keken; zij publiceren geen prijs". saysNotPublished() in
+ *    quad.ts already declares them one finding, and the "niet gepubliceerd"
+ *    price band selects on it. But `quadClass("no")` is `fact` (correctly — see
+ *    below), so `no` + no amount fell through <Quad> to a bare "nee" in FACT
+ *    ink: clicking the band returned 14 rows in amber "niet gepubliceerd" and 5
+ *    in ink "nee". One filter, one asserted meaning, two renderings. Normalising
+ *    here is what makes the cell and the filter incapable of disagreeing — this
+ *    is the identical fix already made above for `yes`, and it is made in the
+ *    same one place.
+ *
+ * NOT normalised anywhere else, and `quadClass` is deliberately NOT changed:
+ * `no` is a genuine, ink-worthy FACT on a field that is not a *_published field.
+ * `accreditation.verified: "no"` means "claimed, and not found in the register" —
+ * an established finding of fact about a check we ran, and it must stay ink.
+ * `contract.min_participants.clause: "no"` likewise means "there is no such
+ * clause". Only the *_published family collapses `no` into the finding.
  */
 export function priceQuad(program: Program): Quad {
-  return priceAmountIsOurGap(program) ? "unknown" : program.price.published;
+  if (priceAmountIsOurGap(program)) return "unknown";
+  return publishedQuad(program.price.published);
+}
+
+/**
+ * The quad a *_published field may render AS ITSELF (not as the value it governs
+ * — that is missingBecause). `no` and `not_published` are one finding on such a
+ * field; `yes` and `unknown` pass through untouched. Every sibling cell that
+ * renders a *_published field directly must route through here, so that no two
+ * surfaces can render the same finding in two different colours.
+ */
+function publishedQuad(published: Quad): Quad {
+  return saysNotPublished(published) ? "not_published" : published;
 }
 
 /**
@@ -401,11 +417,38 @@ export function datasetStats(providers: Provider[]): DatasetStats {
 
 /* ---------- The provider record ---------- */
 
+/**
+ * THE citation. A `source` id, or null where the schema holds none for that field.
+ *
+ * The dataset carries 361 source references and NOT ONE of them used to reach the
+ * page, while /methodologie told the reader "Bij elk gegeven staat een bron en een
+ * datum … je kunt elke bron zelf naslaan" and every page's <meta description> said
+ * "Bronnen bij elk gegeven". The site asserted a standard the page it linked to
+ * did not meet. Two of these refs — `claim.source` and `cohort.source` — are
+ * REQUIRED by the schema, whose comment reads "the source makes the difference
+ * between claim and fact"; a claim published without its source is exactly the
+ * fact/claim collapse the whole model exists to prevent.
+ *
+ * The page renders it as a link to `#bron-<id>` in the Sources section.
+ * dataset.ts's referential-integrity check already guarantees that every `source:`
+ * ref resolves to an entry in that provider's `sources[]` — the dataset does not
+ * load otherwise, and the build gate refuses invalid data — so the anchor can
+ * never dangle. Nothing here re-checks it.
+ */
+type SourceRef = string | null;
+
 export interface QuadRow {
   key: string;
   label: string;
   state: Quad;
+  /**
+   * The established value, when the quad governs one and the record holds it —
+   * `contract.min_participants` is a quad (`clause`) PLUS a number. null → <Quad>
+   * renders the state word instead. Same contract as KeyValueRow.value.
+   */
+  value: string | null;
   note: string | null;
+  source: SourceRef;
 }
 
 export interface KeyValueRow {
@@ -414,6 +457,26 @@ export interface KeyValueRow {
   value: string | null;
   state: Quad;
   note: string | null;
+  source: SourceRef;
+}
+
+export interface CohortView {
+  id: string;
+  start: string;
+  status: Cohort["status"];
+  label: string;
+  note: string | null;
+  /** REQUIRED by the schema (spec §8): an announced cohort is not one that ran,
+   *  and only the source can tell a reader which this is. Never null. */
+  source: string;
+}
+
+export interface AccreditationView {
+  body: string;
+  label: string;
+  verified: Quad;
+  note: string | null;
+  source: SourceRef;
 }
 
 export interface ProgramView {
@@ -427,15 +490,32 @@ export interface ProgramView {
   contract: QuadRow[];
   /** invoicing_entity + note — provenance for the contract quads, never a quad itself. */
   contractNote: string | null;
-  accreditation: { body: string; label: string; verified: Quad; note: string | null }[];
-  cohorts: { id: string; start: string; status: Cohort["status"]; label: string; note: string | null }[];
+  accreditation: AccreditationView[];
+  cohorts: CohortView[];
+  /**
+   * The claims whose `scope` is `program:<this id>` — rendered HERE, under the
+   * programme they were made about, never in one flat provider-level list.
+   *
+   * yoga-moves has three programmes and six claims, two of them provider-level
+   * and four spread across the three programmes. Flattened, a reader comparing
+   * the 200-hour training met a claim made on the 300-hour page and attributed it
+   * to the 200. dataset.ts validates that `scope` resolves to a real programme
+   * precisely so the claim stays anchored to it; the view used to populate
+   * ClaimView.scope and then never read it, discarding the anchor.
+   */
+  claims: ClaimView[];
 }
 
 export interface ClaimView {
   id: string;
   quote: string;
   category: string;
+  /** The raw scope, verbatim from the record: "provider" | "program:<id>" | "module:<id>". */
   scope: string;
+  /** That scope in Dutch — the programme's own name where it names one. */
+  scopeLabel: string;
+  /** REQUIRED by the schema: a claim without its source is not a claim, it is gossip. */
+  source: string;
   analysis: { note: string; status: string; reviewed: string; methodologyVersion: string } | null;
 }
 
@@ -473,9 +553,30 @@ export interface ProviderView {
   depth: string;
   lastVerified: string;
   disclosure: string | null;
-  crkbo: { registered: Quad; register: string | null; holder: string | null; checked: string | null; note: string | null };
-  registrations: { body: string; identifier: string | null; holder: string | null; firstRegistered: string | null; verified: Quad; note: string | null }[];
+  crkbo: {
+    registered: Quad;
+    register: string | null;
+    holder: string | null;
+    checked: string | null;
+    note: string | null;
+    source: SourceRef;
+  };
+  registrations: {
+    body: string;
+    identifier: string | null;
+    holder: string | null;
+    firstRegistered: string | null;
+    verified: Quad;
+    note: string | null;
+    source: SourceRef;
+  }[];
   programs: ProgramView[];
+  /**
+   * ONLY the claims that are not about one of the programmes above — `scope:
+   * provider`, and any module-scoped claim. A programme's claims live on the
+   * programme (ProgramView.claims). Between the two, every claim in the record is
+   * rendered exactly once, under the thing it was actually said about.
+   */
   claims: ClaimView[];
   sources: SourceView[];
   /** Counted separately, and both are printed: neither number alone is the bar. */
@@ -493,12 +594,18 @@ function q(v: Quad | undefined): Quad {
  * record", …). With no value there is nothing established, so it is a gap —
  * never a bare "ja", which would assert a fact we do not hold.
  */
-function fact(label: string, value: string | null | undefined, note?: string | null): KeyValueRow {
+function fact(
+  label: string,
+  value: string | null | undefined,
+  note?: string | null,
+  source?: SourceRef | undefined,
+): KeyValueRow {
   return {
     label,
     value: value ?? null,
     state: value == null ? "unknown" : "yes",
     note: note ?? null,
+    source: source ?? null,
   };
 }
 
@@ -511,7 +618,9 @@ function coherenceRows(program: Program): QuadRow[] {
     key,
     label: nl.coherence[key],
     state: q(cs?.[key]),
+    value: null,
     note: cs?.[`${key}_note`] ?? null,
+    source: cs?.source ?? null,
   }));
 }
 
@@ -521,31 +630,80 @@ function transparencyRows(program: Program): QuadRow[] {
     key,
     label: nl.transparency[key],
     state: q(t?.[key]),
+    value: null,
     note: null,
+    source: t?.source ?? null,
   }));
 }
 
 /**
+ * The quad-bearing keys of the schema's `contract` object — DERIVED FROM THE
+ * SCHEMA, not from the label map.
+ *
+ * A key is quad-bearing when its value is a Quad, or an object that wraps one
+ * (`min_participants: { clause: Quad, value?: number }`). `invoicing_entity`,
+ * `source` and `note` are strings and are excluded by the type itself.
+ *
+ * This is the fix for the drift, not just for its symptom. contractRows() used to
+ * iterate the keys of `nl.contract`, which had three of the schema's four:
+ * `min_participants` — the clause under which a training someone has already paid
+ * for gets CANCELLED — was researched on six records and sourced on all six, and
+ * rendered nowhere. One of them (centre-body-mind) carries `clause: not_published`:
+ * a sourced finding about a named business, silently dropped. TypeScript could not
+ * see it, because a schema key with no label is invisible to a map keyed by labels.
+ * Keyed the other way round, as below, a schema key with no label is a COMPILE
+ * ERROR — and the test derives its key list from the schema shape at runtime too,
+ * so neither half can drift again.
+ */
+type ContractObject = NonNullable<Program["contract"]>;
+type ContractQuadKey = {
+  [K in keyof ContractObject]-?: NonNullable<ContractObject[K]> extends Quad | { clause: Quad }
+    ? K
+    : never;
+}[keyof ContractObject];
+
+/** Add a quad key to `contract` in the schema without a label here → this line fails to compile. */
+const CONTRACT_LABELS: Record<ContractQuadKey, string> = nl.contract;
+
+/**
  * The contract quads, each one its own row — because each one is its own quad.
  *
- * These used to be flattened into a single "Voorwaarden" row: three quad LABELS
- * joined into a sentence and handed to the page as one `state: "yes"`. That
- * rendered two genuine `not_published` findings in fact ink, and would have
- * rendered a future `unknown` — a gap — as an established fact. A quad becomes
- * pixels in exactly one place (<Quad>); the only way to keep that true is to
- * hand the page the quads themselves.
+ * These used to be flattened into a single "Voorwaarden" row: quad LABELS joined
+ * into a sentence and handed to the page as one `state: "yes"`. That rendered two
+ * genuine `not_published` findings in fact ink, and would have rendered a future
+ * `unknown` — a gap — as an established fact. A quad becomes pixels in exactly one
+ * place (<Quad>); the only way to keep that true is to hand the page the quads
+ * themselves.
  *
  * Rendered on EVERY programme, like coherence and transparency: 12 of 77 records
  * carry a `contract` object at all, and the emptiness is itself worth seeing.
+ *
+ * `min_participants` is the odd one: its quad is `clause` ("is there such a
+ * clause?") and it may carry a number with it. The number rides as the row's
+ * `value`, so <Quad> shows "minimaal 6 deelnemers" where the record holds one and
+ * the plain state word where it does not — the clause still governs the colour.
+ * Note that `clause: "no"` here is a genuine FACT ("there is no such clause"), not
+ * a *_published field, so it is never normalised to a finding — see priceQuad.
  */
 function contractRows(program: Program): QuadRow[] {
   const c = program.contract;
-  return (Object.keys(nl.contract) as (keyof typeof nl.contract)[]).map((key) => ({
-    key,
-    label: nl.contract[key],
-    state: q(c?.[key]),
-    note: null,
-  }));
+  // One source for the whole `contract` object — the schema puts it there, so
+  // every row it produces carries it.
+  const source = c?.source ?? null;
+  return (Object.keys(CONTRACT_LABELS) as ContractQuadKey[]).map((key) => {
+    if (key === "min_participants") {
+      const mp = c?.min_participants;
+      return {
+        key,
+        label: CONTRACT_LABELS[key],
+        state: q(mp?.clause),
+        value: mp?.value != null ? nl.minParticipants(mp.value) : null,
+        note: null,
+        source,
+      };
+    }
+    return { key, label: CONTRACT_LABELS[key], state: q(c?.[key]), value: null, note: null, source };
+  });
 }
 
 function programRows(provider: Provider, program: Program): KeyValueRow[] {
@@ -555,6 +713,9 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   const delta = bundleDelta(provider, program);
   const rows: KeyValueRow[] = [];
 
+  // These three are read off the programme's own identity (its format label, the
+  // style it claims, how it is delivered) and the schema holds no `source` for
+  // any of them — so they carry none. A citation is invented for nothing here.
   rows.push(fact(nl.colFormat, formatDisplay(program.format_label)));
   rows.push(fact(nl.rowStyle, program.style_claimed));
   rows.push(fact(nl.colDelivery, deliveryDisplay(program.delivery)));
@@ -574,15 +735,22 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
       program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
       program.price.note,
     ]),
+    source: program.price.source ?? null,
   });
 
   // The same epistemic rule as the listing's €/contactuur column, from the same
   // pair of helpers — the record must never say something the listing does not.
+  //
+  // No citation: this is a DERIVED value (spec §6), computed by us from the price
+  // and the hours, each of which carries its own source in the row above and the
+  // row below. Pinning one of those two sources to our own arithmetic would credit
+  // the provider with a number they never published.
   rows.push({
     label: nl.colPph,
     value: pph.value != null ? formatEuro2(pph.value) : null,
     state: pphState,
     note: pphCaveatFor(program, pphState),
+    source: null,
   });
 
   rows.push({
@@ -596,6 +764,7 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
       ? missingBecause(h.breakdown_published)
       : "yes",
     note: h.note ?? null,
+    source: h.source ?? null,
   });
 
   // The §5 field. Its emptiness across the market is the finding — so it gets
@@ -609,6 +778,8 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
       : null,
     state: h.supervised_teaching_practice != null ? "yes" : missingBecause(h.breakdown_published),
     note: null,
+    // Same field as the row above: the schema puts one source on hours_claimed.
+    source: h.source ?? null,
   });
 
   // The quote is the provider's own words, and where `exists` is a FINDING it is
@@ -624,6 +795,9 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
     value: assessment?.quote ?? null,
     state: assessmentState,
     note: assessment?.quote && !quoteRendersAsValue ? `“${assessment.quote}”` : null,
+    // The schema's `assessment_described` has no `source` field — so this row
+    // shows none. It does not borrow one it was never given.
+    source: null,
   });
 
   rows.push(fact(
@@ -633,6 +807,7 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
       program.group_size_claimed?.max != null && `max ${program.group_size_claimed.max}`,
     ]),
     program.group_size_claimed?.note,
+    program.group_size_claimed?.source,
   ));
 
   rows.push(fact(nl.rowPrerequisites, program.prerequisites_claimed));
@@ -655,10 +830,45 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
           `${nl.lastConfirmed} ${formatMonth(program.track_record.last_confirmed_cohort.slice(0, 7))}`,
       ]),
       joinDot([program.track_record.cadence_note, program.track_record.note]),
+      program.track_record.source,
     ));
   }
 
   return rows;
+}
+
+/**
+ * A claim's scope, in Dutch. `program:<id>` resolves to the programme's NAME —
+ * dataset.ts's integrity check guarantees the id resolves, so the fallback below
+ * is unreachable in a dataset that loads at all; it exists only so this function
+ * is total.
+ */
+function scopeLabel(provider: Provider, scope: string): string {
+  if (scope === "provider") return nl.claimScopeProvider;
+  const programId = scope.startsWith("program:") ? scope.slice("program:".length) : null;
+  if (programId) return provider.programs.find((p) => p.id === programId)?.name ?? scope;
+  const moduleId = scope.startsWith("module:") ? scope.slice("module:".length) : null;
+  if (moduleId) return nl.claimScopeModule(provider.modules.find((m) => m.id === moduleId)?.name ?? moduleId);
+  return scope;
+}
+
+function toClaimView(provider: Provider, c: Claim): ClaimView {
+  return {
+    id: c.id,
+    quote: c.quote, // VERBATIM. Never touch this.
+    category: nl.claimCategory[c.category],
+    scope: c.scope,
+    scopeLabel: scopeLabel(provider, c.scope),
+    source: c.source, // required by the schema — a claim without one is not a claim
+    analysis: c.analysis
+      ? {
+          note: c.analysis.note,
+          status: nl.analysisStatus[c.analysis.status],
+          reviewed: c.analysis.reviewed,
+          methodologyVersion: c.analysis.methodology_version,
+        }
+      : null,
+  };
 }
 
 function domainOf(url: string): string {
@@ -696,6 +906,7 @@ export function toProviderView(p: Provider): ProviderView {
       holder: p.crkbo.holder ?? null,
       checked: p.crkbo.checked ?? null,
       note: p.crkbo.note ?? null,
+      source: p.crkbo.source ?? null,
     },
     registrations: p.registrations.map((r) => ({
       body: nl.body[r.body],
@@ -704,6 +915,7 @@ export function toProviderView(p: Provider): ProviderView {
       firstRegistered: r.first_registered ?? null,
       verified: r.verified_in_register,
       note: r.note ?? null,
+      source: r.source ?? null,
     })),
     programs: p.programs.map((program) => ({
       id: program.id,
@@ -723,6 +935,7 @@ export function toProviderView(p: Provider): ProviderView {
         label: a.label_claimed,
         verified: a.verified,
         note: a.note ?? null,
+        source: a.source ?? null,
       })),
       cohorts: (program.cohorts ?? []).map((c) => ({
         id: c.id,
@@ -730,22 +943,18 @@ export function toProviderView(p: Provider): ProviderView {
         status: c.status,
         label: `${formatMonth(c.start.slice(0, 7))} — ${nl.cohortStatus[c.status]}`,
         note: c.note ?? null,
+        source: c.source, // required by the schema (spec §8)
       })),
+      // The claims made about THIS programme, anchored by the scope the record
+      // gives them and dataset.ts validates. See ProgramView.claims.
+      claims: p.claims.filter((c) => c.scope === `program:${program.id}`).map((c) => toClaimView(p, c)),
     })),
-    claims: p.claims.map((c) => ({
-      id: c.id,
-      quote: c.quote, // VERBATIM. Never touch this.
-      category: nl.claimCategory[c.category],
-      scope: c.scope,
-      analysis: c.analysis
-        ? {
-            note: c.analysis.note,
-            status: nl.analysisStatus[c.analysis.status],
-            reviewed: c.analysis.reviewed,
-            methodologyVersion: c.analysis.methodology_version,
-          }
-        : null,
-    })),
+    // Everything the programmes above did not take: provider-level claims, and
+    // module-scoped ones. Together the two lists are a partition of p.claims —
+    // every claim is rendered exactly once, and none is dropped.
+    claims: p.claims
+      .filter((c) => !p.programs.some((program) => c.scope === `program:${program.id}`))
+      .map((c) => toClaimView(p, c)),
     sources: p.sources.map((s: Source) => ({
       id: s.id,
       type: nl.sourceType[s.type],

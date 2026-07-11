@@ -74,10 +74,19 @@ test("PRICE: 'niet gepubliceerd' selects the FINDING — never “we hold no amo
   // Nothing dropped, either: every genuine finding is reachable through the band.
   assert.equal(notPub.length, ROWS.filter((r) => saysNotPublished(r.priceState)).length,
     "the 'niet gepubliceerd' band dropped a genuine finding");
-  // Both literal values that mean "they do not publish it" are in there — the
-  // band is not secretly just one of them.
-  assert.ok(notPub.some((r) => r.priceState === "not_published"), "no 'not_published' row in the band");
-  assert.ok(notPub.some((r) => r.priceState === "no"), "no 'no' row in the band — that finding is unreachable");
+
+  // Both literal RECORD values that mean "they do not publish it" are in there —
+  // the band is not secretly just one of them. They are checked on the RECORD,
+  // not on the rendered quad, because the rendered quad is now the same for both:
+  // priceQuad() normalises `no` to `not_published` on this *_published field, so
+  // the band's 19 rows render as ONE finding in ONE colour. They did not: 14 came
+  // out amber "niet gepubliceerd" and 5 in fact-ink "nee" — one filter, one
+  // asserted meaning, two renderings, on the same screen.
+  const recordSays = (r: (typeof notPub)[number]) => programOf(r.providerId, r.programId).price.published;
+  assert.ok(notPub.some((r) => recordSays(r) === "not_published"), "no 'not_published' row in the band");
+  assert.ok(notPub.some((r) => recordSays(r) === "no"), "no 'no' row in the band — that finding is unreachable");
+  assert.ok(notPub.every((r) => r.priceState === "not_published"),
+    "a row in the 'niet gepubliceerd' band renders as something other than the finding the band asserts");
 });
 
 test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no band", () => {

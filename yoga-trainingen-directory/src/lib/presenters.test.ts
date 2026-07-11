@@ -1,9 +1,13 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { z } from "zod";
 import { loadDataset } from "./dataset";
 import { toListingRows, datasetStats, formatMonth, pphQuad, priceQuad, toProviderView } from "./presenters";
 import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
+// The SCHEMA, as a value — the contract test walks its shape rather than
+// hard-coding the key list it is supposed to be guarding. See SCHEMA_CONTRACT_KEYS.
+import { Program, Quad } from "../schema";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z"); // fixed — never let a test depend on the wall clock
@@ -297,19 +301,63 @@ test("PRICE: the listing row's price quad IS the record page's price quad — ev
   }
 });
 
-test("PRICE: a quad rendered as a FACT always has a value to show — never a bare “ja”", () => {
+test("PRICE: a quad rendered as a FACT always has a value to show — never a bare “ja” or “nee”", () => {
   // <Quad> renders its children only for a fact WITH children, and falls through
   // to the state word otherwise. So a fact-class quad with nothing to show prints
   // a naked "ja" — an established fact, asserted, with no fact behind it. That is
   // what the five gap programmes printed on the listing.
+  //
+  // There is no longer any exemption for `no`. There used to be — "nee, zij
+  // publiceren geen prijs, the value IS the word" — and it was wrong: `no` on a
+  // *_published field is the SAME finding as `not_published` (saysNotPublished
+  // says so, and the price filter selects on it), but it fell through <Quad> in
+  // FACT ink. Five programmes printed a bare "nee" in ink inside a filter band
+  // rendering fourteen others in amber. priceQuad() now normalises it, so no
+  // price row can reach <Quad> as a value-less fact at all.
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
     if (quadClass(r.priceState) !== "fact") continue;
-    if (r.priceState === "no") continue; // "nee, zij publiceren geen prijs" — the value IS the word
     assert.ok(r.priceDisplay != null,
       `${r.providerId}/${r.programId}: the Prijs cell is a fact ("${r.priceState}") with nothing to show — ` +
-      `it renders a bare “ja”, asserting a price our record does not hold`);
+      `it renders a bare “${r.priceState === "no" ? "nee" : "ja"}”, asserting as established fact a price ` +
+      `our record does not hold`);
   }
+});
+
+test("PRICE: every row in the “niet gepubliceerd” band renders the FINDING class — never fact ink", () => {
+  // THE contradiction, visible on one screen. saysNotPublished() declares `no` and
+  // `not_published` one finding, and the "niet gepubliceerd" price chip selects on
+  // it — but quadClass("no") is "fact", and <Quad> renders children only for a fact
+  // THAT HAS children, so `no` + no amount fell through to quadLabel("no") = "nee",
+  // in fact ink. Clicking one chip returned 14 rows in amber "niet gepubliceerd"
+  // and 5 in ink "nee": one filter, one asserted meaning, two renderings.
+  //
+  // This is the identical bug already fixed for "ja", left standing for "nee". It
+  // fails against the pre-fix code on all five (critical-alignment,
+  // spark-of-light, yoga-centrum-oosterwold ×2, yoga-nature-studio), each of whose
+  // records carries a sourced note to exactly this effect ("Geen prijs
+  // gepubliceerd op de 300u-pagina").
+  //
+  // quadClass itself is deliberately NOT changed: accreditation.verified: "no"
+  // ("claimed, and not found in the register") is a genuine fact and stays ink.
+  // Only priceQuad — a *_published field — normalises.
+  const rows = toListingRows(providers, NOW);
+  const band = rows.filter((r) => saysNotPublished(r.priceState));
+  assert.ok(band.length > 0, "the 'niet gepubliceerd' band is empty — this test tests nothing");
+
+  let fromNo = 0;
+  for (const r of band) {
+    assert.equal(quadClass(r.priceState), "finding",
+      `${r.providerId}/${r.programId}: this row sits in the "niet gepubliceerd" band — an accusation ` +
+      `about a named business — yet its Prijs cell renders in "${quadClass(r.priceState)}" ink, not amber. ` +
+      `The chip and the cell state the same thing in two different colours.`);
+    assert.equal(r.priceState, "not_published",
+      `${r.providerId}/${r.programId}: the band's rows must all render as ONE finding, not two`);
+    if (programOf(r.providerId, r.programId).price.published === "no") fromNo++;
+  }
+  // The `no` direction is the one that was broken; if the data ever loses it, this
+  // test would keep passing while testing nothing.
+  assert.ok(fromNo > 0, "no programme records price.published: no any more — the broken direction is untested");
 });
 
 test("PRICE: the five programmes that publish a price we do not hold are OUR gap, on BOTH pages", () => {
@@ -414,15 +462,199 @@ test("every row carries its raw city names, for the distance filter to place", (
 
 /* ---------- The provider record ---------- */
 
-test("RECORD: a claim quote is reproduced verbatim, never altered", () => {
+/** Every claim the view renders anywhere: provider-level plus each programme's. */
+const renderedClaims = (view: ReturnType<typeof toProviderView>) =>
+  [...view.claims, ...view.programs.flatMap((prog) => prog.claims)];
+
+test("RECORD: a claim quote is reproduced verbatim, never altered — and never dropped", () => {
   // spec §3, the legal posture. Not truncated, not ellipsised, not re-cased.
+  // Claims now live under the thing their `scope` says they are about, so the
+  // completeness check is over BOTH lists: every claim in the record is rendered
+  // exactly once, and no claim is lost to the regrouping.
   for (const p of providers) {
     const view = toProviderView(p);
-    assert.equal(view.claims.length, p.claims.length);
-    for (const [i, c] of p.claims.entries()) {
-      assert.equal(view.claims[i].quote, c.quote, `claim ${c.id} was altered`);
+    const rendered = renderedClaims(view);
+    assert.equal(rendered.length, p.claims.length, `${p.id}: a claim was dropped or duplicated`);
+    assert.deepEqual(new Set(rendered.map((c) => c.id)).size, p.claims.length,
+      `${p.id}: a claim is rendered twice`);
+    for (const c of p.claims) {
+      const shown = rendered.find((r) => r.id === c.id);
+      assert.ok(shown, `${p.id}: claim ${c.id} reaches no part of the page`);
+      assert.equal(shown.quote, c.quote, `claim ${c.id} was altered`);
     }
   }
+});
+
+/* ---------- Provenance: the site's own methodology, kept ----------
+ *
+ * /methodologie promises "Bij elk gegeven staat een bron en een datum", "Elk
+ * gegeven heeft een bron" and "je kunt elke bron zelf naslaan"; the <meta
+ * description> on every page says "Bronnen bij elk gegeven". The dataset holds 361
+ * source refs. Not one of them reached the page: `toProviderView` read `.source`
+ * only on the `sources[]` array itself. A reader met six verbatim quotes on
+ * /aanbieder/yoga-moves and could look up not one of them.
+ *
+ * `claim.source` and `cohort.source` are REQUIRED by the schema — "the source makes
+ * the difference between claim and fact". A null in either is a bug, not data.
+ */
+
+test("SOURCE: every claim carries its source — the schema requires it, so a null is a bug", () => {
+  let checked = 0;
+  for (const p of providers) {
+    for (const c of renderedClaims(toProviderView(p))) {
+      assert.ok(c.source != null && c.source.length > 0,
+        `${p.id}: claim ${c.id} is published with NO source. The schema makes it required — "the source ` +
+        `makes the difference between claim and fact" — and /methodologie promises the reader can look it up.`);
+      checked++;
+    }
+  }
+  assert.ok(checked > 0, "no claims in the dataset — this test tests nothing");
+});
+
+test("SOURCE: every cohort carries its source — an announced cohort is not one that ran (§8)", () => {
+  let checked = 0;
+  for (const p of providers) {
+    for (const prog of toProviderView(p).programs) {
+      for (const c of prog.cohorts) {
+        assert.ok(c.source != null && c.source.length > 0,
+          `${p.id}/${prog.id}: cohort ${c.id} is published with NO source. Recording an announcement as ` +
+          `though it ran is the central trap (spec §8), and only the source lets a reader tell.`);
+        checked++;
+      }
+    }
+  }
+  assert.ok(checked > 0, "no cohorts in the dataset — this test tests nothing");
+});
+
+test("SOURCE: every source a fact cites exists in that provider's sources[] — the link can never dangle", () => {
+  // dataset.ts's referential-integrity check already guarantees this (a record
+  // whose `source:` ref does not resolve does not load, and the build gate refuses
+  // invalid data). This asserts that the VIEW does not invent, mangle or mis-key a
+  // ref on the way to the page: every id the page renders as `#bron-<id>` must be
+  // the id of a source row rendered on that same page.
+  let cites = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    const ids = new Set(view.sources.map((s) => s.id));
+    const check = (source: string | null, what: string) => {
+      if (source == null) return;
+      assert.ok(ids.has(source),
+        `${p.id}: ${what} cites source "${source}", which is not in this provider's sources[] — ` +
+        `the citation links to #bron-${source}, an anchor that exists nowhere on the page`);
+      cites++;
+    };
+
+    check(view.crkbo.source, "crkbo");
+    view.registrations.forEach((r, i) => check(r.source, `registrations[${i}]`));
+    for (const c of view.claims) check(c.source, `claim ${c.id}`);
+    for (const prog of view.programs) {
+      for (const row of prog.rows) check(row.source, `${prog.id} row "${row.label}"`);
+      for (const row of [...prog.coherence, ...prog.transparency, ...prog.contract]) {
+        check(row.source, `${prog.id} quad "${row.key}"`);
+      }
+      for (const a of prog.accreditation) check(a.source, `${prog.id} accreditation "${a.label}"`);
+      for (const c of prog.cohorts) check(c.source, `${prog.id} cohort ${c.id}`);
+      for (const c of prog.claims) check(c.source, `${prog.id} claim ${c.id}`);
+    }
+  }
+  // The dataset holds 361 source refs. If the view carried none of them — the bug
+  // this test exists for — every assertion above would vacuously pass.
+  assert.ok(cites > 300,
+    `only ${cites} facts carry a citation. The dataset holds 361 source refs, and the methodology ` +
+    `promises "bij elk gegeven staat een bron".`);
+});
+
+test("SOURCE: the facts the schema sources are the facts the page cites", () => {
+  // Field by field, against the record — so a `source` silently dropped from one
+  // kind of fact (as all of them were) fails here, not just in aggregate.
+  for (const p of providers) {
+    const view = toProviderView(p);
+    assert.equal(view.crkbo.source, p.crkbo.source ?? null, `${p.id}: crkbo lost its source`);
+    p.registrations.forEach((r, i) =>
+      assert.equal(view.registrations[i].source, r.source ?? null, `${p.id}: registration ${i} lost its source`));
+
+    for (const prog of p.programs) {
+      const rendered = view.programs.find((v) => v.id === prog.id)!;
+      const row = (label: string) => rendered.rows.find((r) => r.label === label);
+      assert.equal(row(nl.colPrice)!.source, prog.price.source ?? null,
+        `${p.id}/${prog.id}: the Prijs row lost price.source`);
+      assert.equal(row(nl.rowHours)!.source, prog.hours_claimed.source ?? null,
+        `${p.id}/${prog.id}: the Urenuitsplitsing row lost hours_claimed.source`);
+      assert.equal(row(nl.rowSupervised)!.source, prog.hours_claimed.source ?? null,
+        `${p.id}/${prog.id}: the Begeleide lespraktijk row lost hours_claimed.source`);
+      if (prog.group_size_claimed) {
+        assert.equal(row(nl.rowGroupSize)!.source, prog.group_size_claimed.source ?? null,
+          `${p.id}/${prog.id}: the Groepsgrootte row lost group_size_claimed.source`);
+      }
+      if (prog.track_record) {
+        assert.equal(row(nl.rowTrackRecord)!.source, prog.track_record.source ?? null,
+          `${p.id}/${prog.id}: the Track record row lost track_record.source`);
+      }
+      for (const r of rendered.coherence) {
+        assert.equal(r.source, prog.coherence_signals?.source ?? null, `${p.id}/${prog.id}: coherence source`);
+      }
+      for (const r of rendered.transparency) {
+        assert.equal(r.source, prog.transparency?.source ?? null, `${p.id}/${prog.id}: transparency source`);
+      }
+      for (const r of rendered.contract) {
+        assert.equal(r.source, prog.contract?.source ?? null, `${p.id}/${prog.id}: contract source`);
+      }
+      prog.accreditation.forEach((a, i) =>
+        assert.equal(rendered.accreditation[i].source, a.source ?? null,
+          `${p.id}/${prog.id}: accreditation ${i} lost its source`));
+      (prog.cohorts ?? []).forEach((c, i) =>
+        assert.equal(rendered.cohorts[i].source, c.source, `${p.id}/${prog.id}: cohort ${c.id} lost its source`));
+    }
+  }
+});
+
+/* ---------- Claims stay anchored to what they were said about ---------- */
+
+test("CLAIM: a programme-scoped claim is rendered under THAT programme, never another", () => {
+  // `scope` was populated and never read: the page rendered every claim in one
+  // flat provider-level list. yoga-moves has 3 programmes and 6 claims — a reader
+  // comparing the 200-hour training met "ya-copycats-300", quoted from the 300-hour
+  // page, and attributed it to the 200. dataset.ts validates that `scope` resolves
+  // precisely so the claim stays anchored; the view discarded the anchor.
+  let scoped = 0;
+  let providerLevel = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of view.programs) {
+      for (const c of prog.claims) {
+        assert.equal(c.scope, `program:${prog.id}`,
+          `${p.id}: claim ${c.id} has scope "${c.scope}" but is rendered under programme ${prog.id} — ` +
+          `a claim misattributed to a programme it was not made about`);
+        scoped++;
+      }
+    }
+    for (const c of view.claims) {
+      assert.ok(!p.programs.some((prog) => c.scope === `program:${prog.id}`),
+        `${p.id}: claim ${c.id} is scoped to a programme (${c.scope}) yet sits in the flat ` +
+        `provider-level list, where a reader will attribute it to the wrong training`);
+      providerLevel++;
+    }
+  }
+  assert.ok(scoped > 0, "no programme-scoped claim any more — the misattribution direction is untested");
+  assert.ok(providerLevel > 0, "no provider-level claim any more — that direction is untested");
+});
+
+test("CLAIM: yoga-moves' six claims land on the three programmes the record scopes them to", () => {
+  // Named, because the misattribution would be named. This is the record from the
+  // review, claim by claim.
+  const view = toProviderView(providers.find((p) => p.id === "yoga-moves")!);
+  const idsOf = (programId: string) =>
+    view.programs.find((v) => v.id === programId)!.claims.map((c) => c.id).sort();
+
+  assert.deepEqual(idsOf("200-vinyasa"), ["ya-international-200"]);
+  assert.deepEqual(idsOf("300-advance"), ["ya-copycats-300"]);
+  assert.deepEqual(idsOf("ashtanga-tt"), ["ashtanga-yai", "pranayama-cert-ashtanga"]);
+  assert.deepEqual(view.claims.map((c) => c.id).sort(), ["vinyasa-intro-nl", "ya-first-school"]);
+
+  // The 200-hour programme must not carry the claim quoted from the 300-hour page.
+  assert.ok(!idsOf("200-vinyasa").includes("ya-copycats-300"));
+  // Provider-level claims say so where they are shown.
+  for (const c of view.claims) assert.equal(c.scopeLabel, nl.claimScopeProvider);
 });
 
 test("RECORD: disclosure is always carried through when present", () => {
@@ -496,24 +728,84 @@ test("RECORD: an absent transparency object yields gaps, not findings", () => {
   assert.ok(checked > 0, "no programme lacks a transparency object any more — this test tests nothing");
 });
 
+/* ---------- Voorwaarden: the page renders the SCHEMA's keys, not a hand-kept list ----------
+ *
+ * The key list below is DERIVED FROM THE SCHEMA at runtime. The old test hard-coded
+ * the same three keys the presenter hard-coded — `["cancellation_published",
+ * "refund_published", "installments_published"]` — so it confirmed itself, and the
+ * schema's FOURTH quad-bearing key went unrendered and untested for as long as it
+ * existed. `min_participants` is the clause under which a training someone has
+ * already paid for gets CANCELLED. Six records carry it; one (centre-body-mind)
+ * carries `clause: not_published` — a sourced finding about a named business,
+ * dropped on the floor. A reader was never told the clause exists.
+ *
+ * A guard test that reads its expectations from the thing it guards guards nothing.
+ * So: walk the schema.
+ */
+const unwrapSchema = (s: z.ZodTypeAny): z.ZodTypeAny =>
+  s instanceof z.ZodOptional || s instanceof z.ZodNullable ? unwrapSchema(s.unwrap()) : s;
+
+/** A Quad, or an object wrapping one (`min_participants: { clause: Quad, … }`). */
+const isQuadBearing = (s: z.ZodTypeAny): boolean => {
+  const inner = unwrapSchema(s);
+  if (inner instanceof z.ZodEnum) {
+    const options = inner.options as string[];
+    return Quad.options.every((o) => options.includes(o)) && options.length === Quad.options.length;
+  }
+  if (inner instanceof z.ZodObject) {
+    const shape = inner.shape as Record<string, z.ZodTypeAny>;
+    return shape.clause != null && isQuadBearing(shape.clause);
+  }
+  return false;
+};
+
+const CONTRACT_SHAPE = (unwrapSchema(Program.shape.contract) as z.ZodObject<z.ZodRawShape>).shape;
+const SCHEMA_CONTRACT_KEYS = Object.keys(CONTRACT_SHAPE).filter((k) => isQuadBearing(CONTRACT_SHAPE[k]));
+
+test("RECORD: every quad-bearing contract key IN THE SCHEMA reaches the page", () => {
+  // Derived from the schema, so a new quad key added to `contract` fails here
+  // until it is rendered — and TypeScript fails first, at CONTRACT_LABELS in
+  // presenters.ts, which is keyed by the schema's own contract shape.
+  assert.ok(SCHEMA_CONTRACT_KEYS.includes("min_participants"),
+    "the schema no longer has min_participants — this test is pinned to the wrong thing");
+  assert.equal(SCHEMA_CONTRACT_KEYS.length, 4,
+    `the schema's contract has ${SCHEMA_CONTRACT_KEYS.length} quad keys: ${SCHEMA_CONTRACT_KEYS.join(", ")}`);
+
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      const rendered = view.programs.find((v) => v.id === prog.id)!;
+      assert.deepEqual(
+        [...rendered.contract.map((r) => r.key)].sort(),
+        [...SCHEMA_CONTRACT_KEYS].sort(),
+        `${p.id}/${prog.id}: the rendered contract rows are not the schema's quad keys — a researched, ` +
+        `sourced field the schema defines is invisible on the page`);
+      for (const row of rendered.contract) {
+        assert.ok(row.label && row.label.length > 0, `${p.id}/${prog.id}: contract.${row.key} has no label`);
+      }
+    }
+  }
+});
+
 test("RECORD: the contract quads reach the page AS quads, never flattened into a sentence", () => {
   // They were once joined into one "Voorwaarden" string handed to the page as a
   // single `state: "yes"` — two real `not_published` findings rendered in fact
   // ink, and a future `unknown` would have rendered a gap as an established
   // fact. Each sub-quad must arrive with its own state, unaltered from the record.
-  const keys = ["cancellation_published", "refund_published", "installments_published"] as const;
   let facts = 0;
   let findings = 0;
   for (const p of providers) {
     const view = toProviderView(p);
     for (const prog of p.programs) {
       const rendered = view.programs.find((v) => v.id === prog.id)!;
-      assert.equal(rendered.contract.length, keys.length,
-        `${p.id}/${prog.id} does not render all three contract quads`);
-      for (const key of keys) {
+      for (const key of SCHEMA_CONTRACT_KEYS) {
         const row = rendered.contract.find((r) => r.key === key)!;
-        assert.equal(row.state, prog.contract?.[key] ?? "unknown",
-          `${p.id}/${prog.id}: contract.${key} is "${prog.contract?.[key] ?? "absent"}" in the record ` +
+        // min_participants holds its quad on `clause`; the others ARE the quad.
+        const recorded = key === "min_participants"
+          ? prog.contract?.min_participants?.clause
+          : (prog.contract as Record<string, Quad | undefined> | undefined)?.[key];
+        assert.equal(row.state, recorded ?? "unknown",
+          `${p.id}/${prog.id}: contract.${key} is "${recorded ?? "absent"}" in the record ` +
           `but renders as "${row.state}"`);
         if (row.state === "not_published") findings++;
         if (row.state === "yes" || row.state === "no") facts++;
@@ -522,6 +814,39 @@ test("RECORD: the contract quads reach the page AS quads, never flattened into a
   }
   assert.ok(findings > 0, "no contract quad is a finding any more — the finding direction is untested");
   assert.ok(facts > 0, "no contract quad is a fact any more — the fact direction is untested");
+});
+
+test("RECORD: a minimum-participants clause shows its number, and a not_published one is a FINDING", () => {
+  // The clause the training gets cancelled under. Six records carry it and none
+  // of them reached a page. Pinned by name, because the finding is about a name.
+  const view = (id: string) => toProviderView(providers.find((p) => p.id === id)!);
+  const row = (providerId: string, programId: string) =>
+    view(providerId).programs.find((v) => v.id === programId)!.contract
+      .find((r) => r.key === "min_participants")!;
+
+  // A sourced finding about a named business, silently dropped before this fix.
+  const cbm = row("centre-body-mind", "200-yoga-docentenopleiding");
+  assert.equal(cbm.state, "not_published");
+  assert.equal(quadClass(cbm.state), "finding", "a sourced not_published finding must render as one");
+
+  // The number rides with the clause where the record holds one.
+  const yogapoint = row("yogapoint", "300-verdieping");
+  assert.equal(yogapoint.state, "yes");
+  assert.equal(yogapoint.value, nl.minParticipants(6), "Yogapoint's minimum of 6 never reaches the page");
+
+  const ca = row("critical-alignment", "cay-lerarenopleiding");
+  assert.equal(ca.state, "yes");
+  assert.equal(ca.value, nl.minParticipants(12));
+
+  // A clause with no number still says the clause exists — <Quad> prints "ja".
+  const moves = row("yoga-moves", "300-advance");
+  assert.equal(moves.state, "yes");
+  assert.equal(moves.value, null);
+
+  // And an un-investigated one stays a GAP — never an accusation.
+  const yns = row("yoga-nature-studio", "200-living-vinyasa");
+  assert.equal(yns.state, "unknown");
+  assert.equal(quadClass(yns.state), "gap");
 });
 
 test("RECORD: the €/contactuur row obeys the same rule as the listing, from the same function", () => {
@@ -577,8 +902,15 @@ test("RECORD: a published price with no amount is OUR gap, never a bare “ja”
           `${p.id}/${prog.id}: the Prijs row is a gap but does not disclose why`);
         checked++;
       } else {
-        // every other programme still says exactly what the record says
-        assert.equal(row.state, prog.price.published);
+        // Every other programme still says exactly what the record says — with the
+        // one normalisation priceQuad makes on this *_published field: `no` and
+        // `not_published` are one finding, so both render as the finding. (Before,
+        // `no` rendered as a bare "nee" in fact ink; see the band test above.)
+        assert.equal(row.state, priceQuad(prog));
+        assert.equal(row.state,
+          saysNotPublished(prog.price.published) ? "not_published" : prog.price.published,
+          `${p.id}/${prog.id}: the Prijs row says "${row.state}" where the record says ` +
+          `"${prog.price.published}"`);
       }
     }
   }

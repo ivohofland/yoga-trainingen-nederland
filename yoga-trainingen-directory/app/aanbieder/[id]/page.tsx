@@ -3,7 +3,10 @@
  * every provider at build time.
  *
  * Every editorial rule this project exists to keep is visible here:
- *   - a claim is rendered VERBATIM, never characterized (spec §3);
+ *   - a claim is rendered VERBATIM, never characterized (spec §3), UNDER the
+ *     thing its `scope` says it was said about — never in one flat list, which
+ *     misattributes a 300-hour page's claim to the 200-hour programme;
+ *   - every fact carries its SOURCE, as a link to that source below (<Cite>);
  *   - an absent optional object renders as a GAP ("nog niet onderzocht"), never
  *     as a finding — <Quad> is the only thing that colours a quad;
  *   - a note renders BESIDE the fact it annotates: provenance, not a findings list;
@@ -13,7 +16,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { loadDataset } from "@/lib/dataset";
-import { toProviderView, formatMonth } from "@/lib/presenters";
+import { toProviderView, formatMonth, type ClaimView } from "@/lib/presenters";
 import { Quad } from "@/components/Quad";
 import { nl } from "@/lib/strings";
 import styles from "./page.module.css";
@@ -21,6 +24,59 @@ import styles from "./page.module.css";
 export function generateStaticParams() {
   const { providers } = loadDataset();
   return providers.map((p) => ({ id: p.id }));
+}
+
+/**
+ * A fact's citation: a link down to that source in the Sources section.
+ *
+ * /methodologie promises "Bij elk gegeven staat een bron en een datum … Je hoeft
+ * dus noch mij, noch de AI te geloven: je kunt elke bron zelf naslaan", and the
+ * <meta description> on every page says "Bronnen bij elk gegeven". The dataset
+ * held 361 source refs and not one reached the page — a reader met six verbatim
+ * quotes here and could look up none of them. The site asserted a standard the
+ * page it linked to did not meet.
+ *
+ * dataset.ts's referential-integrity check guarantees that every `source:` ref
+ * resolves to an entry in this provider's `sources[]` (the dataset does not load
+ * otherwise, and `npm run build` refuses invalid data), so `#bron-<id>` can never
+ * dangle. Nothing here re-checks it.
+ *
+ * NOT a quad, and deliberately quiet: --finding and --gap say something about the
+ * PROVIDER. This says only where we got it. Mono, muted — a footnote marker.
+ */
+function Cite({ source }: { source: string | null }) {
+  if (!source) return null;
+  return (
+    <a className={styles.cite} href={`#bron-${source}`} title={nl.sourceCiteTitle(source)}>
+      {nl.sourceCite(source)}
+    </a>
+  );
+}
+
+/** Verbatim, in the source language. Never truncated, never tidied (spec §3). */
+function Claim({ claim, showScope }: { claim: ClaimView; showScope: boolean }) {
+  return (
+    <blockquote className={styles.claim}>
+      <div className={styles.quote}>“{claim.quote}”</div>
+      <div className={styles.claimCat}>
+        {claim.category}
+        {showScope && ` · ${claim.scopeLabel}`}
+      </div>
+      {/* The schema REQUIRES a claim's source: it is what makes it a recorded
+          claim rather than an assertion of our own. It is shown. */}
+      <Cite source={claim.source} />
+      {/* Layer 3. Separated from the quote and stamped with the methodology
+          version it was made under. */}
+      {claim.analysis && (
+        <div className={styles.analysis}>
+          <div className={styles.analysisLabel}>
+            {nl.analysisLabel(claim.analysis.status, claim.analysis.methodologyVersion)}
+          </div>
+          <p className={styles.analysisBody}>{claim.analysis.note}</p>
+        </div>
+      )}
+    </blockquote>
+  );
 }
 
 export default async function ProviderPage({ params }: { params: Promise<{ id: string }> }) {
@@ -75,6 +131,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
               v.crkbo.checked && `${nl.checkedLabel} ${formatMonth(v.crkbo.checked.slice(0, 7))}`]
               .filter(Boolean).join(" · ")}
             {v.crkbo.note && <div className={styles.note}>{v.crkbo.note}</div>}
+            <Cite source={v.crkbo.source} />
           </div>
         </div>
         {v.registrations.map((r, i) => (
@@ -86,6 +143,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 r.firstRegistered && `${nl.since} ${formatMonth(r.firstRegistered.slice(0, 7))}`]
                 .filter(Boolean).join(" · ")}
               {r.note && <div className={styles.note}>{r.note}</div>}
+              <Cite source={r.source} />
             </div>
           </div>
         ))}
@@ -108,6 +166,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 <div className={styles.v}>
                   <Quad state={row.state}>{row.value}</Quad>
                   {row.note && <div className={styles.note}>{row.note}</div>}
+                  <Cite source={row.source} />
                 </div>
               </div>
             ))}
@@ -120,12 +179,16 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                     <div key={i}>
                       {a.body} — “{a.label}” <Quad state={a.verified} />
                       {a.note && <div className={styles.note}>{a.note}</div>}
+                      <Cite source={a.source} />
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
+            {/* An announced cohort is not a cohort that ran (spec §8) — and the
+                schema REQUIRES the source that lets a reader tell the two apart.
+                It is rendered, never held back. */}
             {prog.cohorts.length > 0 && (
               <div className={styles.kv}>
                 <div className={styles.k}>{nl.rowCohorts}</div>
@@ -134,6 +197,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                     <div key={c.id}>
                       {c.label}
                       {c.note && <div className={styles.note}>{c.note}</div>}
+                      <Cite source={c.source} />
                     </div>
                   ))}
                 </div>
@@ -149,8 +213,9 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
               <div key={s.key} className={styles.kv}>
                 <div className={styles.k}>{s.label}</div>
                 <div className={styles.v}>
-                  <Quad state={s.state} />
+                  <Quad state={s.state}>{s.value}</Quad>
                   {s.note && <div className={styles.note}>{s.note}</div>}
+                  <Cite source={s.source} />
                 </div>
               </div>
             ))}
@@ -159,60 +224,80 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
             {prog.transparency.map((s) => (
               <div key={s.key} className={styles.kv}>
                 <div className={styles.k}>{s.label}</div>
-                <div className={styles.v}><Quad state={s.state} /></div>
+                <div className={styles.v}>
+                  <Quad state={s.state}>{s.value}</Quad>
+                  <Cite source={s.source} />
+                </div>
               </div>
             ))}
 
-            {/* Voorwaarden — three quads, three rows, each one through <Quad>.
-                They were once flattened into a single sentence rendered in fact
-                ink: two real findings lost their colour, and a gap would have
-                read as a fact. A quad only ever becomes pixels in <Quad>. */}
+            {/* Voorwaarden — one quad, one row, each one through <Quad>. They were
+                once flattened into a single sentence rendered in fact ink: two real
+                findings lost their colour, and a gap would have read as a fact. A
+                quad only ever becomes pixels in <Quad>.
+
+                The rows are the SCHEMA's quad keys, not a hand-kept list — see
+                contractRows(). `min_participants` (the clause under which a paid-for
+                training gets cancelled) had no label and so appeared on no page at
+                all, including one sourced `not_published` finding. Where the record
+                holds the number, it rides as the row's value ("minimaal 6
+                deelnemers"); the clause quad still governs the colour. */}
             <div className={styles.subLabel}>{nl.secContract}</div>
             {prog.contract.map((s) => (
               <div key={s.key} className={styles.kv}>
                 <div className={styles.k}>{s.label}</div>
-                <div className={styles.v}><Quad state={s.state} /></div>
+                <div className={styles.v}>
+                  <Quad state={s.state}>{s.value}</Quad>
+                  <Cite source={s.source} />
+                </div>
               </div>
             ))}
             {prog.contractNote && <div className={styles.note}>{prog.contractNote}</div>}
+
+            {/* The claims made about THIS programme — where the record's `scope`
+                puts them. Flattened into one provider-level list, a claim quoted
+                from the 300-hour page was read as a claim about the 200-hour one. */}
+            {prog.claims.length > 0 && (
+              <>
+                <div className={styles.subLabel}>{nl.secClaimsProgramme}</div>
+                <p className={styles.subNote}>{nl.claimsNote}</p>
+                {prog.claims.map((c) => (
+                  <Claim key={c.id} claim={c} showScope={false} />
+                ))}
+              </>
+            )}
           </article>
         ))}
       </section>
 
-      {/* Claims — verbatim, in the source language. Never truncated, never tidied. */}
+      {/* The claims that are NOT about one of the programmes above: provider-level,
+          and module-scoped. Every programme-scoped claim is rendered under its own
+          programme, so between the two lists each claim appears exactly once. */}
       {v.claims.length > 0 && (
         <section className={styles.section}>
           <div className={styles.sectionLabel}>{nl.secClaims}</div>
           <p className={styles.subNote}>{nl.claimsNote}</p>
           {v.claims.map((c) => (
-            <blockquote key={c.id} className={styles.claim}>
-              <div className={styles.quote}>“{c.quote}”</div>
-              <div className={styles.claimCat}>{c.category}</div>
-              {/* Layer 3. Separated from the quote and stamped with the
-                  methodology version it was made under. */}
-              {c.analysis && (
-                <div className={styles.analysis}>
-                  <div className={styles.analysisLabel}>
-                    {nl.analysisLabel(c.analysis.status, c.analysis.methodologyVersion)}
-                  </div>
-                  <p className={styles.analysisBody}>{c.analysis.note}</p>
-                </div>
-              )}
-            </blockquote>
+            <Claim key={c.id} claim={c} showScope />
           ))}
         </section>
       )}
 
-      {/* Sources */}
+      {/* Sources. Each row is the anchor target of every <Cite> that names it —
+          id="bron-<source-id>". Source ids are unique within a provider record and
+          a record page renders exactly one provider, so the ids are unique on the
+          page. */}
       <section className={styles.section}>
         <div className={styles.sectionLabel}>
           {nl.sourcesHeading(v.sources.length, v.sourcesArchivedPublic, v.sourcesArchivedLocal)}
         </div>
         {v.sources.map((s) => (
-          <div key={s.id} className={styles.srcRow}>
+          <div key={s.id} id={`bron-${s.id}`} className={styles.srcRow}>
             <div className={styles.srcKind}>
-              {s.type}
-              <div className={styles.srcCaptured}>{formatMonth(s.captured.slice(0, 7))}</div>
+              {s.id}
+              <div className={styles.srcCaptured}>
+                {s.type} · {formatMonth(s.captured.slice(0, 7))}
+              </div>
             </div>
             <div className={styles.srcUrl}>
               {s.url ? <a href={s.url} target="_blank" rel="noopener">{s.url}</a> : s.id}
