@@ -4,9 +4,10 @@
  * values, spec §6). This module owns *display*: the strings a component
  * renders, and nothing else.
  */
-import { pricePerContactHour } from "./dataset";
+import { bundleDelta, pricePerContactHour } from "./dataset";
+import { quadLabel } from "./quad";
 import { nl } from "./strings";
-import type { Cohort, Program, Provider, Quad } from "../schema";
+import type { Cohort, Program, Provider, Quad, Source } from "../schema";
 
 export interface NextCohort {
   start: string;
@@ -275,5 +276,322 @@ export function datasetStats(providers: Provider[]): DatasetStats {
     programs: programs.length,
     pphComputable: programs.filter((p) => pricePerContactHour(p).value != null).length,
     lastVerified: providers.map((p) => p.last_verified).sort().at(-1) ?? null,
+  };
+}
+
+/* ---------- The provider record ---------- */
+
+export interface QuadRow {
+  key: string;
+  label: string;
+  state: Quad;
+  note: string | null;
+}
+
+export interface KeyValueRow {
+  label: string;
+  /** null → the Quad renders its state word instead of a value. */
+  value: string | null;
+  state: Quad;
+  note: string | null;
+}
+
+export interface ProgramView {
+  id: string;
+  name: string;
+  url: string | null;
+  styleClaimed: string | null;
+  rows: KeyValueRow[];
+  coherence: QuadRow[];
+  transparency: QuadRow[];
+  accreditation: { body: string; label: string; verified: Quad; note: string | null }[];
+  cohorts: { id: string; start: string; status: Cohort["status"]; label: string; note: string | null }[];
+}
+
+export interface ClaimView {
+  id: string;
+  quote: string;
+  category: string;
+  scope: string;
+  analysis: { note: string; status: string; reviewed: string; methodologyVersion: string } | null;
+}
+
+export interface SourceView {
+  id: string;
+  type: string;
+  url: string | null;
+  captured: string;
+  note: string | null;
+  archivePublic: boolean;
+  archiveLocal: boolean;
+}
+
+export interface ProviderView {
+  id: string;
+  name: string;
+  aka: string[];
+  website: string;
+  domain: string;
+  cityDisplay: string;
+  depth: string;
+  lastVerified: string;
+  disclosure: string | null;
+  crkbo: { registered: Quad; register: string | null; holder: string | null; checked: string | null; note: string | null };
+  registrations: { body: string; identifier: string | null; holder: string | null; firstRegistered: string | null; verified: Quad; note: string | null }[];
+  programs: ProgramView[];
+  claims: ClaimView[];
+  sources: SourceView[];
+  sourcesArchived: number;
+}
+
+/** An absent optional object is a gap, never a finding (spec §4). */
+function q(v: Quad | undefined): Quad {
+  return v ?? "unknown";
+}
+
+/**
+ * A row whose label promises a VALUE, not a yes/no ("Groepsgrootte", "Track
+ * record", …). With no value there is nothing established, so it is a gap —
+ * never a bare "ja", which would assert a fact we do not hold.
+ */
+function fact(label: string, value: string | null | undefined, note?: string | null): KeyValueRow {
+  return {
+    label,
+    value: value ?? null,
+    state: value == null ? "unknown" : "yes",
+    note: note ?? null,
+  };
+}
+
+const joinDot = (parts: (string | false | null | undefined)[]): string | null =>
+  parts.filter(Boolean).join(" · ") || null;
+
+/**
+ * A published-ness quad read for a value that is missing from our record.
+ *
+ * Same rule as pphQuad, applied to any field whose availability is gated by a
+ * *_published quad: on such a field `no` and `not_published` both mean "wij
+ * keken; zij publiceren het niet" — a sourced FINDING. `yes` (they do publish
+ * it, yet the value is absent from our record anyway) and `unknown` (nobody
+ * looked) are GAPS in our own research, and must never be published as an
+ * accusation against a named business.
+ */
+function missingBecause(published: Quad): Quad {
+  return published === "not_published" || published === "no" ? "not_published" : "unknown";
+}
+
+function coherenceRows(program: Program): QuadRow[] {
+  const cs = program.coherence_signals;
+  return (Object.keys(nl.coherence) as (keyof typeof nl.coherence)[]).map((key) => ({
+    key,
+    label: nl.coherence[key],
+    state: q(cs?.[key]),
+    note: cs?.[`${key}_note`] ?? null,
+  }));
+}
+
+function transparencyRows(program: Program): QuadRow[] {
+  const t = program.transparency;
+  return (Object.keys(nl.transparency) as (keyof typeof nl.transparency)[]).map((key) => ({
+    key,
+    label: nl.transparency[key],
+    state: q(t?.[key]),
+    note: null,
+  }));
+}
+
+function programRows(provider: Provider, program: Program): KeyValueRow[] {
+  const h = program.hours_claimed;
+  const pphState = pphQuad(program);
+  const pph = pricePerContactHour(program);
+  const delta = bundleDelta(provider, program);
+  const rows: KeyValueRow[] = [];
+
+  rows.push(fact(nl.colFormat, formatDisplay(program.format_label)));
+  rows.push(fact(nl.rowStyle, program.style_claimed));
+  rows.push(fact(nl.colDelivery, deliveryDisplay(program.delivery)));
+
+  rows.push({
+    label: nl.colPrice,
+    value: priceDisplay(program.price),
+    state: program.price.published,
+    note: joinDot([
+      program.price.includes && `${nl.priceIncludes}: ${program.price.includes}`,
+      program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
+      program.price.note,
+    ]),
+  });
+
+  // The same epistemic rule as the listing's €/contactuur column, from the same
+  // pair of helpers — the record must never say something the listing does not.
+  rows.push({
+    label: nl.colPph,
+    value: pph.value != null ? formatEuro2(pph.value) : null,
+    state: pphState,
+    note: pphCaveatFor(program, pphState),
+  });
+
+  rows.push({
+    label: nl.rowHours,
+    value: joinDot([
+      h.total != null && `${h.total} ${nl.hoursTotal}`,
+      h.contact != null && `${h.contact} ${nl.hoursContact}`,
+      h.self_study != null && `${h.self_study} ${nl.hoursSelfStudy}`,
+    ]),
+    state: h.total == null && h.contact == null && h.self_study == null
+      ? missingBecause(h.breakdown_published)
+      : "yes",
+    note: h.note ?? null,
+  });
+
+  // The §5 field. Its emptiness across the market is the finding — so it gets
+  // its own row on every programme, always. With no number, the row says what
+  // the record says about the breakdown that would have carried it: a finding
+  // when they publish none, a gap in OUR record when they do and we lack it.
+  rows.push({
+    label: nl.rowSupervised,
+    value: h.supervised_teaching_practice != null
+      ? `${h.supervised_teaching_practice} ${nl.hoursSuffixLong}`
+      : null,
+    state: h.supervised_teaching_practice != null ? "yes" : missingBecause(h.breakdown_published),
+    note: null,
+  });
+
+  rows.push({
+    label: nl.rowAssessment,
+    value: program.assessment_described?.quote ?? null,
+    state: q(program.assessment_described?.exists),
+    note: null,
+  });
+
+  rows.push(fact(
+    nl.rowGroupSize,
+    joinDot([
+      program.group_size_claimed?.min != null && `min ${program.group_size_claimed.min}`,
+      program.group_size_claimed?.max != null && `max ${program.group_size_claimed.max}`,
+    ]),
+    program.group_size_claimed?.note,
+  ));
+
+  rows.push(fact(nl.rowPrerequisites, program.prerequisites_claimed));
+
+  if (program.composition) {
+    const moduleCount = program.composition.modules?.length ?? 0;
+    rows.push(fact(
+      nl.rowComposition,
+      `${nl.composition[program.composition.type]}${moduleCount ? ` · ${moduleCount} ${nl.modulesSuffix}` : ""}`,
+      delta != null ? nl.bundleDelta(formatEuro(Math.abs(delta)), delta < 0) : null,
+    ));
+  }
+
+  if (program.contract) {
+    rows.push(fact(
+      nl.rowContract,
+      joinDot([
+        program.contract.cancellation_published &&
+          `${nl.contractCancellation}: ${quadLabel(program.contract.cancellation_published)}`,
+        program.contract.refund_published &&
+          `${nl.contractRefund}: ${quadLabel(program.contract.refund_published)}`,
+        program.contract.installments_published &&
+          `${nl.contractInstallments}: ${quadLabel(program.contract.installments_published)}`,
+      ]),
+      joinDot([
+        program.contract.invoicing_entity && `${nl.contractInvoices}: ${program.contract.invoicing_entity}`,
+        program.contract.note,
+      ]),
+    ));
+  }
+
+  if (program.track_record) {
+    rows.push(fact(
+      nl.rowTrackRecord,
+      joinDot([
+        program.track_record.first_seen_year != null && `${nl.since} ${program.track_record.first_seen_year}`,
+        program.track_record.last_confirmed_cohort &&
+          `${nl.lastConfirmed} ${formatMonth(program.track_record.last_confirmed_cohort.slice(0, 7))}`,
+      ]),
+      joinDot([program.track_record.cadence_note, program.track_record.note]),
+    ));
+  }
+
+  return rows;
+}
+
+function domainOf(url: string): string {
+  return url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+}
+
+export function toProviderView(p: Provider): ProviderView {
+  return {
+    id: p.id,
+    name: p.name,
+    aka: p.aka ?? [],
+    website: p.website,
+    domain: domainOf(p.website),
+    cityDisplay: cityDisplay(p),
+    depth: nl.depth[p.depth],
+    lastVerified: p.last_verified,
+    disclosure: p.disclosure ?? null,
+    crkbo: {
+      registered: p.crkbo.registered,
+      register: p.crkbo.register ? nl.crkboRegister[p.crkbo.register] : null,
+      holder: p.crkbo.holder ?? null,
+      checked: p.crkbo.checked ?? null,
+      note: p.crkbo.note ?? null,
+    },
+    registrations: p.registrations.map((r) => ({
+      body: nl.body[r.body],
+      identifier: r.identifier ?? null,
+      holder: r.holder ?? null,
+      firstRegistered: r.first_registered ?? null,
+      verified: r.verified_in_register,
+      note: r.note ?? null,
+    })),
+    programs: p.programs.map((program) => ({
+      id: program.id,
+      name: program.name,
+      url: program.url ?? null,
+      styleClaimed: program.style_claimed ?? null,
+      rows: programRows(p, program),
+      coherence: coherenceRows(program),
+      transparency: transparencyRows(program),
+      accreditation: program.accreditation.map((a) => ({
+        body: nl.body[a.body],
+        label: a.label_claimed,
+        verified: a.verified,
+        note: a.note ?? null,
+      })),
+      cohorts: (program.cohorts ?? []).map((c) => ({
+        id: c.id,
+        start: c.start,
+        status: c.status,
+        label: `${formatMonth(c.start.slice(0, 7))} — ${nl.cohortStatus[c.status]}`,
+        note: c.note ?? null,
+      })),
+    })),
+    claims: p.claims.map((c) => ({
+      id: c.id,
+      quote: c.quote, // VERBATIM. Never touch this.
+      category: nl.claimCategory[c.category],
+      scope: c.scope,
+      analysis: c.analysis
+        ? {
+            note: c.analysis.note,
+            status: nl.analysisStatus[c.analysis.status],
+            reviewed: c.analysis.reviewed,
+            methodologyVersion: c.analysis.methodology_version,
+          }
+        : null,
+    })),
+    sources: p.sources.map((s: Source) => ({
+      id: s.id,
+      type: nl.sourceType[s.type],
+      url: s.url ?? null,
+      captured: s.captured,
+      note: s.note ?? null,
+      archivePublic: s.archived_url != null,
+      archiveLocal: s.local_snapshot != null,
+    })),
+    sourcesArchived: p.sources.filter((s) => s.archived_url != null).length,
   };
 }

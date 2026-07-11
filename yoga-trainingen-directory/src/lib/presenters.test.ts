@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./dataset";
-import { toListingRows, datasetStats, pphQuad } from "./presenters";
+import { toListingRows, datasetStats, pphQuad, toProviderView } from "./presenters";
 import { nl } from "./strings";
 
 const { providers } = loadDataset();
@@ -295,5 +295,63 @@ test("every row carries its raw city names, for the distance filter to place", (
     const provider = providers.find((p) => p.id === r.providerId)!;
     const expected = [...new Set(provider.locations.map((l) => l.city).filter((c): c is string => c != null))];
     assert.deepEqual(r.cities, expected, `${r.providerId} lost or invented a city`);
+  }
+});
+
+/* ---------- The provider record ---------- */
+
+test("RECORD: a claim quote is reproduced verbatim, never altered", () => {
+  // spec §3, the legal posture. Not truncated, not ellipsised, not re-cased.
+  for (const p of providers) {
+    const view = toProviderView(p);
+    assert.equal(view.claims.length, p.claims.length);
+    for (const [i, c] of p.claims.entries()) {
+      assert.equal(view.claims[i].quote, c.quote, `claim ${c.id} was altered`);
+    }
+  }
+});
+
+test("RECORD: disclosure is always carried through when present", () => {
+  for (const p of providers) {
+    assert.equal(toProviderView(p).disclosure, p.disclosure ?? null);
+  }
+});
+
+test("RECORD: a source with no public archive is marked, not hidden", () => {
+  // The publication bar: records below it are marked, never dropped.
+  for (const p of providers) {
+    const view = toProviderView(p);
+    assert.equal(view.sources.length, p.sources.length, `${p.id} dropped a source`);
+    for (const [i, s] of p.sources.entries()) {
+      assert.equal(view.sources[i].archivePublic, s.archived_url != null);
+      assert.equal(view.sources[i].archiveLocal, s.local_snapshot != null);
+    }
+  }
+});
+
+test("RECORD: an absent coherence_signals object yields gaps, not findings", () => {
+  // 52 of 77 programmes have no coherence_signals at all. Not investigated is
+  // not investigated — it must not read as "the provider does not publish it".
+  for (const p of providers) {
+    for (const prog of toProviderView(p).programs) {
+      for (const sig of prog.coherence) {
+        assert.ok(["yes", "no", "not_published", "unknown"].includes(sig.state));
+      }
+    }
+  }
+  const bare = providers.find((p) => p.programs.some((pr) => pr.coherence_signals == null));
+  assert.ok(bare, "expected at least one programme without coherence_signals");
+  const prog = toProviderView(bare).programs.find((pr) => pr.coherence.every((s) => s.state === "unknown"));
+  assert.ok(prog, "a programme with no coherence_signals did not render as all-unknown");
+});
+
+test("RECORD: every programme has a stable anchor id matching its listing href", () => {
+  const rows = toListingRows(providers, NOW);
+  for (const p of providers) {
+    for (const prog of toProviderView(p).programs) {
+      const row = rows.find((r) => r.providerId === p.id && r.programId === prog.id);
+      assert.ok(row, `no listing row for ${p.id}/${prog.id}`);
+      assert.equal(row.href, `/aanbieder/${p.id}#programma-${prog.id}`);
+    }
   }
 });

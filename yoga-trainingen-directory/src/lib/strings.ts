@@ -126,6 +126,69 @@ export const nl = {
   notArchived: "nog niet gearchiveerd",
   archivePublic: "publiek",
   archiveLocal: "lokaal",
+  sourcesHeading: (total: number, archived: number) =>
+    `Bronnen (${total} · ${archived} publiek gearchiveerd)`,
+
+  // Record row labels. Reuses colFormat / colDelivery / colPrice / colPph where
+  // the listing already names the same field — one field, one word.
+  rowStyle: "Stijl (geclaimd)",
+  rowHours: "Urenuitsplitsing",
+  rowSupervised: "Begeleide lespraktijk",
+  rowAssessment: "Toetsing",
+  rowGroupSize: "Groepsgrootte",
+  rowPrerequisites: "Vooropleiding",
+  rowComposition: "Samenstelling",
+  rowContract: "Voorwaarden",
+  rowTrackRecord: "Track record",
+  rowAccreditation: "Accreditatie (geclaimd)",
+  rowCohorts: "Cohorten",
+
+  priceIncludes: "inclusief",
+  priceExcludes: "exclusief",
+  hoursTotal: "totaal",
+  hoursContact: "contact",
+  hoursSelfStudy: "zelfstudie",
+  hoursSuffixLong: "uur",
+  modulesSuffix: "modules",
+  bundleDelta: (amount: string, below: boolean) =>
+    `Pakketprijs ${amount} ${below ? "onder" : "boven"} de som van de losse modules.`,
+  contractCancellation: "annulering",
+  contractRefund: "terugbetaling",
+  contractInstallments: "termijnen",
+  contractInvoices: "factureert",
+  since: "sinds",
+  lastConfirmed: "laatst bevestigd",
+  holderLabel: "houder",
+  registerLabel: "register",
+  checkedLabel: "gecontroleerd",
+  analysisLabel: (status: string, version: string) => `analyse · ${status} · methodologie ${version}`,
+
+  crkboRegister: { instelling: "instelling", docent: "docent" } as const,
+
+  composition: {
+    single_program: "één samenhangende opleiding",
+    fixed_modular: "vaste modules",
+    free_assembly: "vrij samen te stellen",
+  } as const,
+
+  // Layer 3, methodology-versioned — never applied to a quote itself (spec §3).
+  analysisStatus: {
+    accurate: "juist",
+    unsubstantiated: "niet onderbouwd",
+    misleading: "misleidend",
+    regulated_claim: "gereguleerde claim",
+  } as const,
+
+  sourceType: {
+    website: "website",
+    wayback: "wayback",
+    brochure: "brochure",
+    register: "register",
+    inquiry_response: "antwoord op navraag",
+    reader_report: "lezersmelding",
+    email: "e-mail",
+    other: "overig",
+  } as const,
 
   depth: { listed: "basisvermelding", reviewed: "onderzocht", assessed: "beoordeeld" } as const,
 
