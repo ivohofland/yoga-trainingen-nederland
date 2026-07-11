@@ -189,11 +189,18 @@ const MONTHS = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "
  * training someone might plan a year around. A date the reader cannot parse is not
  * a smaller failure than a crash — it is the same failure, published.
  *
- * Every caller feeds it a schema-validated YYYY-MM (a cohort start, a
- * last_verified, a last_confirmed_cohort), so a value that does not parse did not
- * come from the data: it came from a bug in the slicing above it. Fail loudly, at
- * build time, where the build gate can catch it — the identical rule as
- * unhandledQuad in quad.ts.
+ * This throw is an ASSERTION, not a data check — and that distinction only became
+ * true in spec v0.3. The old YearMonth regex was /^\d{4}-\d{2}(-\d{2})?$/, which
+ * accepts "2026-13": a typo'd month was schema-VALID data that sailed through
+ * `npm run validate` and detonated here instead, deep inside `next build`, as a
+ * stack trace rather than a named record and field. That is a validation job
+ * landing in a formatter.
+ *
+ * The month range is now checked where it belongs (YearMonth, schema §4), so
+ * `validate` names the offending record. By the time a value reaches this
+ * function it has been validated, so anything that fails here is a bug in OUR
+ * slicing above the call — never a fact about a provider. Fail loudly at build
+ * time, the same posture as unhandledQuad in quad.ts.
  */
 export function formatMonth(ym: string): string {
   const [y, m] = ym.split("-");
@@ -201,7 +208,8 @@ export function formatMonth(ym: string): string {
   if (!name || !/^\d{4}$/.test(y ?? "")) {
     throw new Error(
       `formatMonth: "${ym}" is not a YYYY-MM month. Rendering it verbatim would publish a malformed ` +
-        `date to a reader; the input is schema-validated, so this is a bug above this call, not data.`,
+        `date to a reader. The month range is validated by YearMonth (schema §4), so this is a bug in ` +
+        `the slicing above this call, not a bad record — if it IS a bad record, YearMonth has regressed.`,
     );
   }
   return `${name} ${y}`;

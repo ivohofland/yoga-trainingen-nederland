@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./loader";
 import { bundleDelta, pricePerContactHour } from "./derive";
-import type { Program } from "../schema";
+import { YearMonth, type Program } from "../schema";
 
 const { providers } = loadDataset();
 
@@ -138,5 +138,37 @@ test("DERIVED: no bundle delta is invented from a module price we do not hold", 
           `${p.id}/${prog.id}: a bundle delta derived from a module price our record does not hold`);
       }
     }
+  }
+});
+
+/* ---------- YearMonth: the month range is validated in the SCHEMA, not a renderer ---------- */
+
+test("SCHEMA: a typo'd month is rejected by validation, not left to a renderer", () => {
+  // spec v0.3. The old regex was /^\d{4}-\d{2}(-\d{2})?$/, which accepts "2026-13".
+  // So a typo'd month was schema-VALID data: `npm run validate` waved it through and
+  // it detonated inside formatMonth, deep in `next build`, as a stack trace instead of
+  // a named record and field. A validation job landing in a formatter. Catch it where
+  // it can be reported usefully — and formatMonth's throw becomes a true assertion.
+  for (const bad of ["2026-13", "2026-00", "2026-99", "2026-1", "2026-6"]) {
+    assert.equal(YearMonth.safeParse(bad).success, false, `"${bad}" must be rejected by YearMonth`);
+  }
+  for (const good of ["2026-01", "2026-12", "2026-06", "2026-06-20"]) {
+    assert.equal(YearMonth.safeParse(good).success, true, `"${good}" must be accepted by YearMonth`);
+  }
+});
+
+test("SCHEMA: every month in the committed dataset is in range", () => {
+  // Guards the v0.3 migration: tightening YearMonth was a no-op on every month
+  // value in the corpus. If this fails, a record carries a month outside 01-12.
+  const seen = new Set<string>();
+  const walk = (o: unknown): void => {
+    if (Array.isArray(o)) return o.forEach(walk);
+    if (o && typeof o === "object") return Object.values(o).forEach(walk);
+    if (typeof o === "string" && /^\d{4}-\d{2}(-\d{2})?$/.test(o)) seen.add(o);
+  };
+  providers.forEach(walk);
+  assert.ok(seen.size > 50, `expected many YYYY-MM values in the data, saw ${seen.size}`);
+  for (const ym of seen) {
+    assert.equal(YearMonth.safeParse(ym).success, true, `"${ym}" is in the data but fails YearMonth`);
   }
 });

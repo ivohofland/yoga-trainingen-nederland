@@ -4,6 +4,8 @@
 
 **v0.2 (2026-06-12)** — revised after the 5-provider pilot (`pilot/pilot-findings.md`): price variants + excludes, delivery language, program prerequisites, per-signal notes, module days, registration holder.
 
+**v0.3 (2026-07-12)** — `YYYY-MM` now states that the month part must be `01`–`12`. The old definition accepted `2026-13`, so a typo'd month was schema-valid data that only failed when a renderer tried to name the month — a validation job landing in a formatter. No record changes: all 78 month values in the corpus were already in range.
+
 ---
 
 ## 0. Scope (inclusion criteria)
@@ -86,6 +88,11 @@ data/
 Layer column: **L1** = basic listing (live-worthy minimum), **L2** = broad-but-cheap facts, **L3** = deep review only.
 Quad-state fields are marked **(q)** = `yes | no | not_published | unknown`.
 Fields holding externally sourced facts accept an optional `source` (a Source id) — mandatory where marked.
+**YYYY-MM** = a calendar month, `YYYY-MM` or `YYYY-MM-DD`; **the month part must be
+`01`–`12`**. A typo'd month is not a rendering problem to be handled downstream —
+it is invalid data, and `npm run validate` must reject it by name. The renderer
+may then assume a real month, and treat anything else as a bug in our code
+rather than a fact about a provider.
 
 ### 4.1 Source
 

@@ -30,10 +30,17 @@ const strictObject = <T extends z.ZodRawShape>(shape: T) => z.object(shape).stri
 export const Quad = z.enum(["yes", "no", "not_published", "unknown"]);
 export type Quad = z.infer<typeof Quad>;
 
-/** YYYY-MM or YYYY-MM-DD */
+/** YYYY-MM or YYYY-MM-DD, month 01-12 (spec §4 preamble, v0.3).
+ *  The month range is validated HERE, not in the renderer. The old regex accepted
+ *  `2026-13`, so a typo'd month was schema-valid data that only blew up when a
+ *  formatter tried to name the month — a validation job landing in a formatter,
+ *  reported as a stack trace inside `next build` instead of by record and field.
+ *  With this, `npm run validate` names the offender; presenters may then assume a
+ *  real month and treat anything else as a bug in our code, never a fact about a
+ *  provider. */
 export const YearMonth = z
   .string()
-  .regex(/^\d{4}-\d{2}(-\d{2})?$/, "expected YYYY-MM or YYYY-MM-DD");
+  .regex(/^\d{4}-(0[1-9]|1[0-2])(-\d{2})?$/, "expected YYYY-MM or YYYY-MM-DD, with month 01-12");
 
 export const Year = z.number().int().min(1900).max(2100);
 
