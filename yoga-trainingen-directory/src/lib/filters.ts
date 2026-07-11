@@ -14,7 +14,29 @@ import type { ListingRow } from "./presenters";
 import { saysNotPublished } from "./quad";
 import { nearestKm, type Centroid } from "./geo";
 
-export type Row = ListingRow & { distanceKm?: number };
+/**
+ * A row we PLACED: it is `distanceKm` from the visitor, and the component prints
+ * that number under its format cell.
+ */
+export type NearRow = ListingRow & { distanceKm: number };
+
+/**
+ * A row with no distance, and — this is the part the optional `?` could not say —
+ * no distance is POSSIBLE for it: it is online (distance does not apply) or we
+ * cannot place its city (a gap in our record).
+ *
+ * `distanceKm?: number` conflated three different things: "not computed yet" (no
+ * origin), "not placeable", and "online, n/a". partitionByDistance pushed `{ ...r }`
+ * into `online` and `unplaceable` WITHOUT stripping the field, so a row that
+ * arrived carrying a distance — from a previous pass, a memo, a re-partition after
+ * the radius changed — kept it, and the component renders `distanceKm != null`
+ * unconditionally: "12 km" printed under a programme with no location at all.
+ * `?: never` makes that state unrepresentable, and the partition strips the field
+ * rather than trusting the input not to have it.
+ */
+export type UnplacedRow = ListingRow & { distanceKm?: never };
+
+export type Row = NearRow | UnplacedRow;
 
 /** No `city`: the design's chip list is replaced by location + radius (spec §6.3). */
 export interface Filters {
@@ -75,7 +97,12 @@ const byName = (a: Row, b: Row) =>
  * rows with nothing to compare are ordered by name, which is stable and total.
  * (Returning NaN from a comparator is undefined behaviour; this never does.)
  */
-export function sortRows(rows: Row[], key: SortKey): Row[] {
+/**
+ * Generic in the row type, so a group's type SURVIVES the sort: sorting
+ * `DistanceGroups["online"]` must not turn `UnplacedRow[]` back into `Row[]` and
+ * hand the component a distance it might print.
+ */
+export function sortRows<T extends Row>(rows: T[], key: SortKey): T[] {
   const out = [...rows]; // never mutate the caller's array
   switch (key) {
     case "alphabetical":
@@ -100,14 +127,24 @@ export function sortRows(rows: Row[], key: SortKey): Row[] {
 }
 
 export interface DistanceGroups {
-  /** Within the radius. Each row carries its distanceKm. */
-  near: Row[];
+  /** Within the radius. Each row carries its distanceKm — the type says so. */
+  near: NearRow[];
   /** Outside it. COUNTED, and shown in the result line — never silently dropped. */
   farCount: number;
-  /** delivery.mode === "online": distance does not apply to them. */
-  online: Row[];
+  /** delivery.mode === "online": distance does not apply to them, so they cannot carry one. */
+  online: UnplacedRow[];
   /** No city we can place. A gap in our record, not a reason to hide them. */
-  unplaceable: Row[];
+  unplaceable: UnplacedRow[];
+}
+
+/**
+ * Drops any distance the row arrived with. A row in `online` or `unplaceable` has
+ * no distance BY DEFINITION — carrying one over from a previous pass is how a
+ * stale "12 km" ends up under a programme with no location.
+ */
+function unplaced(r: Row): UnplacedRow {
+  const { distanceKm: _stale, ...rest } = r;
+  return rest;
 }
 
 /**
@@ -129,19 +166,19 @@ export function partitionByDistance(
   origin: Centroid,
   radiusKm: number | null,
 ): DistanceGroups {
-  const near: Row[] = [];
-  const online: Row[] = [];
-  const unplaceable: Row[] = [];
+  const near: NearRow[] = [];
+  const online: UnplacedRow[] = [];
+  const unplaceable: UnplacedRow[] = [];
   let farCount = 0;
 
   for (const r of rows) {
     if (r.mode === "online") {
-      online.push({ ...r });
+      online.push(unplaced(r));
       continue;
     }
     const km = nearestKm(r.cities, origin);
     if (km == null) {
-      unplaceable.push({ ...r });
+      unplaceable.push(unplaced(r));
       continue;
     }
     if (radiusKm == null || km <= radiusKm) near.push({ ...r, distanceKm: km });

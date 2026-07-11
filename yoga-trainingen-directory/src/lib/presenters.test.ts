@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { z } from "zod";
 import { loadDataset } from "./dataset";
-import { toListingRows, datasetStats, formatMonth, pphQuad, priceQuad, toProviderView } from "./presenters";
+import { toListingRows, datasetStats, formatEuro, formatMonth, pphQuad, priceQuad, toProviderView } from "./presenters";
 import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 // The SCHEMA, as a value — the contract test walks its shape rather than
@@ -30,6 +30,7 @@ test("an announced cohort is never labelled as one that ran", () => {
   // cohort ever mentions running": only an ANNOUNCED cohort must never be
   // presented as one that ran.
   const rows = toListingRows(providers, NOW);
+  let announced = 0;
   for (const r of rows) {
     if (!r.nextCohort) continue;
     const { status, label } = r.nextCohort;
@@ -41,12 +42,19 @@ test("an announced cohort is never labelled as one that ran", () => {
         `programme ${r.programId} shows an announced cohort without saying so`);
       assert.doesNotMatch(label, /gedraaid|gestart|liep/,
         `programme ${r.programId} implies an announced cohort ran`);
+      announced++;
     }
     if (status === "confirmed_ran") {
       assert.match(label, /gedraaid/,
         `programme ${r.programId} confirms a cohort ran but the label doesn't say so`);
     }
   }
+  // Every "next cohort" the listing shows is `announced` — a next cohort is by
+  // definition one that has not run yet — so the `confirmed_ran` branch above is
+  // DEAD CODE here, and this test can only guard the announced direction. The nine
+  // confirmed_ran cohorts appear on the record page, which builds its own label:
+  // see the record cohort test, which is where that direction is actually tested.
+  assert.ok(announced > 0, "no announced cohort in the listing — this test tests nothing");
 });
 
 test("next cohort is never in the past", () => {
@@ -294,8 +302,10 @@ test("PRICE: the listing row's price quad IS the record page's price quad — ev
       assert.equal(listing.priceState, priceQuad(prog),
         `${p.id}/${prog.id}: the listing re-derived the price quad instead of calling priceQuad()`);
       // and the same value, too — a matching quad over a differing number is no
-      // better than a differing quad
-      assert.equal(listing.priceDisplay, record.value,
+      // better than a differing quad. (A non-fact row carries no `value` at all
+      // now — the type forbids it — so "no price shown" is `undefined` here and
+      // `null` on the listing; both mean the cell shows the state word.)
+      assert.equal(listing.priceDisplay, record.value ?? null,
         `${p.id}/${prog.id}: the listing and the record render different prices`);
     }
   }
@@ -657,6 +667,67 @@ test("CLAIM: yoga-moves' six claims land on the three programmes the record scop
   for (const c of view.claims) assert.equal(c.scopeLabel, nl.claimScopeProvider);
 });
 
+test("RECORD: an announced cohort is never labelled as one that ran — on the record page too", () => {
+  // spec §8, the central trap: "an announced cohort is not a cohort that ran".
+  //
+  // The listing (nextCohort) and the record page (toProviderView) build this label
+  // TWICE, independently, and only the listing's was tested. Drop the status from
+  // the record's label and all 78 tests passed — while 58 announced cohorts across
+  // 48 record pages rendered as bare dates under the heading "Cohorten", every one
+  // of them reading as a training that runs.
+  //
+  // This is also the ONLY surface where `confirmed_ran` is real: all 44 cohorts the
+  // listing shows are announced (a "next" cohort has not run yet), so that branch
+  // is dead there. The nine that really did run are here.
+  let announced = 0;
+  let ran = 0;
+  let cancelled = 0;
+  for (const p of providers) {
+    for (const prog of toProviderView(p).programs) {
+      for (const c of prog.cohorts) {
+        const where = `${p.id}/${prog.id} cohort ${c.id}`;
+        assert.ok(c.label.includes(nl.cohortStatus[c.status]),
+          `${where}: the label "${c.label}" omits its status (${c.status}) — a bare date under the ` +
+          `heading "Cohorten" reads as a training that runs`);
+        if (c.status === "announced") {
+          assert.match(c.label, /aangekondigd/, `${where}: announced, and the label does not say so`);
+          assert.doesNotMatch(c.label, /gedraaid|gestart|liep/,
+            `${where}: an ANNOUNCEMENT, presented as a cohort that ran — the central trap (spec §8)`);
+          announced++;
+        }
+        if (c.status === "confirmed_ran") {
+          assert.match(c.label, /gedraaid/, `${where}: confirmed to have run, and the label does not say so`);
+          ran++;
+        }
+        if (c.status === "cancelled") cancelled++;
+        // The date is still there — the status replaces nothing.
+        assert.ok(c.label.includes(formatMonth(c.start.slice(0, 7))), `${where}: the label lost its date`);
+      }
+    }
+  }
+  // Neither direction may go quiet: an all-announced dataset would make the
+  // "gedraaid" assertions vacuous, and an all-ran one the reverse.
+  assert.ok(announced > 0, "no announced cohort on any record page — the trap direction is untested");
+  assert.ok(ran > 0, "no confirmed_ran cohort any more — the branch that says 'this really happened' is dead");
+  assert.ok(announced + ran + cancelled > 0);
+});
+
+test("RECORD: the bundle delta says which SIDE of the sum the package price is on", () => {
+  // A derived comparison published about a named business. `delta < 0` decides
+  // between "onder" and "boven"; flip it and Yogapoint's package is published as
+  // €363 MORE expensive than its three modules when it is €363 CHEAPER — and the
+  // whole 78-test suite stayed green, because nothing asserted the wording.
+  // Exactly one programme in the dataset exercises this line.
+  const view = toProviderView(providers.find((p) => p.id === "yogapoint")!);
+  const row = view.programs.find((v) => v.id === "300-verdieping")!.rows.find((r) => r.label === nl.rowComposition)!;
+  assert.equal(row.note, nl.bundleDelta(formatEuro(363), true),
+    `Yogapoint's €3.993 package is €363 BELOW the €4.356 sum of its three €1.452 modules. The row says: ` +
+    `"${row.note}"`);
+  assert.match(row.note!, /onder/, "the package is cheaper than the sum, and the page must say so");
+  assert.doesNotMatch(row.note!, /boven/,
+    "the page tells the reader a cheaper package is more expensive than its parts");
+});
+
 test("RECORD: disclosure is always carried through when present", () => {
   for (const p of providers) {
     assert.equal(toProviderView(p).disclosure, p.disclosure ?? null);
@@ -895,7 +966,7 @@ test("RECORD: a published price with no amount is OUR gap, never a bare “ja”
     for (const prog of p.programs) {
       const row = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.colPrice)!;
       if (prog.price.published === "yes" && prog.price.amount_eur == null) {
-        assert.equal(row.value, null);
+        assert.equal(row.value ?? null, null);
         assert.equal(row.state, "unknown",
           `${p.id}/${prog.id}: "Prijs: ja" with no amount — a fact we do not hold`);
         assert.ok(row.note?.includes(nl.priceAmountNotInRecord),
@@ -990,6 +1061,215 @@ test("RECORD: the source count never overstates what is archived", () => {
     assert.ok(heading.includes(`${view.sourcesArchivedPublic}`) && heading.includes(`${view.sourcesArchivedLocal}`),
       `${p.id}: the sources heading drops one of the two counts`);
   }
+});
+
+/* ---------- THE rule, over EVERY row of EVERY programme — not three of them ----------
+ *
+ * `missingBecause()` is THE finding-vs-gap rule, and it had exactly one call site
+ * under test (€/contactuur). Replace it with a literal "not_published" at the
+ * SUPERVISED-PRACTICE row and all 78 tests passed — while 6 named businesses whose
+ * record says `breakdown_published: yes` (de-yogaschool-enschede, dru-yoga,
+ * jai-yoga, neo-yoga-delft, yoga-moves, yogic-life) were accused, on their own
+ * pages, of not publishing the one figure this project calls "the finding". The
+ * same hole sat on the hours row, and on `assessment_described` — the fourth
+ * optional object, and the only one with no absent-object test (8 programmes).
+ *
+ * A test per call site would have missed the next call site. So this walks EVERY
+ * KeyValueRow and EVERY QuadRow of EVERY programme of EVERY provider and asks the
+ * only two questions there are:
+ *
+ *   1. If this cell accuses a named business, WHICH FIELD OF OUR RECORD says so?
+ *   2. If nobody investigated the object behind it, does it say anything but
+ *      "nog niet onderzocht"?
+ */
+
+/**
+ * The record field that licenses a row to say "niet gepubliceerd".
+ *
+ *   a Quad    → that field governs the row; only `not_published`/`no` license it;
+ *   undefined → the schema has the field, this record does not (nobody looked):
+ *               the row may say nothing but "nog niet onderzocht";
+ *   null      → NO *_published field governs this row at all ("Groepsgrootte",
+ *               "Track record", "Stijl"…). It may hold a value or admit a gap. It
+ *               may never make a finding — there is nothing to make one from.
+ */
+type Backing = Quad | undefined | null;
+
+const rowBacking = (prog: Program, label: string): Backing => {
+  switch (label) {
+    case nl.colPrice:
+      return prog.price.published;
+    case nl.colPph:
+      // The blocker: no amount → the price is what is missing; else the hours.
+      return prog.price.amount_eur == null
+        ? prog.price.published
+        : prog.hours_claimed.breakdown_published;
+    case nl.rowHours:
+    case nl.rowSupervised:
+      return prog.hours_claimed.breakdown_published;
+    case nl.rowAssessment:
+      // undefined exactly when `assessment_described` is absent — `exists` is
+      // required by the schema, so it cannot be missing from an object that is there.
+      return prog.assessment_described?.exists;
+    default:
+      return null;
+  }
+};
+
+test("RECORD: every row's state is backed by the record — a finding needs a field that says so", () => {
+  let findings = 0;
+  let ungoverned = 0;
+  let absentObject = 0;
+  let supervisedOurGap = 0;
+  let assessmentAbsent = 0;
+  let rowsWalked = 0;
+
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      const rendered = view.programs.find((v) => v.id === prog.id)!;
+      for (const row of rendered.rows) {
+        rowsWalked++;
+        const backing = rowBacking(prog, row.label);
+        const where = `${p.id}/${prog.id} · "${row.label}"`;
+
+        // 1. An accusation must be backed by a record field that literally makes it.
+        if (row.state === "not_published") {
+          assert.ok(backing != null,
+            `${where}: the row says the provider does not publish this, but ${backing === null
+              ? "NO record field governs this row — the accusation is made from nothing"
+              : "the object that would carry that field is absent from our record: nobody looked"}`);
+          assert.ok(saysNotPublished(backing),
+            `${where}: the row accuses a named business of not publishing it, but the record field that ` +
+            `governs it says "${backing}". Our own record contradicts the page. That is a false statement ` +
+            `about a named business — the worst failure this project can commit.`);
+          findings++;
+        }
+
+        // 2. Nobody looked → the row says nothing but "nog niet onderzocht".
+        if (backing === undefined) {
+          assert.equal(row.state, "unknown",
+            `${where}: the optional object behind this row is absent — un-investigated — yet the row ` +
+            `renders "${row.state}". A gap published as a finding is an accusation we never earned.`);
+          absentObject++;
+        }
+        if (backing === null) {
+          assert.ok(row.state === "yes" || row.state === "unknown",
+            `${where}: no *_published field governs this row, so it can only hold a value or admit a gap. ` +
+            `It renders "${row.state}".`);
+          ungoverned++;
+        }
+
+        // 3. And the value never disagrees with the state: a fact shows what it
+        //    asserts, a non-fact carries nothing the page would silently drop.
+        //    (The type forbids both; a cast could still get past it.)
+        if (row.state === "yes") {
+          assert.ok(row.value != null && row.value.length > 0,
+            `${where}: a bare “ja” in fact ink, with nothing behind it`);
+        } else {
+          assert.equal(row.value ?? null, null,
+            `${where}: state "${row.state}" is not a fact, so <Quad> drops this value on the floor: ` +
+            `"${row.value}"`);
+        }
+
+        // Anti-vacuity: the two populations the mutations above would have lied about.
+        if (row.label === nl.rowSupervised && backing === "yes" && row.value == null) supervisedOurGap++;
+        if (row.label === nl.rowAssessment && backing === undefined) assessmentAbsent++;
+      }
+
+      // The quad blocks obey the identical rule: the state IS the record's quad,
+      // and an absent (or un-set) field is a gap.
+      const quadBacking = (section: "coherence" | "transparency" | "contract", key: string): Backing => {
+        if (section === "coherence") {
+          return prog.coherence_signals?.[key as keyof NonNullable<typeof prog.coherence_signals>] as Backing;
+        }
+        if (section === "transparency") {
+          return prog.transparency?.[key as keyof NonNullable<typeof prog.transparency>] as Backing;
+        }
+        if (key === "min_participants") return prog.contract?.min_participants?.clause;
+        return (prog.contract as Record<string, Quad | undefined> | undefined)?.[key];
+      };
+
+      for (const section of ["coherence", "transparency", "contract"] as const) {
+        for (const row of rendered[section]) {
+          rowsWalked++;
+          const backing = quadBacking(section, row.key);
+          const where = `${p.id}/${prog.id} · ${section}.${row.key}`;
+          if (row.state === "not_published") {
+            assert.ok(backing != null && saysNotPublished(backing),
+              `${where}: renders the finding "niet gepubliceerd" while the record says ` +
+              `"${backing ?? "nothing at all — the object is absent"}"`);
+            findings++;
+          }
+          if (backing == null) {
+            assert.equal(row.state, "unknown",
+              `${where}: the record holds no such field — nobody looked — yet the page renders ` +
+              `"${row.state}" about a named business`);
+            absentObject++;
+          }
+        }
+      }
+    }
+  }
+
+  // None of the branches above may go quiet. Each of these counts is a population
+  // that one of the mutations this test exists to kill would have lied about.
+  assert.ok(rowsWalked > 1000, `only ${rowsWalked} rows walked — this test is not seeing the dataset`);
+  assert.ok(findings > 0, "no row anywhere is a finding — the accusation direction is untested");
+  assert.ok(absentObject > 0, "no optional object is absent any more — the gap direction is untested");
+  assert.ok(ungoverned > 0, "no row is ungoverned any more — the fact() direction is untested");
+  assert.ok(supervisedOurGap >= 6,
+    `only ${supervisedOurGap} programmes publish an hours breakdown while OUR record lacks the ` +
+    `supervised-practice figure. Six did (de-yogaschool-enschede, dru-yoga, jai-yoga, neo-yoga-delft, ` +
+    `yoga-moves, yogic-life), and they are exactly the records a literal "not_published" on that row ` +
+    `would libel. If the data no longer holds them, this test no longer guards the row.`);
+  assert.ok(assessmentAbsent >= 8,
+    `only ${assessmentAbsent} programmes have no assessment_described object (8 did) — the fourth ` +
+    `optional object, and the one with no absent-object test`);
+});
+
+test("RECORD: the hours row applies the RULE, not a constant — proven on a record we build", () => {
+  // The general test above cannot prove this one: all four programmes that publish
+  // no hours at all happen to carry `breakdown_published: not_published` today, so
+  // hard-coding "not_published" on the hours row is a silent no-op against THIS
+  // data — a rule that only holds because the counter-example is absent is not a
+  // rule. So: manufacture the counter-example, exactly as the supervised row
+  // already has six of. A provider whose record says "they publish a breakdown"
+  // and whose hours are missing from OUR record must never be accused of hiding them.
+  const real = providers.find((p) => p.id === "de-yogaschool-enschede")!;
+  const base = real.programs.find((pr) => pr.id === "docentenopleiding-raja")!;
+  const hours = (breakdown_published: Quad): Program => ({
+    ...base,
+    hours_claimed: {
+      ...base.hours_claimed,
+      total: null,
+      contact: null,
+      self_study: null,
+      breakdown_published,
+    },
+  });
+  const hoursRow = (program: Program) =>
+    toProviderView({ ...real, programs: [program] })
+      .programs[0].rows.find((r) => r.label === nl.rowHours)!;
+
+  // They publish it; we do not hold it. OUR gap.
+  const ourGap = hoursRow(hours("yes"));
+  assert.equal(ourGap.state, "unknown",
+    `the record says the provider publishes an hours breakdown and our record lacks it — calling that ` +
+    `"niet gepubliceerd" is a false statement about a named business`);
+  assert.equal(ourGap.value ?? null, null);
+
+  // Nobody looked. Also our gap — never an accusation.
+  assert.equal(hoursRow(hours("unknown")).state, "unknown");
+
+  // We looked; they do not publish it. Both literals that say so are the finding.
+  assert.equal(hoursRow(hours("not_published")).state, "not_published");
+  assert.equal(hoursRow(hours("no")).state, "not_published");
+
+  // And the real record — which DOES hold the hours — still shows them.
+  const real360 = hoursRow(base);
+  assert.equal(real360.state, "yes");
+  assert.ok(real360.value?.includes("360"), "the hours we do hold must still reach the page");
 });
 
 test("RECORD: every programme has a stable anchor id matching its listing href", () => {

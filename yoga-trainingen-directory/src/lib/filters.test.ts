@@ -242,6 +242,50 @@ test("DISTANCE: an UNPLACEABLE row is kept — proven with a row we know cannot 
   assert.equal(g.unplaceable.length, 1, "the unplaceable group did not hold exactly the one row it should");
 });
 
+test("DISTANCE: a row that cannot have a distance never keeps a stale one", () => {
+  // `Row.distanceKm?` meant three different things at once — "not computed" (no
+  // origin), "not placeable", and "online, n/a" — and partitionByDistance pushed
+  // `{ ...r }` into `online` and `unplaceable` WITHOUT stripping it, while
+  // overwriting it for `near`. So a row that arrives already carrying a distance
+  // (a second radius pass, a memoised list, a re-partition after the mode filter
+  // changed) kept it, and ProgrammeTable prints `distanceKm != null`
+  // unconditionally: "12 km" under a programme with no location at all, or under
+  // an online one where distance means nothing.
+  //
+  // Feed the output back in — the exact scenario — and the field must be gone.
+  const first = partitionByDistance(ROWS, UTRECHT, null);
+  const placed = first.near[0];
+  assert.ok(placed, "no row could be placed at all — this test tests nothing");
+  assert.equal(typeof placed.distanceKm, "number", "a near row must carry its distance");
+
+  // The same row, second pass: now online (distance does not apply to it), and
+  // now unplaceable (we cannot place its city). Both arrive carrying the distance
+  // the first pass gave them.
+  const second = partitionByDistance(
+    [
+      { ...placed, mode: "online", href: "/aanbieder/x#programma-online" },
+      { ...placed, cities: ["Nergenshuizen"], href: "/aanbieder/x#programma-nowhere" },
+    ],
+    UTRECHT,
+    null,
+  );
+
+  const online = second.online.find((r) => r.href === "/aanbieder/x#programma-online");
+  assert.ok(online, "the online row was dropped");
+  assert.equal(online.distanceKm, undefined,
+    `an online programme has no location, yet it would print "${online.distanceKm} km" — a distance carried ` +
+    `over from a previous pass, presented as this programme's own`);
+
+  const nowhere = second.unplaceable.find((r) => r.href === "/aanbieder/x#programma-nowhere");
+  assert.ok(nowhere, "the unplaceable row was dropped");
+  assert.equal(nowhere.distanceKm, undefined,
+    "we cannot place this programme at all, yet it kept a distance from the pass before");
+
+  // The property is gone, not merely undefined — nothing downstream can read it back.
+  assert.ok(!("distanceKm" in online), "the online row still carries a distanceKm key");
+  assert.ok(!("distanceKm" in nowhere), "the unplaceable row still carries a distanceKm key");
+});
+
 test("DISTANCE: the radius is honoured, and rows outside it are COUNTED", () => {
   const g = partitionByDistance(ROWS, UTRECHT, 25);
   assert.ok(g.near.every((r) => (r.distanceKm as number) <= 25), "a row beyond 25 km matched");

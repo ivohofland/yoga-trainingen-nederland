@@ -5,7 +5,7 @@
  * renders, and nothing else.
  */
 import { bundleDelta, pricePerContactHour } from "./dataset";
-import { quadClass, saysNotPublished } from "./quad";
+import { saysNotPublished } from "./quad";
 import { nl } from "./strings";
 import type { Claim, Cohort, Program, Provider, Quad, Source } from "../schema";
 
@@ -217,7 +217,10 @@ function pphBlocker(program: Program): { field: "price" | "hours"; published: Qu
  * Every caller — €/contactuur, the hours breakdown, supervised practice, the
  * price amount — routes through here. The rule is stated ONCE.
  */
-function missingBecause(published: Quad): Quad {
+function missingBecause(published: Quad): "not_published" | "unknown" {
+  // The return type is the rule, too: a value we do NOT hold can only ever be
+  // their omission or our gap. It is never "yes" — there is nothing to say yes to
+  // — so a row built from it cannot claim a fact it has nothing to back with.
   return saysNotPublished(published) ? "not_published" : "unknown";
 }
 
@@ -451,14 +454,38 @@ export interface QuadRow {
   source: SourceRef;
 }
 
-export interface KeyValueRow {
-  label: string;
-  /** null → the Quad renders its state word instead of a value. */
-  value: string | null;
-  state: Quad;
-  note: string | null;
-  source: SourceRef;
-}
+/**
+ * A labelled row: a state, and — when the state is a fact we hold — the value it
+ * asserts. The two are ONE thing, so the type ties them together.
+ *
+ * It used to be `{ value: string | null; state: Quad }` — two independent fields,
+ * and both illegal pairings were representable:
+ *
+ *   { state: "yes", value: null }  → <Quad> renders children only for a fact WITH
+ *     children, so this falls through to a bare “ja” in FACT INK: an established
+ *     fact asserted about a named business with nothing whatsoever behind it. That
+ *     is the bug that shipped on five providers' Prijs cells.
+ *
+ *   { state: "not_published", value: "…" } → a non-fact drops its children on the
+ *     floor. That is the bug that ate six providers' verbatim assessment quotes —
+ *     the very evidence for the finding beside them.
+ *
+ * Both were still reachable at the assessment row, the one row whose value and
+ * state come from DIFFERENT record fields (`quote` vs `exists`): the schema makes
+ * `exists` required and `quote` optional, so `{ exists: "yes" }` with no quote is
+ * schema-legal and printed “Toetsing — ja”, in fact ink, backed by nothing. No
+ * record has that shape today; nothing but luck was holding it back.
+ *
+ * Now: a fact ALWAYS carries what it asserts, and a non-fact NEVER carries a value
+ * the page would silently drop (it goes in the `note`, which always renders).
+ * Neither illegal shape compiles.
+ */
+export type KeyValueRow = { label: string; note: string | null; source: SourceRef } & (
+  | { state: "yes"; value: string }
+  /** No value to show → <Quad> renders the state word. `no` belongs here: on the
+   *  fields these rows read, “nee” IS the whole statement. */
+  | { state: "no" | "not_published" | "unknown"; value?: never }
+);
 
 export interface CohortView {
   id: string;
@@ -590,9 +617,24 @@ function q(v: Quad | undefined): Quad {
 }
 
 /**
+ * The quad a row with NO value may carry — and "yes" is not among them.
+ *
+ * A fact with nothing behind it asserts something our record does not hold; if we
+ * ever reach that state, the missing value is OURS, so it is a gap (the identical
+ * correction priceQuad makes, rule 1 — never the amber accusation). The type
+ * already forbids the pairing; this is the one place that decides what to render
+ * instead of it, rather than each caller inventing an answer.
+ */
+function noValue(state: Quad): Exclude<Quad, "yes"> {
+  return state === "yes" ? "unknown" : state;
+}
+
+/**
  * A row whose label promises a VALUE, not a yes/no ("Groepsgrootte", "Track
  * record", …). With no value there is nothing established, so it is a gap —
- * never a bare "ja", which would assert a fact we do not hold.
+ * never a bare "ja", which would assert a fact we do not hold, and never
+ * "niet gepubliceerd": no *_published field governs these rows, so nothing in
+ * the record licenses an accusation about them.
  */
 function fact(
   label: string,
@@ -600,13 +642,10 @@ function fact(
   note?: string | null,
   source?: SourceRef | undefined,
 ): KeyValueRow {
-  return {
-    label,
-    value: value ?? null,
-    state: value == null ? "unknown" : "yes",
-    note: note ?? null,
-    source: source ?? null,
-  };
+  const common = { label, note: note ?? null, source: source ?? null };
+  return value == null
+    ? { ...common, state: "unknown" }
+    : { ...common, state: "yes", value };
 }
 
 const joinDot = (parts: (string | false | null | undefined)[]): string | null =>
@@ -724,19 +763,22 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // second reading of the same field. "Prijs: ja" with no amount is a promise the
   // row cannot keep, and it asserts as an established fact something our record
   // does not hold; the note says whose gap that is, rather than leaving the reader
-  // to infer an omission by the provider.
-  rows.push({
-    label: nl.colPrice,
-    value: priceDisplay(program.price),
-    state: priceQuad(program),
-    note: joinDot([
-      priceAmountIsOurGap(program) && nl.priceAmountNotInRecord,
-      program.price.includes && `${nl.priceIncludes}: ${program.price.includes}`,
-      program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
-      program.price.note,
-    ]),
-    source: program.price.source ?? null,
-  });
+  // to infer an omission by the provider. The type now makes that promise
+  // unbreakable: a "yes" that has no amount to show cannot be constructed at all.
+  const priceState = priceQuad(program);
+  const priceValue = priceDisplay(program.price);
+  const priceNote = joinDot([
+    priceAmountIsOurGap(program) && nl.priceAmountNotInRecord,
+    program.price.includes && `${nl.priceIncludes}: ${program.price.includes}`,
+    program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
+    program.price.note,
+  ]);
+  const priceSource = program.price.source ?? null;
+  rows.push(
+    priceState === "yes" && priceValue != null
+      ? { label: nl.colPrice, state: "yes", value: priceValue, note: priceNote, source: priceSource }
+      : { label: nl.colPrice, state: noValue(priceState), note: priceNote, source: priceSource },
+  );
 
   // The same epistemic rule as the listing's €/contactuur column, from the same
   // pair of helpers — the record must never say something the listing does not.
@@ -745,60 +787,83 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // and the hours, each of which carries its own source in the row above and the
   // row below. Pinning one of those two sources to our own arithmetic would credit
   // the provider with a number they never published.
-  rows.push({
-    label: nl.colPph,
-    value: pph.value != null ? formatEuro2(pph.value) : null,
-    state: pphState,
-    note: pphCaveatFor(program, pphState),
-    source: null,
-  });
+  const pphValue = pph.value != null ? formatEuro2(pph.value) : null;
+  const pphNote = pphCaveatFor(program, pphState);
+  rows.push(
+    pphState === "yes" && pphValue != null
+      ? { label: nl.colPph, state: "yes", value: pphValue, note: pphNote, source: null }
+      : { label: nl.colPph, state: noValue(pphState), note: pphNote, source: null },
+  );
 
-  rows.push({
-    label: nl.rowHours,
-    value: joinDot([
-      h.total != null && `${h.total} ${nl.hoursTotal}`,
-      h.contact != null && `${h.contact} ${nl.hoursContact}`,
-      h.self_study != null && `${h.self_study} ${nl.hoursSelfStudy}`,
-    ]),
-    state: h.total == null && h.contact == null && h.self_study == null
-      ? missingBecause(h.breakdown_published)
-      : "yes",
-    note: h.note ?? null,
-    source: h.source ?? null,
-  });
+  const hoursValue = joinDot([
+    h.total != null && `${h.total} ${nl.hoursTotal}`,
+    h.contact != null && `${h.contact} ${nl.hoursContact}`,
+    h.self_study != null && `${h.self_study} ${nl.hoursSelfStudy}`,
+  ]);
+  rows.push(
+    hoursValue != null
+      ? { label: nl.rowHours, state: "yes", value: hoursValue, note: h.note ?? null, source: h.source ?? null }
+      : {
+          label: nl.rowHours,
+          // THE rule, not a literal: 71 programmes publish no supervised-practice
+          // figure and 4 publish no hours at all, and what the page may SAY about
+          // each absence is what the record says about the breakdown that would
+          // have carried it. (See missingBecause. The row below is where hard-coding
+          // "not_published" here would have accused six named businesses.)
+          state: missingBecause(h.breakdown_published),
+          note: h.note ?? null,
+          source: h.source ?? null,
+        },
+  );
 
   // The §5 field. Its emptiness across the market is the finding — so it gets
   // its own row on every programme, always. With no number, the row says what
   // the record says about the breakdown that would have carried it: a finding
   // when they publish none, a gap in OUR record when they do and we lack it.
-  rows.push({
-    label: nl.rowSupervised,
-    value: h.supervised_teaching_practice != null
-      ? `${h.supervised_teaching_practice} ${nl.hoursSuffixLong}`
-      : null,
-    state: h.supervised_teaching_practice != null ? "yes" : missingBecause(h.breakdown_published),
-    note: null,
-    // Same field as the row above: the schema puts one source on hours_claimed.
-    source: h.source ?? null,
-  });
+  // SIX programmes are the second kind (breakdown_published: yes, no supervised
+  // figure). A literal "not_published" here reads as a finding about each of them.
+  const supervised = h.supervised_teaching_practice;
+  // Same field as the row above: the schema puts one source on hours_claimed.
+  const hoursSource = h.source ?? null;
+  rows.push(
+    supervised != null
+      ? {
+          label: nl.rowSupervised,
+          state: "yes",
+          value: `${supervised} ${nl.hoursSuffixLong}`,
+          note: null,
+          source: hoursSource,
+        }
+      : { label: nl.rowSupervised, state: missingBecause(h.breakdown_published), note: null, source: hoursSource },
+  );
 
   // The quote is the provider's own words, and where `exists` is a FINDING it is
   // the *evidence for* that finding ("Na afronding ontvang je een RYT-200
   // certificaat" — a certificate promised, no assessment described). <Quad>
   // renders children only for a fact, so on the six such programmes that quote
   // was being dropped on the floor. It goes in the note, which always renders.
+  //
+  // This is the one row whose value and state come from two DIFFERENT record
+  // fields (`quote` vs `exists`), which is why both illegal shapes lived here
+  // longest. The row now has to say what it means: the quote is the value only
+  // when it IS the fact ("ja" — and here is what they describe); otherwise the
+  // state stands alone and the quote is the evidence beneath it. An `exists: yes`
+  // with no quote is a fact we do not hold — our gap, never their omission.
   const assessment = program.assessment_described;
   const assessmentState = q(assessment?.exists);
-  const quoteRendersAsValue = quadClass(assessmentState) === "fact";
-  rows.push({
-    label: nl.rowAssessment,
-    value: assessment?.quote ?? null,
-    state: assessmentState,
-    note: assessment?.quote && !quoteRendersAsValue ? `“${assessment.quote}”` : null,
-    // The schema's `assessment_described` has no `source` field — so this row
-    // shows none. It does not borrow one it was never given.
-    source: null,
-  });
+  const quote = assessment?.quote ?? null;
+  // The schema's `assessment_described` has no `source` field — so this row
+  // shows none. It does not borrow one it was never given.
+  rows.push(
+    assessmentState === "yes" && quote != null
+      ? { label: nl.rowAssessment, state: "yes", value: quote, note: null, source: null }
+      : {
+          label: nl.rowAssessment,
+          state: noValue(assessmentState),
+          note: quote != null ? `“${quote}”` : null,
+          source: null,
+        },
+  );
 
   rows.push(fact(
     nl.rowGroupSize,
