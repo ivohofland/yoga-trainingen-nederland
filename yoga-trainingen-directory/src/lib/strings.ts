@@ -36,6 +36,8 @@ export const nl = {
   filterRegister: "Registerstatus",
   filterPrice: "Prijs (gepubliceerd)",
   filterOwnFormat: "eigen vorm",
+  hourSuffix: "u",
+  monthsSuffix: "mnd",
 
   // Location + radius (spec §6.3). Replaces the design's four-city chip list.
   filterLocation: "Afstand",
@@ -55,6 +57,9 @@ export const nl = {
   // Headings for what distance cannot describe (spec §6.4). Nothing is hidden.
   groupOnline: "Online — afstand niet van toepassing",
   groupUnplaceable: "Locatie niet vermeld — wij kunnen deze niet plaatsen",
+  // Short inline label for a provider's city cell — distinct from
+  // groupUnplaceable above, which is a section heading with longer wording.
+  cityNotListed: "locatie niet vermeld",
   farExcluded: (n: number) =>
     `${n} ${n === 1 ? "opleiding valt" : "opleidingen vallen"} buiten deze straal.`,
   filterYaVerified: "YA register-geverifieerd",

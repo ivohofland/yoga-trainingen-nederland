@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./dataset";
 import { toListingRows, datasetStats } from "./presenters";
+import { nl } from "./strings";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z"); // fixed — never let a test depend on the wall clock
@@ -14,15 +15,28 @@ test("every programme in the dataset becomes exactly one row", () => {
 
 test("an announced cohort is never labelled as one that ran", () => {
   // spec §8: recording an announcement as if it happened is the central trap.
+  // "confirmed_ran" cohorts really did run — their Dutch label legitimately
+  // contains "gedraaid", regardless of whether the start date happens to be
+  // in the future (a cohort can be confirmed as running before its own start
+  // month has fully passed). The invariant this guards is narrower than "no
+  // cohort ever mentions running": only an ANNOUNCED cohort must never be
+  // presented as one that ran.
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
-    if (r.nextCohort?.status === "announced") {
-      assert.match(r.nextCohort.label, /aangekondigd/,
+    if (!r.nextCohort) continue;
+    const { status, label } = r.nextCohort;
+    // the status is never omitted from the label, whatever it is
+    assert.ok(label.includes(nl.cohortStatus[status]),
+      `programme ${r.programId} cohort label omits its status (${status})`);
+    if (status === "announced") {
+      assert.match(label, /aangekondigd/,
         `programme ${r.programId} shows an announced cohort without saying so`);
+      assert.doesNotMatch(label, /gedraaid|gestart|liep/,
+        `programme ${r.programId} implies an announced cohort ran`);
     }
-    if (r.nextCohort) {
-      assert.doesNotMatch(r.nextCohort.label, /gedraaid|gestart|liep/,
-        `programme ${r.programId} implies a cohort ran`);
+    if (status === "confirmed_ran") {
+      assert.match(label, /gedraaid/,
+        `programme ${r.programId} confirms a cohort ran but the label doesn't say so`);
     }
   }
 });
@@ -50,11 +64,17 @@ test("a programme with no computable price-per-contact-hour carries a caveat, no
 });
 
 test("a price that is not published never renders as a number", () => {
+  // pricePublished is quad-state (yes | no | not_published | unknown, spec's
+  // quad-state convention); an amount is only legitimate when it is "yes" —
+  // "no", "not_published", and "unknown" must all carry neither a number nor
+  // a rendered price string.
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
-    if (r.pricePublished === "not_published" || r.pricePublished === "unknown") {
+    if (r.pricePublished !== "yes") {
       assert.equal(r.priceAmount, null,
         `programme ${r.programId} has an amount despite pricePublished=${r.pricePublished}`);
+      assert.equal(r.priceDisplay, null,
+        `programme ${r.programId} renders a price despite pricePublished=${r.pricePublished}`);
     }
   }
 });

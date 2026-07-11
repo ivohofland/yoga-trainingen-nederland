@@ -84,25 +84,34 @@ export function formatMonth(ym: string): string {
 
 function cityDisplay(p: Provider): string {
   const cities = p.locations.map((l) => l.city).filter((c): c is string => c != null);
-  return cities.length ? [...new Set(cities)].join(" · ") : "locatie niet vermeld";
+  return cities.length ? [...new Set(cities)].join(" · ") : nl.cityNotListed;
 }
 
 function formatDisplay(f: Program["format_label"]): string {
   if (f === "other" || f === "none") return nl.filterOwnFormat;
-  return `${f} u`;
+  return `${f} ${nl.hourSuffix}`;
 }
 
 function deliveryDisplay(d: Program["delivery"]): string {
   const parts: string[] = [nl.mode[d.mode], nl.structure[d.structure]];
   const { duration_months_min: lo, duration_months_max: hi } = d;
-  if (lo != null && hi != null && lo !== hi) parts.push(`${lo}–${hi} mnd`);
-  else if (lo != null) parts.push(`${lo} mnd`);
-  else if (hi != null) parts.push(`${hi} mnd`);
+  if (lo != null && hi != null && lo !== hi) parts.push(`${lo}–${hi} ${nl.monthsSuffix}`);
+  else if (lo != null) parts.push(`${lo} ${nl.monthsSuffix}`);
+  else if (hi != null) parts.push(`${hi} ${nl.monthsSuffix}`);
   if (d.language) parts.push(d.language.toUpperCase());
   return parts.join(" · ");
 }
 
-/** null when the price is not a published number — never a zero, never a guess. */
+/**
+ * null when the price is not a published number — never a zero, never a guess.
+ *
+ * This passes `amount_eur` through as-is; it does not null the value here
+ * even when `published !== "yes"`. The invariant "an amount implies the
+ * provider publishes a price" is enforced by the build-gate test in
+ * presenters.test.ts, not by silently nulling in this presenter — a data
+ * error that violates the invariant must fail the build loudly, because
+ * hiding it here would be worse than the build failing.
+ */
 function priceDisplay(p: Program["price"]): string | null {
   if (p.amount_eur == null) return null;
   const base = `${formatEuro(p.amount_eur)} · ${nl.vat[p.vat]}`;
