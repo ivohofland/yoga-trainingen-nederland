@@ -30,6 +30,18 @@ test("a provider with several locations matches on its NEAREST one", () => {
   assert.ok(d != null && d < 1, `expected ~0 km from Utrecht to itself, got ${d}`);
 });
 
+test("a provider places on its nearest PLACEABLE city, rather than being dropped", () => {
+  // Inner Axis teaches in Utrecht and in "Salzburg (regio), Oostenrijk". The
+  // Austrian location legitimately does not resolve against a Dutch register.
+  // One unplaceable location must not make the whole provider unplaceable —
+  // that would silently drop a training that genuinely runs in Utrecht.
+  const utrecht = cityCentroid("Utrecht");
+  assert.ok(utrecht);
+  const d = nearestKm(["Utrecht", "Salzburg (regio), Oostenrijk"], utrecht);
+  assert.notEqual(d, null, "a mixed placeable/unplaceable provider was dropped as unplaceable");
+  assert.ok(d != null && d < 1, `expected ~0 km via its Utrecht location, got ${d}`);
+});
+
 test("nearestKm returns null when no city can be placed — never 0, never Infinity", () => {
   // 0 would mean "right here" and Infinity would sort it as far away. Both lie.
   assert.equal(nearestKm([], { lat: 52, lon: 5 }), null);

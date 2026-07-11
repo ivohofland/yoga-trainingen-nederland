@@ -1,0 +1,231 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 44px;
+  align-items: flex-start;
+  padding: 24px 0 22px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.groupLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule-2);
+}
+
+.chipActive {
+  composes: chip;
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.postcode {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 4px 10px;
+  width: 140px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.geoNote {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 260px;
+}
+
+.geoError {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--error);
+  max-width: 260px;
+}
+
+.distance {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* Rows distance cannot describe. Visible, and told why. */
+.groupHeading {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 36px 0 0;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.sortBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 16px;
+}
+
+.sortGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resultLine {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 2.6fr) 0.8fr 1.7fr 1.7fr 1.5fr 1.8fr;
+  gap: 16px;
+}
+
+.head {
+  composes: grid;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.row {
+  composes: grid;
+  align-items: baseline;
+  padding: 20px 16px;
+  margin: 0 -16px;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+}
+
+.row:hover {
+  background: var(--hover);
+}
+
+.provider {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.providerName {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.programName {
+  font-size: 16.5px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.style {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.cohort {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.disclosure {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--finding);
+  margin-top: 6px;
+}
+
+.cell {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.cellSmall {
+  composes: cell;
+  font-size: 11.5px;
+}
+
+.empty {
+  padding: 48px 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.footnote {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 780px;
+  margin: 20px 0 0;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .head {
+    display: none;
+  }
+}

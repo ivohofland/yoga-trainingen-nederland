@@ -1,0 +1,35 @@
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  padding: 14px 0 0;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.intro {
+  max-width: 640px;
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  margin: 44px 0 12px;
+}
+
+.legend {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 720px;
+  margin: 0 0 44px;
+}
+
+.footnote {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 780px;
+  margin: 20px 0 0;
+}
