@@ -780,11 +780,9 @@ export const nl = {
   footLeft: "Geen totaalscores. Geen ranglijsten. Geen affiliate-links. Geen betaalde plaatsing.",
   footRight: "Onderzoek door Ivo Hofland",
   footGithub: "data, schema & methode op GitHub ↗",
-  githubUrl: "https://github.com/ivohofland/yoga-trainingen",
+  githubUrl: "https://github.com/ivohofland/yoga-trainingen-nederland",
 } as const;
 ```
-
-Note: `githubUrl` — confirm the real repo URL with `git remote -v` and correct it if it differs. The design's placeholder was `your-org/yoga-trainingen`.
 
 - [ ] **Step 4: Write the listing presenter**
 
@@ -3525,4 +3523,4 @@ Expect a clean tree. If `public/data/v1/providers.json` was regenerated identica
 4. **No "residential" distance group.** An earlier draft proposed one; the schema has no `residential` field, so it would have meant inferring residency from `structure: "intensive"`. Cut, under the same rule that cut the rest of the design's inventions.
 5. **`transparency` exists on only 4 of 77 programmes** and `coherence_signals` on 25. Most render as five/six gaps. Correct and honest, but the record pages will look sparse — expected, not a bug.
 
-**Known follow-up:** `nl.githubUrl` in `src/lib/strings.ts` is a placeholder — this repo currently has **no git remote**. Either set the real URL or drop the footer link; do not ship a dead one.
+**Resolved:** the footer links to `https://github.com/ivohofland/yoga-trainingen-nederland` (remote added 2026-07-11). `.env` is gitignored and has never entered history — verified before the repo went public.
