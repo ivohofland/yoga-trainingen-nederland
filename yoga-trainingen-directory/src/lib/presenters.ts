@@ -5,7 +5,7 @@
  * renders, and nothing else.
  */
 import { bundleDelta, pricePerContactHour } from "./dataset";
-import { quadLabel } from "./quad";
+import { quadClass } from "./quad";
 import { nl } from "./strings";
 import type { Cohort, Program, Provider, Quad, Source } from "../schema";
 
@@ -143,16 +143,19 @@ function pphBlocker(program: Program): { field: "price" | "hours"; published: Qu
 }
 
 /**
- * The quad the €/contactuur cell may render when there is no computable value.
+ * THE rule of this project, in one function — the only place it may live.
  *
- * THE rule this exists to enforce (CLAUDE.md, spec §4): `not_published` is a
- * FINDING ABOUT A NAMED BUSINESS — "we looked; they do not state it". `unknown`
- * is a GAP IN OUR OWN RESEARCH. Publishing a gap as a finding is an accusation
- * we did not earn; publishing a finding as a gap disowns research we did do and
- * sourced. Both are wrong. So the cell says exactly what the record says about
- * the BLOCKING field — no more, and no less.
+ * A value is missing from our record. Some *_published quad governs whether it
+ * could have been there at all. What may the page SAY about the absence?
  *
- * The blocking fields are both called *published*, and on such a field `no` and
+ * (CLAUDE.md, spec §4): `not_published` is a FINDING ABOUT A NAMED BUSINESS —
+ * "we looked; they do not state it". `unknown` is a GAP IN OUR OWN RESEARCH.
+ * Publishing a gap as a finding is an accusation we did not earn; publishing a
+ * finding as a gap disowns research we did do and sourced. Both are wrong. So
+ * the cell says exactly what the record says about the GOVERNING field — no
+ * more, and no less.
+ *
+ * Those fields are all called *published*, and on such a field `no` and
  * `not_published` mean the same thing about the provider: they do not publish
  * it. `no` is not contradictory — it is a researched, sourced finding (five
  * programmes carry it, each with a note like "Geen prijs gepubliceerd op de
@@ -164,11 +167,18 @@ function pphBlocker(program: Program): { field: "price" | "hours"; published: Qu
  * yogic-life/ryt200-multistyle, yogic-life/ryt300-multistyle: an amount, a
  * published breakdown, and no `hours_claimed.contact`). The missing value is
  * OURS. That is a gap, and so is `unknown` — nobody looked yet.
+ *
+ * Every caller — €/contactuur, the hours breakdown, supervised practice, the
+ * price amount — routes through here. The rule is stated ONCE.
  */
+function missingBecause(published: Quad): Quad {
+  return published === "not_published" || published === "no" ? "not_published" : "unknown";
+}
+
+/** The quad the €/contactuur cell may render when there is no computable value. */
 export function pphQuad(program: Program): Quad {
   if (pricePerContactHour(program).value != null) return "yes";
-  const { published } = pphBlocker(program);
-  return published === "not_published" || published === "no" ? "not_published" : "unknown";
+  return missingBecause(pphBlocker(program).published);
 }
 
 /**
@@ -304,6 +314,9 @@ export interface ProgramView {
   rows: KeyValueRow[];
   coherence: QuadRow[];
   transparency: QuadRow[];
+  contract: QuadRow[];
+  /** invoicing_entity + note — provenance for the contract quads, never a quad itself. */
+  contractNote: string | null;
   accreditation: { body: string; label: string; verified: Quad; note: string | null }[];
   cohorts: { id: string; start: string; status: Cohort["status"]; label: string; note: string | null }[];
 }
@@ -324,6 +337,20 @@ export interface SourceView {
   note: string | null;
   archivePublic: boolean;
   archiveLocal: boolean;
+  /**
+   * BOTH slots, always — "publiek ✓ · lokaal —". The publication bar is *both* a
+   * public archive AND a dated local copy, so showing only the halves we have
+   * lets a source that meets half the bar read as if it met all of it (104 of
+   * 220 sources actually meet it; 108 more carried a quiet single ✓). Null when
+   * NEITHER exists: the page prints the below-the-bar stamp instead.
+   *
+   * Not a quad, and deliberately not phrased as one: this is a fact about OUR
+   * record, not a finding about the provider. Many local-only sources are
+   * legitimate — Yoga Alliance and CRKBO registers are JS-rendered or excluded
+   * from Wayback, so a browser-rendered local capture is the only evidence
+   * possible. Showing the missing half is reporting, not criticism.
+   */
+  archiveSlots: string | null;
 }
 
 export interface ProviderView {
@@ -341,7 +368,9 @@ export interface ProviderView {
   programs: ProgramView[];
   claims: ClaimView[];
   sources: SourceView[];
-  sourcesArchived: number;
+  /** Counted separately, and both are printed: neither number alone is the bar. */
+  sourcesArchivedPublic: number;
+  sourcesArchivedLocal: number;
 }
 
 /** An absent optional object is a gap, never a finding (spec §4). */
@@ -366,20 +395,6 @@ function fact(label: string, value: string | null | undefined, note?: string | n
 const joinDot = (parts: (string | false | null | undefined)[]): string | null =>
   parts.filter(Boolean).join(" · ") || null;
 
-/**
- * A published-ness quad read for a value that is missing from our record.
- *
- * Same rule as pphQuad, applied to any field whose availability is gated by a
- * *_published quad: on such a field `no` and `not_published` both mean "wij
- * keken; zij publiceren het niet" — a sourced FINDING. `yes` (they do publish
- * it, yet the value is absent from our record anyway) and `unknown` (nobody
- * looked) are GAPS in our own research, and must never be published as an
- * accusation against a named business.
- */
-function missingBecause(published: Quad): Quad {
-  return published === "not_published" || published === "no" ? "not_published" : "unknown";
-}
-
 function coherenceRows(program: Program): QuadRow[] {
   const cs = program.coherence_signals;
   return (Object.keys(nl.coherence) as (keyof typeof nl.coherence)[]).map((key) => ({
@@ -400,6 +415,29 @@ function transparencyRows(program: Program): QuadRow[] {
   }));
 }
 
+/**
+ * The contract quads, each one its own row — because each one is its own quad.
+ *
+ * These used to be flattened into a single "Voorwaarden" row: three quad LABELS
+ * joined into a sentence and handed to the page as one `state: "yes"`. That
+ * rendered two genuine `not_published` findings in fact ink, and would have
+ * rendered a future `unknown` — a gap — as an established fact. A quad becomes
+ * pixels in exactly one place (<Quad>); the only way to keep that true is to
+ * hand the page the quads themselves.
+ *
+ * Rendered on EVERY programme, like coherence and transparency: 12 of 77 records
+ * carry a `contract` object at all, and the emptiness is itself worth seeing.
+ */
+function contractRows(program: Program): QuadRow[] {
+  const c = program.contract;
+  return (Object.keys(nl.contract) as (keyof typeof nl.contract)[]).map((key) => ({
+    key,
+    label: nl.contract[key],
+    state: q(c?.[key]),
+    note: null,
+  }));
+}
+
 function programRows(provider: Provider, program: Program): KeyValueRow[] {
   const h = program.hours_claimed;
   const pphState = pphQuad(program);
@@ -411,11 +449,19 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   rows.push(fact(nl.rowStyle, program.style_claimed));
   rows.push(fact(nl.colDelivery, deliveryDisplay(program.delivery)));
 
+  // "Prijs: ja" with no amount is a promise the row cannot keep — and worse, it
+  // asserts as an established fact something our record does not hold. Five
+  // programmes are this shape. The record says the provider DOES publish a price
+  // and we simply do not have the number: by the same rule as everywhere else,
+  // that missing value is OURS, so it is a gap — and the note says so, rather
+  // than leaving the reader to infer an omission by the provider.
+  const priceAmountIsOurGap = program.price.published === "yes" && program.price.amount_eur == null;
   rows.push({
     label: nl.colPrice,
     value: priceDisplay(program.price),
-    state: program.price.published,
+    state: priceAmountIsOurGap ? "unknown" : program.price.published,
     note: joinDot([
+      priceAmountIsOurGap && nl.priceAmountNotInRecord,
       program.price.includes && `${nl.priceIncludes}: ${program.price.includes}`,
       program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
       program.price.note,
@@ -457,11 +503,19 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
     note: null,
   });
 
+  // The quote is the provider's own words, and where `exists` is a FINDING it is
+  // the *evidence for* that finding ("Na afronding ontvang je een RYT-200
+  // certificaat" — a certificate promised, no assessment described). <Quad>
+  // renders children only for a fact, so on the six such programmes that quote
+  // was being dropped on the floor. It goes in the note, which always renders.
+  const assessment = program.assessment_described;
+  const assessmentState = q(assessment?.exists);
+  const quoteRendersAsValue = quadClass(assessmentState) === "fact";
   rows.push({
     label: nl.rowAssessment,
-    value: program.assessment_described?.quote ?? null,
-    state: q(program.assessment_described?.exists),
-    note: null,
+    value: assessment?.quote ?? null,
+    state: assessmentState,
+    note: assessment?.quote && !quoteRendersAsValue ? `“${assessment.quote}”` : null,
   });
 
   rows.push(fact(
@@ -484,24 +538,6 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
     ));
   }
 
-  if (program.contract) {
-    rows.push(fact(
-      nl.rowContract,
-      joinDot([
-        program.contract.cancellation_published &&
-          `${nl.contractCancellation}: ${quadLabel(program.contract.cancellation_published)}`,
-        program.contract.refund_published &&
-          `${nl.contractRefund}: ${quadLabel(program.contract.refund_published)}`,
-        program.contract.installments_published &&
-          `${nl.contractInstallments}: ${quadLabel(program.contract.installments_published)}`,
-      ]),
-      joinDot([
-        program.contract.invoicing_entity && `${nl.contractInvoices}: ${program.contract.invoicing_entity}`,
-        program.contract.note,
-      ]),
-    ));
-  }
-
   if (program.track_record) {
     rows.push(fact(
       nl.rowTrackRecord,
@@ -519,6 +555,20 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
 
 function domainOf(url: string): string {
   return url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+}
+
+/**
+ * The two halves of the publication bar, spelled out — a present half and an
+ * absent half are equally visible. Null when there is neither: the page then
+ * prints the below-the-bar stamp instead of two empty slots.
+ */
+function archiveSlots(s: Source): string | null {
+  if (s.archived_url == null && s.local_snapshot == null) return null;
+  const mark = (present: boolean) => (present ? nl.archivePresent : nl.archiveAbsent);
+  return [
+    `${nl.archivePublic} ${mark(s.archived_url != null)}`,
+    `${nl.archiveLocal} ${mark(s.local_snapshot != null)}`,
+  ].join(" · ");
 }
 
 export function toProviderView(p: Provider): ProviderView {
@@ -555,6 +605,11 @@ export function toProviderView(p: Provider): ProviderView {
       rows: programRows(p, program),
       coherence: coherenceRows(program),
       transparency: transparencyRows(program),
+      contract: contractRows(program),
+      contractNote: joinDot([
+        program.contract?.invoicing_entity && `${nl.contractInvoices}: ${program.contract.invoicing_entity}`,
+        program.contract?.note,
+      ]),
       accreditation: program.accreditation.map((a) => ({
         body: nl.body[a.body],
         label: a.label_claimed,
@@ -591,7 +646,9 @@ export function toProviderView(p: Provider): ProviderView {
       note: s.note ?? null,
       archivePublic: s.archived_url != null,
       archiveLocal: s.local_snapshot != null,
+      archiveSlots: archiveSlots(s),
     })),
-    sourcesArchived: p.sources.filter((s) => s.archived_url != null).length,
+    sourcesArchivedPublic: p.sources.filter((s) => s.archived_url != null).length,
+    sourcesArchivedLocal: p.sources.filter((s) => s.local_snapshot != null).length,
   };
 }

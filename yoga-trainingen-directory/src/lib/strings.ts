@@ -88,6 +88,13 @@ export const nl = {
   pphHoursNotInRecord:
     "Niet te berekenen: de contacturen ontbreken in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
 
+  // Same rule, applied to the price itself: the record says de aanbieder
+  // publiceert een prijs, maar het bedrag staat niet in ons record. Dat gat is
+  // van ons, en de regel zegt dat — in plaats van een kale “ja” die een bedrag
+  // belooft dat er niet is.
+  priceAmountNotInRecord:
+    "De aanbieder publiceert een prijs; het bedrag ontbreekt in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
+
   colProgramme: "Opleiding",
   colFormat: "Format",
   colDelivery: "Uitvoering",
@@ -116,6 +123,7 @@ export const nl = {
   secCoherenceNote:
     "Geen oordeel “samenhang: hoog/laag”. De signalen staan er; u weegt zelf.",
   secTransparency: "Wat de aanbieder publiceert",
+  secContract: "Voorwaarden",
   secClaims: "Beweringen in het record",
   claimsNote:
     "Letterlijk geciteerd in de brontaal. Beweringen zijn genoteerd als bewering — nooit als feit.",
@@ -123,11 +131,25 @@ export const nl = {
   pubBar:
     "Publicatielat: elke kritisch geciteerde bron heeft zowel een publiek archief als een " +
     "gedateerde lokale kopie. Records die de lat niet halen worden gemarkeerd, niet verborgen.",
+  // Both halves of the bar are printed for every source, so a half that is
+  // missing is visible instead of quietly reading as satisfied. Some registers
+  // (Yoga Alliance, CRKBO) are JS-gerenderd of uitgesloten van Wayback — daar is
+  // de lokale kopie het enige bewijs dat mogelijk is. Dit is verslag van ons
+  // eigen dossier, geen verwijt aan de aanbieder.
+  pubBarSlots:
+    "Per bron staan beide helften vermeld: “publiek” is het openbare archief, “lokaal” de " +
+    "gedateerde kopie in ons eigen dossier. Een “—” betekent dat die helft er niet is. " +
+    "Sommige registers zijn JS-gerenderd of uitgesloten van Wayback; daar is de lokale " +
+    "kopie de enige mogelijke vastlegging.",
   notArchived: "nog niet gearchiveerd",
   archivePublic: "publiek",
   archiveLocal: "lokaal",
-  sourcesHeading: (total: number, archived: number) =>
-    `Bronnen (${total} · ${archived} publiek gearchiveerd)`,
+  archivePresent: "✓",
+  archiveAbsent: "—",
+  // Never one number: a count of public archives alone reads as archive coverage,
+  // and the bar is BOTH halves. Both counts, side by side, over the total.
+  sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>
+    `Bronnen (${total} · ${publicArchived} met publiek archief · ${localCopies} met lokale kopie)`,
 
   // Record row labels. Reuses colFormat / colDelivery / colPrice / colPph where
   // the listing already names the same field — one field, one word.
@@ -138,7 +160,6 @@ export const nl = {
   rowGroupSize: "Groepsgrootte",
   rowPrerequisites: "Vooropleiding",
   rowComposition: "Samenstelling",
-  rowContract: "Voorwaarden",
   rowTrackRecord: "Track record",
   rowAccreditation: "Accreditatie (geclaimd)",
   rowCohorts: "Cohorten",
@@ -152,9 +173,6 @@ export const nl = {
   modulesSuffix: "modules",
   bundleDelta: (amount: string, below: boolean) =>
     `Pakketprijs ${amount} ${below ? "onder" : "boven"} de som van de losse modules.`,
-  contractCancellation: "annulering",
-  contractRefund: "terugbetaling",
-  contractInstallments: "termijnen",
   contractInvoices: "factureert",
   since: "sinds",
   lastConfirmed: "laatst bevestigd",
@@ -248,6 +266,15 @@ export const nl = {
     assessment_criteria_published: "Toetscriteria",
     reading_list_published: "Leeslijst",
     teacher_bios_published: "Docentbio’s",
+  } as const,
+
+  // Three quads, three rows — never one sentence. Joining quad LABELS into a
+  // string and handing it to the page as a single fact strips a finding of its
+  // colour and would render a gap as a fact. The keys are the schema's.
+  contract: {
+    cancellation_published: "Annuleringsvoorwaarden",
+    refund_published: "Terugbetalingsregeling",
+    installments_published: "Betaling in termijnen",
   } as const,
 
   footLeft: "Geen totaalscores. Geen ranglijsten. Geen affiliate-links. Geen betaalde plaatsing.",

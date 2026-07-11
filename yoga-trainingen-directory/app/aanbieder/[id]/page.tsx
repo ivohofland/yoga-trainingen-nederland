@@ -162,6 +162,19 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 <div className={styles.v}><Quad state={s.state} /></div>
               </div>
             ))}
+
+            {/* Voorwaarden — three quads, three rows, each one through <Quad>.
+                They were once flattened into a single sentence rendered in fact
+                ink: two real findings lost their colour, and a gap would have
+                read as a fact. A quad only ever becomes pixels in <Quad>. */}
+            <div className={styles.subLabel}>{nl.secContract}</div>
+            {prog.contract.map((s) => (
+              <div key={s.key} className={styles.kv}>
+                <div className={styles.k}>{s.label}</div>
+                <div className={styles.v}><Quad state={s.state} /></div>
+              </div>
+            ))}
+            {prog.contractNote && <div className={styles.note}>{prog.contractNote}</div>}
           </article>
         ))}
       </section>
@@ -193,7 +206,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
       {/* Sources */}
       <section className={styles.section}>
         <div className={styles.sectionLabel}>
-          {nl.sourcesHeading(v.sources.length, v.sourcesArchived)}
+          {nl.sourcesHeading(v.sources.length, v.sourcesArchivedPublic, v.sourcesArchivedLocal)}
         </div>
         {v.sources.map((s) => (
           <div key={s.id} className={styles.srcRow}>
@@ -208,19 +221,24 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
             {/*
              * NOT a quad. <Quad state="not_published"> would print "niet
              * gepubliceerd" — which says the PROVIDER failed to publish
-             * something. An unarchived source is the opposite: it is OUR record
-             * sitting below the publication bar. Its own class, its own words,
-             * and it is marked rather than hidden.
+             * something. This is the opposite: it is OUR record, measured
+             * against OUR publication bar. Its own class, its own words.
+             *
+             * BOTH halves of the bar, always. Printing only the halves we have
+             * let 108 sources with a single quiet ✓ read as if they met a bar
+             * that asks for two — the page would have been claiming a standard
+             * it does not meet, in the one place whose job is to be honest about
+             * exactly that. A missing half is a "—", not an accusation: for the
+             * JS-rendered and Wayback-excluded registers a local capture is the
+             * only evidence that can exist.
              */}
-            <div className={s.archivePublic || s.archiveLocal ? styles.srcArchive : styles.belowBar}>
-              {s.archivePublic || s.archiveLocal
-                ? [s.archivePublic && `${nl.archivePublic} ✓`, s.archiveLocal && `${nl.archiveLocal} ✓`]
-                    .filter(Boolean).join(" · ")
-                : nl.notArchived}
-            </div>
+            {s.archiveSlots
+              ? <div className={styles.srcArchive}>{s.archiveSlots}</div>
+              : <div className={styles.belowBar}>{nl.notArchived}</div>}
           </div>
         ))}
         <p className={styles.pubBar}>{nl.pubBar}</p>
+        <p className={styles.pubBar}>{nl.pubBarSlots}</p>
       </section>
     </main>
   );

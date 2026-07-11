@@ -332,17 +332,218 @@ test("RECORD: a source with no public archive is marked, not hidden", () => {
 test("RECORD: an absent coherence_signals object yields gaps, not findings", () => {
   // 52 of 77 programmes have no coherence_signals at all. Not investigated is
   // not investigated — it must not read as "the provider does not publish it".
+  //
+  // Every such programme, and every one of its six signals: a `?? "not_published"`
+  // anywhere in coherenceRows must fail here. (An earlier version of this test
+  // searched for SOME programme of SOME provider that happened to render
+  // all-unknown, which a single well-populated record could satisfy while every
+  // other programme lied.)
+  let checked = 0;
   for (const p of providers) {
-    for (const prog of toProviderView(p).programs) {
-      for (const sig of prog.coherence) {
-        assert.ok(["yes", "no", "not_published", "unknown"].includes(sig.state));
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      if (prog.coherence_signals != null) continue;
+      const rendered = view.programs.find((v) => v.id === prog.id)!;
+      assert.equal(rendered.coherence.length, Object.keys(nl.coherence).length,
+        `${p.id}/${prog.id} does not render all six coherence signals`);
+      for (const sig of rendered.coherence) {
+        assert.equal(sig.state, "unknown",
+          `${p.id}/${prog.id}: coherence_signals is absent — nobody looked — yet "${sig.key}" renders ` +
+          `as "${sig.state}". A gap published as a finding is an accusation against a named business ` +
+          `that we never researched.`);
+      }
+      checked++;
+    }
+  }
+  assert.ok(checked > 0, "no programme lacks coherence_signals any more — this test tests nothing");
+});
+
+test("RECORD: an absent transparency object yields gaps, not findings", () => {
+  // The identical rule, on the field where it is most likely to break: 73 of 77
+  // programmes have no `transparency` object at all, so a `?? "not_published"`
+  // in transparencyRows would print a five-line amber indictment on nearly every
+  // programme on the site — of research nobody has done. That field had no test.
+  let checked = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      if (prog.transparency != null) continue;
+      const rendered = view.programs.find((v) => v.id === prog.id)!;
+      assert.equal(rendered.transparency.length, Object.keys(nl.transparency).length,
+        `${p.id}/${prog.id} does not render all five transparency signals`);
+      for (const sig of rendered.transparency) {
+        assert.equal(sig.state, "unknown",
+          `${p.id}/${prog.id}: transparency is absent — nobody looked — yet "${sig.key}" renders ` +
+          `as "${sig.state}", which states as a finding that the provider publishes no ${sig.label}`);
+      }
+      checked++;
+    }
+  }
+  assert.ok(checked > 0, "no programme lacks a transparency object any more — this test tests nothing");
+});
+
+test("RECORD: the contract quads reach the page AS quads, never flattened into a sentence", () => {
+  // They were once joined into one "Voorwaarden" string handed to the page as a
+  // single `state: "yes"` — two real `not_published` findings rendered in fact
+  // ink, and a future `unknown` would have rendered a gap as an established
+  // fact. Each sub-quad must arrive with its own state, unaltered from the record.
+  const keys = ["cancellation_published", "refund_published", "installments_published"] as const;
+  let facts = 0;
+  let findings = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      const rendered = view.programs.find((v) => v.id === prog.id)!;
+      assert.equal(rendered.contract.length, keys.length,
+        `${p.id}/${prog.id} does not render all three contract quads`);
+      for (const key of keys) {
+        const row = rendered.contract.find((r) => r.key === key)!;
+        assert.equal(row.state, prog.contract?.[key] ?? "unknown",
+          `${p.id}/${prog.id}: contract.${key} is "${prog.contract?.[key] ?? "absent"}" in the record ` +
+          `but renders as "${row.state}"`);
+        if (row.state === "not_published") findings++;
+        if (row.state === "yes" || row.state === "no") facts++;
       }
     }
   }
-  const bare = providers.find((p) => p.programs.some((pr) => pr.coherence_signals == null));
-  assert.ok(bare, "expected at least one programme without coherence_signals");
-  const prog = toProviderView(bare).programs.find((pr) => pr.coherence.every((s) => s.state === "unknown"));
-  assert.ok(prog, "a programme with no coherence_signals did not render as all-unknown");
+  assert.ok(findings > 0, "no contract quad is a finding any more — the finding direction is untested");
+  assert.ok(facts > 0, "no contract quad is a fact any more — the fact direction is untested");
+});
+
+test("RECORD: the €/contactuur row obeys the same rule as the listing, from the same function", () => {
+  // The Critical bug this project already shipped once and fixed — a gap
+  // published as a finding — lived in the listing. Nothing pinned the RECORD's
+  // €/contactuur row to pphQuad, so the identical bug could be reintroduced here
+  // with zero test failures. It cannot now: the row's state must BE pphQuad's,
+  // and a finding must be backed by a record field that literally says the
+  // provider does not publish it.
+  let findings = 0;
+  let gaps = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      const row = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.colPph);
+      assert.ok(row, `${p.id}/${prog.id} has no €/contactuur row`);
+      assert.equal(row.state, pphQuad(prog),
+        `${p.id}/${prog.id}: the record's €/contactuur row says "${row.state}" where the one rule ` +
+        `says "${pphQuad(prog)}" — the record must never say something the listing does not`);
+
+      if (row.state !== "not_published") {
+        if (row.state === "unknown") gaps++;
+        continue;
+      }
+      const blocker = prog.price.amount_eur == null
+        ? prog.price.published
+        : prog.hours_claimed.breakdown_published;
+      assert.ok(blocker === "not_published" || blocker === "no",
+        `${p.id}/${prog.id}: the row accuses the provider of not publishing it, but the blocking ` +
+        `record field says "${blocker}" — that is OUR gap, published as a finding about a named business`);
+      findings++;
+    }
+  }
+  assert.ok(findings > 0, "no programme exercises the FINDING direction any more");
+  assert.ok(gaps > 0, "no programme exercises the GAP direction any more");
+});
+
+test("RECORD: a published price with no amount is OUR gap, never a bare “ja”", () => {
+  // Five programmes: price.published is "yes" and amount_eur is null. A row
+  // labelled "Prijs" promises a value; "ja" with no number asserts as an
+  // established fact something our record does not hold. The record says they
+  // DO publish it — so the missing number is ours. Same rule, same direction.
+  let checked = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      const row = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.colPrice)!;
+      if (prog.price.published === "yes" && prog.price.amount_eur == null) {
+        assert.equal(row.value, null);
+        assert.equal(row.state, "unknown",
+          `${p.id}/${prog.id}: "Prijs: ja" with no amount — a fact we do not hold`);
+        assert.ok(row.note?.includes(nl.priceAmountNotInRecord),
+          `${p.id}/${prog.id}: the Prijs row is a gap but does not disclose why`);
+        checked++;
+      } else {
+        // every other programme still says exactly what the record says
+        assert.equal(row.state, prog.price.published);
+      }
+    }
+  }
+  assert.ok(checked > 0, "no programme publishes a price without an amount any more");
+});
+
+test("RECORD: a provider's verbatim assessment quote is never dropped", () => {
+  // <Quad> renders children only for a fact, so on the six programmes where
+  // `exists: not_published` AND a quote exists, the provider's own words were
+  // vanishing — and that quote is the EVIDENCE for the finding. It must always
+  // reach the page: as the row's value where the state is a fact, in the row's
+  // note otherwise. Verbatim, either way (spec §3).
+  let viaNote = 0;
+  for (const p of providers) {
+    const view = toProviderView(p);
+    for (const prog of p.programs) {
+      const quote = prog.assessment_described?.quote;
+      if (!quote) continue;
+      const row = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.rowAssessment)!;
+      const rendered = `${row.value ?? ""}${row.note ?? ""}`;
+      assert.ok(rendered.includes(quote),
+        `${p.id}/${prog.id}: assessment quote never reaches the page (state "${row.state}")`);
+      if (row.state === "not_published" || row.state === "unknown") {
+        assert.ok(row.note?.includes(quote),
+          `${p.id}/${prog.id}: the quote is the evidence for a "${row.state}" — it must be in the note, ` +
+          `which always renders, not in the value, which a non-fact drops`);
+        viaNote++;
+      }
+    }
+  }
+  assert.ok(viaNote > 0, "no non-fact assessment carries a quote any more");
+});
+
+test("RECORD: every source shows BOTH halves of the publication bar", () => {
+  // The bar is a public archive AND a dated local copy. Rendering only the
+  // halves that exist let a half-met bar read as a met one — the site claiming a
+  // standard it does not meet, on the page whose job is to be honest about that.
+  // Both slots, always; a missing half is a "—", never silence.
+  const seen = new Set<string>();
+  for (const p of providers) {
+    for (const s of toProviderView(p).sources) {
+      if (!s.archivePublic && !s.archiveLocal) {
+        assert.equal(s.archiveSlots, null, `${p.id}/${s.id}: nothing archived, yet it prints a slot line`);
+        seen.add("neither");
+        continue;
+      }
+      const slots = s.archiveSlots;
+      assert.ok(slots, `${p.id}/${s.id} shows no archive slots`);
+      // both halves are named, every time, whichever one is missing
+      assert.ok(slots.includes(nl.archivePublic) && slots.includes(nl.archiveLocal),
+        `${p.id}/${s.id}: "${slots}" hides a half of the bar`);
+      assert.ok(
+        slots.includes(`${nl.archivePublic} ${s.archivePublic ? nl.archivePresent : nl.archiveAbsent}`),
+        `${p.id}/${s.id}: the public-archive slot misreports (archived_url ${s.archivePublic})`);
+      assert.ok(
+        slots.includes(`${nl.archiveLocal} ${s.archiveLocal ? nl.archivePresent : nl.archiveAbsent}`),
+        `${p.id}/${s.id}: the local-copy slot misreports (local_snapshot ${s.archiveLocal})`);
+      seen.add(`${s.archivePublic}/${s.archiveLocal}`);
+    }
+  }
+  // all four shapes exist in the dataset — none of the branches above is dead
+  for (const shape of ["true/true", "false/true", "true/false", "neither"]) {
+    assert.ok(seen.has(shape), `no source has archive shape ${shape} — that branch is untested`);
+  }
+});
+
+test("RECORD: the source count never overstates what is archived", () => {
+  // "N · M publiek gearchiveerd" invited the reader to take M as the bar. Both
+  // counts are printed, and each is the literal count of the field it names.
+  for (const p of providers) {
+    const view = toProviderView(p);
+    assert.equal(view.sourcesArchivedPublic, p.sources.filter((s) => s.archived_url != null).length);
+    assert.equal(view.sourcesArchivedLocal, p.sources.filter((s) => s.local_snapshot != null).length);
+    assert.ok(view.sourcesArchivedPublic <= view.sources.length);
+    assert.ok(view.sourcesArchivedLocal <= view.sources.length);
+    const heading = nl.sourcesHeading(view.sources.length, view.sourcesArchivedPublic, view.sourcesArchivedLocal);
+    assert.ok(heading.includes(`${view.sourcesArchivedPublic}`) && heading.includes(`${view.sourcesArchivedLocal}`),
+      `${p.id}: the sources heading drops one of the two counts`);
+  }
 });
 
 test("RECORD: every programme has a stable anchor id matching its listing href", () => {

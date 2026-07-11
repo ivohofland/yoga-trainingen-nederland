@@ -5,8 +5,9 @@
  * and belong to Quad.module.css alone (see the docblock in Quad.tsx): amber
  * means exactly one thing on this site — "we looked; the provider does not
  * publish it". Two things on this page need to stand out without being quads —
- * the disclosure and an unarchived source — and both are statements about US,
- * not findings about the provider. They get ink stamps, not the finding colour.
+ * the disclosure and a source below the publication bar — and both are
+ * statements about US, not findings about the provider. They get ink, not the
+ * finding colour.
  */
 
 .back {
@@ -258,10 +259,18 @@
   overflow-wrap: anywhere;
 }
 
+/*
+ * Both halves of the publication bar, always: "publiek ✓ · lokaal —". Ink, not
+ * a quad colour — this reports on OUR record, never on the provider. Quiet by
+ * design: it is provenance, and a missing half is often the only outcome
+ * possible (Wayback-excluded or JS-rendered registers). Legible enough that the
+ * "—" cannot be mistaken for a "✓".
+ */
 .srcArchive {
   font-family: var(--mono);
   font-size: 11px;
-  color: var(--muted);
+  color: var(--ink-2);
+  white-space: nowrap;
 }
 
 /*
