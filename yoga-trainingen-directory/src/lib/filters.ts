@@ -6,12 +6,8 @@
  *   - a programme that publishes no hours must not top a price ranking;
  *   - a radius filter must never silently delete a row it cannot place.
  */
-// TYPE-only from presenters: presenters.ts reaches dataset.ts (node:fs) and this
-// module is bundled into the client filter island, so a value import from it
-// breaks the build. The rule the price band needs therefore lives in quad.ts,
-// which imports nothing but a type — see saysNotPublished.
 import type { ListingRow } from "./presenters";
-import { saysNotPublished } from "./quad";
+import type { PriceBand } from "./rules";
 import { nearestKm, type Centroid } from "./geo";
 
 /**
@@ -38,14 +34,30 @@ export type UnplacedRow = ListingRow & { distanceKm?: never };
 
 export type Row = NearRow | UnplacedRow;
 
-/** No `city`: the design's chip list is replaced by location + radius — see
- *  docs/superpowers/plans/2026-07-11-public-listing.md. */
+/** The two registers a chip may select on. Not a Quad, and not a body key: CRKBO
+ *  is a fact about the SCHOOL, Yoga Alliance a fact about the PROGRAMME. */
+export type RegisterFilter = "ya" | "crkbo";
+
+/**
+ * No `city`: the design's chip list is replaced by location + radius — see
+ * docs/superpowers/plans/2026-07-11-public-listing.md.
+ *
+ * EVERY FIELD IS NARROWED TO ITS ROW'S UNION. `null` means "this filter is off",
+ * and it is the ONLY string-ish value any of them may take besides a value the
+ * corresponding row actually holds.
+ *
+ * All five were `string | null`, while their counterparts on ListingRow are unions:
+ * `{ mode: "hybrid" }` compiled and matched nothing at all. An empty result is not
+ * a neutral outcome on this site — an empty "niet gepubliceerd" band READS AS AN
+ * EDITORIAL CLAIM ("no provider withholds a price"), stated to the visitor by a
+ * typo the compiler was happy with.
+ */
 export interface Filters {
-  format: string | null;
-  language: string | null;
-  mode: string | null;
-  register: string | null;
-  price: string | null;
+  format: ListingRow["formatLabel"] | null;
+  language: ListingRow["language"];
+  mode: ListingRow["mode"] | null;
+  register: RegisterFilter | null;
+  price: PriceBand | null;
 }
 
 export const EMPTY_FILTERS: Filters = {
@@ -72,17 +84,19 @@ export function filterRows(rows: Row[], f: Filters): Row[] {
     // CRKBO registers institutions, not programmes: a property of the school, and
     // the chip says so in as many words ("CRKBO-geregistreerd").
     if (f.register === "crkbo" && r.crkboRegistered !== "yes") return false;
-    // The two amount bands operate on published amounts only.
-    if (f.price === "under3000" && !(r.priceAmount != null && r.priceAmount < 3000)) return false;
-    if (f.price === "from3000" && !(r.priceAmount != null && r.priceAmount >= 3000)) return false;
-    // "niet gepubliceerd" selects the FINDING — what our record says about the
-    // provider — and never "we hold no amount", which is a fact about OUR record.
-    // The two are not the same set: five programmes publish a price we simply do
-    // not have. Selecting on `priceAmount == null` swept them in and told the
-    // reader that four named businesses publish no price, while our own record —
-    // and their own record page — said they do. `priceState` is priceQuad(): the
-    // same value the row renders in its own Prijs cell.
-    if (f.price === "not_published" && !saysNotPublished(r.priceState)) return false;
+    // ONE equality, and no re-derivation is possible here — that is the point.
+    //
+    // This was three checks, two of them reading `r.priceAmount` (a fact about OUR
+    // record) to decide what to say about a PROVIDER. The band that selects the
+    // finding is not equal to any single quad value — it is saysNotPublished(), i.e.
+    // `not_published` OR `no` — and while it was NAMED "not_published", any
+    // contributor "simplifying" it to `r.priceState !== f.price` type-checked fine
+    // and silently dropped five sourced `no` findings out of the band.
+    //
+    // The band now IS the row's own `priceBand`, computed once by rules.ts, and it
+    // is named so it cannot be mistaken for a quad. The filter can only agree with
+    // the cell beside it.
+    if (f.price && r.priceBand !== f.price) return false;
     return true;
   });
 }

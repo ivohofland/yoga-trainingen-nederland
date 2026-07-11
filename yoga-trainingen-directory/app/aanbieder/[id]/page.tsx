@@ -15,8 +15,8 @@
  */
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { loadDataset } from "@/lib/dataset";
-import { toProviderView, formatMonth, type ClaimView } from "@/lib/presenters";
+import { loadDataset } from "@/lib/loader";
+import { toProviderView, formatMonth, cohortLabel, type ClaimView } from "@/lib/presenters";
 import { Quad } from "@/components/Quad";
 import { nl } from "@/lib/strings";
 import styles from "./page.module.css";
@@ -204,7 +204,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 <div className={styles.v}>
                   {prog.cohorts.map((c) => (
                     <div key={c.id}>
-                      {c.label}
+                      {cohortLabel(c)}
                       {c.note && <div className={styles.note}>{c.note}</div>}
                       <Cite source={c.source} />
                     </div>

@@ -1,6 +1,7 @@
 {
   "data_current_as_of": "2026-07-01",
   "count": 47,
+  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven.",
   "providers": [
     {
       "id": "7-yoga-academy",
@@ -104,7 +105,16 @@
               "language": "nl",
               "note": "Start jan 2026, gecertificeerd 'binnen 10 weken'; pagina markeert het als afgelopen/niet meer boekbaar."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -235,6 +245,15 @@
             "first_seen_year": 2015,
             "source": "ya-register-2026-06",
             "note": "AALO afficheert 'Feedback Company 8.8' studentbeoordeling als marketing"
+          },
+          "derived": {
+            "price_state": "unknown",
+            "price_band": "amount_not_in_record",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
           }
         },
         {
@@ -282,6 +301,15 @@
           },
           "assessment_described": {
             "exists": "not_published"
+          },
+          "derived": {
+            "price_state": "unknown",
+            "price_band": "amount_not_in_record",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
           }
         }
       ],
@@ -418,7 +446,16 @@
               "language": "nl",
               "note": "Geadverteerd 28 sep 2024 - 5 apr 2025 (nu verstreken). Of het cohort daadwerkelijk doorging is niet bevestigd (§8); de gebruiker vermoedt van wel. Geen nieuw/komend cohort aangekondigd.\n"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         },
         {
           "id": "200-yin-xl",
@@ -499,7 +536,16 @@
               "language": "nl",
               "note": "Geadverteerd 29 mrt - 15 nov 2025 (nu verstreken); doorgang niet bevestigd (§8). Geen nieuw/komend cohort aangekondigd.\n"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -675,7 +721,16 @@
               "status": "announced",
               "source": "site-2026-06"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -904,7 +959,16 @@
               "person_id": "dong",
               "role": "Yin/TCM, anatomie"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -1210,7 +1274,16 @@
               "person_id": "fleur-van-zonneveld",
               "role": "lead teacher"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "200-vinyasa-hybrid-2026",
@@ -1309,7 +1382,16 @@
               "person_id": "david-rodrigues-junior",
               "role": "lead teacher (E-RYT 200; 'The Psychedelic Yogi')"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -1540,7 +1622,16 @@
               "source": "site-2026-06",
               "note": "volledige datumlijst gepubliceerd incl. examendag 11 juli 2027"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -1680,7 +1771,16 @@
           "track_record": {
             "note": "boek 'YOGA Critical Alignment' 2009 (herzien 2012); 'honderden docenten opgeleid'"
           },
-          "editorial": "Transparantie-uitschieter binnen de dataset: publiceert volledige certificeringscriteria, gedetailleerde kwalificatie-uitkomsten, annulerings- voorwaarden, én een klachtenprocedure met onafhankelijke, bindende externe arbiter (Alma Netten). Dit is exact het materiaal dat elders ontbreekt. (editorial = expliciete observatie, gescheiden van de feiten hierboven)\n"
+          "editorial": "Transparantie-uitschieter binnen de dataset: publiceert volledige certificeringscriteria, gedetailleerde kwalificatie-uitkomsten, annulerings- voorwaarden, én een klachtenprocedure met onafhankelijke, bindende externe arbiter (Alma Netten). Dit is exact het materiaal dat elders ontbreekt. (editorial = expliciete observatie, gescheiden van de feiten hierboven)\n",
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -1805,7 +1905,16 @@
               "source": "site-2026-06",
               "note": "1e jaar start 31 aug 2026; proeflessen mei/juni, open dag 23 aug"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "unknown",
+            "price_band": "amount_not_in_record",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -1990,7 +2099,16 @@
               "language": "nl",
               "note": "Start 15 aug 2026, Leeuwarden (Club Yoga); weekendritme za/zo."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "200-yin",
@@ -2058,7 +2176,16 @@
               "language": "nl",
               "note": "Start 3 okt 2026, ~7 maanden."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "200-vinyasa-intensive",
@@ -2126,7 +2253,16 @@
               "language": "en",
               "note": "Start 27 jul 2026, 3,5 weken, dagelijks 10-17u, Amsterdam."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -2394,7 +2530,16 @@
               "language": "nl",
               "note": "1e-jaars Docentenopleiding start na de zomervakantie (± sep 2026; ook een instroom na de kerstvakantie). \"2026-09\" benadert de na-zomer-start; exacte datum wordt via berichtgeving doorgegeven. 30e editie.\n"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": 12.75,
+            "pph_state": "yes",
+            "contact_ratio": 0.6,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         },
         {
           "id": "meesteropleiding-raja",
@@ -2453,7 +2598,16 @@
               "person_id": "ylvy-vaanholt",
               "role": "Yogacharya / leerkracht"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": 12.75,
+            "pph_state": "yes",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -2726,7 +2880,16 @@
               "language": "nl",
               "note": "Start 28 & 29 mrt 2026; 6 modules; weekenden za-zo 9:30-16:30; 2027-data onder voorbehoud."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": 13.46,
+            "pph_state": "yes",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -2946,7 +3109,16 @@
               "person_id": "wim-van-doorn",
               "role": "docent (yogafilosofie)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -3187,7 +3359,16 @@
               "person_id": "jasper-kok",
               "role": "hoofddocent / oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -3420,7 +3601,16 @@
               "person_id": "selma-van-der-graaf",
               "role": "hoofddocent / oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "75-yin",
@@ -3488,7 +3678,16 @@
               "person_id": "selma-van-der-graaf",
               "role": "hoofddocent / oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -3676,7 +3875,16 @@
                 "Applied Anatomy (live online)"
               ]
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -3879,7 +4087,16 @@
               "source": "site-att-2026-06",
               "note": "start 14 maart 2026"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "pranayama-tt",
@@ -3931,7 +4148,16 @@
               "language": "en",
               "note": "start 16 mei 2026, afronding 4 juli 2027; volledige datumlijst als afbeelding gepubliceerd"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": 11.93,
+            "pph_state": "yes",
+            "contact_ratio": 0.57,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -4120,7 +4346,16 @@
               "source": "site-2026-06",
               "note": "volledige weekenddata gepubliceerd; examenmomenten 'volgen'"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -4294,7 +4529,16 @@
               "person_id": "gemma-schuurman",
               "role": "docent (praktijk + zachtere yogavormen)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": 16.03,
+            "pph_state": "yes",
+            "contact_ratio": 0.9,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -4493,7 +4737,16 @@
               "person_id": "yogi-madhav",
               "role": "gastdocent (traditionele Indiase Hatha/Sivananda asanales)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "200-yin-online",
@@ -4571,7 +4824,16 @@
               "person_id": "dorien-bortels",
               "role": "hoofddocent / mede-oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -4775,7 +5037,16 @@
               "language": "nl",
               "note": "Start 5-6-7 jun 2026, 8 weekenden, diploma-uitreiking 27 sep 2026."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "300-advanced",
@@ -4841,6 +5112,15 @@
             "first_seen_year": 2018,
             "source": "ya-register-2026-06",
             "note": "Modulair CE-traject; geen vaste cohort. Internationale gastdocenten."
+          },
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
           }
         }
       ],
@@ -5053,7 +5333,16 @@
               "person_id": "leonie-van-der-linden",
               "role": "lead teacher / eigenaar"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -5302,7 +5591,16 @@
               "person_id": "jeske-papadopoulos",
               "role": "docent (YA teaching staff)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -5572,7 +5870,16 @@
               "person_id": "pepijn-van-sandijk",
               "role": "docent (ca. 9 lesdagen; onderwijskundige)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": 21.18,
+            "pph_state": "yes",
+            "contact_ratio": 1,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [
@@ -5836,7 +6143,16 @@
               "source": "site-2026-06",
               "note": "studiejaar 2026-2027; conceptplanning als PDF gepubliceerd"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -6038,7 +6354,16 @@
               "person_id": "amanda-beelen",
               "role": "Yin/TCM/5 Elementen"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         },
         {
           "id": "200-online",
@@ -6086,6 +6411,15 @@
           "track_record": {
             "first_seen_year": 2018,
             "source": "ya-register-2026-06"
+          },
+          "derived": {
+            "price_state": "unknown",
+            "price_band": "amount_not_in_record",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
           }
         },
         {
@@ -6141,6 +6475,15 @@
           "track_record": {
             "first_seen_year": 2018,
             "source": "ya-register-2026-06"
+          },
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
           }
         }
       ],
@@ -6449,7 +6792,16 @@
               "person_id": "marloes-van-der-kamp",
               "role": "hoofddocent / eigenaar"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "300-verdieping",
@@ -6527,7 +6879,16 @@
               "person_id": "marloes-van-der-kamp",
               "role": "hoofddocent / eigenaar"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -6711,7 +7072,16 @@
               "person_id": "kesharini",
               "role": "hoofddocent"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -6942,7 +7312,16 @@
               "person_id": "gretchen",
               "role": "senior teacher"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -7196,7 +7575,16 @@
               "person_id": "fanny-alavoine",
               "role": "co-lead teacher"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "200-yin",
@@ -7291,7 +7679,16 @@
               "person_id": "willemieke-verweij",
               "role": "gastdocent"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "300-modern-vinyasa",
@@ -7383,7 +7780,16 @@
               "person_id": "fanny-alavoine",
               "role": "co-lead teacher"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -7676,7 +8082,16 @@
               "person_id": "beatrice-savaris",
               "role": "hoofddocent / mede-ontwerper"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "200-yin",
@@ -7771,7 +8186,16 @@
               "person_id": "eva-de-hoijer",
               "role": "hoofddocent (lead trainer Yin)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -8019,7 +8443,16 @@
               "person_id": "gitty-de-gier",
               "role": "lead teacher / oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "150-yin-lunar",
@@ -8087,7 +8520,16 @@
               "person_id": "gitty-de-gier",
               "role": "lead teacher / oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "100-restorative-ayurveda",
@@ -8156,7 +8598,16 @@
               "person_id": "gitty-de-gier",
               "role": "lead teacher / oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "500-pathway",
@@ -8212,6 +8663,15 @@
           "track_record": {
             "first_seen_year": 2024,
             "source": "ya-register-2026-06"
+          },
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
           }
         }
       ],
@@ -8450,7 +8910,16 @@
               "person_id": "jonas-nathan",
               "role": "hoofddocent Yin TT"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "200-vinyasa",
@@ -8519,7 +8988,16 @@
               "language": "en",
               "note": "November-start; jaar 2026-2027 afgeleid uit prijspagina-deadlines."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -8716,6 +9194,15 @@
             "first_seen_year": 2019,
             "source": "ya-register-2026-06",
             "note": "pagina zegt 'tien modules' maar lijst er 8 + afronding — telling klopt niet zichtbaar"
+          },
+          "derived": {
+            "price_state": "unknown",
+            "price_band": "amount_not_in_record",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
           }
         }
       ],
@@ -8929,7 +9416,16 @@
               "person_id": "petra-meirink",
               "role": "eigenaar / lead teacher (Odaka)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         },
         {
           "id": "200-yin",
@@ -9017,7 +9513,16 @@
               "person_id": "manisha-lakshi",
               "role": "docent (Ayurveda)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -9295,7 +9800,16 @@
               "person_id": "bruce-chung",
               "role": "docent (mondiaal; YA-profiel nu België)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "500-pathway",
@@ -9356,6 +9870,15 @@
             "first_seen_year": 2023,
             "source": "ya-register-2026-06",
             "note": "RYS 500 sinds nov 2023; modulaire route met losse module-/niche-trainingen."
+          },
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
           }
         }
       ],
@@ -9640,7 +10163,16 @@
               "language": "en",
               "note": "Weekendprogramma, start 22 jan 2027, 8 weekenden vr-za-zo, Fly Studio, eindigt begin juli."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "300-advance",
@@ -9754,7 +10286,16 @@
               "language": "en",
               "note": "Modulair, start feb 2026, af te ronden in 1-3 jaar."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": 16.12,
+            "pph_state": "yes",
+            "contact_ratio": 0.82,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         },
         {
           "id": "ashtanga-tt",
@@ -9835,7 +10376,16 @@
               "language": "en",
               "note": "Start 7 maart 2026 (oorspronkelijk 6 maart; inhaaldag 20 juni); 8 weekenden vr-za-zo 11:30-18:30, Fly Studio."
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -10102,7 +10652,16 @@
               "language": "mixed",
               "note": "volledige datumlijst gepubliceerd; praktijk-examen 27 jun 2027"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         },
         {
           "id": "300-advanced-vinyasa",
@@ -10165,6 +10724,15 @@
           "track_record": {
             "first_seen_year": 2024,
             "source": "ya-register-2026-06"
+          },
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
           }
         }
       ],
@@ -10385,7 +10953,16 @@
               "person_id": "lahma-muris",
               "role": "hoofddocent"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -10620,7 +11197,16 @@
               "person_id": "jasper",
               "role": "docent / mede-oprichter"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -10852,7 +11438,16 @@
               "person_id": "jose-de-groot",
               "role": "docent / lead (functionele anatomie)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -11061,7 +11656,16 @@
               "person_id": "lisa-louer",
               "role": "primary teacher, hoofddocent opleidingen"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -11286,7 +11890,16 @@
               "source": "site-2026-06",
               "note": "module 3"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": -363,
+            "multistyle": false
+          }
         }
       ],
       "modules": [
@@ -11510,7 +12123,16 @@
               "person_id": "sina-kaden",
               "role": "gastdocent (masterclass anatomie) + mede-ontwikkelaar"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -11725,7 +12347,16 @@
               "person_id": "jasmijn-koelink",
               "role": "docent (YA teaching staff)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "not_published",
+            "price_band": "none_published",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
         }
       ],
       "modules": [],
@@ -11904,7 +12535,16 @@
               "source": "site-ryt200-2026-06",
               "note": "zondaggroep, start 6 september; rooster wordt pas op de eerste opleidingsdag gedeeld"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "under3000",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         },
         {
           "id": "ryt300-multistyle",
@@ -11958,7 +12598,16 @@
               "source": "site-ryt300-2026-06",
               "note": "zaterdaggroep, start 12 september; rooster pas op eerste opleidingsdag"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],
@@ -12199,7 +12848,16 @@
               "person_id": "marlou-ansems",
               "role": "docent (YA teaching staff)"
             }
-          ]
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "pph": null,
+            "pph_state": "not_published",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": true
+          }
         }
       ],
       "modules": [],

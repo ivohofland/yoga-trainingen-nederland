@@ -1,18 +1,44 @@
 /**
- * Pure Provider → view-model. No file reads, no side effects, no business
- * logic that belongs in dataset.ts (which owns validation and the derived
- * values, spec §6). This module owns *display*: the strings a component
- * renders, and nothing else.
+ * Pure Provider → view-model. No file reads, no side effects, and no business
+ * logic that belongs elsewhere: `loader.ts` owns validation, `derive.ts` owns the
+ * derived values (spec §6), `rules.ts` owns the finding-vs-gap rule. This module
+ * owns *display*: the strings a component renders, and nothing else.
+ *
+ * It is PURE — it reaches `derive.ts` and `rules.ts`, never `loader.ts` — so a
+ * client component may import values from it, not merely types.
  */
-import { bundleDelta, pricePerContactHour } from "./dataset";
-import { saysNotPublished } from "./quad";
+import { bundleDelta, pricePerContactHour } from "./derive";
+import {
+  missingBecause,
+  pphBlocker,
+  pphQuad,
+  priceAmountIsOurGap,
+  priceBand,
+  priceQuad,
+  type PriceBand,
+} from "./rules";
 import { nl } from "./strings";
 import type { Claim, Cohort, Program, Provider, Quad, Source } from "../schema";
 
+/**
+ * The next cohort — its START and its STATUS, never a pre-baked label.
+ *
+ * It used to carry `label: string` with the status word already cooked into it,
+ * which made a label that CONTRADICTS its own status structurally constructible:
+ * `{ start: "2026-09", status: "announced", label: "start sep 2026 — gestart" }`
+ * type-checks perfectly. An announced cohort presented as one that ran is spec §8's
+ * central trap, and only the discipline of the single constructor was stopping a
+ * second one from doing it. The label is now DERIVED at render, from these two
+ * fields, by nextCohortLabel() — so it cannot disagree with the status it names.
+ */
 export interface NextCohort {
   start: string;
   status: Cohort["status"];
-  label: string;
+}
+
+/** The one way a next-cohort label is written. Its status is not optional. */
+export function nextCohortLabel(c: NextCohort): string {
+  return nl.nextCohortLabel(formatMonth(c.start), nl.cohortStatus[c.status]);
 }
 
 /** The schema's accreditation body key — the raw value, not its Dutch label. */
@@ -46,7 +72,6 @@ export interface ListingRow {
   mode: Program["delivery"]["mode"];
   language: "nl" | "en" | "mixed" | null;
   deliveryDisplay: string;
-  priceAmount: number | null;
   /**
    * What the Prijs cell is ALLOWED to say — priceQuad(), the same function the
    * provider record's Prijs row uses. NOT the raw `price.published`: on the five
@@ -55,6 +80,20 @@ export interface ListingRow {
    * The row carries the quad, never the raw field, so no consumer can re-derive it.
    */
   priceState: Quad;
+  /**
+   * The band this row belongs to, DERIVED HERE — the row does not carry the raw
+   * amount for a filter to band it up again.
+   *
+   * `priceAmount: number | null` used to sit right here, and `r.priceAmount == null`
+   * is PRECISELY the expression that told readers four named businesses publish no
+   * price. It was the surviving half of the bug `priceState` was introduced to kill:
+   * its only consumers were two band checks in filters.ts, but a contributor adding
+   * a "prijs onbekend" chip would have found it sitting there, reading naturally and
+   * type-checking, and re-created the false statement verbatim. Banding is the
+   * price rule, the price rule lives in rules.ts, and the row carries only its
+   * verdict — so filterRows collapses to one equality and can re-derive nothing.
+   */
+  priceBand: PriceBand;
   priceDisplay: string | null;
   pph: number | null;
   /**
@@ -87,27 +126,37 @@ export interface ListingRow {
   hasDisclosure: boolean;
 }
 
+/**
+ * The verification window across the whole corpus — BOTH ends, never one.
+ *
+ * The stat was once the max, printed as "records geverifieerd jul 2026". When that
+ * was written, 46 of 48 records were 2026-06 and two were 2026-07: the header
+ * claimed for the corpus what was true of two records, and re-verifying a single
+ * record next year would have re-dated all 48 on the strength of one. A max cannot
+ * help but overstate — it is the freshest thing we hold, presented as the state of
+ * everything.
+ *
+ * The oldest end is the only honest floor ("every record is at least this fresh"),
+ * so it is always shown; the newest is shown with it, as a range, so the span is
+ * visible rather than collapsed to a single flattering date. When both ends fall in
+ * the same month the range degenerates to that one month.
+ *
+ * ONE nullable object, not two independent nullables. As `verifiedOldest: string |
+ * null` + `verifiedNewest: string | null`, "both or neither" was unexpressed — half
+ * a window is representable, and app/page.tsx had to guard both ends to print one
+ * line. An empty corpus has no window at all; a non-empty one always has both ends.
+ */
+export interface VerificationWindow {
+  oldest: string;
+  newest: string;
+}
+
 export interface DatasetStats {
   providers: number;
   programs: number;
   pphComputable: number;
-  /**
-   * The verification window across the whole corpus — BOTH ends, never one.
-   *
-   * This was the max, printed as "records geverifieerd jul 2026". When this was
-   * written, 46 of 48 records were 2026-06 and two were 2026-07: the header
-   * claimed for the corpus what was true of two records, and re-verifying a
-   * single record next year would have re-dated all 48 on the strength of one. A
-   * max cannot help but overstate — it is the freshest thing we hold, presented
-   * as the state of everything.
-   *
-   * The oldest end is the only honest floor ("every record is at least this
-   * fresh"), so it is always shown; the newest is shown with it, as a range, so
-   * the span is visible rather than collapsed to a single flattering date. When
-   * both ends fall in the same month the range degenerates to that one month.
-   */
-  verifiedOldest: string | null;
-  verifiedNewest: string | null;
+  /** null ONLY when there are no records at all. Never half a window. */
+  verified: VerificationWindow | null;
 }
 
 const EUR = new Intl.NumberFormat("nl-NL", {
@@ -176,121 +225,6 @@ function priceDisplay(p: Program["price"]): string | null {
 }
 
 /**
- * Which field stops `pricePerContactHour` from computing, and what the record
- * says about that field. There are exactly two blockers, and they are findings
- * about two different fields:
- *   - no price amount  → the blocker is the price → `price.published`;
- *   - no contact hours → the blocker is the hours → `hours_claimed.breakdown_published`.
- */
-function pphBlocker(program: Program): { field: "price" | "hours"; published: Quad } {
-  return program.price.amount_eur == null
-    ? { field: "price", published: program.price.published }
-    : { field: "hours", published: program.hours_claimed.breakdown_published };
-}
-
-/**
- * THE rule of this project, in one function — the only place it may live.
- *
- * A value is missing from our record. Some *_published quad governs whether it
- * could have been there at all. What may the page SAY about the absence?
- *
- * (CLAUDE.md, spec §2.2): `not_published` is a FINDING ABOUT A NAMED BUSINESS —
- * "we looked; they do not state it". `unknown` is a GAP IN OUR OWN RESEARCH.
- * Publishing a gap as a finding is an accusation we did not earn; publishing a
- * finding as a gap disowns research we did do and sourced. Both are wrong. So
- * the cell says exactly what the record says about the GOVERNING field — no
- * more, and no less.
- *
- * Those fields are all called *published*, and on such a field `no` and
- * `not_published` mean the same thing about the provider: they do not publish
- * it. `no` is not contradictory — it is a researched, sourced finding (when this
- * was written, five programmes carried it, each with a note like "Geen prijs
- * gepubliceerd op de 300u-pagina"). Both therefore license the amber finding.
- *
- * `yes` is the genuinely contradictory case: the record says the provider DOES
- * publish it, yet the value is missing from our record anyway — three
- * programmes are exactly this shape (yogaeasy/200-hatha-vinyasa,
- * yogic-life/ryt200-multistyle, yogic-life/ryt300-multistyle: an amount, a
- * published breakdown, and no `hours_claimed.contact`). The missing value is
- * OURS. That is a gap, and so is `unknown` — nobody looked yet.
- *
- * Every caller — €/contactuur, the hours breakdown, supervised practice, the
- * price amount — routes through here. The rule is stated ONCE.
- */
-function missingBecause(published: Quad): "not_published" | "unknown" {
-  // The return type is the rule, too: a value we do NOT hold can only ever be
-  // their omission or our gap. It is never "yes" — there is nothing to say yes to
-  // — so a row built from it cannot claim a fact it has nothing to back with.
-  return saysNotPublished(published) ? "not_published" : "unknown";
-}
-
-/** The quad the €/contactuur cell may render when there is no computable value. */
-export function pphQuad(program: Program): Quad {
-  if (pricePerContactHour(program).value != null) return "yes";
-  return missingBecause(pphBlocker(program).published);
-}
-
-/**
- * The record says the provider publishes a price, and we do not hold the amount.
- * Five programmes are exactly this shape (aalo-yoga-academie/yin-yang-ryt200,
- * aalo-yoga-academie/yin-ryt200, de-blikopener/hatha-raja-opleiding,
- * sanayou/200-online, yoga-academie-nederland/300-hatha-verdieping).
- */
-function priceAmountIsOurGap(program: Program): boolean {
-  return program.price.published === "yes" && program.price.amount_eur == null;
-}
-
-/**
- * THE price quad — what any surface, anywhere, may say about a programme's price.
- * The listing cell, the record row and the price filter all call THIS. There is
- * no second derivation, and no consumer is given the raw `price.published` to
- * re-derive one from: that duplication WAS the bug.
- *
- * It says what the record says, with exactly TWO corrections. Both run in the
- * direction that protects the reader from a claim the page cannot keep:
- *
- * 1. `yes` with no amount → `unknown`. The record says they DO publish a price
- *    but our record holds no number. A "ja" with no number promises a fact we do
- *    not hold; and the finding-vs-gap rule (see missingBecause) says a value
- *    missing from a field the provider does publish is a gap in OUR research,
- *    never an omission by them. Five programmes are this shape.
- *
- * 2. `no` → `not_published`. `price.published` is a *_published field, and on
- *    such a field `no` and `not_published` say the identical thing about the
- *    provider — "wij keken; zij publiceren geen prijs". saysNotPublished() in
- *    quad.ts already declares them one finding, and the "niet gepubliceerd"
- *    price band selects on it. But `quadClass("no")` is `fact` (correctly — see
- *    below), so `no` + no amount fell through <Quad> to a bare "nee" in FACT
- *    ink: clicking the band returned 14 rows in amber "niet gepubliceerd" and 5
- *    in ink "nee". One filter, one asserted meaning, two renderings. Normalising
- *    here is what makes the cell and the filter incapable of disagreeing — this
- *    is the identical fix already made above for `yes`, and it is made in the
- *    same one place.
- *
- * NOT normalised anywhere else, and `quadClass` is deliberately NOT changed:
- * `no` is a genuine, ink-worthy FACT on a field that is not a *_published field.
- * `accreditation.verified: "no"` means "claimed, and not found in the register" —
- * an established finding of fact about a check we ran, and it must stay ink.
- * `contract.min_participants.clause: "no"` likewise means "there is no such
- * clause". Only the *_published family collapses `no` into the finding.
- */
-export function priceQuad(program: Program): Quad {
-  if (priceAmountIsOurGap(program)) return "unknown";
-  return publishedQuad(program.price.published);
-}
-
-/**
- * The quad a *_published field may render AS ITSELF (not as the value it governs
- * — that is missingBecause). `no` and `not_published` are one finding on such a
- * field; `yes` and `unknown` pass through untouched. Every sibling cell that
- * renders a *_published field directly must route through here, so that no two
- * surfaces can render the same finding in two different colours.
- */
-function publishedQuad(published: Quad): Quad {
-  return saysNotPublished(published) ? "not_published" : published;
-}
-
-/**
  * The human-readable "why" behind the cell. It must never contradict the quad
  * above: a finding names the provider's omission, a gap is phrased as a gap in
  * our record — never as an accusation that the provider withheld something.
@@ -324,11 +258,7 @@ function nextCohort(program: Program, now: Date): NextCohort | null {
     .sort((a, b) => a.start.localeCompare(b.start));
   const c = upcoming[0];
   if (!c) return null;
-  return {
-    start: c.start.slice(0, 7),
-    status: c.status,
-    label: nl.nextCohortLabel(formatMonth(c.start.slice(0, 7)), nl.cohortStatus[c.status]),
-  };
+  return { start: c.start.slice(0, 7), status: c.status };
 }
 
 function registers(program: Program): RegisterChip[] {
@@ -386,8 +316,8 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
         mode: program.delivery.mode,
         language: program.delivery.language ?? null,
         deliveryDisplay: deliveryDisplay(program.delivery),
-        priceAmount: program.price.amount_eur ?? null,
         priceState: priceQuad(program),
+        priceBand: priceBand(program),
         priceDisplay: priceDisplay(program.price),
         pph: pph.value,
         pphDisplay: pph.value != null ? formatEuro2(pph.value) : null,
@@ -407,14 +337,16 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
 
 export function datasetStats(providers: Provider[]): DatasetStats {
   const programs = providers.flatMap((p) => p.programs);
-  const verified = providers.map((p) => p.last_verified).sort();
+  const dates = providers.map((p) => p.last_verified).sort();
+  const oldest = dates[0];
+  const newest = dates.at(-1);
   return {
     providers: providers.length,
     programs: programs.length,
     pphComputable: programs.filter((p) => pricePerContactHour(p).value != null).length,
-    // Both ends. Never just the newest — see DatasetStats.
-    verifiedOldest: verified[0] ?? null,
-    verifiedNewest: verified.at(-1) ?? null,
+    // Both ends, or neither — see VerificationWindow. A sorted non-empty array has
+    // both, so the window is null exactly when the corpus is empty.
+    verified: oldest != null && newest != null ? { oldest, newest } : null,
   };
 }
 
@@ -487,21 +419,70 @@ export type KeyValueRow = { label: string; note: string | null; source: SourceRe
   | { state: "no" | "not_published" | "unknown"; value?: never }
 );
 
+/**
+ * A cohort on the record page. Like NextCohort, it carries `start` + `status` and
+ * NO pre-baked label: a stored label is structurally free to contradict the status
+ * beside it, and "an announced cohort presented as one that ran" is spec §8's
+ * central trap. cohortLabel() derives it, so it cannot.
+ */
 export interface CohortView {
   id: string;
   start: string;
   status: Cohort["status"];
-  label: string;
   note: string | null;
   /** REQUIRED by the schema (spec §8): an announced cohort is not one that ran,
    *  and only the source can tell a reader which this is. Never null. */
   source: string;
 }
 
+/** The one way a cohort label is written. Its status is not optional. */
+export function cohortLabel(c: Pick<CohortView, "start" | "status">): string {
+  return nl.cohortLabel(formatMonth(c.start.slice(0, 7)), nl.cohortStatus[c.status]);
+}
+
 export interface AccreditationView {
+  /**
+   * The schema key, carried ALONGSIDE the Dutch label — exactly as RegisterChip
+   * carries it, and for the identical reason. `body` is `nl.body[a.body]`, a
+   * DISPLAY STRING: any future selection on this view ("does this record show a
+   * Yoga Alliance accreditation?") would have had to compare `body === "Yoga
+   * Alliance"`, making a translatable label load-bearing. That is the shape of the
+   * YA-filter bug, which asserted one thing in a chip and the opposite in the cell
+   * beside it. Select on `bodyKey`; render `body`.
+   */
+  bodyKey: AccreditationBody;
   body: string;
+  /** The register label the provider CLAIMS ("RYS 200"), verbatim — not our words. */
   label: string;
   verified: Quad;
+  note: string | null;
+  source: SourceRef;
+}
+
+/** The schema's registration body key — the raw value, not its Dutch label. */
+type RegistrationBody = Provider["registrations"][number]["body"];
+
+/** A register the SCHOOL is on (as opposed to a programme's accreditation above).
+ *  Carries `bodyKey` for the same reason AccreditationView does. */
+export interface RegistrationView {
+  bodyKey: RegistrationBody;
+  body: string;
+  identifier: string | null;
+  holder: string | null;
+  firstRegistered: string | null;
+  verified: Quad;
+  note: string | null;
+  source: SourceRef;
+}
+
+/** CRKBO is a register of INSTITUTIONS and teachers — a fact about the school,
+ *  never about a programme. It is deliberately not shown in a programme's
+ *  Registerstatus column, so there is nothing there for it to contradict. */
+export interface CrkboView {
+  registered: Quad;
+  register: string | null;
+  holder: string | null;
+  checked: string | null;
   note: string | null;
   source: SourceRef;
 }
@@ -585,23 +566,8 @@ export interface ProviderView {
   depth: string;
   lastVerified: string;
   disclosure: string | null;
-  crkbo: {
-    registered: Quad;
-    register: string | null;
-    holder: string | null;
-    checked: string | null;
-    note: string | null;
-    source: SourceRef;
-  };
-  registrations: {
-    body: string;
-    identifier: string | null;
-    holder: string | null;
-    firstRegistered: string | null;
-    verified: Quad;
-    note: string | null;
-    source: SourceRef;
-  }[];
+  crkbo: CrkboView;
+  registrations: RegistrationView[];
   programs: ProgramView[];
   /**
    * ONLY the claims that are not about one of the programmes above — `scope:
@@ -980,6 +946,7 @@ export function toProviderView(p: Provider): ProviderView {
       source: p.crkbo.source ?? null,
     },
     registrations: p.registrations.map((r) => ({
+      bodyKey: r.body,
       body: nl.body[r.body],
       identifier: r.identifier ?? null,
       holder: r.holder ?? null,
@@ -1002,17 +969,19 @@ export function toProviderView(p: Provider): ProviderView {
         program.contract?.note,
       ]),
       accreditation: program.accreditation.map((a) => ({
+        bodyKey: a.body, // the key, so no future selection has to match a Dutch label
         body: nl.body[a.body],
         label: a.label_claimed,
         verified: a.verified,
         note: a.note ?? null,
         source: a.source ?? null,
       })),
+      // No `label`: the page calls cohortLabel(). A stored label can contradict its
+      // own status; a derived one cannot (spec §8).
       cohorts: (program.cohorts ?? []).map((c) => ({
         id: c.id,
         start: c.start,
         status: c.status,
-        label: nl.cohortLabel(formatMonth(c.start.slice(0, 7)), nl.cohortStatus[c.status]),
         note: c.note ?? null,
         source: c.source, // required by the schema (spec §8)
       })),

@@ -6,7 +6,7 @@ import { nl } from "@/lib/strings";
 import { Quad } from "./Quad";
 import { EMPTY_FILTERS, filterRows, sortRows, partitionByDistance, type Filters, type Row, type SortKey } from "@/lib/filters";
 import { parsePostcode, pc4Centroid, type Centroid } from "@/lib/geo";
-import type { ListingRow } from "@/lib/presenters";
+import { nextCohortLabel, type ListingRow } from "@/lib/presenters";
 import styles from "./ProgrammeTable.module.css";
 
 interface Props {
@@ -14,10 +14,33 @@ interface Props {
   providerCount: number;
 }
 
-interface Chip {
-  value: string;
+/**
+ * A chip's `value` is a value of THE FILTER IT BELONGS TO — never a bare string.
+ *
+ * `Chip { value: string }` let a typo compile and return zero rows, and on this
+ * site an empty band is not a neutral outcome: an empty "niet gepubliceerd" price
+ * band READS AS AN EDITORIAL CLAIM — "no provider withholds a price" — asserted to
+ * the visitor by a misspelling nobody could see. Now the chip lists are pinned to
+ * `Filters` at construction (see `group()`), so a value that no row can ever hold
+ * is a compile error.
+ */
+interface Chip<K extends keyof Filters> {
+  value: NonNullable<Filters[K]>;
   label: string;
 }
+
+interface FilterGroup<K extends keyof Filters = keyof Filters> {
+  key: K;
+  label: string;
+  chips: Chip<K>[];
+}
+
+/** Pins each group's chips to ITS filter's union — this is where a typo now fails. */
+const group = <K extends keyof Filters>(key: K, label: string, chips: Chip<K>[]): FilterGroup<K> => ({
+  key,
+  label,
+  chips,
+});
 
 type RadiusKm = 25 | 50 | 100 | null;
 
@@ -108,8 +131,12 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
     ? groups4.near.length + groups4.online.length + groups4.unplaceable.length
     : flat.length;
 
-  const toggle = (group: keyof Filters, value: string) =>
-    setFilters((f) => ({ ...f, [group]: f[group] === value ? null : value }));
+  // The cast is confined to this one line, and it is safe by construction: `group()`
+  // above has already pinned every chip's value to its own filter's union, so the
+  // only pairs that reach here are ones TypeScript has checked. (A computed key
+  // widens the spread's type; nothing narrower is expressible without a cast.)
+  const toggle = <K extends keyof Filters>(key: K, value: NonNullable<Filters[K]>) =>
+    setFilters((f) => ({ ...f, [key]: f[key] === value ? null : value }) as Filters);
 
   // "Filters wissen" must clear EVERY filter — the radius included. It is a
   // filter (it decides which rows are `near` and which are merely counted as
@@ -131,34 +158,29 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
   const modes = [...new Set(rows.map((r) => r.mode))].sort();
   const languages = [...new Set(rows.map((r) => r.language).filter((l): l is NonNullable<typeof l> => l != null))].sort();
 
-  const groups: { key: keyof Filters; label: string; chips: Chip[] }[] = [
-    {
-      key: "format",
-      label: nl.filterFormat,
-      chips: formats.map((f) => ({
-        value: f,
-        label: f === "other" || f === "none" ? nl.filterOwnFormat : f,
-      })),
-    },
-    { key: "language", label: nl.filterLanguage, chips: languages.map((l) => ({ value: l, label: l.toUpperCase() })) },
-    { key: "mode", label: nl.filterMode, chips: modes.map((m) => ({ value: m, label: nl.mode[m] })) },
-    {
-      key: "register",
-      label: nl.filterRegister,
-      chips: [
-        { value: "ya", label: nl.filterYaVerified },
-        { value: "crkbo", label: nl.filterCrkbo },
-      ],
-    },
-    {
-      key: "price",
-      label: nl.filterPrice,
-      chips: [
-        { value: "under3000", label: nl.filterUnder3000 },
-        { value: "from3000", label: nl.filterFrom3000 },
-        { value: "not_published", label: nl.filterPriceNotPublished },
-      ],
-    },
+  const groups: FilterGroup[] = [
+    group(
+      "format",
+      nl.filterFormat,
+      formats.map((f) => ({ value: f, label: f === "other" || f === "none" ? nl.filterOwnFormat : f })),
+    ),
+    group("language", nl.filterLanguage, languages.map((l) => ({ value: l, label: l.toUpperCase() }))),
+    group("mode", nl.filterMode, modes.map((m) => ({ value: m, label: nl.mode[m] }))),
+    group("register", nl.filterRegister, [
+      { value: "ya", label: nl.filterYaVerified },
+      { value: "crkbo", label: nl.filterCrkbo },
+    ]),
+    // Three chips, not four. `amount_not_in_record` — the five programmes that
+    // publish a price we have not captured — is deliberately NOT offered: a price
+    // band is a statement ("it costs this much", "they publish no price"), and
+    // about those five we can honestly make neither. They are OUR gap, and they are
+    // visible in the unfiltered list, where a reader meets them as "nog niet
+    // onderzocht". See PriceBand in rules.ts.
+    group("price", nl.filterPrice, [
+      { value: "under3000", label: nl.filterUnder3000 },
+      { value: "from3000", label: nl.filterFrom3000 },
+      { value: "none_published", label: nl.filterPriceNotPublished },
+    ]),
   ];
 
   // The distance sort only exists once we know where the visitor is.
@@ -189,7 +211,9 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
         </div>
         <div className={styles.programName}>{r.programName}</div>
         {r.styleClaimed && <div className={styles.style}>{r.styleClaimed}</div>}
-        {r.nextCohort && <div className={styles.cohort}>{r.nextCohort.label}</div>}
+        {/* Derived from {start, status} at render — never a stored string that could
+            say "gestart" beside status "announced" (spec §8). */}
+        {r.nextCohort && <div className={styles.cohort}>{nextCohortLabel(r.nextCohort)}</div>}
         {r.hasDisclosure && <div className={styles.disclosure}>{nl.disclosureLabel}</div>}
       </div>
       <div className={styles.cell}>

@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { loadDataset } from "./dataset";
+import { loadDataset } from "./loader";
 import { toListingRows } from "./presenters";
 import { saysNotPublished } from "./quad";
 import { cityCentroid } from "./geo";
@@ -42,11 +42,42 @@ test("every format in the data is reachable by a filter", () => {
 });
 
 test("PRICE: the two amount bands match only programmes with a published amount", () => {
-  for (const band of ["under3000", "from3000"]) {
+  // Checked against the RECORD, never against a field on the row: the row no longer
+  // CARRIES the raw amount, and that is the fix. `priceAmount: number | null` was the
+  // surviving half of the shipped bug — `r.priceAmount == null` is precisely the
+  // expression that told readers four named businesses publish no price, and it sat
+  // on the row, reading naturally and type-checking, waiting for the next chip.
+  for (const band of ["under3000", "from3000"] as const) {
     const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
-    assert.ok(got.every((r) => r.priceAmount != null),
+    assert.ok(got.length > 0, `price band '${band}' matches nothing at all`);
+    assert.ok(got.every((r) => programOf(r.providerId, r.programId).price.amount_eur != null),
       `price band '${band}' matched a programme with no published price`);
   }
+});
+
+test("PRICE: the band that selects the finding is NOT equal to a quad value", () => {
+  // The band is `none_published`, and it is deliberately NOT named after a quad,
+  // because it is not equal to one: it is saysNotPublished() — `not_published` OR
+  // `no`. While it WAS called "not_published", a contributor "simplifying"
+  // `!saysNotPublished(r.priceState)` to `r.priceState !== f.price` type-checked
+  // fine and silently dropped every sourced `no` finding out of the band —
+  // under-reporting findings about named businesses, in the direction that disowns
+  // research we did do and sourced.
+  //
+  // So: the band must contain rows whose RECORD says `no`, and the naive equality
+  // must be provably wrong. If these ever coincide, the name has stopped earning
+  // its keep.
+  const band = filterRows(ROWS, { ...EMPTY_FILTERS, price: "none_published" });
+  const fromNo = band.filter((r) => programOf(r.providerId, r.programId).price.published === "no");
+  assert.ok(fromNo.length > 0,
+    "no programme records price.published: no any more — the band name no longer guards anything");
+  assert.ok(band.some((r) => programOf(r.providerId, r.programId).price.published === "not_published"),
+    "the band holds only one of the two literals that mean 'they do not publish it'");
+
+  // Every row in the band renders as ONE finding, in one colour — the two record
+  // literals are normalised by priceQuad, so `no` never reaches <Quad> as fact ink.
+  assert.ok(band.every((r) => r.priceState === "not_published"),
+    "a row in the finding band renders as something other than the finding the band asserts");
 });
 
 test("PRICE: 'niet gepubliceerd' selects the FINDING — never “we hold no amount”", () => {
@@ -56,7 +87,7 @@ test("PRICE: 'niet gepubliceerd' selects the FINDING — never “we hold no amo
   // AALO Yoga Academie, de Blikopener, SanaYou and Yoga Academie Nederland
   // publish no price, while our own record (and their own record page, and the
   // Prijs cell in the very row the filter returned) says they do.
-  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" });
+  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "none_published" });
   assert.ok(notPub.length > 0, "the 'niet gepubliceerd' band matches nothing at all");
 
   for (const r of notPub) {
@@ -92,11 +123,13 @@ test("PRICE: 'niet gepubliceerd' selects the FINDING — never “we hold no amo
 test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no band", () => {
   const under = filterRows(ROWS, { ...EMPTY_FILTERS, price: "under3000" });
   const from = filterRows(ROWS, { ...EMPTY_FILTERS, price: "from3000" });
-  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "not_published" });
+  const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "none_published" });
   assert.ok(under.length > 0 && from.length > 0, "a price band matches nothing at all");
-  assert.ok(under.every((r) => (r.priceAmount as number) < 3000),
+  // The boundary is checked against the RECORD's amount — the row does not carry it.
+  const amountOf = (r: Row) => programOf(r.providerId, r.programId).price.amount_eur as number;
+  assert.ok(under.every((r) => amountOf(r) < 3000),
     "'onder €3.000' matched a programme costing €3.000 or more");
-  assert.ok(from.every((r) => (r.priceAmount as number) >= 3000),
+  assert.ok(from.every((r) => amountOf(r) >= 3000),
     "'€3.000 en hoger' matched a programme costing less than €3.000");
 
   // The bands used to be asserted as a partition of all 77 rows. They are not one,
@@ -106,10 +139,16 @@ test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no b
   // price" — and about these five we can honestly make neither. They are OUR gap;
   // they belong in no band, and they are visible in the unfiltered list, where a
   // reader meets them as "nog niet onderzocht".
+  //
+  // They now have a band NAME of their own — `amount_not_in_record` — which says
+  // out loud that "we hold no amount" is its own category rather than a cheap
+  // synonym for "they publish no price". It is offered by no chip: see ProgrammeTable.
   const ourGaps = ROWS.filter((r) => r.priceState === "unknown");
   assert.ok(ourGaps.length > 0, "no programme is a price gap any more — this test tests nothing");
   for (const g of ourGaps) {
-    for (const band of ["under3000", "from3000", "not_published"] as const) {
+    assert.equal(g.priceBand, "amount_not_in_record",
+      `${g.providerId}/${g.programId}: our own gap, banded as something we could state about them`);
+    for (const band of ["under3000", "from3000", "none_published"] as const) {
       const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
       assert.ok(!got.some((r) => r.href === g.href),
         `${g.providerId}/${g.programId} is a gap in OUR record, yet the '${band}' band claims it`);

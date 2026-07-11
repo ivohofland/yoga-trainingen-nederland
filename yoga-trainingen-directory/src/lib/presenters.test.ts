@@ -1,8 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { z } from "zod";
-import { loadDataset } from "./dataset";
-import { toListingRows, datasetStats, formatEuro, formatMonth, pphQuad, priceQuad, toProviderView } from "./presenters";
+import { loadDataset } from "./loader";
+import { toListingRows, datasetStats, formatEuro, formatMonth, cohortLabel, nextCohortLabel, toProviderView } from "./presenters";
+import { pphQuad, priceQuad } from "./rules";
 import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 // The SCHEMA, as a value — the contract test walks its shape rather than
@@ -33,7 +34,11 @@ test("an announced cohort is never labelled as one that ran", () => {
   let announced = 0;
   for (const r of rows) {
     if (!r.nextCohort) continue;
-    const { status, label } = r.nextCohort;
+    const { status } = r.nextCohort;
+    // DERIVED at render from {start, status} — the row no longer STORES a label, so
+    // a label contradicting its own status ("start sep 2026 — gestart" on an
+    // announced cohort) is not merely wrong now, it is unconstructible.
+    const label = nextCohortLabel(r.nextCohort);
     // the status is never omitted from the label, whatever it is
     assert.ok(label.includes(nl.cohortStatus[status]),
       `programme ${r.programId} cohort label omits its status (${status})`);
@@ -209,7 +214,8 @@ test("PPH: the €/contactuur cell never contradicts the Prijs cell in its own r
   // €/contactuur derived from it un-researched.
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
-    if (r.pph != null || r.priceAmount != null) continue; // the price is the blocker
+    // The blocker, read off the RECORD — the row carries no raw amount any more.
+    if (r.pph != null || programOf(r.providerId, r.programId).price.amount_eur != null) continue;
     if (saysNotPublished(r.priceState)) {
       assert.equal(r.pphState, "not_published",
         `${r.providerId}/${r.programId}: the Prijs cell states "${r.priceState}" as researched, ` +
@@ -269,12 +275,18 @@ test("a price that is not published never renders as a number", () => {
   // would be circular.)
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
-    const published = programOf(r.providerId, r.programId).price.published;
+    const program = programOf(r.providerId, r.programId);
+    const published = program.price.published;
     if (published !== "yes") {
-      assert.equal(r.priceAmount, null,
+      assert.equal(program.price.amount_eur ?? null, null,
         `programme ${r.programId} has an amount despite price.published=${published}`);
       assert.equal(r.priceDisplay, null,
         `programme ${r.programId} renders a price despite price.published=${published}`);
+      // …and so it is in no amount band. This is the invariant the two amount bands
+      // lean on: `priceBand` may only say "under3000"/"from3000" of a programme whose
+      // record actually holds a published amount.
+      assert.ok(r.priceBand === "none_published" || r.priceBand === "amount_not_in_record",
+        `programme ${r.programId} is banded "${r.priceBand}" with no published amount`);
     }
   }
 });
@@ -426,8 +438,22 @@ test("stats are derived from the data, never hard-coded", () => {
   assert.equal(stats.providers, providers.length);
   assert.equal(stats.programs, providers.reduce((n, p) => n + p.programs.length, 0));
   assert.ok(stats.pphComputable <= stats.programs);
-  assert.match(stats.verifiedOldest ?? "", /^\d{4}-\d{2}/);
-  assert.match(stats.verifiedNewest ?? "", /^\d{4}-\d{2}/);
+  assert.ok(stats.verified, "a non-empty corpus always has a verification window");
+  assert.match(stats.verified.oldest, /^\d{4}-\d{2}/);
+  assert.match(stats.verified.newest, /^\d{4}-\d{2}/);
+});
+
+test("STATS: the verification window is both ends or neither, and never inverted", () => {
+  // It was two independent nullables (`verifiedOldest` / `verifiedNewest`), so half
+  // a window was representable and app/page.tsx had to guard both ends to print one
+  // line. One nullable object states "both or neither" in the type; this pins the
+  // ordering the type cannot.
+  const stats = datasetStats(providers);
+  assert.ok(stats.verified, "the corpus is not empty, so it has a window");
+  assert.ok(stats.verified.oldest <= stats.verified.newest,
+    `the window runs backwards: ${stats.verified.oldest} … ${stats.verified.newest}`);
+  // …and an empty corpus has no window at all, rather than half of one.
+  assert.equal(datasetStats([]).verified, null);
 });
 
 test("STATS: the freshness line never dates the corpus by its freshest record", () => {
@@ -437,14 +463,15 @@ test("STATS: the freshness line never dates the corpus by its freshest record", 
   // every record clears — is the one that anchors the line.
   const stats = datasetStats(providers);
   const all = providers.map((p) => p.last_verified).sort();
-  assert.equal(stats.verifiedOldest, all[0], "the oldest verification is not the oldest in the data");
-  assert.equal(stats.verifiedNewest, all.at(-1), "the newest verification is not the newest in the data");
+  assert.ok(stats.verified, "the corpus is not empty, so it has a window");
+  assert.equal(stats.verified.oldest, all[0], "the oldest verification is not the oldest in the data");
+  assert.equal(stats.verified.newest, all.at(-1), "the newest verification is not the newest in the data");
   assert.ok(new Set(all.map((d) => d.slice(0, 7))).size > 1,
     "every record shares one verification month — this test would prove nothing");
 
   const line = nl.statVerified(
-    formatMonth(stats.verifiedOldest!.slice(0, 7)),
-    formatMonth(stats.verifiedNewest!.slice(0, 7)),
+    formatMonth(stats.verified.oldest.slice(0, 7)),
+    formatMonth(stats.verified.newest.slice(0, 7)),
   );
   const oldest = formatMonth(all[0].slice(0, 7));
   assert.ok(line.includes(oldest),
@@ -679,12 +706,17 @@ test("RECORD: an announced cohort is never labelled as one that ran — on the r
   // This is also the ONLY surface where `confirmed_ran` is real: all 44 cohorts the
   // listing shows are announced (a "next" cohort has not run yet), so that branch
   // is dead there. The nine that really did run are here.
+  //
+  // The label is now DERIVED from {start, status} by cohortLabel(), not stored on
+  // the view: a CohortView whose label contradicts its own status is no longer
+  // constructible at all, and this test pins the one function that writes it.
   let announced = 0;
   let ran = 0;
   let cancelled = 0;
   for (const p of providers) {
     for (const prog of toProviderView(p).programs) {
-      for (const c of prog.cohorts) {
+      for (const cohort of prog.cohorts) {
+        const c = { ...cohort, label: cohortLabel(cohort) };
         const where = `${p.id}/${prog.id} cohort ${c.id}`;
         assert.ok(c.label.includes(nl.cohortStatus[c.status]),
           `${where}: the label "${c.label}" omits its status (${c.status}) — a bare date under the ` +

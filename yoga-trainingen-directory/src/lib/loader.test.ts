@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { bundleDelta, loadDataset, pricePerContactHour } from "./dataset";
+import { loadDataset } from "./loader";
+import { bundleDelta, pricePerContactHour } from "./derive";
 import type { Program } from "../schema";
 
 const { providers } = loadDataset();

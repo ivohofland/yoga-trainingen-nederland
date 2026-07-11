@@ -62,23 +62,47 @@ The brand name is the canonical identifier; register entities (CRKBO holder,
 KvK legal name, YA registration holder) are *data about* the brand, because
 registrations are frequently held under a different BV/holding/person name.
 
-**The load pipeline** is `src/lib/dataset.ts`:
-1. parses each YAML, validates against the `Provider` Zod schema;
-2. runs **referential-integrity checks** beyond what Zod can express — every
-   `source:` ref must exist in `sources[]`, `composition.modules` must point at
-   real modules, nested cohorts' `program` field must match the parent, claim
-   `scope` (`program:<id>` / `module:<id>`) must resolve;
-3. exposes **derived values** (`pricePerContactHour`, `contactRatio`,
-   `bundleDelta`, `completeness`). Derived values are computed here and
-   **never stored** (spec §6) — if you find yourself adding a computed field to
-   a YAML record, it belongs in this module instead.
+**The load pipeline is split by purity, and the split is load-bearing:**
 
-**Views and the API are both consumers of one dataset.** `app/page.tsx` is the
-listing view (Server Component, calls `loadDataset()` directly; throws if the
-data is invalid). `export-json.ts` writes the same validated data to a
-static, versioned `public/data/v1/providers.json` — designed so a future
-frontend under a different brand can consume it without touching this repo.
-The `@/*` path alias maps to `src/*`.
+- `src/lib/loader.ts` — **the only impure module.** `node:fs`, YAML parsing,
+  Zod validation, and the **referential-integrity checks** beyond what Zod can
+  express: every `source:` ref must exist in `sources[]`, `composition.modules`
+  must point at real modules, nested cohorts' `program` field must match the
+  parent, claim `scope` (`program:<id>` / `module:<id>`) must resolve.
+- `src/lib/derive.ts` — the **derived values** (`pricePerContactHour`,
+  `contactRatio`, `bundleDelta`, `isMultistyle`, `completeness`, `providerQa`).
+  Computed, **never stored** (spec §6) — if you find yourself adding a computed
+  field to a YAML record, it belongs here instead.
+- `src/lib/rules.ts` — **the finding-vs-gap rule** (`priceQuad`, `pphQuad`,
+  `missingBecause`, `publishedQuad`, `priceBand`). What any surface is ALLOWED
+  to say about a value our record does not hold. Stated once, here.
+- `src/lib/presenters.ts` — display only: the strings a component renders.
+
+`derive.ts`, `rules.ts`, `quad.ts` and `presenters.ts` **must import nothing
+from `node:*`.** That is not tidiness. When the rule lived behind `node:fs`, the
+JSON API could not import it, so it shipped the raw records — and any consumer
+rendering `price.published` reconstructed the bug the site had just fixed.
+The rule must stay reachable by the server pages, the client filter island, and
+`export-json.ts` alike.
+
+**Views and the API are all consumers of one dataset, and of one rule.**
+`app/page.tsx` is the listing view (Server Component, calls `loadDataset()`
+directly; throws if the data is invalid). `export-json.ts` writes the same
+validated data to a static, versioned `public/data/v1/providers.json` —
+designed so a future frontend under a different brand can consume it without
+touching this repo. The `@/*` path alias maps to `src/*`.
+
+**The export ships a `derived` block per programme** (`price_state`,
+`price_band`, `pph`, `pph_state`, `contact_ratio`, `bundle_delta`,
+`multistyle`), built in `src/lib/api.ts` by the same functions the site renders
+from. **Consumers must read `derived.price_state`, never the raw
+`price.published`** — five programmes carry `published: "yes"` with no
+`amount_eur` (they publish a price; we have not captured it), and rendering the
+raw field states a bare "ja" as established fact about a named business.
+Derived values are computed **at export** and are still never stored in `data/`:
+spec §6 holds — the export is a *rendering* of the records, not the source of
+truth. A test pins `derived.price_state` to what the listing and the record page
+render, for every programme.
 
 ## Editorial conventions that the model enforces
 

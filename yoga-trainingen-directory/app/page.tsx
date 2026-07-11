@@ -3,7 +3,7 @@
  * dataset at build time and throws if it is invalid — the site refuses to
  * render invalid data. Only the filter/sort island below is client-side.
  */
-import { loadDataset } from "@/lib/dataset";
+import { loadDataset } from "@/lib/loader";
 import { toListingRows, datasetStats, formatMonth } from "@/lib/presenters";
 import { ProgrammeTable } from "@/components/ProgrammeTable";
 import { nl } from "@/lib/strings";
@@ -22,13 +22,15 @@ export default function Home() {
         <span>{stats.providers} {nl.statProviders}</span>
         <span>{stats.programs} {nl.statPrograms}</span>
         <span>{nl.statRegisters}</span>
-        {/* Both ends of the verification window. The newest alone would let two
-            fresh records date the whole corpus — see DatasetStats. */}
-        {stats.verifiedOldest && stats.verifiedNewest && (
+        {/* Both ends of the verification window, or no line at all. The newest alone
+            would let two fresh records date the whole corpus — see
+            VerificationWindow, which is why this is ONE nullable object rather than
+            two nullables the page has to guard separately. */}
+        {stats.verified && (
           <span>
             {nl.statVerified(
-              formatMonth(stats.verifiedOldest.slice(0, 7)),
-              formatMonth(stats.verifiedNewest.slice(0, 7)),
+              formatMonth(stats.verified.oldest.slice(0, 7)),
+              formatMonth(stats.verified.newest.slice(0, 7)),
             )}
           </span>
         )}

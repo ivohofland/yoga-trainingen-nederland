@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { distanceKm, cityCentroid, nearestKm, parsePostcode } from "./geo";
-import { loadDataset } from "./dataset";
+import { loadDataset } from "./loader";
 
 test("distanceKm is a real haversine, not a euclidean fudge", () => {
   // Amsterdam centraal → Utrecht centraal is ~35 km as the crow flies.

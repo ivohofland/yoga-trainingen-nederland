@@ -23,7 +23,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { loadDataset } from "../src/lib/dataset";
+import { loadDataset } from "../src/lib/loader";
 
 const OUT = path.join(process.cwd(), "src", "data");
 const RETRIEVED = new Date().toISOString().slice(0, 10);

@@ -14,7 +14,8 @@
  * files-in-git.
  */
 import { notFound } from "next/navigation";
-import { loadDataset, providerQa } from "@/lib/dataset";
+import { loadDataset } from "@/lib/loader";
+import { providerQa } from "@/lib/derive";
 
 export const metadata = { title: "QA / review — interne werklijst" };
 
