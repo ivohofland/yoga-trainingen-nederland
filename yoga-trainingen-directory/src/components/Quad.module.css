@@ -1,0 +1,15 @@
+/* The ONLY place a quad value becomes pixels. See spec §4. */
+.fact {
+  color: var(--ink);
+}
+
+.finding {
+  color: var(--finding);
+}
+
+/* Deliberately recessive: a gap is an absence in OUR work and must never
+   compete with facts for attention, let alone read as an accusation. */
+.gap {
+  color: var(--gap);
+  font-style: italic;
+}
