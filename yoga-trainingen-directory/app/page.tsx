@@ -1,75 +1,47 @@
 /**
- * Listing view — one of multiple views over the same dataset (spec §1).
- * Deliberately renders the §5 decomposition: the hour label is descriptive,
- * supervised teaching practice gets its own column, and "niet gepubliceerd"
- * is displayed as a finding, not hidden as a gap.
+ * Listing view (spec §1). A Server Component: it loads and validates the
+ * dataset at build time and throws if it is invalid — the site refuses to
+ * render invalid data. Only the filter/sort island below is client-side.
  */
-import { loadDataset, pricePerContactHour } from "@/lib/dataset";
-
-const QUAD_LABEL: Record<string, string> = {
-  yes: "ja",
-  no: "nee",
-  not_published: "niet gepubliceerd",
-  unknown: "nog niet onderzocht",
-};
+import { loadDataset } from "@/lib/loader";
+import { toListingRows, datasetStats, formatMonth } from "@/lib/presenters";
+import { ProgrammeTable } from "@/components/ProgrammeTable";
+import { nl } from "@/lib/strings";
+import styles from "./page.module.css";
 
 export default function Home() {
   const { providers, errors } = loadDataset();
   if (errors.length > 0) throw new Error(`Dataset invalid:\n${errors.join("\n")}`);
 
+  const rows = toListingRows(providers);
+  const stats = datasetStats(providers);
+
   return (
     <main>
-      <h1>Yoga-docentenopleidingen in Nederland</h1>
-      <p style={{ color: "#555" }}>
-        Feitelijk overzicht. Claims zijn als claim genoteerd; “niet gepubliceerd” betekent: wij
-        keken, de opleider vermeldt het niet. Onderzoek door Ivo Hofland.
-      </p>
-      {providers.map((p) => (
-        <section key={p.id} style={{ borderTop: "1px solid #ddd", padding: "1rem 0" }}>
-          <h2 style={{ marginBottom: 0 }}>{p.name}</h2>
-          <p style={{ margin: "0.2rem 0", color: "#555" }}>
-            {p.locations.map((l) => l.city ?? "locatie onbekend").join(", ")} ·{" "}
-            <a href={p.website}>{p.website.replace(/^https?:\/\/(www\.)?/, "")}</a> · diepte:{" "}
-            {p.depth} · laatst geverifieerd: {p.last_verified}
-          </p>
-          {p.programs.map((program) => {
-            const pph = pricePerContactHour(program);
-            return (
-              <table key={program.id} style={{ margin: "0.5rem 0", borderCollapse: "collapse" }}>
-                <tbody>
-                  <tr>
-                    <td style={{ paddingRight: 12, color: "#777" }}>opleiding</td>
-                    <td>
-                      <strong>{program.name}</strong> ({program.format_label} uur-format)
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style={{ paddingRight: 12, color: "#777" }}>prijs</td>
-                    <td>
-                      {program.price.amount_eur != null
-                        ? `€${program.price.amount_eur} (${program.price.vat})`
-                        : QUAD_LABEL[program.price.published]}
-                      {program.price.excludes ? ` — exclusief: ${program.price.excludes}` : ""}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style={{ paddingRight: 12, color: "#777" }}>prijs per contactuur</td>
-                    <td>{pph.value != null ? `€${pph.value}` : pph.caveat}</td>
-                  </tr>
-                  <tr>
-                    <td style={{ paddingRight: 12, color: "#777" }}>begeleide lespraktijk</td>
-                    <td>
-                      {program.hours_claimed.supervised_teaching_practice != null
-                        ? `${program.hours_claimed.supervised_teaching_practice} uur`
-                        : QUAD_LABEL[program.hours_claimed.breakdown_published]}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            );
-          })}
-        </section>
-      ))}
+      <div className={styles.stats}>
+        <span>{stats.providers} {nl.statProviders}</span>
+        <span>{stats.programs} {nl.statPrograms}</span>
+        <span>{nl.statRegisters}</span>
+        {/* Both ends of the verification window, or no line at all. The newest alone
+            would let two fresh records date the whole corpus — see
+            VerificationWindow, which is why this is ONE nullable object rather than
+            two nullables the page has to guard separately. */}
+        {stats.verified && (
+          <span>
+            {nl.statVerified(
+              formatMonth(stats.verified.oldest.slice(0, 7)),
+              formatMonth(stats.verified.newest.slice(0, 7)),
+            )}
+          </span>
+        )}
+      </div>
+
+      <p className={styles.intro}>{nl.intro}</p>
+      <p className={styles.legend}>{nl.legend}</p>
+
+      <ProgrammeTable rows={rows} providerCount={stats.providers} />
+
+      <p className={styles.footnote}>{nl.priceFootnote(stats.pphComputable, stats.programs)}</p>
     </main>
   );
 }

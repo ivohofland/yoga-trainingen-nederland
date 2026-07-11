@@ -1,0 +1,74 @@
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 32px 96px;
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 44px 0 28px;
+  border-top: 6px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+
+.brand {
+  text-decoration: none;
+  color: inherit;
+}
+
+.overline {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 34px;
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.navLink {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 7px 14px;
+  border: 1px solid var(--ink);
+  text-decoration: none;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.navLink:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 32px;
+  margin-top: 72px;
+  padding-top: 18px;
+  border-top: 2px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.7;
+}

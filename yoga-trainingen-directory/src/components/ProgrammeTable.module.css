@@ -1,0 +1,266 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 44px;
+  align-items: flex-start;
+  padding: 24px 0 22px;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.groupLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 4px 10px;
+  cursor: pointer;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--rule-2);
+}
+
+.chipActive {
+  composes: chip;
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.postcode {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 4px 10px;
+  width: 140px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.geoNote {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 260px;
+}
+
+.geoError {
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--error);
+  max-width: 260px;
+}
+
+.distance {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* Rows distance cannot describe. Visible, and told why. */
+.groupHeading {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 36px 0 0;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.sortBar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 16px;
+}
+
+.sortGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resultLine {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 2.6fr) 0.8fr 1.7fr 1.7fr 1.5fr 1.8fr;
+  gap: 16px;
+}
+
+.head {
+  composes: grid;
+  padding: 10px 0 8px;
+  border-bottom: 1px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.row {
+  composes: grid;
+  align-items: baseline;
+  padding: 20px 16px;
+  margin: 0 -16px;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+}
+
+.row:hover {
+  background: var(--hover);
+}
+
+.provider {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.providerName {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.programName {
+  font-size: 16.5px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+/*
+ * The style the provider CLAIMS ("Hatha & Vinyasa") — a fact, read straight off
+ * the record.
+ *
+ * It was --muted + italic, which is pixel-for-pixel the .gap treatment in
+ * Quad.module.css (--gap holds the same value as --muted, and adds italic). The
+ * whole site trains the reader's eye on grey-italic = "nog niet onderzocht", and
+ * then set a fact in it. Ink — quieter than the programme name above it, but
+ * unmistakably something we know.
+ */
+.style {
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+.cohort {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/*
+ * A disclosure is NOT a quad. It is the researcher declaring a relationship —
+ * a statement about US, not a finding about the provider.
+ *
+ * It used to use --finding, which made amber mean two different things at once
+ * ("the provider does not publish this" AND "we have a tie to this provider").
+ * --finding and --gap are quad tokens and belong to Quad.module.css alone; see
+ * the docblock in Quad.tsx.
+ *
+ * So: a stamp. Ink on paper, mono caps, thin ink border — prominent, and
+ * unmistakably not the finding colour.
+ */
+.disclosure {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 2px 6px;
+  margin-top: 8px;
+}
+
+.cell {
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.cellSmall {
+  composes: cell;
+  font-size: 11.5px;
+}
+
+/* Read by assistive tech, invisible on screen — for text that a sighted reader
+   gets some other way (here: the €/contactuur caveat, which was mouse-only in a
+   `title`). Never use it to hide something that has no visible equivalent. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.empty {
+  padding: 48px 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* No `.footnote` here. The price footnote belongs to the page, not the table —
+   it lives in app/page.module.css, and this file once carried a second, identical
+   copy of it. Two spellings of one style is how the page ends up rendering both. */
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .head {
+    display: none;
+  }
+}

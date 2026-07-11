@@ -1,0 +1,359 @@
+/*
+ * The record page.
+ *
+ * --finding and --gap do NOT appear here, and must not. They are quad tokens
+ * and belong to Quad.module.css alone (see the docblock in Quad.tsx): amber
+ * means exactly one thing on this site — "we looked; the provider does not
+ * publish it". Two things on this page need to stand out without being quads —
+ * the disclosure and a source below the publication bar — and both are
+ * statements about US, not findings about the provider. They get ink, not the
+ * finding colour.
+ */
+
+.back {
+  padding: 36px 0 0;
+}
+
+.backLink {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 12px;
+  border: 1px solid var(--ink);
+  text-decoration: none;
+  background: var(--paper);
+}
+
+.backLink:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.head {
+  padding: 40px 0 26px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.headTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 18px;
+}
+
+.name {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.aka {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin-top: 10px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-2);
+}
+
+/*
+ * The methodology promises this is shown. It gets a border, not a footnote —
+ * a declared relationship between the researcher and the provider. Ink on
+ * paper: prominent, and unmistakably not the finding colour.
+ */
+.disclosure {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--ink);
+  max-width: 720px;
+}
+
+.disclosureLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.disclosureBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.section {
+  padding: 38px 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sectionLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.subLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 26px 0 4px;
+}
+
+/*
+ * The note under a section heading ("Geen oordeel samenhang: hoog/laag…").
+ *
+ * Not italic, for the same reason .style in ProgrammeTable.module.css is not:
+ * --gap is --muted + italic, so muted-italic is the exact rendering of "nog niet
+ * onderzocht". These lines are the opposite of a gap — they are the site
+ * explaining what it is about to show — and they must not be dressed as one.
+ */
+.subNote {
+  font-size: 13px;
+  color: var(--ink-2);
+  margin: 0 0 10px;
+}
+
+.regRow {
+  display: grid;
+  grid-template-columns: 170px 200px 1fr;
+  gap: 16px;
+  padding: 9px 0;
+  border-top: 1px dotted var(--rule-dot);
+  align-items: baseline;
+}
+
+.regBody {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.regNote {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+.programme {
+  padding: 18px 0 8px;
+  scroll-margin-top: 24px;
+}
+
+.progName {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: 210px 1fr;
+  gap: 16px;
+  padding: 6px 0;
+  border-top: 1px dotted var(--rule);
+  max-width: 880px;
+}
+
+.k {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 2px;
+}
+
+.v {
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+/* Provenance for the fact above it — deliberately quiet. */
+.note {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/*
+ * The citation beside a fact: a link down to that source in the Bronnen section.
+ * The methodology promises "Bij elk gegeven staat een bron … je kunt elke bron
+ * zelf naslaan", so every sourced field carries one.
+ *
+ * NOT a quad, and it must never look like one: --finding and --gap say something
+ * about the PROVIDER, and a citation says only where we got the fact. It is
+ * provenance, not an accusation — so it borrows the existing muted/mono idiom of
+ * .note, one step smaller, underlined only on hover. It has to be legible enough
+ * to click and quiet enough to ignore.
+ */
+.cite {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--rule-2);
+  margin-top: 4px;
+}
+
+.cite:hover,
+.cite:focus-visible {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+.claim {
+  max-width: 780px;
+  margin: 14px 0;
+  padding-left: 18px;
+  border-left: 2px solid var(--ink);
+}
+
+/* Verbatim, in the source language. Nothing here shortens or tidies it. */
+.quote {
+  font-size: 16.5px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.claimCat {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Layer 3, methodology-versioned — visually separated from the quote. */
+.analysis {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: var(--hover);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.analysisLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.analysisBody {
+  margin: 0;
+}
+
+/*
+ * Also the landing target of every .cite link on the page (id="bron-<source-id>").
+ * scroll-margin-top keeps the row clear of the viewport edge when jumped to, and
+ * :target tints the row the reader asked for — the same --hover the analysis block
+ * uses. Quiet, and pointedly not a quad colour: nothing here is a finding.
+ */
+.srcRow {
+  display: grid;
+  grid-template-columns: 150px minmax(180px, 1fr) 230px;
+  gap: 16px;
+  padding: 7px 0;
+  border-top: 1px dotted var(--rule-dot);
+  align-items: baseline;
+  max-width: 880px;
+  scroll-margin-top: 24px;
+}
+
+.srcRow:target {
+  background: var(--hover);
+}
+
+/* The source's own id — the string a .cite link names, so a reader who follows
+   one lands on a row that says the id they clicked. */
+.srcKind {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  overflow-wrap: anywhere;
+}
+
+.srcCaptured {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.srcUrl {
+  font-family: var(--mono);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Both halves of the publication bar, always: "publiek ✓ · lokaal —". Ink, not
+ * a quad colour — this reports on OUR record, never on the provider. Quiet by
+ * design: it is provenance, and a missing half is often the only outcome
+ * possible (Wayback-excluded or JS-rendered registers). Legible enough that the
+ * "—" cannot be mistaken for a "✓".
+ */
+.srcArchive {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+/*
+ * Below the publication bar. NOT a quad — this is a statement about OUR record,
+ * not about the provider, so it must not wear --finding ("niet gepubliceerd" =
+ * the provider's omission). Marked, never hidden: an ink stamp, so a reader
+ * scanning the source list cannot miss it.
+ */
+.belowBar {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  padding: 2px 6px;
+}
+
+.pubBar {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  max-width: 780px;
+  line-height: 1.7;
+  margin: 16px 0 0;
+}
+
+@media (max-width: 860px) {
+  .regRow,
+  .kv,
+  .srcRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

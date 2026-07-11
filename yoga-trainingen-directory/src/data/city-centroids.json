@@ -1,0 +1,224 @@
+{
+  "_source": {
+    "url": "https://api.pdok.nl/bzk/locatieserver/search/v3_1/free",
+    "name": "PDOK Locatieserver",
+    "retrieved": "2026-07-11"
+  },
+  "cities": {
+    "'s-Hertogenbosch": {
+      "lat": 51.71,
+      "lon": 5.2957,
+      "provincie": "Noord-Brabant"
+    },
+    "Almere": {
+      "lat": 52.4025,
+      "lon": 5.2057,
+      "provincie": "Flevoland"
+    },
+    "Amersfoort": {
+      "lat": 52.1682,
+      "lon": 5.3894,
+      "provincie": "Utrecht"
+    },
+    "Amsterdam": {
+      "lat": 52.3734,
+      "lon": 4.9045,
+      "provincie": "Noord-Holland"
+    },
+    "Arnhem": {
+      "lat": 52.0011,
+      "lon": 5.8926,
+      "provincie": "Gelderland"
+    },
+    "Austerlitz": {
+      "lat": 52.0838,
+      "lon": 5.3124,
+      "provincie": "Utrecht"
+    },
+    "Baarn": {
+      "lat": 52.2071,
+      "lon": 5.2713,
+      "provincie": "Utrecht"
+    },
+    "Belfeld": {
+      "lat": 51.3058,
+      "lon": 6.1247,
+      "provincie": "Limburg"
+    },
+    "Breda": {
+      "lat": 51.5804,
+      "lon": 4.7556,
+      "provincie": "Noord-Brabant"
+    },
+    "Brunssum": {
+      "lat": 50.9429,
+      "lon": 5.978,
+      "provincie": "Limburg"
+    },
+    "Culemborg": {
+      "lat": 51.9458,
+      "lon": 5.2104,
+      "provincie": "Gelderland"
+    },
+    "Delft": {
+      "lat": 51.9985,
+      "lon": 4.3631,
+      "provincie": "Zuid-Holland"
+    },
+    "Den Haag": {
+      "lat": 52.0721,
+      "lon": 4.293,
+      "provincie": "Zuid-Holland"
+    },
+    "Doorwerth": {
+      "lat": 51.974,
+      "lon": 5.7864,
+      "provincie": "Gelderland"
+    },
+    "Drenthe": {
+      "lat": 52.81,
+      "lon": 6.6248,
+      "provincie": "Drenthe"
+    },
+    "Eindhoven": {
+      "lat": 51.4502,
+      "lon": 5.4585,
+      "provincie": "Noord-Brabant"
+    },
+    "Enschede": {
+      "lat": 52.2208,
+      "lon": 6.8778,
+      "provincie": "Overijssel"
+    },
+    "Groet": {
+      "lat": 52.7221,
+      "lon": 4.6704,
+      "provincie": "Noord-Holland"
+    },
+    "Groningen": {
+      "lat": 53.2222,
+      "lon": 6.5633,
+      "provincie": "Groningen"
+    },
+    "Leeuwarden": {
+      "lat": 53.2007,
+      "lon": 5.8031,
+      "provincie": "Fryslân"
+    },
+    "Leiden": {
+      "lat": 52.155,
+      "lon": 4.4851,
+      "provincie": "Zuid-Holland"
+    },
+    "Maarssen": {
+      "lat": 52.1408,
+      "lon": 5.0444,
+      "provincie": "Utrecht"
+    },
+    "Maastricht": {
+      "lat": 50.853,
+      "lon": 5.6995,
+      "provincie": "Limburg"
+    },
+    "Nieuw-Vennep": {
+      "lat": 52.2638,
+      "lon": 4.6356,
+      "provincie": "Noord-Holland"
+    },
+    "Nieuwkuijk": {
+      "lat": 51.6933,
+      "lon": 5.1784,
+      "provincie": "Noord-Brabant"
+    },
+    "Nijmegen": {
+      "lat": 51.8348,
+      "lon": 5.8332,
+      "provincie": "Gelderland"
+    },
+    "Randwijk": {
+      "lat": 51.9472,
+      "lon": 5.6944,
+      "provincie": "Gelderland"
+    },
+    "Rotterdam": {
+      "lat": 51.9225,
+      "lon": 4.4865,
+      "provincie": "Zuid-Holland"
+    },
+    "Sassenheim": {
+      "lat": 52.2189,
+      "lon": 4.5175,
+      "provincie": "Zuid-Holland"
+    },
+    "Schiedam": {
+      "lat": 51.9268,
+      "lon": 4.3853,
+      "provincie": "Zuid-Holland"
+    },
+    "Schoorl": {
+      "lat": 52.7102,
+      "lon": 4.6622,
+      "provincie": "Noord-Holland"
+    },
+    "Silvolde": {
+      "lat": 51.906,
+      "lon": 6.4021,
+      "provincie": "Gelderland"
+    },
+    "Sinderen": {
+      "lat": 51.9173,
+      "lon": 6.4485,
+      "provincie": "Gelderland"
+    },
+    "Sittard": {
+      "lat": 51.0004,
+      "lon": 5.8697,
+      "provincie": "Limburg"
+    },
+    "Tilburg": {
+      "lat": 51.5727,
+      "lon": 5.0453,
+      "provincie": "Noord-Brabant"
+    },
+    "Utrecht": {
+      "lat": 52.0887,
+      "lon": 5.0952,
+      "provincie": "Utrecht"
+    },
+    "Veen": {
+      "lat": 51.7778,
+      "lon": 5.0969,
+      "provincie": "Noord-Brabant"
+    },
+    "Voorhout": {
+      "lat": 52.2281,
+      "lon": 4.4938,
+      "provincie": "Zuid-Holland"
+    },
+    "Waalwijk": {
+      "lat": 51.6943,
+      "lon": 5.0689,
+      "provincie": "Noord-Brabant"
+    },
+    "Wageningen": {
+      "lat": 51.9735,
+      "lon": 5.6635,
+      "provincie": "Gelderland"
+    },
+    "Westerbork": {
+      "lat": 52.8534,
+      "lon": 6.6051,
+      "provincie": "Drenthe"
+    },
+    "Woerden": {
+      "lat": 52.0863,
+      "lon": 4.879,
+      "provincie": "Utrecht"
+    },
+    "Zwolle": {
+      "lat": 52.5187,
+      "lon": 6.1184,
+      "provincie": "Overijssel"
+    }
+  }
+}

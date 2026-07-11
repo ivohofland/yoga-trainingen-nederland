@@ -1,0 +1,356 @@
+/**
+ * Every user-facing string, in one place. NL-only for now: all record notes in
+ * the dataset are Dutch, so the site is Dutch. Adding EN later means adding a
+ * second keyed object here — not a refactor.
+ *
+ * No user-facing string may be inlined in a component.
+ */
+export const nl = {
+  overline: "Onafhankelijk onderzoek · Nederland",
+  title: "Yoga-docentenopleidingen",
+  navDirectory: "Overzicht",
+  navMethod: "Methode",
+
+  statProviders: "aanbieders",
+  statPrograms: "opleidingen",
+  statRegisters: "getoetst aan openbare registers (CRKBO, Yoga Alliance, VYN)",
+  // The verification WINDOW, both ends — never the newest alone. "records
+  // geverifieerd jul 2026" was the max over 48 records of which 46 were jun 2026:
+  // a claim about the corpus carried by two records, and one re-verification next
+  // year would have re-dated all 48. A range cannot overstate: the oldest end is
+  // the floor every record clears.
+  statVerified: (oldest: string, newest: string) =>
+    oldest === newest
+      ? `records geverifieerd ${oldest}`
+      : `records geverifieerd ${oldest}–${newest}`,
+
+  intro:
+    "Een feitelijk overzicht van yoga-docentenopleidingen, samengesteld uit " +
+    "websites van aanbieders en openbare registers. Beweringen staan er letterlijk, " +
+    "nooit gekarakteriseerd. Er wordt hier niets gerangschikt, gescoord of gesponsord.",
+  legend:
+    "“niet gepubliceerd” = wij keken; de aanbieder vermeldt het niet — een bevinding. · " +
+    "“nog niet onderzocht” = een gat in ons onderzoek, nooit getoond als bevinding.",
+
+  sortLabel: "Sorteer",
+  sortUpcoming: "eerstvolgende start",
+  sortAlphabetical: "A–Z",
+  sortPph: "€ / contactuur",
+  sortVerified: "laatst geverifieerd",
+
+  filterFormat: "Uren-format",
+  filterLanguage: "Voertaal",
+  filterMode: "Uitvoering",
+  filterRegister: "Registerstatus",
+  filterPrice: "Prijs (gepubliceerd)",
+  // `other` — the programme uses an hour format outside 200/300/500. That is what
+  // the record says, so this is what the page says.
+  formatOther: "eigen vorm",
+  // `none` — the programme carries NO hour-format label. It used to render "eigen
+  // vorm" too, which invents a claim the record does not make (they are not said
+  // to have a form of their own), and made two chips over disjoint sets look
+  // identical. See formatDisplay() in presenters.ts.
+  formatNone: "geen uren-label",
+  hourSuffix: "u",
+  monthsSuffix: "mnd",
+
+  // Location + radius. Replaces the design's four-city chip list — see
+  // docs/superpowers/plans/2026-07-11-public-listing.md.
+  filterLocation: "Afstand",
+  postcodePlaceholder: "postcode, bijv. 3512",
+  postcodeInvalid: "Geen geldige Nederlandse postcode.",
+  postcodeUnknown: "Deze postcode kennen we niet.",
+  // The PC4 table is lazy-loaded; that import can fail (offline, cache miss,
+  // a stale chunk after a deploy). It must SAY so — a filter that silently
+  // does nothing is worse than one that admits it broke.
+  postcodeLookupFailed: "De postcodetabel kon niet worden geladen. Probeer het opnieuw.",
+  postcodeNote:
+    "De postcode blijft in uw browser — er wordt niets verstuurd. " +
+    "Coördinaten uit open data van CBS/PDOK.",
+  radius25: "25 km",
+  radius50: "50 km",
+  radius100: "100 km",
+  radiusAll: "heel NL",
+  sortDistance: "afstand",
+  distanceAway: (km: number) => `${km.toLocaleString("nl-NL", { maximumFractionDigits: 0 })} km`,
+
+  // Headings for what distance cannot describe. Nothing is hidden — see
+  // docs/superpowers/plans/2026-07-11-public-listing.md.
+  groupOnline: "Online — afstand niet van toepassing",
+  // ONE heading used to cover both reasons a row has no distance:
+  // "Locatie niet vermeld — wij kunnen deze niet plaatsen". Over a provider who
+  // DID state a city that our tables cannot geocode, that is a false statement
+  // about a named business — printed directly above a row whose own city cell
+  // shows the location the heading says was never given. The two reasons are now
+  // two groups, and the second one owns the miss as ours. See Placement in geo.ts.
+  groupNoCity: "Locatie niet vermeld — het record noemt geen plaats",
+  groupNoCentroid: "Plaats wél vermeld, maar niet in onze locatiedata — een gat in ons onderzoek",
+  // Short inline label for a provider's city cell — distinct from
+  // groupNoCity above, which is a section heading with longer wording.
+  cityNotListed: "locatie niet vermeld",
+  farExcluded: (n: number) =>
+    `${n} ${n === 1 ? "opleiding valt" : "opleidingen vallen"} buiten deze straal.`,
+  filterYaVerified: "YA register-geverifieerd",
+  filterCrkbo: "CRKBO-geregistreerd",
+  filterUnder3000: "onder €3.000",
+  filterFrom3000: "€3.000 en hoger",
+  filterPriceNotPublished: "niet gepubliceerd",
+
+  // €/contactuur, when there is no computable value. The first two are FINDINGS
+  // about the provider — used when the record's blocking *published* field says
+  // `not_published` OR `no`, which on such a field mean the same thing: wij
+  // keken, zij publiceren het niet. The last two are GAPS in ons onderzoek and
+  // say so in as many words. Never swap them — see pphQuad() in presenters.ts.
+  //
+  // These are display copy, deliberately fuller than the terse diagnostic
+  // dataset.ts returns alongside a null value: that one is worded identically
+  // for a finding and for a gap, so it can never be shown to a reader as-is.
+  pphPriceNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen prijs.",
+  pphHoursNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen urenuitsplitsing.",
+  pphPriceNotInRecord:
+    "Niet te berekenen: de prijs ontbreekt in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
+  pphHoursNotInRecord:
+    "Niet te berekenen: de contacturen ontbreken in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
+
+  // Same rule, applied to the price itself: the record says de aanbieder
+  // publiceert een prijs, maar het bedrag staat niet in ons record. Dat gat is
+  // van ons, en de regel zegt dat — in plaats van een kale “ja” die een bedrag
+  // belooft dat er niet is.
+  priceAmountNotInRecord:
+    "De aanbieder publiceert een prijs; het bedrag ontbreekt in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
+
+  colProgramme: "Opleiding",
+  colFormat: "Format",
+  colDelivery: "Uitvoering",
+  colPrice: "Prijs",
+  colPph: "€ / contactuur",
+  colRegister: "Registerstatus",
+
+  noResults: "Geen opleidingen voldoen aan de huidige filters.",
+  clearFilters: "Filters wissen",
+  resultLine: (progShown: number, progTotal: number, provShown: number, provTotal: number) =>
+    `${progShown} van ${progTotal} opleidingen · ${provShown} van ${provTotal} aanbieders`,
+  priceFootnote: (computable: number, total: number) =>
+    `Prijzen zijn niet direct vergelijkbaar: de btw-behandeling en wat de prijs omvat ` +
+    `verschillen per aanbieder. Prijs per contactuur is berekenbaar voor ${computable} van ` +
+    `${total} opleidingen — de meeste aanbieders publiceren geen urenuitsplitsing. ` +
+    `Die afwezigheid is zelf een bevinding.`,
+
+  backAll: "← Alle opleidingen",
+  depthLabel: "onderzoeksdiepte",
+  lastVerifiedLabel: "laatst geverifieerd",
+  disclosureLabel: "Belangenverstrengeling",
+
+  secRegisters: "Registers & verificatie",
+  secProgrammes: "Opleidingen",
+  secCoherence: "Samenhang — zes controleerbare signalen",
+  secCoherenceNote:
+    "Geen oordeel “samenhang: hoog/laag”. De signalen staan er; u weegt zelf.",
+  secTransparency: "Wat de aanbieder publiceert",
+  secContract: "Voorwaarden",
+  // Beweringen staan bij het ding waarover ze gaan. Een bewering met scope
+  // `program:300-advance` onder de 200u-opleiding lezen is misattributie — het
+  // record verankert de scope, dus de pagina doet dat ook (zie claimsByScope).
+  secClaims: "Beweringen over de aanbieder",
+  secClaimsProgramme: "Beweringen over deze opleiding",
+  claimsNote:
+    "Letterlijk geciteerd in de brontaal. Beweringen zijn genoteerd als bewering — nooit als feit.",
+  claimScopeProvider: "over de aanbieder",
+  claimScopeModule: (id: string) => `over module ${id}`,
+  // No `secSources: "Bronnen"` here: the sources section is headed by
+  // sourcesHeading(), which carries the two archive counts. A bare "Bronnen"
+  // constant beside it is a second heading nothing renders — and an invitation
+  // to render the one that omits the counts.
+  pubBar:
+    "Publicatielat: elke kritisch geciteerde bron heeft zowel een publiek archief als een " +
+    "gedateerde lokale kopie. Records die de lat niet halen worden gemarkeerd, niet verborgen.",
+  // Both halves of the bar are printed for every source, so a half that is
+  // missing is visible instead of quietly reading as satisfied. Some registers
+  // (Yoga Alliance, CRKBO) are JS-gerenderd of uitgesloten van Wayback — daar is
+  // de lokale kopie het enige bewijs dat mogelijk is. Dit is verslag van ons
+  // eigen dossier, geen verwijt aan de aanbieder.
+  pubBarSlots:
+    "Per bron staan beide helften vermeld: “publiek” is het openbare archief, “lokaal” de " +
+    "gedateerde kopie in ons eigen dossier. Een “—” betekent dat die helft er niet is. " +
+    "Sommige registers zijn JS-gerenderd of uitgesloten van Wayback; daar is de lokale " +
+    "kopie de enige mogelijke vastlegging.",
+  // The citation beside a fact. The methodology promises "Bij elk gegeven staat
+  // een bron en een datum" and "je kunt elke bron zelf naslaan" — so every
+  // sourced field carries a link to the source entry at the bottom of the page,
+  // by the source's own id. Deliberately quiet, and deliberately NOT a quad
+  // colour: provenance is not an accusation. It is mono/muted, like a footnote
+  // marker, because that is what it is.
+  sourceCite: (id: string) => `bron: ${id}`,
+  sourceCiteTitle: (id: string) => `Bron ${id} — spring naar de bronnenlijst onderaan deze pagina`,
+
+  notArchived: "nog niet gearchiveerd",
+  archivePublic: "publiek",
+  archiveLocal: "lokaal",
+  archivePresent: "✓",
+  archiveAbsent: "—",
+  // Never one number: a count of public archives alone reads as archive coverage,
+  // and the bar is BOTH halves. Both counts, side by side, over the total.
+  sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>
+    `Bronnen (${total} · ${publicArchived} met publiek archief · ${localCopies} met lokale kopie)`,
+
+  // Record row labels. Reuses colFormat / colDelivery / colPrice / colPph where
+  // the listing already names the same field — one field, one word.
+  rowStyle: "Stijl (geclaimd)",
+  rowHours: "Urenuitsplitsing",
+  rowSupervised: "Begeleide lespraktijk",
+  rowAssessment: "Toetsing",
+  rowGroupSize: "Groepsgrootte",
+  rowPrerequisites: "Vooropleiding",
+  rowComposition: "Samenstelling",
+  rowTrackRecord: "Track record",
+  rowAccreditation: "Accreditatie (geclaimd)",
+  rowCohorts: "Cohorten",
+
+  priceIncludes: "inclusief",
+  priceExcludes: "exclusief",
+  /** A base price plus N variants — the count includes the base itself. */
+  priceVariants: (n: number) => `${n} varianten`,
+  groupSizeMin: (n: number) => `min ${n}`,
+  groupSizeMax: (n: number) => `max ${n}`,
+  /**
+   * The cohort line. Both surfaces build it HERE — the listing's next-cohort cell
+   * and the record page's Cohorten row — and both must name the status: an
+   * announced cohort is not a cohort that ran (§8), and a bare date reads as one
+   * that does.
+   */
+  cohortLabel: (month: string, status: string) => `${month} — ${status}`,
+  /** The same line on the listing, where it is the NEXT start rather than a log entry. */
+  nextCohortLabel: (month: string, status: string) => `start ${month} — ${status}`,
+  hoursTotal: "totaal",
+  hoursContact: "contact",
+  hoursSelfStudy: "zelfstudie",
+  hoursSuffixLong: "uur",
+  modulesSuffix: "modules",
+  bundleDelta: (amount: string, below: boolean) =>
+    `Pakketprijs ${amount} ${below ? "onder" : "boven"} de som van de losse modules.`,
+  contractInvoices: "factureert",
+  since: "sinds",
+  lastConfirmed: "laatst bevestigd",
+  holderLabel: "houder",
+  registerLabel: "register",
+  checkedLabel: "gecontroleerd",
+  // The analysis stamp. It carries the date the analysis was MADE, not just the
+  // methodology version: /methodologie promises the reader "een bron én een
+  // datum", and an analysis is the one thing on the page that is ours rather than
+  // the provider's — so when we formed it is exactly what a reader needs to weigh
+  // it. `reviewed` was carried into the view and rendered nowhere.
+  analysisLabel: (status: string, reviewed: string, version: string) =>
+    `analyse · ${status} · beoordeeld ${reviewed} · methodologie ${version}`,
+
+  crkboRegister: { instelling: "instelling", docent: "docent" } as const,
+
+  composition: {
+    single_program: "één samenhangende opleiding",
+    fixed_modular: "vaste modules",
+    free_assembly: "vrij samen te stellen",
+  } as const,
+
+  // Layer 3, methodology-versioned — never applied to a quote itself (spec §3).
+  analysisStatus: {
+    accurate: "juist",
+    unsubstantiated: "niet onderbouwd",
+    misleading: "misleidend",
+    regulated_claim: "gereguleerde claim",
+  } as const,
+
+  sourceType: {
+    website: "website",
+    wayback: "wayback",
+    brochure: "brochure",
+    register: "register",
+    inquiry_response: "antwoord op navraag",
+    reader_report: "lezersmelding",
+    email: "e-mail",
+    other: "overig",
+  } as const,
+
+  depth: { listed: "basisvermelding", reviewed: "onderzocht", assessed: "beoordeeld" } as const,
+
+  cohortStatus: {
+    announced: "aangekondigd",
+    confirmed_ran: "bevestigd gedraaid",
+    cancelled: "geannuleerd",
+    unknown: "status onbekend",
+  } as const,
+
+  vat: {
+    incl: "incl. btw",
+    exempt_crkbo: "btw-vrij (CRKBO)",
+    excl: "excl. btw",
+    unknown: "btw onbekend",
+  } as const,
+
+  mode: { in_person: "op locatie", online: "online", hybrid: "hybride" } as const,
+
+  structure: {
+    weekends: "weekenden",
+    evenings: "avonden",
+    intensive: "intensief",
+    modular: "modulair",
+    mixed: "gemengd",
+  } as const,
+
+  body: {
+    yoga_alliance: "Yoga Alliance",
+    vyn: "VYN",
+    crkbo: "CRKBO",
+    other: "overig",
+  } as const,
+
+  claimCategory: {
+    scientific: "wetenschappelijk",
+    health_outcome: "gezondheidsbelofte",
+    income_outcome: "inkomensbelofte",
+    accreditation: "accreditatie",
+    lineage_authority: "lineage / autoriteit",
+    scope_of_practice: "behandelpretentie",
+    other: "overig",
+  } as const,
+
+  coherence: {
+    required_sequence: "Verplichte volgorde",
+    single_cohort_intake: "Eén vast startmoment per groep",
+    integrative_assessment: "Toetsing die de onderdelen samenbrengt",
+    continuous_lead_teacher: "Doorlopende hoofddocent",
+    modules_sold_separately: "Modules ook los verkocht",
+    bundle_price_below_sum: "Pakketprijs lager dan som van de modules",
+  } as const,
+
+  transparency: {
+    syllabus_published: "Syllabus",
+    hours_breakdown_published: "Urenuitsplitsing",
+    assessment_criteria_published: "Toetscriteria",
+    reading_list_published: "Leeslijst",
+    teacher_bios_published: "Docentbio’s",
+  } as const,
+
+  // One quad, one row — never one sentence. Joining quad LABELS into a string and
+  // handing it to the page as a single fact strips a finding of its colour and
+  // would render a gap as a fact.
+  //
+  // The keys ARE the schema's, and presenters.ts type-checks that: CONTRACT_LABELS
+  // is typed `Record<ContractQuadKey, string>` against the schema's own contract
+  // shape, so a quad-bearing key in the schema with no label here is a COMPILE
+  // ERROR. It was not, and `min_participants` — the clause under which a training
+  // someone has paid for gets cancelled — was researched, sourced and rendered
+  // nowhere for exactly that reason.
+  contract: {
+    cancellation_published: "Annuleringsvoorwaarden",
+    refund_published: "Terugbetalingsregeling",
+    min_participants: "Minimum aantal deelnemers",
+    installments_published: "Betaling in termijnen",
+  } as const,
+
+  /** The `value` beside contract.min_participants.clause, when the record holds one. */
+  minParticipants: (n: number) => `minimaal ${n} deelnemers`,
+
+  footLeft: "Geen totaalscores. Geen ranglijsten. Geen affiliate-links. Geen betaalde plaatsing.",
+  footRight: "Onderzoek door Ivo Hofland",
+  footGithub: "data, schema & methode op GitHub ↗",
+  githubUrl: "https://github.com/ivohofland/yoga-trainingen-nederland",
+} as const;

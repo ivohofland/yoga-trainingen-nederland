@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# scratch: the subagent-driven-development ledger and review artefacts
+.superpowers/

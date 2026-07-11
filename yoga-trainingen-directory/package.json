@@ -4,14 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run gen-schema && npm run validate && npm run export-json && next build",
+    "build": "npm run gen-schema && npm run validate && npm test && npm run export-json && next build",
     "start": "next start",
+    "test": "tsx --test \"src/**/*.test.ts\"",
     "validate": "tsx scripts/validate.ts",
     "gen-schema": "tsx scripts/gen-schema.ts",
     "export-json": "tsx scripts/export-json.ts",
     "archive": "tsx scripts/archive.ts"
   },
   "dependencies": {
+    "marked": "^18.0.6",
     "next": "^15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

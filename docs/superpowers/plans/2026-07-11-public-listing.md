@@ -2366,12 +2366,14 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
           </button>
         </div>
       )}
-
-      <p className={styles.footnote}>{nl.postcodeNote}</p>
     </>
   );
 }
 ```
+
+`nl.postcodeNote` renders **once**, under the postcode input (`styles.geoNote`).
+Do not also repeat it as a footnote — the page's only footnote is
+`nl.priceFootnote`, rendered by `app/page.tsx`.
 
 Two things to get right here:
 
@@ -2598,11 +2600,18 @@ Expected: FAIL — `toProviderView is not a function` / not exported.
 
 - [ ] **Step 3: Add `toProviderView` to `src/lib/presenters.ts`**
 
-Append (keeping everything already there):
+Append the code below, keeping everything already in the file.
+
+**Hoist the imports.** The three `import` lines shown at the top of this block
+belong with the existing imports at the **top of the file** — do not leave them
+mid-file. After merging, `presenters.ts` should import from `./dataset`:
+`pricePerContactHour, bundleDelta`; from `./quad`: `quadLabel`; from `../schema`:
+`Cohort, Program, Provider, Quad, Source`.
 
 ```ts
-import { bundleDelta } from "./dataset";
-import type { Source } from "../schema";
+import { bundleDelta } from "./dataset";   // ← hoist: merge into the existing ./dataset import
+import { quadLabel } from "./quad";        // ← hoist: new import
+import type { Source } from "../schema";   // ← hoist: merge into the existing ../schema import
 
 export interface QuadRow {
   key: string;
@@ -2879,8 +2888,6 @@ export function toProviderView(p: Provider): ProviderView {
   };
 }
 ```
-
-Add `import { quadLabel } from "./quad";` to the imports at the top of `presenters.ts`.
 
 - [ ] **Step 4: Run the tests and make sure they pass**
 

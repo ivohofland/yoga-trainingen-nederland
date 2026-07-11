@@ -1,0 +1,59 @@
+/*
+ * Design tokens. Values from the imported Claude Design prototype.
+ *
+ * NOTE: --muted and --gap hold the same value and are SEPARATE ON PURPOSE.
+ * --muted is chrome (overlines, column headers, secondary text).
+ * --gap is a quad state (spec §2.2). They mean different things and may
+ * diverge. Do not "clean up the duplicate".
+ */
+:root {
+  /* surface + structure */
+  --paper: #fbfbf9;
+  --ink-2: #33332f;
+  --muted: #6e6e68;
+  --rule: #e3e2dd;
+  --rule-2: #c9c8c2;
+  --rule-dot: #d8d7d1;
+  --hover: #f3f2ee;
+
+  /* semantic — quad state (spec §2.2).
+     The colour encodes how well we know something,
+     NEVER whether the answer is good. */
+  --ink: #161616;     /* fact — yes | no, established           */
+  --finding: #8a5a00; /* not_published — they don't say it      */
+  --gap: #6e6e68;     /* unknown — we haven't looked (+ italic) */
+
+  --error: #b00020;
+
+  --serif: var(--font-newsreader), Georgia, serif;
+  --mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+}
+
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+
+a:hover {
+  color: var(--muted);
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--paper);
+}

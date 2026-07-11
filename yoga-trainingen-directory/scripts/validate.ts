@@ -2,7 +2,8 @@
  * Validates all provider records against the schema + integrity rules.
  * Build fails on invalid data: `npm run build` runs this first.
  */
-import { loadDataset, pricePerContactHour, contactRatio, bundleDelta, completeness } from "../src/lib/dataset";
+import { loadDataset } from "../src/lib/loader";
+import { pricePerContactHour, contactRatio, bundleDelta, completeness } from "../src/lib/derive";
 
 const { providers, errors } = loadDataset();
 
