@@ -97,6 +97,14 @@ them silently corrupts the dataset's credibility.
   owner; local copies (dated by git) cannot. JS-heavy pages (e.g. Yoga Alliance
   registers are Salesforce-rendered) need the browser-rendered local capture —
   Wayback stores only an empty shell, so it's skipped for those domains.
+- **Archive bodies are NOT published; their hashes are.** This repo is public.
+  `data/archives/**/*.pdf|*.html` are gitignored — they live on disk and in the
+  private, git-dated archive repo (`yoga-trainingen-archief`). The `.sha256`
+  beside each one IS committed, and proves the snapshot exists and is unaltered
+  without republishing a provider's copyrighted page. Quoting verbatim is
+  citaatrecht (Art. 15a Aw); mirroring a whole brochure is not. See
+  `data/archives/README.md`. Commit new bodies to the private repo so git keeps
+  dating them — that dating is what gives them their weight.
 - `depth` (`listed | reviewed | assessed`) states honestly how far a record has
   been taken; `archived_url: null` means a source is consciously not yet
   archived, and such records do not meet the publication bar.

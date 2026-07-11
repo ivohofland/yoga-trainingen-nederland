@@ -5,3 +5,10 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# Archive BODIES are not published — see data/archives/README.md.
+# The .sha256 next to each one IS published, and proves the snapshot exists
+# and has not been altered, without republishing a provider's copyrighted page.
+# Bodies live on disk and in the private, git-dated archive repo.
+data/archives/**/*.pdf
+data/archives/**/*.html
