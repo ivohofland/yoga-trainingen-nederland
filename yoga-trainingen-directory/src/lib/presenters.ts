@@ -129,51 +129,65 @@ function priceDisplay(p: Program["price"]): string | null {
 }
 
 /**
+ * Which field stops `pricePerContactHour` from computing, and what the record
+ * says about that field. There are exactly two blockers, and they are findings
+ * about two different fields:
+ *   - no price amount  → the blocker is the price → `price.published`;
+ *   - no contact hours → the blocker is the hours → `hours_claimed.breakdown_published`.
+ */
+function pphBlocker(program: Program): { field: "price" | "hours"; published: Quad } {
+  return program.price.amount_eur == null
+    ? { field: "price", published: program.price.published }
+    : { field: "hours", published: program.hours_claimed.breakdown_published };
+}
+
+/**
  * The quad the €/contactuur cell may render when there is no computable value.
  *
  * THE rule this exists to enforce (CLAUDE.md, spec §4): `not_published` is a
  * FINDING ABOUT A NAMED BUSINESS — "we looked; they do not state it". `unknown`
- * is a GAP IN OUR OWN RESEARCH. Rendering every missing €/contactuur as
- * `not_published` publishes our gaps as accusations. So the cell may only ever
- * say what the record itself says.
+ * is a GAP IN OUR OWN RESEARCH. Publishing a gap as a finding is an accusation
+ * we did not earn; publishing a finding as a gap disowns research we did do and
+ * sourced. Both are wrong. So the cell says exactly what the record says about
+ * the BLOCKING field — no more, and no less.
  *
- * `pricePerContactHour` can fail for two different reasons, and they are
- * findings about two different fields:
- *   - no price amount  → the blocker is the price → ask `price.published`;
- *   - no contact hours → the blocker is the hours → ask `hours_claimed.breakdown_published`.
+ * The blocking fields are both called *published*, and on such a field `no` and
+ * `not_published` mean the same thing about the provider: they do not publish
+ * it. `no` is not contradictory — it is a researched, sourced finding (five
+ * programmes carry it, each with a note like "Geen prijs gepubliceerd op de
+ * 300u-pagina"). Both therefore license the amber finding.
  *
- * And then the guard that matters: if that field says `yes` (the provider DOES
- * publish it) or `no` while the value is still missing from our record — three
+ * `yes` is the genuinely contradictory case: the record says the provider DOES
+ * publish it, yet the value is missing from our record anyway — three
  * programmes are exactly this shape (yogaeasy/200-hatha-vinyasa,
  * yogic-life/ryt200-multistyle, yogic-life/ryt300-multistyle: an amount, a
- * published breakdown, and no `hours_claimed.contact`) — then the record
- * supports NO published-ness finding at all. The value is missing from OUR
- * record. That is a gap. Only a literal `not_published` on the blocking field
- * licenses the amber finding; everything else is `unknown`.
+ * published breakdown, and no `hours_claimed.contact`). The missing value is
+ * OURS. That is a gap, and so is `unknown` — nobody looked yet.
  */
 export function pphQuad(program: Program): Quad {
   if (pricePerContactHour(program).value != null) return "yes";
-  const blocker: Quad =
-    program.price.amount_eur == null
-      ? program.price.published
-      : program.hours_claimed.breakdown_published;
-  return blocker === "not_published" ? "not_published" : "unknown";
+  const { published } = pphBlocker(program);
+  return published === "not_published" || published === "no" ? "not_published" : "unknown";
 }
 
 /**
  * The human-readable "why" behind the cell. It must never contradict the quad
- * above: when the state is a gap, the caveat is phrased as a gap in our record,
- * never as an accusation that the provider withheld something.
+ * above: a finding names the provider's omission, a gap is phrased as a gap in
+ * our record — never as an accusation that the provider withheld something.
+ *
+ * The wording is OURS, not dataset.ts's. `pricePerContactHour` returns a terse
+ * diagnostic ("prijs niet gepubliceerd") whenever it cannot compute, worded
+ * identically for a finding and for a gap — surfacing it verbatim is exactly
+ * how a gap would get published as an accusation. Only its comparability
+ * caveats (what the price includes/excludes, which exist only when there IS a
+ * value) are display copy; those we pass through.
  */
 function pphCaveatFor(program: Program, state: Quad): string | null {
   const { value, caveat } = pricePerContactHour(program);
-  // A computable value: the only caveats left are the comparability ones
-  // (what the price includes/excludes).
   if (value != null) return caveat ?? null;
-  const priceIsBlocker = program.price.amount_eur == null;
+  const priceIsBlocker = pphBlocker(program).field === "price";
   if (state === "not_published") {
-    // dataset.ts's own wording: "prijs niet gepubliceerd" / "contacturen niet gepubliceerd".
-    return caveat ?? (priceIsBlocker ? nl.pphPriceNotPublished : nl.pphHoursNotPublished);
+    return priceIsBlocker ? nl.pphPriceNotPublished : nl.pphHoursNotPublished;
   }
   return priceIsBlocker ? nl.pphPriceNotInRecord : nl.pphHoursNotInRecord;
 }

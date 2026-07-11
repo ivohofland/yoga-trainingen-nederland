@@ -73,13 +73,20 @@ export const nl = {
   filterPriceNotPublished: "niet gepubliceerd",
 
   // €/contactuur, when there is no computable value. The first two are FINDINGS
-  // about the provider (they are only ever used when the record's own quad says
-  // `not_published`); the last two are GAPS in our record and are worded as
-  // such. Never swap them — see pphQuad() in presenters.ts.
-  pphPriceNotPublished: "prijs niet gepubliceerd",
-  pphHoursNotPublished: "contacturen niet gepubliceerd",
-  pphPriceNotInRecord: "prijs ontbreekt in ons record",
-  pphHoursNotInRecord: "contacturen ontbreken in ons record",
+  // about the provider — used when the record's blocking *published* field says
+  // `not_published` OR `no`, which on such a field mean the same thing: wij
+  // keken, zij publiceren het niet. The last two are GAPS in ons onderzoek and
+  // say so in as many words. Never swap them — see pphQuad() in presenters.ts.
+  //
+  // These are display copy, deliberately fuller than the terse diagnostic
+  // dataset.ts returns alongside a null value: that one is worded identically
+  // for a finding and for a gap, so it can never be shown to a reader as-is.
+  pphPriceNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen prijs.",
+  pphHoursNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen urenuitsplitsing.",
+  pphPriceNotInRecord:
+    "Niet te berekenen: de prijs ontbreekt in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
+  pphHoursNotInRecord:
+    "Niet te berekenen: de contacturen ontbreken in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
 
   colProgramme: "Opleiding",
   colFormat: "Format",

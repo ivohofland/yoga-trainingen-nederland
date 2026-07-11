@@ -61,10 +61,13 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
         // Distance is the useful default the moment we know where they are.
         if (c) setSort((s) => (s === DEFAULT_SORT ? "distance" : s));
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         // The lazy chunk failed to load. Say so: a location filter that
         // silently does nothing — no origin, radius chips dead — is the worst
-        // of the options, because the visitor cannot tell it is broken.
+        // of the options, because the visitor cannot tell it is broken. And log
+        // the error itself: a message to the visitor is not a diagnostic trail,
+        // and swallowing the cause leaves nothing to debug the next report with.
+        console.error("postcode lookup failed", err);
         if (cancelled) return;
         setOrigin(null);
         setGeoError(nl.postcodeLookupFailed);
@@ -185,9 +188,17 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
       {/* Both the string and the quad come from the presenter. The quad comes from
           the RECORD, never from the mere absence of a value: see pphQuad() in
           presenters.ts. Rendering `not_published` here for every null would
-          publish OUR research gaps as accusations against named businesses. */}
+          publish OUR research gaps as accusations against named businesses.
+
+          The caveat is the difference between "zij publiceren het niet" and
+          "wij weten het nog niet" — the distinction this whole project turns on.
+          A `title` hands that only to a mouse. It is therefore ALSO in the
+          accessible name of the row, visually hidden: same words, no pointer
+          required, visual design untouched. (On a link, `title` is only a
+          fallback name, so the two never double up.) */}
       <div className={styles.cellSmall} title={r.pphCaveat ?? undefined}>
         {r.pphDisplay ?? <Quad state={r.pphState} />}
+        {r.pphCaveat && <span className={styles.srOnly}> — {r.pphCaveat}</span>}
       </div>
       <div className={styles.cellSmall}>
         {r.registers.length === 0 ? (

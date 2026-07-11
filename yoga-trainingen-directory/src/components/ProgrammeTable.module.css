@@ -220,6 +220,21 @@
   font-size: 11.5px;
 }
 
+/* Read by assistive tech, invisible on screen — for text that a sighted reader
+   gets some other way (here: the €/contactuur caveat, which was mouse-only in a
+   `title`). Never use it to hide something that has no visible equivalent. */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .empty {
   padding: 48px 0;
   font-family: var(--mono);

@@ -66,14 +66,42 @@ test("a programme with no computable price-per-contact-hour carries a caveat, no
   }
 });
 
-/* ---------- €/contactuur: our gaps are never published as their omissions ---------- */
+/* ---------- €/contactuur: the cell says what the record says. No more, no less ----------
+ *
+ * THE rule (CLAUDE.md, spec §4). `not_published` is a FINDING about a NAMED
+ * BUSINESS — we looked, they do not state it. `unknown` is a GAP in OUR OWN
+ * research. Collapsing either into the other is forbidden, and the two failures
+ * are symmetrical:
+ *
+ *   - a gap rendered as a finding  → we accuse a named business of an omission
+ *                                    we never established;
+ *   - a finding rendered as a gap  → we disown research we did do and sourced,
+ *                                    and contradict our own Prijs column.
+ *
+ * So these tests are written as a BICONDITIONAL. A one-sided test ("if the cell
+ * says not_published, the record must too") is passed by an implementation that
+ * returns "unknown" for everything — which is precisely how a regression once
+ * shipped. Each direction below must be able to fail on its own.
+ */
 
-test("PPH: the cell never accuses a provider of not publishing something the record does not say they withheld", () => {
-  // THE rule (CLAUDE.md, spec §4). `not_published` is a finding about a NAMED
-  // BUSINESS; `unknown` is a gap in OUR research. The €/contactuur cell may
-  // only claim `not_published` when the field that actually blocks the
-  // calculation literally says `not_published` in the record.
+/** The blocking field, exactly as pphQuad must read it: no amount → the price is
+ *  what's missing; otherwise the hours are. */
+const blockerOf = (providerId: string, programId: string) => {
+  const program = programOf(providerId, programId);
+  return program.price.amount_eur == null
+    ? program.price.published
+    : program.hours_claimed.breakdown_published;
+};
+
+test("PPH: the state is a finding if and only if the record's blocking field says the provider does not publish it", () => {
+  // Both blocking fields are called *published*. On such a field `not_published`
+  // and `no` say the same thing about the provider — they do not publish it —
+  // and both are researched, sourced findings. `yes` (the record says they DO
+  // publish it, yet the value is missing anyway) and `unknown` (nobody looked)
+  // are gaps in our record. This maps every row in the dataset, both ways.
   const rows = toListingRows(providers, NOW);
+  let findings = 0;
+  let gaps = 0;
   for (const r of rows) {
     if (r.pph != null) {
       assert.equal(r.pphState, "yes", `programme ${r.programId} has a value but does not say so`);
@@ -83,19 +111,55 @@ test("PPH: the cell never accuses a provider of not publishing something the rec
       continue;
     }
     assert.equal(r.pphDisplay, null, `programme ${r.programId} renders a €/contactuur it does not have`);
-    const program = programOf(r.providerId, r.programId);
-    // The blocker: no amount → the price is what's missing; else the hours are.
-    const blocker =
-      program.price.amount_eur == null
-        ? program.price.published
-        : program.hours_claimed.breakdown_published;
-    if (r.pphState === "not_published") {
-      assert.equal(blocker, "not_published",
-        `${r.providerId}/${r.programId}: the site says "niet gepubliceerd" but the record's own ` +
-        `blocking field says "${blocker}" — that publishes OUR gap as an accusation against a named business`);
-    }
-    assert.ok(r.pphState === "not_published" || r.pphState === "unknown",
-      `${r.providerId}/${r.programId}: a missing €/contactuur may only be a finding or a gap, got "${r.pphState}"`);
+    const blocker = blockerOf(r.providerId, r.programId);
+    const expected = blocker === "not_published" || blocker === "no" ? "not_published" : "unknown";
+    assert.equal(r.pphState, expected,
+      `${r.providerId}/${r.programId}: the blocking field says "${blocker}", so the cell must be ` +
+      `"${expected}", but it says "${r.pphState}" — ` +
+      (expected === "not_published"
+        ? `that disowns a sourced finding and calls our own research un-done (the Prijs column ` +
+          `renders the same field as a fact in the very same row)`
+        : `that publishes OUR gap as an accusation against a named business`));
+    if (expected === "not_published") findings++;
+    else gaps++;
+  }
+  // Neither direction may quietly become vacuous: if the data ever loses all of
+  // one kind, the biconditional above would stop testing that direction at all.
+  assert.ok(findings > 0, "no programme exercises the FINDING direction any more");
+  assert.ok(gaps > 0, "no programme exercises the GAP direction any more");
+});
+
+test("PPH: a record whose blocking field says the provider does not publish it is a FINDING, never a gap", () => {
+  // The converse direction, pinned to named records. Each of these carries a
+  // sourced note to exactly this effect ("Geen prijs gepubliceerd op de
+  // 300u-pagina", "Geen opleidingsprijs op de site"). Rendering them grey and
+  // italic — "nog niet onderzocht" — states two falsehoods about our own
+  // research: that we did not look, and that our record lacks what it plainly
+  // holds. Both literal values that mean "they do not publish it" are covered
+  // here, on both blocking fields.
+  const doesNotPublish = [
+    ["spark-of-light", "300-verdieping"],           // price.published: no
+    ["yoga-centrum-oosterwold", "200-odaka"],       // price.published: no
+    ["yoga-centrum-oosterwold", "200-yin"],         // price.published: no
+    ["yoga-nature-studio", "300-advanced-vinyasa"], // price.published: no
+    ["critical-alignment", "cay-lerarenopleiding"], // price.published: no
+    ["adhouna", "200-multistyle"],                  // price.published: not_published
+    ["7-yoga-academy", "200-ryt"],                  // hours_claimed.breakdown_published: not_published
+  ] as const;
+  const rows = toListingRows(providers, NOW);
+  for (const [providerId, programId] of doesNotPublish) {
+    const blocker = blockerOf(providerId, programId);
+    // guard: if the data changes, this test must not quietly pass on a
+    // programme that no longer has the shape it is here to pin.
+    assert.ok(blocker === "no" || blocker === "not_published",
+      `${providerId}/${programId} no longer blocks on a "does not publish" field (got "${blocker}")`);
+
+    assert.equal(pphQuad(programOf(providerId, programId)), "not_published",
+      `${providerId}/${programId}: the record says the provider does not publish it — that is a ` +
+      `sourced finding about them, not a gap in our research`);
+    const row = rows.find((r) => r.providerId === providerId && r.programId === programId)!;
+    assert.equal(row.pphState, "not_published");
+    assert.notEqual(row.pphState, "unknown");
   }
 });
 
@@ -126,13 +190,53 @@ test("PPH: a record that says the provider DOES publish the hours is a gap in ou
   }
 });
 
-test("PPH: the caveat never contradicts the quad it sits next to", () => {
+test("PPH: the €/contactuur cell never contradicts the Prijs cell in its own row", () => {
+  // The visible symptom of the regression: the same row rendered the price as an
+  // established fact in ink ("nee, zij publiceren geen prijs") while calling the
+  // €/contactuur derived from it un-researched.
   const rows = toListingRows(providers, NOW);
   for (const r of rows) {
-    if (r.pph != null || r.pphState !== "unknown") continue;
-    assert.ok(r.pphCaveat && !/niet gepubliceerd/.test(r.pphCaveat),
-      `${r.providerId}/${r.programId}: the cell is a gap but its caveat "${r.pphCaveat}" ` +
-      `asserts the provider withheld something`);
+    if (r.pph != null || r.priceAmount != null) continue; // the price is the blocker
+    if (r.pricePublished === "no" || r.pricePublished === "not_published") {
+      assert.equal(r.pphState, "not_published",
+        `${r.providerId}/${r.programId}: the Prijs cell states "${r.pricePublished}" as researched, ` +
+        `but the €/contactuur cell calls the same fact "${r.pphState}"`);
+    }
+  }
+});
+
+test("PPH: the caveat never contradicts the quad it sits next to", () => {
+  // Both directions. A gap must never assert the provider withheld anything; a
+  // finding must say plainly that they did not publish it — a finding whose
+  // tooltip blames our own record is the regression wearing the right colour.
+  const rows = toListingRows(providers, NOW);
+  for (const r of rows) {
+    if (r.pph != null) continue;
+    assert.ok(r.pphCaveat, `${r.providerId}/${r.programId}: no €/contactuur and no explanation why`);
+    const caveat = r.pphCaveat!;
+    if (r.pphState === "unknown") {
+      assert.ok(!/publiceert geen|niet gepubliceerd/.test(caveat),
+        `${r.providerId}/${r.programId}: the cell is a gap but its caveat "${caveat}" ` +
+        `asserts the provider withheld something`);
+      assert.match(caveat, /ons record/,
+        `${r.providerId}/${r.programId}: the cell is a gap but its caveat "${caveat}" does not own it as ours`);
+    }
+    if (r.pphState === "not_published") {
+      assert.match(caveat, /publiceert geen/,
+        `${r.providerId}/${r.programId}: the cell is a finding but its caveat "${caveat}" does not say ` +
+        `what the provider does not publish`);
+      assert.ok(!/ontbreekt in ons record|ontbreken in ons record/.test(caveat),
+        `${r.providerId}/${r.programId}: the cell is a finding but its caveat "${caveat}" blames our record`);
+    }
+  }
+});
+
+test("PPH: every caveat string in strings.ts is reachable", () => {
+  // The four pph* strings are display copy that duplicates nothing; a dead one
+  // is copy nobody maintains and nobody reads. Each must be produced by some row.
+  const shown = new Set(toListingRows(providers, NOW).map((r) => r.pphCaveat).filter(Boolean));
+  for (const key of ["pphPriceNotPublished", "pphHoursNotPublished", "pphPriceNotInRecord", "pphHoursNotInRecord"] as const) {
+    assert.ok(shown.has(nl[key]), `nl.${key} is never rendered — it is dead copy`);
   }
 });
 
