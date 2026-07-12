@@ -113,9 +113,12 @@ export function pphQuad(program: Program): Quad {
 
 /**
  * The record says the provider publishes a price, and we do not hold the amount.
- * Five programmes are exactly this shape (aalo-yoga-academie/yin-yang-ryt200,
- * aalo-yoga-academie/yin-ryt200, de-blikopener/hatha-raja-opleiding,
- * sanayou/200-online, yoga-academie-nederland/300-hatha-verdieping).
+ *
+ * Five programmes were this shape; four have been paid off (their price source was
+ * the page that LINKED to the price rather than the one that stated it — see
+ * provenance.ts, which now catches exactly that). One remains: sanayou/200-online.
+ * Do not re-hardcode a roster here or in a test: `provenance.ts` finds them, and the
+ * tests derive the set from THIS predicate, so paying one off cannot break a build.
  */
 export function priceAmountIsOurGap(program: Program): boolean {
   return program.price.published === "yes" && program.price.amount_eur == null;
@@ -135,7 +138,8 @@ export function priceAmountIsOurGap(program: Program): boolean {
  *    but our record holds no number. A "ja" with no number promises a fact we do
  *    not hold; and the finding-vs-gap rule (see missingBecause) says a value
  *    missing from a field the provider does publish is a gap in OUR research,
- *    never an omission by them. Five programmes are this shape.
+ *    never an omission by them. Five programmes were this shape; one still is
+ *    (see priceAmountIsOurGap).
  *
  * 2. `no` → `not_published`. `price.published` is a *_published field, and on such
  *    a field `no` and `not_published` say the identical thing about the provider —
@@ -174,12 +178,12 @@ export function priceQuad(program: Program): Quad {
  *
  * `amount_not_in_record` is the fourth band, and it exists to say out loud that
  * "we hold no amount" is its OWN category — not a cheap synonym for "they publish
- * no price". Those are the five programmes whose record says they DO publish a
- * price we simply have not captured. Sweeping them into the finding band told
- * readers that four named businesses publish no price while our own record said
- * they do. They belong to no chip: a price band is a statement ("it costs this
- * much", "they publish no price") and about these five we can honestly make
- * neither.
+ * no price". Those are the programmes whose record says they DO publish a price we
+ * simply have not captured (five when the band was written, one today). Sweeping
+ * them into the finding band told readers that four named businesses publish no
+ * price while our own record said they do. They belong to no chip: a price band is a
+ * statement ("it costs this much", "they publish no price") and about these we can
+ * honestly make neither.
  *
  * The bands are exhaustive and disjoint over every programme, and they agree with
  * priceQuad() by construction:

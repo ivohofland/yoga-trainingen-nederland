@@ -8,6 +8,7 @@
     "start": "next start",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "validate": "tsx scripts/validate.ts",
+    "provenance": "tsx scripts/provenance.ts",
     "gen-schema": "tsx scripts/gen-schema.ts",
     "export-json": "tsx scripts/export-json.ts",
     "archive": "tsx scripts/archive.ts"

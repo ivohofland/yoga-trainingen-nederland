@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../provider.schema.json
 id: yoga-academie-nederland
 name: Yoga Academie Nederland
-aka: ["YAN"]
+aka: [ "YAN" ]
 website: https://yoga-academie.nl
 status: active
 locations:
@@ -49,16 +49,123 @@ sources:
     url: https://www.crkbo.nl/Register/Instellingen
     archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
     captured: "2026-06-12"
+  - id: datakosten-pdf-2026-07
+    type: brochure
+    url: https://yoga-academie.nl/.cm4all/uproc.php/0/YAN_datakosten.pdf
+    archived_url: null
+    captured: "2026-07-12"
+    note: "'data-overzicht (pdf)' — de PDF die vanaf de opleidingspagina gelinkt
+      wordt en die de prijzen draagt (opleidingsprijs, prijs per module,
+      niet-inbegrepen kosten). De opleidingspagina zelf noemt geen bedrag. Een
+      gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan
+      vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs.
+      archived_url: null — Wayback weigerde de capture op 2026-07-12 ('already
+      captured 1 times today, which is a daily limit we have set for that Resource
+      type') en de availability-API kent nog geen snapshot. Opnieuw indienen
+      (`npm run archive -- yoga-academie-nederland`); tot die tijd is dit bewust
+      niet publiek gearchiveerd en haalt dit record de publicatielat niet."
+    local_snapshot: data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-12.pdf
 
+# Moduleprijzen: alle acht staan in de datakosten-PDF, onder "KOSTEN MODULES 300
+# UUR". Geen BTW-vermelding op het hele document — vat blijft dus `unknown`, óók
+# al is YAN CRKBO-geregistreerd (spec §4.11: nooit afleiden uit CRKBO).
 modules:
-  - { id: holistische-anatomie, name: "Holistische Anatomie", days_claimed: 8, type: other, sold_separately: "yes" }
-  - { id: chakrapsychologie, name: "Chakrapsychologie", days_claimed: 8, type: specialization, sold_separately: "yes" }
-  - { id: yoga-coaching, name: "Yoga Coaching", days_claimed: 5, type: specialization, sold_separately: "yes" }
-  - { id: restorative-nidra, name: "Restorative & Nidra", days_claimed: 8, type: specialization, sold_separately: "yes" }
-  - { id: mindful-flow, name: "Mindful Flow", days_claimed: 5, type: specialization, sold_separately: "yes" }
-  - { id: klankschalen-mantra, name: "Klankschalen, Mantra & Yoga", days_claimed: 3, type: specialization, sold_separately: "yes" }
-  - { id: ayurveda-asana, name: "Ayurveda & Asana", days_claimed: 5, type: specialization, sold_separately: "yes" }
-  - { id: fysieke-begeleiding, name: "Fysieke begeleiding", days_claimed: 3, type: other, sold_separately: "yes" }
+  - id: holistische-anatomie
+    name: "Holistische Anatomie"
+    days_claimed: 8
+    type: other
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 995,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
+  - id: chakrapsychologie
+    name: "Chakrapsychologie"
+    days_claimed: 8
+    type: specialization
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 995,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
+  - id: yoga-coaching
+    name: "Yoga Coaching"
+    days_claimed: 5
+    type: specialization
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 725,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
+  - id: restorative-nidra
+    name: "Restorative & Nidra"
+    days_claimed: 8
+    type: specialization
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 995,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
+  - id: mindful-flow
+    name: "Mindful Flow"
+    days_claimed: 5
+    type: specialization
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 650,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
+  - id: klankschalen-mantra
+    name: "Klankschalen, Mantra & Yoga"
+    days_claimed: 3
+    type: specialization
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 430,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
+  - id: ayurveda-asana
+    name: "Ayurveda & Asana"
+    days_claimed: 5
+    type: specialization
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 650,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
+  - id: fysieke-begeleiding
+    name: "Fysieke begeleiding"
+    days_claimed: 3
+    type: other
+    sold_separately: "yes"
+    price:
+      {
+        amount_eur: 430,
+        vat: unknown,
+        published: "yes",
+        source: datakosten-pdf-2026-07
+      }
 
 programs:
   - id: 300-hatha-verdieping
@@ -73,16 +180,19 @@ programs:
       duration_months_min: 24
       language: nl
     price:
-      amount_eur: null
+      amount_eur: 5095
       vat: unknown
       published: "yes"
-      note: "Yoga Academie Nederland publiceert wél prijzen: in een vanaf de
-        opleidingspagina gelinkte PDF (datakosten). Die PDF is nog niet
-        geëxtraheerd. LET OP — de hier geciteerde bron is de opleidingspagina zelf en
-        bevat zélf geen bedrag; de gelinkte PDF die de prijzen wél draagt staat niet
-        in sources[] en is niet gearchiveerd. Onderzoeksschuld, geen bevinding over
-        de aanbieder (zie technical-todo.md)."
-      source: site-2026-06
+      excludes: "(externe) studieboeken en eventuele andere variabele kosten:
+        'maximaal €450,-' voor de 300 uur verdiepingsopleiding. Bij betaling in
+        drie termijnen komt er € 25,- administratiekosten bij."
+      note: "Prijs uit de datakosten-PDF ('300 uur Hatha verdiepingsopleiding €
+        5.095,-'), de PDF die vanaf de opleidingspagina wordt gelinkt; de
+        opleidingspagina zelf noemt geen bedrag. De PDF vermeldt nergens BTW —
+        vat blijft daarom `unknown` (spec §4.11: niet afleiden uit de
+        CRKBO-registratie). Losse modules staan er ook in (zie modules[]): samen
+        € 5.870,-, dus de bundel ligt € 775,- lager."
+      source: datakosten-pdf-2026-07
     hours_claimed:
       total: 300
       contact: null
@@ -93,23 +203,47 @@ programs:
       source: site-2026-06
     composition:
       type: fixed_modular
-      modules: [holistische-anatomie, chakrapsychologie, yoga-coaching, restorative-nidra, mindful-flow, klankschalen-mantra, ayurveda-asana, fysieke-begeleiding]
+      modules:
+        [
+          holistische-anatomie,
+          chakrapsychologie,
+          yoga-coaching,
+          restorative-nidra,
+          mindful-flow,
+          klankschalen-mantra,
+          ayurveda-asana,
+          fysieke-begeleiding
+        ]
     coherence_signals:
       required_sequence: unknown
-      required_sequence_note: "ingangseisen per module verschillend; certificaat per module nodig om 'door te stromen'"
+      required_sequence_note: "ingangseisen per module verschillend; certificaat per
+        module nodig om 'door te stromen'"
       single_cohort_intake: "no"
       integrative_assessment: "yes"
       integrative_assessment_note: "afsluitende dag + scriptie; pas dan overkoepelend 300 uur diploma"
       continuous_lead_teacher: unknown
       modules_sold_separately: "yes"
-      bundle_price_below_sum: unknown
+      bundle_price_below_sum: "yes"
+      bundle_price_below_sum_note: "los gekocht kosten de acht modules samen € 5.870,-
+        (995 + 995 + 725 + 995 + 650 + 430 + 650 + 430); de bundel kost €
+        5.095,-. De bundel ligt dus € 775,- onder de som van zijn delen —
+        exclusief de losse 'Afrondingsdag + scriptie' (€ 250,-), die de PDF
+        apart prijst en die in de bundel zit. Alle bedragen uit bron
+        datakosten-pdf-2026-07; de overige signalen hieronder uit site-2026-06."
       source: site-2026-06
+    contract:
+      installments_published: "yes"
+      source: datakosten-pdf-2026-07
+      note: "'Bij betaling in drie termijnen (maanden) wordt € 25,- aan
+        administratiekosten in rekening gebracht.'"
     assessment_described:
       exists: "yes"
-      continuous: "yes"   # per module toetsing + reflectieverslagen, doorlopend
-      final: "yes"        # afsluitende dag + scriptie
-      quote: "voorbereiden van de examens, schrijven van je reflectieverslagen … afronding + scriptie"
+      continuous: "yes" # per module toetsing + reflectieverslagen, doorlopend
+      final: "yes" # afsluitende dag + scriptie
+      quote: "voorbereiden van de examens, schrijven van je reflectieverslagen …
+        afronding + scriptie"
     track_record:
       first_seen_year: 2019
       source: ya-register-2026-06
-      note: "pagina zegt 'tien modules' maar lijst er 8 + afronding — telling klopt niet zichtbaar"
+      note: "pagina zegt 'tien modules' maar lijst er 8 + afronding — telling klopt
+        niet zichtbaar"

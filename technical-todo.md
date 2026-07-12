@@ -74,7 +74,7 @@ captured carries no € amount at all, and the page that does carry the price wa
 never captured and never archived. `published: yes` is CORRECT (they do publish a
 price); the amount and its source are missing from our record, and each
 `price.note` now says so in as many words. Until these are done, the price on
-these five is our gap, never a finding about them.*
+these is our gap, never a finding about them.*
 
 The fix for each: read the page that carries the price, add it to that record's
 `sources[]` (with `captured`), archive it (`npm run archive -- <id>` — public +
@@ -82,23 +82,32 @@ local, per the publication bar), set `price.amount_eur` (cheapest
 generally-available variant, per the §4 convention) or `variants[]`, set `vat`
 where the page states it, and trim the note back to what is still true.
 
-- [ ] **`aalo-yoga-academie/yin-yang-ryt200`** — price is per pakket/module on the
-  separate **inschrijfpagina's** (`site-2026-06` = the overzichtspagina, no amount).
-  Extract the pakket/module prices, decide the comparable base for a
-  `free_assembly` RYT200, source + archive the inschrijfpagina's.
-- [ ] **`aalo-yoga-academie/yin-ryt200`** — same provider, same inschrijfpagina's,
-  same missing source. Do both Aalo programmes in one pass.
-- [ ] **`de-blikopener/hatha-raja-opleiding`** — price is on a separate
-  **tarievenpagina** (`site-2026-06` = the site overview, no amount). Read, source,
-  archive, extract. `vat: exempt_crkbo` is already recorded.
+**The class of bug is now caught automatically** — `src/lib/provenance.ts` opens the
+archived artifacts of every cited price source and warns (in `npm run validate`, on
+`/qa`, and strictly in `npm run provenance`) when they contain no amount at all. It
+found exactly these records. Four are done; the list below is what it still finds.
+
+- [x] **`aalo-yoga-academie/yin-yang-ryt200`** — lesgeld € 2.988,- (€ 2.838,60 bij
+  eenmalige betaling, 5% korting) + **examengeld € 553,-** apart; sourced +
+  archived as `site-yin-yang-2026-07`.
+- [x] **`aalo-yoga-academie/yin-ryt200`** — same lesgeld, but **examengeld € 435,-**:
+  same price, different mandatory extra. Sourced + archived as `site-yin-2026-07`.
+- [x] **`de-blikopener/hatha-raja-opleiding`** — € 1.290,- **per studiejaar** (no total
+  is published anywhere; not multiplied). Sourced + archived as `tarieven-2026-07`.
+  **The rates page states no BTW at all**, so `vat: exempt_crkbo` cannot be grounded
+  in it — see `price.note`; §4.11 says the value should be `unknown`. Left as-is,
+  flagged, needs a decision.
 - [ ] **`sanayou/200-online`** — modular online, 3 routes; prices are per
   module/traject on the **module-/inschrijfpagina's** (`site-online-2026-06` = the
-  overzicht, no amount). Needs a decision on the comparable base across the 3 routes
-  as well as the extraction.
-- [ ] **`yoga-academie-nederland/300-hatha-verdieping`** — prices are in a **PDF
-  linked from the opleidingspagina** (datakosten). The PDF is the source: capture it
-  (`type: pdf`), archive it locally — a linked PDF is exactly the artefact a provider
-  can replace silently — and extract the amounts.
+  overzicht, which prices the OTHER two routes — which is why the provenance check
+  passes it: it is page-level, not fact-level). Needs a decision on the comparable
+  base across the 3 routes as well as the extraction.
+- [x] **`yoga-academie-nederland/300-hatha-verdieping`** — € 5.095,- from the linked
+  datakosten PDF, sourced + archived as `datakosten-pdf-2026-07` (Wayback refused it
+  on the day — daily limit for that resource type — so `archived_url: null`; the local
+  copy + SHA-256 stands, and the submission must be retried). All 8 module prices
+  came from the same PDF, so `bundleDelta` now computes: **−€ 775,-** (bundle below
+  the sum of its parts).
 
 ## Code health
 

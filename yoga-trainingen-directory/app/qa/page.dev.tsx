@@ -16,6 +16,7 @@
 import { notFound } from "next/navigation";
 import { loadDataset } from "@/lib/loader";
 import { providerQa } from "@/lib/derive";
+import { priceProvenance } from "@/lib/provenance";
 
 export const metadata = { title: "QA / review — interne werklijst" };
 
@@ -60,21 +61,30 @@ export default function Qa() {
   const { providers, errors } = loadDataset();
   if (errors.length > 0) throw new Error(`Dataset invalid:\n${errors.join("\n")}`);
 
-  // Most-incomplete first: the work list, prioritised.
+  // Most-incomplete first: the work list, prioritised. The price-provenance findings
+  // are read off the ARCHIVED ARTIFACTS (node:fs + pdftotext) and injected, because
+  // derive.ts is pure by construction — see providerQa's header.
   const rows = providers
-    .map((p) => ({ p, qa: providerQa(p) }))
+    .map((p) => ({
+      p,
+      qa: providerQa(p, new Date(), priceProvenance(p).findings.map((f) => f.message)),
+    }))
     .sort((a, b) => a.qa.completeness - b.qa.completeness);
 
   const totalGaps = rows.reduce((n, r) => n + r.qa.gaps.length, 0);
   const totalUnarchived = rows.reduce((n, r) => n + r.qa.unarchivedSources, 0);
+  const totalProvenance = rows.reduce((n, r) => n + r.qa.priceProvenance.length, 0);
 
   return (
     <main>
       <h1>QA / review — interne werklijst</h1>
       <p style={{ color: "#555" }}>
         Alleen-lezen overzicht (niet gepubliceerd). {providers.length} records ·{" "}
-        {totalGaps} open punten · {totalUnarchived} bronnen zonder publiek archief.
-        “Open punten” zijn uitsluitend <em>nog niet onderzocht</em> (quad-state{" "}
+        {totalGaps} open punten · {totalUnarchived} bronnen zonder publiek archief ·{" "}
+        <span style={{ color: totalProvenance > 0 ? "#b00" : "#070" }}>
+          {totalProvenance} prijsclaim(s) zonder bewijs in de geciteerde bron
+        </span>
+        . “Open punten” zijn uitsluitend <em>nog niet onderzocht</em> (quad-state{" "}
         <code>unknown</code>) — “niet gepubliceerd” is een bevinding, geen gat.
       </p>
       {rows.map(({ p, qa }) => {
@@ -103,6 +113,18 @@ export default function Qa() {
               </ul>
             ) : (
               <p style={{ margin: "0.4rem 0", color: "#070" }}>geen open gaten</p>
+            )}
+
+            {/* Een prijsclaim waarvan de geciteerde pagina geen bedrag toont: geen
+                gat in een quad maar een defect in de BRONVERWIJZING — het record
+                oogt compleet en het archief draagt er niets van. Rood, apart van de
+                gaten-lijst. */}
+            {qa.priceProvenance.length > 0 && (
+              <ul style={{ margin: "0.4rem 0", color: "#b00" }}>
+                {qa.priceProvenance.map((g, i) => (
+                  <li key={i}>{g}</li>
+                ))}
+              </ul>
             )}
 
             <div style={{ fontSize: "0.85rem", margin: "0.4rem 0" }}>

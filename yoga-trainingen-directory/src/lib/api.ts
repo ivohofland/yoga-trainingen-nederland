@@ -5,10 +5,11 @@
  * different brand can consume it without touching this repo". It used to be a
  * dump of the raw `Provider[]` and NOTHING else — no derived state whatsoever.
  *
- * That was not merely thin, it was dangerous. Five programmes carry
+ * That was not merely thin, it was dangerous. Five programmes carried
  * `price: { published: "yes" }` with no `amount_eur` (the provider publishes a
- * price; we have not captured it). A consumer rendering that raw field through its
- * own quad component prints a bare "ja" in fact ink for four NAMED BUSINESSES —
+ * price; we have not captured it) — one still does, and any record can land back in
+ * that state tomorrow. A consumer rendering that raw field through its own quad
+ * component prints a bare "ja" in fact ink for NAMED BUSINESSES —
  * reconstructing, from scratch, the exact bug this project spent a release
  * eliminating. And it could not have done better: the rule that corrects it
  * (`priceQuad`) lived in a server-only module it had no way to import.
@@ -35,8 +36,8 @@ export const API_VERSION = "v1";
 export interface ProgramDerived {
   /**
    * WHAT A CONSUMER MAY SAY ABOUT THIS PROGRAMME'S PRICE. Not `price.published`,
-   * which on five programmes says "yes" while the record holds no amount — render
-   * that and you assert a price we do not have about a business we name.
+   * which still says "yes" on a programme whose amount our record does not hold —
+   * render that and you assert a price we do not have about a business we name.
    *
    * `yes` → `price.amount_eur` is present and is the price.
    * `not_published` → a sourced FINDING: we looked, they publish no price.

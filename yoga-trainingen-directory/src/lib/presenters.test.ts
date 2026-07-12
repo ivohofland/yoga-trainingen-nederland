@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { z } from "zod";
 import { loadDataset } from "./loader";
 import { toListingRows, datasetStats, formatEuro, formatMonth, cohortLabel, nextCohortLabel, toProviderView } from "./presenters";
-import { pphQuad, priceQuad } from "./rules";
+import { pphQuad, priceAmountIsOurGap, priceQuad } from "./rules";
 import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 // The SCHEMA, as a value — the contract test walks its shape rather than
@@ -551,25 +551,23 @@ test("PRICE: every row in the “niet gepubliceerd” band renders the FINDING c
   assert.ok(fromNo > 0, "no programme records price.published: no any more — the broken direction is untested");
 });
 
-test("PRICE: the five programmes that publish a price we do not hold are OUR gap, on BOTH pages", () => {
-  // Named, because the accusation would be named. The record says each of these
-  // DOES publish a price; the amount is missing from our record. Amber
-  // ("niet gepubliceerd") on either page is a false statement about them.
-  const ourGaps = [
-    ["aalo-yoga-academie", "yin-yang-ryt200"],
-    ["aalo-yoga-academie", "yin-ryt200"],
-    ["de-blikopener", "hatha-raja-opleiding"],
-    ["sanayou", "200-online"],
-    ["yoga-academie-nederland", "300-hatha-verdieping"],
-  ] as const;
+test("PRICE: every programme that publishes a price we do not hold is OUR gap, on BOTH pages", () => {
+  // The record says each of these DOES publish a price; the amount is missing from
+  // our record. Amber ("niet gepubliceerd") on either page is a false statement
+  // about them.
+  //
+  // DERIVED, not named — see the twin test in api.test.ts. It named five programmes;
+  // four have since been paid off (price sources captured, amounts extracted), and a
+  // hard-coded roster of records-in-a-state fails the build for having been FIXED.
+  // The predicate is the rule's own, so the set is whatever the data holds today
+  // (sanayou/200-online), and every failure message still names the record.
+  const ourGaps = providers.flatMap((p) =>
+    p.programs.filter(priceAmountIsOurGap).map((program) => [p.id, program.id] as const),
+  );
+  assert.ok(ourGaps.length > 0, "no programme is in this state any more — the rule this pins is untested");
+
   const rows = toListingRows(providers, NOW);
   for (const [providerId, programId] of ourGaps) {
-    const prog = programOf(providerId, programId);
-    // guard: if the data is completed one day, this test must not quietly pass on
-    // a programme that no longer has the shape it is here to pin.
-    assert.equal(prog.price.published, "yes", `${providerId}/${programId} no longer publishes a price`);
-    assert.equal(prog.price.amount_eur ?? null, null, `${providerId}/${programId} now has an amount`);
-
     const listing = rows.find((r) => r.providerId === providerId && r.programId === programId)!;
     const record = toProviderView(providers.find((p) => p.id === providerId)!)
       .programs.find((v) => v.id === programId)!

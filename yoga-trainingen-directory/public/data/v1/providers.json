@@ -210,11 +210,23 @@
             "language": "nl"
           },
           "price": {
-            "amount_eur": null,
+            "amount_eur": 2838.6,
+            "variants": [
+              {
+                "label": "eenmalig, 5% korting",
+                "amount_eur": 2838.6
+              },
+              {
+                "label": "12 maandtermijnen à € 249,- (lesgeld zonder korting)",
+                "amount_eur": 2988
+              }
+            ],
             "vat": "unknown",
             "published": "yes",
-            "note": "Aalo publiceert wél een prijs: per pakket/module op de aparte inschrijfpagina's, niet als één totaal op het overzicht. Het bedrag is nog niet uitgelezen. LET OP — de hier geciteerde bron is die overzichtspagina en bevat zélf geen bedrag; de inschrijfpagina's die de prijs wél dragen staan niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
-            "source": "site-2026-06"
+            "includes": "studiemateriaal ('Het lesgeld voor de Yin/Yang Yoga Teacher Training is inclusief studiemateriaal')",
+            "excludes": "examengeld € 553,- ('Het examengeld is inclusief het theorie- en praktijkexamen en het erkend diploma')",
+            "note": "Lesgeld van de opleidingspagina zelf (geharvest 2026-07-12): eenmalig € 2.988,- → € 2.838,60 met 5% korting, of 12 maandtermijnen à € 249,- (= € 2.988,-). Examengeld € 553,- komt daar bovenop. De overzichtspagina (site-2026-06) noemt geen enkel bedrag; die citeren wij hier dus niet meer.",
+            "source": "site-yin-yang-2026-07"
           },
           "hours_claimed": {
             "total": 200,
@@ -243,16 +255,21 @@
           "assessment_described": {
             "exists": "not_published"
           },
+          "contract": {
+            "installments_published": "yes",
+            "source": "site-yin-yang-2026-07",
+            "note": "12 maandtermijnen à € 249,- (= € 2.988,-, gelijk aan het lesgeld zonder korting; de korting van 5% geldt alleen bij eenmalige betaling)"
+          },
           "track_record": {
             "first_seen_year": 2015,
             "source": "ya-register-2026-06",
             "note": "AALO afficheert 'Feedback Company 8.8' studentbeoordeling als marketing"
           },
           "derived": {
-            "price_state": "unknown",
-            "price_band": "amount_not_in_record",
+            "price_state": "yes",
+            "price_band": "under3000",
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": false
@@ -278,11 +295,23 @@
             "language": "nl"
           },
           "price": {
-            "amount_eur": null,
+            "amount_eur": 2838.6,
+            "variants": [
+              {
+                "label": "eenmalig, 5% korting",
+                "amount_eur": 2838.6
+              },
+              {
+                "label": "12 maandtermijnen à € 249,- (lesgeld zonder korting)",
+                "amount_eur": 2988
+              }
+            ],
             "vat": "unknown",
             "published": "yes",
-            "note": "Aalo publiceert wél een prijs: per module/pakket op de aparte inschrijfpagina's. Het bedrag is nog niet uitgelezen. LET OP — de hier geciteerde bron is de overzichtspagina en bevat zélf geen bedrag; de inschrijfpagina's die de prijs wél dragen staan niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
-            "source": "site-2026-06"
+            "includes": "studiemateriaal ('Het lesgeld voor de Yin Yoga Teacher Training is inclusief studiemateriaal')",
+            "excludes": "examengeld € 435,- ('Het examengeld is inclusief de beoordeling van de casus, het theorie examen en het erkend diploma')",
+            "note": "Lesgeld van de opleidingspagina zelf (geharvest 2026-07-12): eenmalig € 2.988,- → € 2.838,60 met 5% korting, of 12 maandtermijnen à € 249,-. Het examengeld is hier € 435,-, tegen € 553,- bij de Yin/Yang-training: hetzelfde lesgeld, verschillende verplichte meerkosten. De overzichtspagina (site-2026-06) noemt geen enkel bedrag.",
+            "source": "site-yin-2026-07"
           },
           "hours_claimed": {
             "total": 200,
@@ -305,11 +334,16 @@
           "assessment_described": {
             "exists": "not_published"
           },
+          "contract": {
+            "installments_published": "yes",
+            "source": "site-yin-2026-07",
+            "note": "12 maandtermijnen à € 249,- (= € 2.988,-, gelijk aan het lesgeld zonder korting; de korting van 5% geldt alleen bij eenmalige betaling)"
+          },
           "derived": {
-            "price_state": "unknown",
-            "price_band": "amount_not_in_record",
+            "price_state": "yes",
+            "price_band": "under3000",
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": false
@@ -328,7 +362,7 @@
           "archived_url": "https://web.archive.org/web/20260613081543/https://www.aalo.nl/yoga-academie/",
           "local_snapshot": "data/archives/aalo-yoga-academie/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13",
-          "note": "overzichtspagina; prijzen per module/pakket op aparte inschrijfpagina's, nog niet uitgelezen"
+          "note": "overzichtspagina; bevat zélf geen enkel bedrag — de prijzen staan op de opleidingspagina's per training (site-yin-yang-2026-07, site-yin-2026-07), die hieronder als aparte bronnen staan en waaruit de prijzen zijn overgenomen."
         },
         {
           "id": "ya-register-2026-06",
@@ -345,6 +379,24 @@
           "archived_url": "https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen",
           "local_snapshot": "data/archives/aalo-yoga-academie/crkbo-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
+        },
+        {
+          "id": "site-yin-yang-2026-07",
+          "type": "website",
+          "url": "https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/",
+          "archived_url": "https://web.archive.org/web/20260712065457/https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/",
+          "local_snapshot": "data/archives/aalo-yoga-academie/site-yin-yang-2026-07-2026-07-12.pdf",
+          "captured": "2026-07-12",
+          "note": "opleidingspagina Yin/Yang RYT-200 — draagt zelf de prijs; de overzichtspagina (site-2026-06) linkt er alleen naar."
+        },
+        {
+          "id": "site-yin-2026-07",
+          "type": "website",
+          "url": "https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/",
+          "archived_url": "https://web.archive.org/web/20260712070739/https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/",
+          "local_snapshot": "data/archives/aalo-yoga-academie/site-yin-2026-07-2026-07-12.pdf",
+          "captured": "2026-07-12",
+          "note": "opleidingspagina Yin RYT-200 — draagt zelf de prijs; de overzichtspagina (site-2026-06) linkt er alleen naar."
         }
       ],
       "depth": "listed",
@@ -1880,11 +1932,22 @@
             "language": "nl"
           },
           "price": {
-            "amount_eur": null,
+            "amount_eur": 1290,
+            "variants": [
+              {
+                "label": "per studiejaar (vanaf 1 juni 2026)",
+                "amount_eur": 1290
+              },
+              {
+                "label": "vroegboekkorting 1e jaar 2026, bij inschrijving vóór 5 juli 2026",
+                "amount_eur": 1220
+              }
+            ],
             "vat": "exempt_crkbo",
             "published": "yes",
-            "note": "De Blikopener publiceert wél een prijs: op een aparte tarievenpagina. Die pagina is nog niet uitgelezen. LET OP — de hier geciteerde bron is de site-overzichtspagina en bevat zélf geen bedrag; de tarievenpagina die de prijs wél draagt staat niet in sources[] en is niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
-            "source": "site-2026-06"
+            "excludes": "eenmalig € 100,- inschrijf- en boekengeld in het 1e jaar; de verblijfskosten van het jaarlijkse yogaweekend ('vanaf 1 juli 2026 € 335,-').",
+            "note": "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12), niet per opleiding: het traject loopt meerdere jaren en een totaalprijs publiceren zij niet. Niet vermenigvuldigd — dat zou een bedrag verzinnen dat zij nergens noemen. LET OP (BTW): de tarievenpagina noemt géén BTW — geen 'incl.', geen 'excl.', geen 'vrijgesteld', geen CRKBO. Volgens spec §4.11 hoort `vat` dan `unknown` te zijn; de bestaande waarde `exempt_crkbo` is hier niet op deze bron te gronden en lijkt afgeleid uit de CRKBO-registratie, wat §4.11 juist verbiedt. Bewust ongewijzigd gelaten en gemeld i.p.v. stil gecorrigeerd.",
+            "source": "tarieven-2026-07"
           },
           "hours_claimed": {
             "total": null,
@@ -1919,10 +1982,10 @@
             }
           ],
           "derived": {
-            "price_state": "unknown",
-            "price_band": "amount_not_in_record",
+            "price_state": "yes",
+            "price_band": "under3000",
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": false
@@ -1964,7 +2027,7 @@
           "archived_url": "https://web.archive.org/web/20260613080628/https://www.blikopener.info/",
           "local_snapshot": "data/archives/de-blikopener/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13",
-          "note": "homepage; prijzen/uren achter 'Agenda's en Tarieven'-menu, nog niet uitgelezen"
+          "note": "homepage; bevat zélf geen bedrag — linkt via het menu 'Agenda's en Tarieven' naar de tarievenpagina (tarieven-2026-07), die de prijs wél stelt en waaruit die is overgenomen. Uren publiceren zij nergens."
         },
         {
           "id": "vyn-register-2026-06",
@@ -1981,6 +2044,15 @@
           "archived_url": "https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen",
           "local_snapshot": "data/archives/de-blikopener/crkbo-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
+        },
+        {
+          "id": "tarieven-2026-07",
+          "type": "website",
+          "url": "https://www.blikopener.info/agendas-en-tarieven/tarieven/",
+          "archived_url": "https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/",
+          "local_snapshot": "data/archives/de-blikopener/tarieven-2026-07-2026-07-12.pdf",
+          "captured": "2026-07-12",
+          "note": "tarievenpagina — de pagina die de prijs STELT (de homepage linkt er alleen naar)."
         }
       ],
       "depth": "listed",
@@ -9199,11 +9271,12 @@
             "language": "nl"
           },
           "price": {
-            "amount_eur": null,
+            "amount_eur": 5095,
             "vat": "unknown",
             "published": "yes",
-            "note": "Yoga Academie Nederland publiceert wél prijzen: in een vanaf de opleidingspagina gelinkte PDF (datakosten). Die PDF is nog niet geëxtraheerd. LET OP — de hier geciteerde bron is de opleidingspagina zelf en bevat zélf geen bedrag; de gelinkte PDF die de prijzen wél draagt staat niet in sources[] en is niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
-            "source": "site-2026-06"
+            "excludes": "(externe) studieboeken en eventuele andere variabele kosten: 'maximaal €450,-' voor de 300 uur verdiepingsopleiding. Bij betaling in drie termijnen komt er € 25,- administratiekosten bij.",
+            "note": "Prijs uit de datakosten-PDF ('300 uur Hatha verdiepingsopleiding € 5.095,-'), de PDF die vanaf de opleidingspagina wordt gelinkt; de opleidingspagina zelf noemt geen bedrag. De PDF vermeldt nergens BTW — vat blijft daarom `unknown` (spec §4.11: niet afleiden uit de CRKBO-registratie). Losse modules staan er ook in (zie modules[]): samen € 5.870,-, dus de bundel ligt € 775,- lager.",
+            "source": "datakosten-pdf-2026-07"
           },
           "hours_claimed": {
             "total": 300,
@@ -9235,7 +9308,8 @@
             "integrative_assessment_note": "afsluitende dag + scriptie; pas dan overkoepelend 300 uur diploma",
             "continuous_lead_teacher": "unknown",
             "modules_sold_separately": "yes",
-            "bundle_price_below_sum": "unknown",
+            "bundle_price_below_sum": "yes",
+            "bundle_price_below_sum_note": "los gekocht kosten de acht modules samen € 5.870,- (995 + 995 + 725 + 995 + 650 + 430 + 650 + 430); de bundel kost € 5.095,-. De bundel ligt dus € 775,- onder de som van zijn delen — exclusief de losse 'Afrondingsdag + scriptie' (€ 250,-), die de PDF apart prijst en die in de bundel zit. Alle bedragen uit bron datakosten-pdf-2026-07; de overige signalen hieronder uit site-2026-06.",
             "source": "site-2026-06"
           },
           "assessment_described": {
@@ -9244,18 +9318,23 @@
             "final": "yes",
             "quote": "voorbereiden van de examens, schrijven van je reflectieverslagen … afronding + scriptie"
           },
+          "contract": {
+            "installments_published": "yes",
+            "source": "datakosten-pdf-2026-07",
+            "note": "'Bij betaling in drie termijnen (maanden) wordt € 25,- aan administratiekosten in rekening gebracht.'"
+          },
           "track_record": {
             "first_seen_year": 2019,
             "source": "ya-register-2026-06",
             "note": "pagina zegt 'tien modules' maar lijst er 8 + afronding — telling klopt niet zichtbaar"
           },
           "derived": {
-            "price_state": "unknown",
-            "price_band": "amount_not_in_record",
+            "price_state": "yes",
+            "price_band": "from3000",
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
-            "bundle_delta": null,
+            "bundle_delta": -775,
             "multistyle": false
           }
         }
@@ -9266,56 +9345,104 @@
           "name": "Holistische Anatomie",
           "days_claimed": 8,
           "type": "other",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 995,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         },
         {
           "id": "chakrapsychologie",
           "name": "Chakrapsychologie",
           "days_claimed": 8,
           "type": "specialization",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 995,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         },
         {
           "id": "yoga-coaching",
           "name": "Yoga Coaching",
           "days_claimed": 5,
           "type": "specialization",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 725,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         },
         {
           "id": "restorative-nidra",
           "name": "Restorative & Nidra",
           "days_claimed": 8,
           "type": "specialization",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 995,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         },
         {
           "id": "mindful-flow",
           "name": "Mindful Flow",
           "days_claimed": 5,
           "type": "specialization",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 650,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         },
         {
           "id": "klankschalen-mantra",
           "name": "Klankschalen, Mantra & Yoga",
           "days_claimed": 3,
           "type": "specialization",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 430,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         },
         {
           "id": "ayurveda-asana",
           "name": "Ayurveda & Asana",
           "days_claimed": 5,
           "type": "specialization",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 650,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         },
         {
           "id": "fysieke-begeleiding",
           "name": "Fysieke begeleiding",
           "days_claimed": 3,
           "type": "other",
-          "sold_separately": "yes"
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 430,
+            "vat": "unknown",
+            "published": "yes",
+            "source": "datakosten-pdf-2026-07"
+          }
         }
       ],
       "claims": [],
@@ -9350,6 +9477,15 @@
           "url": "https://www.crkbo.nl/Register/Instellingen",
           "archived_url": "https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen",
           "captured": "2026-06-12"
+        },
+        {
+          "id": "datakosten-pdf-2026-07",
+          "type": "brochure",
+          "url": "https://yoga-academie.nl/.cm4all/uproc.php/0/YAN_datakosten.pdf",
+          "archived_url": null,
+          "local_snapshot": "data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-12.pdf",
+          "captured": "2026-07-12",
+          "note": "'data-overzicht (pdf)' — de PDF die vanaf de opleidingspagina gelinkt wordt en die de prijzen draagt (opleidingsprijs, prijs per module, niet-inbegrepen kosten). De opleidingspagina zelf noemt geen bedrag. Een gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs. archived_url: null — Wayback weigerde de capture op 2026-07-12 ('already captured 1 times today, which is a daily limit we have set for that Resource type') en de availability-API kent nog geen snapshot. Opnieuw indienen (`npm run archive -- yoga-academie-nederland`); tot die tijd is dit bewust niet publiek gearchiveerd en haalt dit record de publicatielat niet."
         }
       ],
       "depth": "listed",

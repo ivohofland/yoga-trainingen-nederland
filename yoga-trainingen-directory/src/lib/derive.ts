@@ -98,10 +98,24 @@ export interface ProviderQa {
   /** Open work: only `unknown` quad-states (genuine gaps), never `not_published`
    *  (which is a finding, not a gap — see spec §2). */
   gaps: string[];
+  /** Programmes claiming a published price whose CITED page shows no amount —
+   *  see provenance.ts. A citation defect, not a gap in a quad: the record looks
+   *  complete and the archive backs none of it. */
+  priceProvenance: string[];
 }
 
-/** Surfaces what a record still needs. Pure read — never mutates the dataset. */
-export function providerQa(p: Provider, now = new Date()): ProviderQa {
+/**
+ * Surfaces what a record still needs. Pure read — never mutates the dataset.
+ *
+ * `priceProvenance` is INJECTED rather than computed: answering it means opening
+ * the archived artifacts (node:fs + pdftotext), and this module must import nothing
+ * from `node:*` or the JSON export and the client filter island lose their access to
+ * the derived values (see the header). The finding lives in `src/lib/provenance.ts`,
+ * where the impurity belongs; callers that can reach the disk (`scripts/validate.ts`,
+ * the dev-only `/qa` page) pass it in. A caller that cannot simply reports no
+ * citation defects — and none of the surfaces that ship to readers is such a caller.
+ */
+export function providerQa(p: Provider, now = new Date(), priceProvenance: string[] = []): ProviderQa {
   const gaps: string[] = [];
   if (p.crkbo.registered === "unknown") gaps.push("CRKBO: nog niet onderzocht");
 
@@ -129,5 +143,6 @@ export function providerQa(p: Provider, now = new Date()): ProviderQa {
     totalSources: p.sources.length,
     ageMonths,
     gaps,
+    priceProvenance,
   };
 }

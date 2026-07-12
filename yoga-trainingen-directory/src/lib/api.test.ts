@@ -15,7 +15,7 @@ import assert from "node:assert/strict";
 import { loadDataset } from "./loader";
 import { toApiPayload } from "./api";
 import { toListingRows, toProviderView } from "./presenters";
-import { priceQuad } from "./rules";
+import { priceAmountIsOurGap, priceQuad } from "./rules";
 import { saysNotPublished, quadClass } from "./quad";
 import { nl } from "./strings";
 
@@ -78,32 +78,30 @@ test("API: derived.price_state IS what the listing renders and what the record p
   assert.ok(checked > 0, "the export has no programmes — this test tests nothing");
 });
 
-test("API: the five programmes that publish a price we do not hold are OUR gap in the JSON too", () => {
-  // Named, because the accusation — and the false "ja" — would be named. Verified in
-  // the committed providers.json: each carries `price: { published: "yes" }` with no
-  // `amount_eur`. A consumer rendering that raw field through its own quad component
-  // prints a bare "ja" in FACT ink about these four businesses; rendering it as the
-  // absence of a price prints an accusation instead. Both are false.
+test("API: every programme that publishes a price we do not hold is OUR gap in the JSON too", () => {
+  // Each of these carries `price: { published: "yes" }` with no `amount_eur`. A
+  // consumer rendering that raw field through its own quad component prints a bare
+  // "ja" in FACT ink about a named business; rendering it as the absence of a price
+  // prints an accusation instead. Both are false.
   //
   // `derived.price_state` is what it must read, and it says "unknown": a gap in OUR
   // research. This is exactly the correction the site makes, now reachable by anyone
   // holding nothing but the JSON file.
-  const ourGaps = [
-    ["aalo-yoga-academie", "yin-yang-ryt200"],
-    ["aalo-yoga-academie", "yin-ryt200"],
-    ["de-blikopener", "hatha-raja-opleiding"],
-    ["sanayou", "200-online"],
-    ["yoga-academie-nederland", "300-hatha-verdieping"],
-  ] as const;
+  //
+  // THE LIST IS DERIVED, NOT NAMED. It used to name the five programmes it pinned,
+  // and it was right to: the accusation would be named. But four of them have since
+  // been paid off (their price sources were captured and the amounts extracted), and
+  // a hard-coded list of records-in-a-state rots the moment the state changes — it
+  // failed the build for having been FIXED. `priceAmountIsOurGap` is the same
+  // predicate the rule itself uses, so the set is whatever the data currently holds
+  // (today: sanayou/200-online), and the messages below still name every one of them.
+  const ourGaps = providers.flatMap((p) =>
+    p.programs.filter(priceAmountIsOurGap).map((program) => [p.id, program.id] as const),
+  );
+  assert.ok(ourGaps.length > 0, "no programme is in this state any more — the rule this pins is untested");
 
   for (const [providerId, programId] of ourGaps) {
     const { api, listing, record } = surfaces(providerId, programId);
-
-    // guard: the trap the consumer would fall into is still in the data. If the
-    // amounts are ever captured, this test must not quietly pass on a changed shape.
-    assert.equal(api.price.published, "yes",
-      `${providerId}/${programId} no longer publishes a price — this test pins the wrong record`);
-    assert.equal(api.price.amount_eur ?? null, null, `${providerId}/${programId} now has an amount`);
 
     // The derived state a consumer must read — and all three surfaces say it.
     assert.equal(api.derived.price_state, "unknown",

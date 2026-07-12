@@ -96,9 +96,10 @@ touching this repo. The `@/*` path alias maps to `src/*`.
 `price_band`, `pph`, `pph_state`, `contact_ratio`, `bundle_delta`,
 `multistyle`), built in `src/lib/api.ts` by the same functions the site renders
 from. **Consumers must read `derived.price_state`, never the raw
-`price.published`** — five programmes carry `published: "yes"` with no
-`amount_eur` (they publish a price; we have not captured it), and rendering the
-raw field states a bare "ja" as established fact about a named business.
+`price.published`** — a programme can carry `published: "yes"` with no
+`amount_eur` (they publish a price; we have not captured it — five once did, one
+still does), and rendering the raw field states a bare "ja" as established fact
+about a named business.
 Derived values are computed **at export** and are still never stored in `data/`:
 spec §6 holds — the export is a *rendering* of the records, not the source of
 truth. A test pins `derived.price_state` to what the listing and the record page
@@ -145,6 +146,28 @@ them silently corrupts the dataset's credibility.
   owner; local copies (dated by git) cannot. JS-heavy pages (e.g. Yoga Alliance
   registers are Salesforce-rendered) need the browser-rendered local capture —
   Wayback stores only an empty shell, so it's skipped for those domains.
+- **Cite the page that STATES the fact — never the page that links to it. If it is
+  not captured, capture it.** A `source` is not a pointer to the provider; it is the
+  evidence for one field. Four records carried `price.published: "yes"` citing an
+  overview page with no € on it anywhere, while the rates page / the enrolment page /
+  the linked datakosten PDF that actually stated the price was never sourced and
+  never archived — so the archive, which is the whole evidentiary basis here, held
+  nothing behind the claim. The record looked perfect; only the ARTIFACT could tell.
+  The order is therefore: find the page that states it → add it to `sources[]` →
+  **archive it** → extract the value FROM THE CAPTURED FILE. Never from a search
+  summary, never from memory. `src/lib/provenance.ts` now enforces this for prices
+  (warning in `npm run validate`, counted on `/qa`, strict in `npm run provenance`);
+  a linked PDF is exactly the artefact a provider can silently replace, so it gets
+  its own `Source` with its own capture.
+- **The JS-rendered-price trap: search BOTH artifacts.** Each source is captured as
+  `<id>-<date>.html` (raw DOM) *and* `<id>-<date>.pdf` (browser-rendered). Neither
+  alone is evidence: 3 providers' prices exist ONLY in the PDF (injected by a JS
+  add-to-cart widget after load, so the saved DOM never contains them) and 7 exist
+  ONLY in the HTML (print CSS and lazy sections drop them from the PDF render). This
+  is the same trap as the Salesforce-rendered YA registers — *a stored page is not
+  the page a reader saw* — and it is why the provenance check reads both and passes
+  on either. Use `pdftotext` for the PDFs; `strings` cannot read compressed PDF text
+  streams and will happily "find" a price in binary noise.
 - **Archive bodies are NOT published; their hashes are.** This repo is public.
   `data/archives/**/*.pdf|*.html` are gitignored — they live on disk and in the
   private, git-dated archive repo (`yoga-trainingen-archief`). The `.sha256`

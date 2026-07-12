@@ -30,8 +30,9 @@ sources:
     url: https://www.blikopener.info/
     archived_url: https://web.archive.org/web/20260613080628/https://www.blikopener.info/
     captured: "2026-06-13"
-    note: "homepage; prijzen/uren achter 'Agenda's en Tarieven'-menu, nog niet
-      uitgelezen"
+    note: "homepage; bevat zélf geen bedrag — linkt via het menu 'Agenda's en
+      Tarieven' naar de tarievenpagina (tarieven-2026-07), die de prijs wél stelt en
+      waaruit die is overgenomen. Uren publiceren zij nergens."
     local_snapshot: data/archives/de-blikopener/site-2026-06-2026-06-13.pdf
   - id: vyn-register-2026-06
     type: register
@@ -45,6 +46,14 @@ sources:
     archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
     captured: "2026-06-13"
     local_snapshot: data/archives/de-blikopener/crkbo-register-2026-06-2026-06-13.pdf
+  - id: tarieven-2026-07
+    type: website
+    url: https://www.blikopener.info/agendas-en-tarieven/tarieven/
+    captured: "2026-07-12"
+    note: "tarievenpagina — de pagina die de prijs STELT (de homepage linkt er
+      alleen naar)."
+    local_snapshot: data/archives/de-blikopener/tarieven-2026-07-2026-07-12.pdf
+    archived_url: https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/
 
 programs:
   - id: hatha-raja-opleiding
@@ -63,15 +72,36 @@ programs:
       structure: mixed
       language: nl
     price:
-      amount_eur: null
+      # PER STUDIEJAAR, GEEN TOTAAL. De tarievenpagina zegt: "€ 1290,- (vanaf 1 juni
+      # 2026) per studiejaar", en de opleiding is een meerjarig traject. Een
+      # jaarbedrag is geen totaalprijs, en er is er geen: de Blikopener publiceert
+      # nergens wat de hele opleiding kost. Vermenigvuldigen met een aantal jaren zou
+      # een getal fabriceren dat zij niet noemen (en dat afhangt van een jarental dat
+      # zij evenmin als urental publiceren) — dat is precies het soort afgeleide
+      # "feit" over een genoemd bedrijf dat dit project verbiedt. Dus: het bedrag dat
+      # zij WEL noemen, met in de note wat het is. Elke afgeleide die dit als totaal
+      # zou lezen (€/contactuur) is hier hoe dan ook geblokkeerd: er zijn geen
+      # gepubliceerde contacturen.
+      amount_eur: 1290
+      variants:
+        - { label: "per studiejaar (vanaf 1 juni 2026)", amount_eur: 1290 }
+        - { label: "vroegboekkorting 1e jaar 2026, bij inschrijving vóór 5 juli 2026", amount_eur: 1220 }
+      # BLIJFT exempt_crkbo, NIET omdat de pagina dat zegt — zie note. Ongewijzigd
+      # gelaten omdat het een bestaande, elders gemaakte keuze is; het bewijs
+      # hieronder zegt dat `unknown` de juiste waarde zou zijn (spec §4.11).
       vat: exempt_crkbo
       published: "yes"
-      note: "De Blikopener publiceert wél een prijs: op een aparte tarievenpagina.
-        Die pagina is nog niet uitgelezen. LET OP — de hier geciteerde bron is de
-        site-overzichtspagina en bevat zélf geen bedrag; de tarievenpagina die de
-        prijs wél draagt staat niet in sources[] en is niet gearchiveerd.
-        Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md)."
-      source: site-2026-06
+      excludes: "eenmalig € 100,- inschrijf- en boekengeld in het 1e jaar; de
+        verblijfskosten van het jaarlijkse yogaweekend ('vanaf 1 juli 2026 € 335,-')."
+      note: "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12), niet per
+        opleiding: het traject loopt meerdere jaren en een totaalprijs publiceren zij
+        niet. Niet vermenigvuldigd — dat zou een bedrag verzinnen dat zij nergens
+        noemen. LET OP (BTW): de tarievenpagina noemt géén BTW — geen 'incl.', geen
+        'excl.', geen 'vrijgesteld', geen CRKBO. Volgens spec §4.11 hoort `vat` dan
+        `unknown` te zijn; de bestaande waarde `exempt_crkbo` is hier niet op deze
+        bron te gronden en lijkt afgeleid uit de CRKBO-registratie, wat §4.11 juist
+        verbiedt. Bewust ongewijzigd gelaten en gemeld i.p.v. stil gecorrigeerd."
+      source: tarieven-2026-07
     hours_claimed:
       total: null
       contact: null
