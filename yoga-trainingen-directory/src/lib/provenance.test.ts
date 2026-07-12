@@ -149,12 +149,24 @@ test("every cited source evidences the claim it is cited for — or the finding 
  * asserted where the evidence actually is.
  */
 const KNOWN_FINDINGS = report.skipped > 0 ? report.findings.map((f) => `${f.providerId}/${f.programId} [${f.check}]`) : [
-  // The cited page prints no BTW at all — so it cannot be the source of a BTW treatment.
+  // BOTH HOURS FINDINGS ARE GONE, and they were gone for OPPOSITE reasons — which is the
+  // distinction this check exists to force, and the reason the list below is only BTW:
+  //
+  //   - wahe/500-pathway [hours] was a SOURCING ERROR. The school really does publish the
+  //     500 ("Samen vormen de 200-uurs basisopleiding en de 300 uur aan verdiepingsmodules
+  //     een totaal van 500 uur opleiding") — on /yoga-alliance/, a page we had never
+  //     captured. Archived, cited, quoted verbatim; the 500 is now THEIR claim.
+  //   - de-yogaschool-enschede [hours] was a STORED SUM. "600" appears in NONE of that
+  //     provider's artifacts: the page publishes 360 contact + 240 self-study and never
+  //     their sum. `total` is now null — we do not store our own arithmetic (§6).
+  //
+  // A page-level check cannot tell those two apart. Only opening the archive can, and
+  // guessing wrong invents a programme in one direction or accuses a school in the other.
+  //
+  // The cited page prints no BTW at all — so it cannot be the source of a BTW treatment
+  // (§4.11: observed, or not known). Triaged in technical-todo.md, each with the reason
+  // the archive gives:
   "adhouna/200-multistyle [vat]",
-  // The cited page prints 200 + 150 + 100. The 500 is OUR sum, stored as their claim (§6).
-  "de-yogaschool-enschede/docentenopleiding-raja [hours]",
-  "wahe/500-pathway [hours]",
-  "wahe/500-pathway [vat]",
   "yoga-den/200-vinyasa [vat]",
   "yoga-den/500-pathway [vat]",
 ];

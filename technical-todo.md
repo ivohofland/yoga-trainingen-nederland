@@ -122,28 +122,95 @@ it is cited for. Triage, do not bulk-fix: each needs a human to find the page th
 state it, archive that page, and re-point the citation. Pinned in `provenance.test.ts`
 (`KNOWN_FINDINGS`), so the count cannot grow unnoticed.*
 
-**BTW cited to a page that never mentions BTW** (4). §4.11: a VAT treatment is directly
-observed or it is not known — it may never be inferred from a CRKBO registration. Each
-needs the page that states the BTW treatment (algemene voorwaarden, inschrijfpagina,
-tarievenpagina), archived; or `vat: unknown`, which is what the two records corrected in
-v0.5 (`de-blikopener` ×2, `yogatreat/200-functional-yin`) now carry.
+### The corpus sweep (all 48 records) — and the ONE distinction that matters
 
-- [ ] **`adhouna/200-multistyle`** — `vat: incl`, cited to `site-multistyle-2026-06`.
-- [ ] **`wahe/500-pathway`** — `vat: excl`, cited to `site-overview-2026-06`.
-- [ ] **`yoga-den/200-vinyasa`** — `vat: incl`, cited to `site-ytt-200-2026-06`.
-- [ ] **`yoga-den/500-pathway`** — `vat: incl`, cited to `site-ytt-overview-2026-06`.
+*Run over every record: **170 claims examined, 0 skipped** (all snapshot bodies present
+locally), of which **72 are a stored `hours_claimed.total`**. Both hours findings are now
+closed, and they closed for **opposite reasons**. That split is the whole point, and it
+cannot be guessed from the YAML — only from the archive:*
 
-**An hours total that appears nowhere on the cited page** (2). Both are the same shape,
-and it is a nastier one than a bad citation: the cited page publishes the PARTS, and the
-total in our record is **our own addition** — a derived value, stored, presented as the
-school's claim (spec §6, principle 9). Either cite a page where the provider states the
-total, or record the parts and derive the total in `derive.ts`.
+- **(a) A SOURCING ERROR** — the school **does** publish the figure, on a page we never
+  captured or never cited. The record is right; our citation was pointing at the wrong
+  page. → *Find the page, archive it, cite it.*
+- **(b) A STORED SUM** — the school **does not** publish the figure; we computed it and
+  stored it in a field that renders as their claim. → *Stop storing it* (§6, principle 9:
+  derived values are never stored).
 
-- [ ] **`de-yogaschool-enschede/docentenopleiding-raja`** — record says 600 u; the page
-  (`site-docenten-2026-07`) prints "360 uren" + "240 uur" and never their sum.
-- [ ] **`wahe/500-pathway`** — record says 500 u; the page (`site-overview-2026-06`)
-  prints 200 + 150 + 100 (+ "~50u komende module"), and `hours_claimed.note` says so in
-  as many words: "200 + 150 + 100 (+ komende ~50u …) = 500u".
+**Hours — (a) sourcing errors** (1, fixed)
+
+- [x] **`wahe/500-pathway`** — **the 500-hour route is real; our sourcing was wrong.** The
+  figure was flagged because the cited overview page never prints "500" — but Wahé markets
+  the stacked route explicitly, on `https://wahe-by-gitty.nl/yoga-alliance/`, a page we had
+  never captured: *"Samen vormen de 200-uurs basisopleiding en de 300 uur aan
+  verdiepingsmodules een totaal van 500 uur opleiding, wat voldoet aan de eisen voor
+  registratie op het 500-uurs niveau bij Yoga Alliance."* Archived as
+  `site-yoga-alliance-2026-07` (Wayback + local); `hours_claimed` and `accreditation` now
+  cite it, the sentences are in `claims[]` **verbatim**, and `composition.modules` lists
+  the four components the school itself names (200 + 150 + 100 + 50). `total: 500` is
+  therefore **their published claim**, not our sum. `label_claimed` was *"RYS 500
+  (YA-leerroute, gestapeld uit de losse opleidingen)"* — half our characterisation, in a
+  field that exists to hold the school's words; it is now the school's own phrase
+  (*"registratie op het 500-uurs niveau bij Yoga Alliance"*), with our commentary moved to
+  `note`.
+  **A real finding fell out of it:** of the four components, three (200u Vinyasa, 150u
+  Yin/Lunar, 100u Restorative) have their own opleidingspagina with dates and enrolment;
+  the **50u Filosofie, Pranayama en meditatie** module has none — the overview page files
+  it under *"Coming:"* and publishes no dates and no price. **The published 500-hour route
+  is currently not completable: 450 of the 500 hours are bookable.** Stated as fact in
+  `hours_claimed.note`, not as characterisation.
+
+**Hours — (b) stored sums** (1, fixed)
+
+- [x] **`de-yogaschool-enschede/docentenopleiding-raja`** — **confirmed against every
+  artifact this provider has: the string "600" appears ZERO times.** The page states
+  *"De opleiding neemt drie jaar of 360 uren in beslag. Daarnaast is er minimale zelfstudie
+  van 240 uur."* — they publish 360 and 240, separately, and **never their sum**. The 600
+  was OUR arithmetic, stored in a field that renders as the school's claimed total.
+  `hours_claimed.total` → **`null`**; `contact: 360` and `self_study: 240` stay (those ARE
+  published and sourced), and the note now says plainly that the school publishes no
+  combined total.
+  **Consequence, and it is a real one:** the reader now sees **no total** for this
+  programme. A derived `total_hours` — same shape as v0.5's derived `total_price` for
+  `de-blikopener` (computed in `derive.ts`, rendered *visibly as ours*, never stored) —
+  would restore it honestly. **Not done here: a deliberate follow-up decision, not a
+  drive-by.**
+
+*No other stored hours total in the corpus fails the check: the remaining 70 all appear,
+as printed figures, on the page they are cited to.*
+
+### BTW cited to a page that never mentions BTW (3 open)
+
+*§4.11: a VAT treatment is **directly observed or it is not known** — it may never be
+inferred from a CRKBO registration, from the invoicing entity, or from a sibling
+programme's page. The same (a)/(b) logic applies, and the archives settle three of the
+four. `vat: unknown` is the honest value for (b) — that is what the two records corrected
+in v0.5 (`de-blikopener` ×2, `yogatreat/200-functional-yin`) now carry.*
+
+**(b) Inferred, never observed — the VAT twin of a stored sum.** Both records' own notes
+admit the inference in as many words. Neither needs a live page to fix: the fix is to stop
+asserting. *(Left as data changes for the maintainer to sign off — this sweep only
+classified them.)*
+
+- [ ] **`adhouna/200-multistyle`** — `vat: incl`, cited to `site-multistyle-2026-06`. That
+  page publishes **no price at all** for this programme, and mentions no BTW. The `incl`
+  is carried over from a **different programme's** page (Yin XL, which does state *"€
+  1.420,00 incl. BTW"*). No archived artifact states this programme's VAT. → `unknown`.
+- [ ] **`yoga-den/500-pathway`** — `vat: incl`, cited to `site-ytt-overview-2026-06`. The
+  note infers it outright: *"zelfde btw-belaste entiteit (Yoga Den B.V., niet-CRKBO)"* —
+  precisely the inference §4.11 forbids. **No Yoga Den artifact mentions BTW anywhere.**
+  → `unknown`.
+
+**Cannot be settled from the archive — needs a live re-check** (not done here: this task
+fetched live pages only for `wahe` and `de-yogaschool-enschede`).
+
+- [ ] **`yoga-den/200-vinyasa`** — `vat: incl`, cited to `site-ytt-200-2026-06`. The record's
+  note claims the page *"vermeldde 'Pricing incl. VAT'"* (past tense), but **no Yoga Den
+  artifact contains the string** — and this is not a partial capture: the cited page's
+  pricing block IS fully captured (*"Pricing"*, *"Investment: €3597"*) and carries no VAT
+  wording beside it. Either the page changed after it was read, or the wording was never
+  there. **Our note and our archive contradict each other**, and only the live page can say
+  which is right: re-check → if the wording is there, this is **(a)** (recapture + re-cite);
+  if not, it is **(b)** (→ `unknown`).
 
 ## Code health
 

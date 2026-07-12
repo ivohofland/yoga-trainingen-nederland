@@ -162,7 +162,7 @@ programs:
         ≠ btw-vrijstelling; niet CRKBO).
       source: site-docenten-2026-07
     hours_claimed:
-      total: 600
+      total: null
       contact: 360
       self_study: 240
       supervised_teaching_practice: null
@@ -170,11 +170,16 @@ programs:
       contact_published: yes
       source: site-docenten-2026-07
       note: >
-        120 lesblokken van wekelijks 3 uur = 360 contacturen over 3 jaar +
-        minimaal 240 uur zelfstudie (min. 1 uur per dag) = 600 uur totaal. Een
-        geïsoleerd lespraktijk-/supervised-teaching-getal wordt niet gegeven; de
-        opleiding is sterk beoefenings-/theoriegericht met een eindexamen, niet
-        primair lespraktijk-uren.
+        DE SCHOOL PUBLICEERT GEEN TOTAAL. Ze publiceert twee getallen, apart:
+        "De opleiding neemt drie jaar of 360 uren in beslag. Daarnaast is er
+        minimale zelfstudie van 240 uur." (120 lesblokken van wekelijks 3 uur =
+        360 contacturen over 3 jaar; de zelfstudie is een minimum, min. 1 uur per
+        dag.) 360 + 240 = 600 is ONZE optelling — het getal 600 komt op geen
+        enkele gearchiveerde pagina van deze school voor, en total blijft daarom
+        leeg (spec §6: afgeleide waarden worden niet opgeslagen). Een geïsoleerd
+        lespraktijk-/supervised-teaching-getal wordt niet gegeven; de opleiding is
+        sterk beoefenings-/theoriegericht met een eindexamen, niet primair
+        lespraktijk-uren.
     composition:
       type: single_program
     assessment_described:
