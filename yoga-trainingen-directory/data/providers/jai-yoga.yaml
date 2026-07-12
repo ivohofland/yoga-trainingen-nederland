@@ -89,6 +89,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-att-2026-06
     assessment_described:
       exists: not_published
@@ -138,6 +139,7 @@ programs:
       self_study: 150
       supervised_teaching_practice: null # "teaching methodology with supervised practice" geclaimd, niet gekwantificeerd
       breakdown_published: "yes"
+      contact_published: "yes"
       source: site-ptt-2026-06
       note: >
         Zelfstudie-aanduiding inconsistent op dezelfde pagina: bovenaan

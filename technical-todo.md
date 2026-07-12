@@ -65,6 +65,41 @@ records stay files-in-git. These items make that workflow fast and safe instead.
   completeness, depth, and `last_verified` age — most-incomplete-first. Never
   writes.
 
+## Research debt
+
+*Not engineering: named, actionable extraction work that the records themselves
+already admit to. Each item below is a record whose `price.published: yes` is
+**cited against a source that does not evidence it** — the overview page we
+captured carries no € amount at all, and the page that does carry the price was
+never captured and never archived. `published: yes` is CORRECT (they do publish a
+price); the amount and its source are missing from our record, and each
+`price.note` now says so in as many words. Until these are done, the price on
+these five is our gap, never a finding about them.*
+
+The fix for each: read the page that carries the price, add it to that record's
+`sources[]` (with `captured`), archive it (`npm run archive -- <id>` — public +
+local, per the publication bar), set `price.amount_eur` (cheapest
+generally-available variant, per the §4 convention) or `variants[]`, set `vat`
+where the page states it, and trim the note back to what is still true.
+
+- [ ] **`aalo-yoga-academie/yin-yang-ryt200`** — price is per pakket/module on the
+  separate **inschrijfpagina's** (`site-2026-06` = the overzichtspagina, no amount).
+  Extract the pakket/module prices, decide the comparable base for a
+  `free_assembly` RYT200, source + archive the inschrijfpagina's.
+- [ ] **`aalo-yoga-academie/yin-ryt200`** — same provider, same inschrijfpagina's,
+  same missing source. Do both Aalo programmes in one pass.
+- [ ] **`de-blikopener/hatha-raja-opleiding`** — price is on a separate
+  **tarievenpagina** (`site-2026-06` = the site overview, no amount). Read, source,
+  archive, extract. `vat: exempt_crkbo` is already recorded.
+- [ ] **`sanayou/200-online`** — modular online, 3 routes; prices are per
+  module/traject on the **module-/inschrijfpagina's** (`site-online-2026-06` = the
+  overzicht, no amount). Needs a decision on the comparable base across the 3 routes
+  as well as the extraction.
+- [ ] **`yoga-academie-nederland/300-hatha-verdieping`** — prices are in a **PDF
+  linked from the opleidingspagina** (datakosten). The PDF is the source: capture it
+  (`type: pdf`), archive it locally — a linked PDF is exactly the artefact a provider
+  can replace silently — and extract the amounts.
+
 ## Code health
 
 - [ ] **Linter + formatter.** No ESLint/Prettier config exists. Add `next lint`

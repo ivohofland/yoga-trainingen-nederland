@@ -154,6 +154,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yin200-2026-06
       note: >
         "Training at a glance": 80u online learning (50u Yin & Anatomy + 30u Yin

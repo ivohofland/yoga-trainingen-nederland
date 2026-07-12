@@ -116,6 +116,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-basis-2026-06
       note: >
         200u over 8 trainingsweekenden (vr/za/zo 09:00-17:00, jun-sep 2026).
@@ -176,6 +177,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-advanced-2026-06
       note: >
         300u zelf samen te stellen uit keuzemodules binnen 2,5 jaar; YA-eis:

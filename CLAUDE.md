@@ -114,10 +114,27 @@ them silently corrupts the dataset's credibility.
   "not yet investigated" (a *gap*, never rendered as a finding). Never collapse
   the two. A negative finding stays `unknown` until verified — see the
   enumeration notes on Yogapoint/Delight.
+- **`hours_claimed` asks about the breakdown TWICE, and the two answers differ**
+  (spec §4.3, v0.4). `breakdown_published` = do they break the total down *at
+  all*? `contact_published` = do they publish the **contact-hour figure
+  specifically** — the number `pricePerContactHour` needs? Both are required on
+  every programme, and both directions occur: three providers publish a rich
+  breakdown by *subject*, by *delivery mode*, or in *ranges* with no contact
+  figure in it (`breakdown_published: yes` + `contact_published: not_published`);
+  two publish the contact figure and nothing else (the reverse). **`pphBlocker`
+  blocks on `contact_published`** — the field that stops a derivation is the
+  field we must cite when we say why. Do not "simplify" it back to one quad: one
+  quad for two questions is what made the site call its most transparent schools
+  un-investigated. `supervised_teaching_practice` is still governed by
+  `breakdown_published` (there is no `supervised_published`).
 - **Claims are quoted verbatim, never characterized** (legal posture, spec §3).
   Claims are stored as claims with a mandatory `source`, never as facts. Any
   analysis of a claim lives in a separate, methodology-versioned `analysis`
-  sub-object (layer 3 only).
+  sub-object (layer 3 only). **A `claim.quote` stores the provider's words and no
+  delimiters** — the record page supplies the quotation marks, so a value stored
+  as `"…"` renders doubled. `integrityErrors()` rejects a quote that both opens
+  and closes with a quote mark; the renderer never edits a quote to compensate,
+  because a renderer that may edit verbatim text is the thing §3 forbids.
 - **Every cohort needs `status` + `source`** — an announced cohort is not a
   cohort that ran; recording one as if it ran is the central trap (spec §8).
 - **No composite scores. Anywhere.** Assessments have per-axis sub-scores by

@@ -74,6 +74,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "200u op locatie, verspreid over 10 weekenden (NL). Geen uren-/lespraktijk-uitsplitsing."
           },
@@ -212,7 +213,7 @@
             "amount_eur": null,
             "vat": "unknown",
             "published": "yes",
-            "note": "prijs per pakket/module op inschrijfpagina's, niet als één totaal op overzicht; nog uit te lezen",
+            "note": "Aalo publiceert wél een prijs: per pakket/module op de aparte inschrijfpagina's, niet als één totaal op het overzicht. Het bedrag is nog niet uitgelezen. LET OP — de hier geciteerde bron is die overzichtspagina en bevat zélf geen bedrag; de inschrijfpagina's die de prijs wél dragen staan niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
             "source": "site-2026-06"
           },
           "hours_claimed": {
@@ -221,6 +222,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06"
           },
           "composition": {
@@ -279,7 +281,7 @@
             "amount_eur": null,
             "vat": "unknown",
             "published": "yes",
-            "note": "per module/pakket; nog uit te lezen",
+            "note": "Aalo publiceert wél een prijs: per module/pakket op de aparte inschrijfpagina's. Het bedrag is nog niet uitgelezen. LET OP — de hier geciteerde bron is de overzichtspagina en bevat zélf geen bedrag; de inschrijfpagina's die de prijs wél dragen staan niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
             "source": "site-2026-06"
           },
           "hours_claimed": {
@@ -288,6 +290,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06"
           },
           "composition": {
@@ -425,6 +428,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-multistyle-2026-06",
             "note": "Lesdagen 9:00-18:30 te Brunssum. 100u-Hatha-houders kunnen met +100u de 200u voltooien. Geen geïsoleerd contact-urental."
           },
@@ -505,6 +509,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yinxl-2026-06",
             "note": "2 delen, lesdagen 10:00-18:00 te Brunssum. 100u-Yin-houders kunnen met +100u de 200u voltooien."
           },
@@ -696,6 +701,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06"
           },
           "assessment_described": {
@@ -878,6 +884,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "brochure-2026-06",
             "note": "200u in 2 modules over 10 weekenden: Module 1 = 85u (4 weekenden; Yin+Yang/ Vinyasa-asana, anatomie elk weekend, 5 elementen/meridianen, filosofie, chakra's, Sanskriet), Module 2 = 115u (6 weekenden; teaching skills, voice, hands-on adjustments, blessurepreventie, business of yoga). Zelfstudie 2-4 uur/week. Begeleide lespraktijk aanwezig maar niet als urental: studenten geven asana's in weekend 5 & 7 en CO-DOCEREN een echte studioles met een ervaren docent in weekend 8. Geen geïsoleerde contact-/lespraktijk-uren.\n"
           },
@@ -1238,6 +1245,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2025-vinyasa-2026-06",
             "note": "8 weekenden + 6 zaterdagen over 7 maanden (13 sep 2025-15 mrt 2026), dagelijks 9:30-17:00. Online anatomie-cursus (David Keil) apart. Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -1349,6 +1357,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-hybrid-2026-06",
             "note": "Hybride: zelf-paced online (filosofie + toegepaste anatomie) + immersie 1 (Bluebirds Oost, 19-24 okt 2026, 8:30-17:00) + immersie 2 (residentieel Mariënkroon, 21-27 nov 2026). Afstudeereis: een volledige 1-uurs Vinyasa-les geven. Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -1599,6 +1608,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06"
           },
           "assessment_described": {
@@ -1722,6 +1732,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "Geen RYT-urentelling (eigen methode). Wel concreet: in jaar 2 geef je 5 yogalessen aan een zelf geworven groep leerlingen + eindverslag + presentatie. Min. 2 CAY-lessen/week verplicht; thuisoefening ~20 min/dag aanbevolen.\n"
           },
@@ -1872,7 +1883,7 @@
             "amount_eur": null,
             "vat": "exempt_crkbo",
             "published": "yes",
-            "note": "prijs op aparte tarievenpagina, nog niet uitgelezen",
+            "note": "De Blikopener publiceert wél een prijs: op een aparte tarievenpagina. Die pagina is nog niet uitgelezen. LET OP — de hier geciteerde bron is de site-overzichtspagina en bevat zélf geen bedrag; de tarievenpagina die de prijs wél draagt staat niet in sources[] en is niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
             "source": "site-2026-06"
           },
           "hours_claimed": {
@@ -1881,6 +1892,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "geen urentelling op homepage; meerjarig traject"
           },
@@ -2067,6 +2079,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-vinyasa-2026-06",
             "note": "200u-format; lesdata als weekenden (vr-avond + za/zo) + enkele midweekdagen, geen uren-uitsplitsing. 4 OPTIONELE praktijkdagen onder mentorbegeleiding. Zelfstudie: verplichte literatuur, boekpresentatie, persoonlijk verslag, eigen oefengroepje. Max. 3 dagen missen.\n"
           },
@@ -2156,6 +2169,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin-2026-06",
             "note": "200u-format, ~7 maanden; geen uren-uitsplitsing gepubliceerd."
           },
@@ -2231,6 +2245,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-intensive-2026-06",
             "note": "Volledig 200u-programma in 3,5 weken immersion, dagelijks 10:00-17:00, Amsterdam. Bevat 'mentored teaching labs' + feedback van senior teachers; geen geïsoleerd uren-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -2504,6 +2519,7 @@
             "self_study": 240,
             "supervised_teaching_practice": null,
             "breakdown_published": "yes",
+            "contact_published": "yes",
             "source": "site-docenten-2026-07",
             "note": "120 lesblokken van wekelijks 3 uur = 360 contacturen over 3 jaar + minimaal 240 uur zelfstudie (min. 1 uur per dag) = 600 uur totaal. Een geïsoleerd lespraktijk-/supervised-teaching-getal wordt niet gegeven; de opleiding is sterk beoefenings-/theoriegericht met een eindexamen, niet primair lespraktijk-uren.\n"
           },
@@ -2579,6 +2595,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "yes",
             "source": "site-meester-2026-07",
             "note": "120 lesblokken van wekelijks 3 uur = 360 contacturen over 3 jaar + minimaal 1,5 uur zelfwerkzaamheid per dag (niet als totaal-getal gepubliceerd).\n"
           },
@@ -2615,7 +2632,7 @@
         {
           "id": "meester-lineage",
           "scope": "program:meesteropleiding-raja",
-          "quote": "\"Het eerste jaar: Witte Magie. ... Het tweede jaar: Esoterische Psychologie. ... [de] intrinsieke conditie volgens de 7 stralenleer. ... Het derde jaar: Esoterische Genezing.\"\n",
+          "quote": "Het eerste jaar: Witte Magie. ... Het tweede jaar: Esoterische Psychologie. ... [de] intrinsieke conditie volgens de 7 stralenleer. ... Het derde jaar: Esoterische Genezing.\n",
           "category": "lineage_authority",
           "source": "site-meester-2026-07",
           "analysis": {
@@ -2822,6 +2839,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "yes",
+            "contact_published": "yes",
             "source": "site-2026-06",
             "note": "\"De opleiding zelf bestaat uit 220 contacturen\" — expliciet vermeld. Daarnaast 5-7 uur/week eigen praktijk + zelfstudie (geen totaal). Lesgeven is onderdeel (groepsles mogelijk na module 3), maar niet als urental geïsoleerd. Module 5 bevat een 3-daagse retraite.\n"
           },
@@ -3051,6 +3069,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "10 weekenden (za 12:00-18:00, zo 10:00-17:00) + ~3-5u zelfstudie/week. Concreet feedbacksignaal: halverwege én aan het einde een OPGENOMEN les die door de hoofddocent wordt beoordeeld + uitgebreide feedback (op opnames, niet live geobserveerd). Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -3320,6 +3339,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-ytt-2026-06",
             "note": "200u over 4 residentiële blokken (20 lesdagen: 2×4 + 1×5 + 1×7 dagen) met een volle dagstructuur (05:30-08:00 ochtendpractice, ochtend-/middag-/avond- programma). Tussen de blokken buddy-groepjes (geen extra live bijeenkomsten). Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd; max 10% (2 dagen) verzuim toegestaan (inhalen in een volgende opleiding).\n"
           },
@@ -3566,6 +3586,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-hatha-2026-06",
             "note": "4 residentiële blokken (2 weekenden + 2 weken) op Hof van Kairos; dagstructuur 07:30 sadhana - 20:00 avondprogramma. ~3u integratiewerk/week tussen de blokken + intervisie in oefengroepjes. Geen geïsoleerd contact-/ lespraktijk-urental.\n"
           },
@@ -3650,6 +3671,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin-2026-06",
             "note": "Residentiële week (ma-zo) op Hof van Kairos. Geen geïsoleerd contact-urental."
           },
@@ -3846,6 +3868,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-maxstrom-2026-06",
             "note": "28 opleidingsdagen totaal, hybride. Segment 1: 15 dagen in-person Inner Axis yoga/beweging met Max (1 rustdag). Segment 2: Breathe to Heal (retraite Oostenrijk) + 6 dagen Applied Anatomy live online (Jamie Elmer, 3 weekenden). Max doceert 21 dagen, Jamie 7, + 4u online nazorg. Geen uren-uitsplitsing of geïsoleerd lespraktijk-urental gepubliceerd; wel posture labs en \"practicing teaching\" in het dagrooster (9-16:30 incl. 1,5u pauze).\n"
           },
@@ -4069,6 +4092,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-att-2026-06"
           },
           "assessment_described": {
@@ -4132,6 +4156,7 @@
             "self_study": 150,
             "supervised_teaching_practice": null,
             "breakdown_published": "yes",
+            "contact_published": "yes",
             "source": "site-ptt-2026-06",
             "note": "Zelfstudie-aanduiding inconsistent op dezelfde pagina: bovenaan \"personal practice & study (100+ hrs.)\", onderaan \"approximately 150 additional hours… number of hours amounts to 350\".\n"
           },
@@ -4322,6 +4347,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06"
           },
           "coherence_signals": {
@@ -4483,6 +4509,7 @@
             "self_study": 20,
             "supervised_teaching_practice": null,
             "breakdown_published": "yes",
+            "contact_published": "yes",
             "source": "site-2026-06",
             "note": "EXPLICIET gepubliceerd: 200u = 180u gezamenlijk (contact) op de trainingsdagen + minimaal 20u zelfstudie (waarschijnlijk meer). Deelnemers geven elke bijeenkomst (een deel van) een les (dagelijks ~12:30-14:30 peer-teaching + feedback); geen geïsoleerd lespraktijk-urental, maar lespraktijk is structureel en doorlopend.\n"
           },
@@ -4712,6 +4739,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-hatha-2026-06",
             "note": "VOLLEDIG ONLINE & SELF-PACED: de \"200 uur\" is zelfstudie-materiaal (videolessen, leesmateriaal, quizzen, opdrachten), geen live cohort of geroosterde contacturen (YA-profiel toont 0 training dates). Persoonlijke begeleiding op aanvraag (e-mail/telefoon/videobellen). LET OP (descriptief, geen compliance-oordeel): de huidige YA-standaard STAAT 100% distance learning TOE, maar eist min. 15% synchroon = 30u voor een RYS 200 (docent + studenten real-time samen, online of fysiek). Een volledig pre-recorded/self-paced 200u zonder geroosterde synchrone component haalt die 30u-synchroon-eis niet. De RYS dateert echter van 2019 en is mogelijk niet ge-up-levelt naar de elevated standaard (legacy) — zie standards-era backlog-idee.\n"
           },
@@ -4803,6 +4831,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin-2026-06",
             "note": "VOLLEDIG ONLINE & SELF-PACED (gemiddeld 6-12 mnd, zelf te bepalen): \"200 uur\" = zelfstudie-materiaal (videolessen, leesmateriaal, opdrachten, quizzen), geen live cohort/contacturen. Zelfde elevated-standaard-kanttekening als bij de Hatha-opleiding (descriptief; RYS legacy 2019).\n"
           },
@@ -5010,6 +5039,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-basis-2026-06",
             "note": "200u over 8 trainingsweekenden (vr/za/zo 09:00-17:00, jun-sep 2026). Functionele anatomie is een kernonderdeel. Lesgeven is onderdeel maar niet als geïsoleerd uren-/lespraktijk-urental gepubliceerd. NB: ook een Engelstalige variant ('Fundamental Teacher Training', zie site-fundamental).\n"
           },
@@ -5084,6 +5114,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-advanced-2026-06",
             "note": "300u zelf samen te stellen uit keuzemodules binnen 2,5 jaar; YA-eis: alle modules op één locatie. Modules grotendeels in weekenden/avonden, met internationale gastdocenten (o.a. Max Strom gaf hier gastlessen — zie provider inner-axis).\n"
           },
@@ -5301,6 +5332,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-product-2026-06",
             "note": "200u training & coaching over ~7 maanden (hybride). 3 lesweekenden (Waalwijk/Veen) + 3 zoom-avonden + 3-daags retreatweekend + 2 praktijkdagen + 2 examendagen. Daarnaast wekelijks zelf een les geven aan familie/vrienden + wekelijks zelf een les volgen. Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -5537,6 +5569,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-200-2026-06",
             "note": "4 modules van 50u (Anatomie/basis, Energie, Energiewerk/Qi Gong, Myofascial release/myoyin). Elke 50u-module = 5 lesdagen + persoonlijke zelfstudie/lees-/huiswerkopdrachten (~12u/module, grotendeels Bernie-Clark-lezen vooraf). 200u-diploma = 4 modules + online theorie-examen + afrondingsopdracht. Geen geïsoleerd contact-/ lespraktijk-urental gepubliceerd.\n"
           },
@@ -5812,6 +5845,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "yes",
             "source": "site-pureteacher-2026-06",
             "note": "De site noemt \"200 contacturen\" over ca. 2 jaar, verdeeld over 39 lesdagen (Module I 10 + II 16 + III 10 + IV 3), naast eigen oefen-/ studie-uren. De 200u zijn dus geframed als contacturen; de zelfstudie-uren en een geïsoleerd lespraktijk-/supervised-teaching-getal zijn niet als getallen gepubliceerd.\n"
           },
@@ -6111,6 +6145,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "Format uitgedrukt in lesdagen en weekuren, niet in een uren-uitsplitsing. Min. 120u yoga volgen bij (erkende) docent als aparte verplichting. Begeleide lespraktijk aanwezig (\"oefenlessen geven aan medecursisten, eigen cursisten, intervisie\") maar niet gekwantificeerd.\n"
           },
@@ -6294,6 +6329,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-klassikaal-2026-06",
             "note": "4 modules van 50u (Yin 1, Yin 2, Yang 1, Yang 2), elk 6 lesdagen. Lesgeven/didactiek + eigen lessen opbouwen aanwezig; geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -6393,7 +6429,7 @@
             "amount_eur": null,
             "vat": "unknown",
             "published": "yes",
-            "note": "Modulair online (3 routes); prijs per module/traject — bedragen niet uitgelezen in deze ronde.",
+            "note": "Modulair online (3 routes). Sanayou publiceert wél prijzen: per module/traject, op de module- en inschrijfpagina's. Bedragen niet uitgelezen in deze ronde. LET OP — de hier geciteerde bron is de overzichtspagina en bevat zélf geen bedrag; de pagina's die de prijzen wél dragen staan niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
             "source": "site-online-2026-06"
           },
           "hours_claimed": {
@@ -6402,6 +6438,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-online-2026-06",
             "note": "200u online, modulair (o.a. Yin Yoga Basics, 5 Elementenleer, Fascia, Advanced Yin & Yang Flows)."
           },
@@ -6466,6 +6503,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-300-2026-06",
             "note": "300u hybride, modulair (13+ keuzemodules), 2 richtingen (Yin Mastery / Yoga Awakening)."
           },
@@ -6741,6 +6779,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-200-2026-06",
             "note": "10 lesweekenden/jaar (9 modules van 2 dagen + 2 examendagen), elke lesdag 09:00-17:30. Daarnaast ~5u/week buiten de weekenden verwacht (eigen beoefening, oefenen in lesgeven, achtergronden) voor het docent-certificaat. Lesgeven aan medecursisten vanaf het begin; geen geïsoleerd contact-/ lespraktijk-urental gepubliceerd. Online omgeving vanaf sep 2026.\n"
           },
@@ -6849,6 +6888,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-300-2026-06",
             "note": "YA-pad: 6 modules van 50u (geen vrijstelling). VYN-pad: 7 modules + scriptie + examen, min. 3 jaar (vrijstellingen mogelijk). Modules: Yin (2×50u YA / 2×40u VYN), Yoga Nidra (2×50u), Energetische Aspecten (2×50u + 1×32u). Modulair instroombaar; los als 50u-bijscholing.\n"
           },
@@ -7034,6 +7074,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-tt-2026-06",
             "note": "6 weekenden (za-zo 9:00-17:00) + een 6-daagse residentiële immersion (2-7 mei 2027) + voorbereidende/thuisopdrachten. Geen geïsoleerd contact-/lespraktijk- urental.\n"
           },
@@ -7263,6 +7304,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "9 weekenden over 9 maanden (3x vrijdagavond 19-21 + za/zo 09:00-17:00), alle dagdelen fysiek. Daarnaast verwacht: gem. 4 yogalessen/maand (32 totaal, min. 12 met de eigen mentor). 'Asana in Depth' (2 sessies/weekend), teaching skills + sequencing (eigen lessen voorbereiden). Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -7526,6 +7568,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-vinyasa200-2026-06",
             "note": "6 weekenden (vr 18:00-20:00, za 12:00-20:00, zo 10:00-18:00) + retreatweek. Hands-on: 16 lessen volgen, 2 assisteren, 4 observeren bij Studio Tribes. Eindtoets: open-book essay (thuis) + groeps-lesexamen. Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -7630,6 +7673,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin200-2026-06",
             "note": "4×50u modules (The Essence/Channels/Elements/Art), elk los boekbaar (ook als continuing ed); start met elke module, eigen tempo; 200u-certificaat na alle vier. Eindtoets & examen. Per yogindra.com: deelnemers volgen 5 lessen bij Indra. Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -7734,6 +7778,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-vinyasa300-2026-06",
             "note": "2 retreats (75u; intro noemt afwijkend \"75h & 100h\") + 6×25u modules. Diploma-assessments: meedraaien in 10 lessen, 2 assisteren, 1 les/workshop leiden (geobserveerd + 1-op-1 feedback), schriftelijke opdracht. Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -8037,6 +8082,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-vinyasa-2026-06",
             "note": "12 weekenden (za/zo 10:00-18:00) = 200u geclaimd; daarnaast 20u online anatomie (verplicht), 40 verplichte yogalessen, ~2u studie/week, 3 extra (niet-verplichte) oefendagen. Geen geïsoleerd contact-/lespraktijk- urental gepubliceerd.\n"
           },
@@ -8145,6 +8191,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin-2026-06",
             "note": "Geclaimd als 200u over 3 modules, maar de gepubliceerde deelgetallen zijn INTERN INCONSISTENT: '3 modules of 60 hours' (=180u), elders '5 studiodagen + 10u online' per module (=±45u/module, ±135u totaal) en in één tab '7 weekends + 7 days online – 50 hrs'. Geen sluitende uren-uitsplitsing.\n"
           },
@@ -8405,6 +8452,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-vinyasa200-2026-06",
             "note": "22 live dagen in Baarn (11 blokken, vr+za 10:30-17:30) + min. 20 min eigen practice/dag + online leeromgeving + praktijkdagen. Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -8491,6 +8539,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin150-2026-06",
             "note": "Weekenden 10:30-17:30 in Baarn. Geen geïsoleerd contact-urental."
           },
@@ -8569,6 +8618,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-restorative100-2026-06",
             "note": "8 live dagen (4 weekenden) 10:30-17:30 + min. 20 min eigen practice/dag."
           },
@@ -8649,6 +8699,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-overview-2026-06",
             "note": "200 + 150 + 100 (+ komende ~50u filosofie/pranayama-module) = 500u."
           },
@@ -8872,6 +8923,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin-2026-06",
             "note": "200u-format over 10 weekenden (vr 18:30-21:30 masterclass; za/zo 09:00-17:00: praktijk, theorie, 'practicing your skills'). Geen geïsoleerd uren-/ lespraktijk-urental gepubliceerd. Max. 28 deelnemers; wachtlijst.\n"
           },
@@ -8971,6 +9023,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-vinyasa-2026-06",
             "note": "200u-format, weekenden bij Yagoy Pijp (Karel du Jardinstraat 33); november-start."
           },
@@ -9149,7 +9202,7 @@
             "amount_eur": null,
             "vat": "unknown",
             "published": "yes",
-            "note": "prijzen in gelinkte PDF (datakosten), nog niet geëxtraheerd",
+            "note": "Yoga Academie Nederland publiceert wél prijzen: in een vanaf de opleidingspagina gelinkte PDF (datakosten). Die PDF is nog niet geëxtraheerd. LET OP — de hier geciteerde bron is de opleidingspagina zelf en bevat zélf geen bedrag; de gelinkte PDF die de prijzen wél draagt staat niet in sources[] en is niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
             "source": "site-2026-06"
           },
           "hours_claimed": {
@@ -9158,6 +9211,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06"
           },
           "composition": {
@@ -9383,6 +9437,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-odaka-2026-06",
             "note": "200u klassikaal (in-person), opgebouwd uit kernmodules; praktijk- opdrachten + peer-teaching. Geen uren-/contact-uitsplitsing gepubliceerd."
           },
@@ -9464,6 +9519,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin-2026-06",
             "note": "200u klassikaal: één meerdaagse module + losse weekend-studiedagen + huiswerkopdrachten. Geen uren-/contact-uitsplitsing gepubliceerd."
           },
@@ -9763,6 +9819,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-ytt-200-2026-06",
             "note": "1-weekse intensive (14-20 sep) + 3 Amsterdam-weekenden (2-4 okt, 6-8 nov, 4-6 dec 2026). Locatie van de intensive niet gespecificeerd op de 2026-pagina (de 2025-editie deed een week in Marokko). Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -9852,6 +9909,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-ytt-overview-2026-06",
             "note": "200u (foundational) + modules (100H Advanced YTT, 50H Yin, 50H Advanced Asana & Ayurveda, 50H Ashtanga Intensive, 50H Alignment, 50H Pilates, 50/100H Mentorship, 50H Pranayama & Meditation, Restorative YTT, 50H Rocket). Geen geïsoleerd contact-/lespraktijk-urental.\n"
           },
@@ -10121,6 +10179,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-200-2026-06",
             "note": "Geen urenuitsplitsing op de pagina; \"observing in YM classes\" inbegrepen maar niet gekwantificeerd.\n"
           },
@@ -10226,6 +10285,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "yes",
+            "contact_published": "yes",
             "source": "site-300-2026-06",
             "note": "\"245+ contact hours in 8 required modules\" + 45 keuze-uren (electives) + \"OmWork\" (persoonlijke praktijk ±15-20u/maand, 25 te geven lesuren, eindproject). Begeleide lespraktijk niet als apart urental; wel Module 7 \"The Art of Reading Bodies\" (adjustments) en 25 lesuren als afstudeereis.\n"
           },
@@ -10350,6 +10410,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-ashtanga-2026-06",
             "note": "Geen uren-totaal op de pagina (format via RYS 200). Wel: \"Observing and Assisting in Class: at least 12 hours under the guidance of Lead Teacher/ Assistant(s)\" (observeren/assisteren), dagelijkse eigen praktijk 1-2u, huiswerk 3-8u/week.\n"
           },
@@ -10602,6 +10663,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-200-2026-06",
             "note": "Geen uren-uitsplitsing. Wel concreet praktijk-/lespraktijkkader: praktijkdag + supervisie (30 jan), praktijk-examen (27 jun), studiegroep om lesgeven te oefenen, plus 16 studiolessen volgen + min. 8 observeren. Begeleide lespraktijk aanwezig maar niet als urental geïsoleerd.\n"
           },
@@ -10697,6 +10759,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-300-2026-06"
           },
           "composition": {
@@ -10919,6 +10982,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "'200+ uur'. 11 lesweekenden (vr+za 13:30-18:30) + retreat (examens/ diploma-uitreiking) + reserveweekend voor herexamens. Daarnaast ~3u studiebelasting + min. 2 yogalessen/week (met verslag); peer-teaching & adjustments. Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -11165,6 +11229,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-opleiding-2026-06",
             "note": "2-jarig: jaar 1 = 18 lesdagen (3 digitaal), jaar 2 = 21 lesdagen; vrijdag 9:00-16:00. ~4-6u zelfstudie/week. 5 gratis yogalessen/maand (studio of online). Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -11381,6 +11446,7 @@
             "self_study": null,
             "supervised_teaching_practice": 10,
             "breakdown_published": "yes",
+            "contact_published": "not_published",
             "source": "site-academy-tt-2026-06",
             "note": "GEPUBLICEERDE breakdown (transparantie-uitschieter): 110u pre-recorded klassen + 30u live online lectures/Q&A + 10u small-group teaching practice + wekelijkse assignments/yogalessen (~50u zelfstudie/integratie tot 200u). ~15u inzet per week, rustweek elke 4-5 weken. De 30u synchroon (live) komt overeen met de online-RYS200-eis (min. 15% / 30u synchroon); de 10u begeleide lespraktijk is EXPLICIET vermeld — zeldzaam in de markt (§5).\n"
           },
@@ -11443,7 +11509,7 @@
             "price_state": "yes",
             "price_band": "under3000",
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": true
@@ -11617,6 +11683,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "200u over 8 maanden: 7 trainingsweekenden (Sittard) + 1 interne residentiële week (Belfeld). Geen uren-uitsplitsing gepubliceerd. \"Praktijkstage bij een erkende yogaschool\" = begeleide lespraktijk, niet gekwantificeerd. Bevat ook mentoring + intervisie.\n"
           },
@@ -11830,6 +11897,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06"
           },
           "group_size_claimed": {
@@ -12078,6 +12146,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-vinyasa-2026-06",
             "note": "200u over 8 weekenden / 24 lesdagen (vr 17-21, za 11:30-18:30, zo 12:30-19:30) + 4 verplichte intervisie-/oefendagen (3u, zelf in te plannen) + eigen practice/reflectie tussen de weekenden. Geen geïsoleerd contact-/ lespraktijk-urental.\n"
           },
@@ -12321,6 +12390,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-yin200-2026-06",
             "note": "\"Training at a glance\": 80u online learning (50u Yin & Anatomy + 30u Yin & Meridians, pre-recorded) + live adjustment & teaching-practice sessies (Zoom) + live mentoring (whole-group + study-group) + maandelijkse 90-min live Yin-les (verplicht) + quizzes/homework/closure assignments. De volledige 200u-decompositie en de live-/lespraktijk-uren zijn niet als getallen gepubliceerd.\n"
           },
@@ -12517,6 +12587,7 @@
             "self_study": null,
             "supervised_teaching_practice": 10,
             "breakdown_published": "yes",
+            "contact_published": "not_published",
             "source": "site-ryt200-2026-06",
             "note": "Verdeling per onderdeel gepubliceerd: Asana & Methodologie 100, Anatomie/ Fysiologie/Psychologie 20, Filosofie & Ethiek 30, Meditatie & Ademhaling 15, Practicum 10 — telt op tot 175 van de 200; ondernemersmodule ongekwantificeerd. De \"stage, lesgeven beoefening met gestructureerde feedback\" is VRIJWILLIG (\"vanaf maart, sterk aanbevolen\") en telt hier niet mee als begeleide lespraktijk.\n"
           },
@@ -12540,7 +12611,7 @@
             "price_state": "yes",
             "price_band": "under3000",
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": true
@@ -12583,6 +12654,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "yes",
+            "contact_published": "not_published",
             "source": "site-ryt300-2026-06",
             "note": "Verdeling gepubliceerd als BANDBREEDTES: Asana/Sequencing/Praktijk 100-150, Lesgeefmethodologie 25-40, Anatomie/Fysiologie/Subtiele Lichamen 20-40, Filosofie/Levensstijl/Ethiek 30-60, Practicum (observeren, assisteren, lesgeven) 30-50. Minima tellen op tot 205, maxima tot 340. Practicum vermengt observeren/assisteren/lesgeven, dus begeleide lespraktijk niet als getal te isoleren.\n"
           },
@@ -12603,7 +12675,7 @@
             "price_state": "yes",
             "price_band": "from3000",
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": true
@@ -12804,6 +12876,7 @@
             "self_study": null,
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
+            "contact_published": "not_published",
             "source": "site-2026-06",
             "note": "200u over 33 lesdagen (vrijdag 11:00-17:30) in 5 modules + Engelstalig online anatomie-programma + huiswerk/zelfstudie. Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
           },

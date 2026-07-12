@@ -255,6 +255,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-vinyasa200-2026-06
       note: >
         6 weekenden (vr 18:00-20:00, za 12:00-20:00, zo 10:00-18:00) +
@@ -353,6 +354,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yin200-2026-06
       note: >
         4×50u modules (The Essence/Channels/Elements/Art), elk los boekbaar (ook
@@ -445,6 +447,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-vinyasa300-2026-06
       note: >
         2 retreats (75u; intro noemt afwijkend "75h & 100h") + 6×25u modules.

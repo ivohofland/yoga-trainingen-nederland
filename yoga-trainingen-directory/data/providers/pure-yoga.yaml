@@ -255,6 +255,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: yes
       source: site-pureteacher-2026-06
       note: >
         De site noemt "200 contacturen" over ca. 2 jaar, verdeeld over 39

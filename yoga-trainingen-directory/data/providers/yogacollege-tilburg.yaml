@@ -162,6 +162,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-opleiding-2026-06
       note: >
         2-jarig: jaar 1 = 18 lesdagen (3 digitaal), jaar 2 = 21 lesdagen;

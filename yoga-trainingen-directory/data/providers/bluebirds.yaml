@@ -172,6 +172,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2025-vinyasa-2026-06
       note: >
         8 weekenden + 6 zaterdagen over 7 maanden (13 sep 2025-15 mrt 2026),
@@ -258,6 +259,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-hybrid-2026-06
       note: >
         Hybride: zelf-paced online (filosofie + toegepaste anatomie) + immersie

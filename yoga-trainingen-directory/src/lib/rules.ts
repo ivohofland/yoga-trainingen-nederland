@@ -41,11 +41,18 @@ import type { Program, Quad } from "../schema";
  * gepubliceerd op de 300u-pagina"). Both therefore license the amber finding.
  *
  * `yes` is the genuinely contradictory case: the record says the provider DOES
- * publish it, yet the value is missing from our record anyway — three programmes
- * are exactly this shape (yogaeasy/200-hatha-vinyasa, yogic-life/ryt200-multistyle,
- * yogic-life/ryt300-multistyle: an amount, a published breakdown, and no
- * `hours_claimed.contact`). The missing value is OURS. That is a gap, and so is
- * `unknown` — nobody looked yet.
+ * publish it, yet the value is missing from our record anyway — five programmes are
+ * exactly this shape on the price (`price.published: yes`, no `amount_eur`; see
+ * priceAmountIsOurGap) and six on the supervised-practice figure
+ * (`breakdown_published: yes`, no `supervised_teaching_practice`). The missing value
+ * is OURS. That is a gap, and so is `unknown` — nobody looked yet.
+ *
+ * Note what this rule does NOT license: reading a governing field that does not
+ * govern the value in question. Until v0.4, €/contactuur read `breakdown_published`
+ * — a field about the breakdown, not about the contact hours — and so three
+ * providers who publish a breakdown WITHOUT a contact-hour figure landed on this
+ * `yes` branch and were rendered as our gap. The rule was right; the field was the
+ * wrong one. Hence `hours_claimed.contact_published` (spec v0.4) and pphBlocker.
  *
  * Every caller — €/contactuur, the hours breakdown, supervised practice, the price
  * amount — routes through here. The rule is stated ONCE.
@@ -73,12 +80,29 @@ export function publishedQuad(published: Quad): Quad {
  * about that field. There are exactly two blockers, and they are findings about
  * two different fields:
  *   - no price amount  → the blocker is the price → `price.published`;
- *   - no contact hours → the blocker is the hours → `hours_claimed.breakdown_published`.
+ *   - no contact hours → the blocker is the hours → `hours_claimed.contact_published`.
+ *
+ * THE HOURS BLOCKER IS `contact_published`, NOT `breakdown_published` (spec v0.4).
+ * The derivation needs ONE number — the contact hours — so the field that must be
+ * cited when we say why we cannot compute it is the field about THAT number.
+ * `breakdown_published` answers a different question ("do they break the total down
+ * at all?"), and the two come apart in both directions:
+ *
+ *   - yogaeasy/200-hatha-vinyasa, yogic-life/ryt200-multistyle, ryt300-multistyle
+ *     publish a breakdown (`breakdown_published: yes`) that is by delivery mode, by
+ *     subject, or in ranges — no contact-hour figure anywhere in it. Blocking on
+ *     `breakdown_published` sent them down the `yes` branch of missingBecause and
+ *     printed "nog niet onderzocht": the three most transparent hour-publishers in
+ *     the corpus, told to readers as research we never did. We did do it.
+ *   - de-yogaschool-enschede/meesteropleiding-raja and pure-yoga/200-pureteacher run
+ *     the other way (`breakdown_published: not_published`, contact hours published):
+ *     they compute, so no blocker is read — but they are why the field is its own
+ *     quad rather than a refinement of the other.
  */
 export function pphBlocker(program: Program): { field: "price" | "hours"; published: Quad } {
   return program.price.amount_eur == null
     ? { field: "price", published: program.price.published }
-    : { field: "hours", published: program.hours_claimed.breakdown_published };
+    : { field: "hours", published: program.hours_claimed.contact_published };
 }
 
 /** The quad the €/contactuur cell may render when there is no computable value. */

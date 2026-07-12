@@ -87,6 +87,7 @@ programs:
       self_study: null
       supervised_teaching_practice: 10 # "Practicum (10 uur)"
       breakdown_published: "yes"
+      contact_published: "not_published"
       source: site-ryt200-2026-06
       note: >
         Verdeling per onderdeel gepubliceerd: Asana & Methodologie 100,
@@ -141,6 +142,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: "yes"
+      contact_published: "not_published"
       source: site-ryt300-2026-06
       note: >
         Verdeling gepubliceerd als BANDBREEDTES: Asana/Sequencing/Praktijk

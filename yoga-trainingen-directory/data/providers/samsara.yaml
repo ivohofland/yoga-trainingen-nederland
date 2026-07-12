@@ -86,6 +86,7 @@ programs:
       self_study: null # "thuis 10-15 uur/week"; daarnaast min. 120u yoga bij erkende docent
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
       note: >
         Format uitgedrukt in lesdagen en weekuren, niet in een

@@ -67,8 +67,12 @@ programs:
       amount_eur: null
       vat: unknown
       published: "yes"
-      note: "prijs per pakket/module op inschrijfpagina's, niet als één totaal op
-        overzicht; nog uit te lezen"
+      note: "Aalo publiceert wél een prijs: per pakket/module op de aparte
+        inschrijfpagina's, niet als één totaal op het overzicht. Het bedrag is nog
+        niet uitgelezen. LET OP — de hier geciteerde bron is die overzichtspagina en
+        bevat zélf geen bedrag; de inschrijfpagina's die de prijs wél dragen staan
+        niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding
+        over de aanbieder (zie technical-todo.md)."
       source: site-2026-06
     hours_claimed:
       total: 200
@@ -76,6 +80,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     composition:
       type: free_assembly # RYT200 samengesteld uit losse pakketten/modules
@@ -118,7 +123,12 @@ programs:
       amount_eur: null
       vat: unknown
       published: "yes"
-      note: "per module/pakket; nog uit te lezen"
+      note: "Aalo publiceert wél een prijs: per module/pakket op de aparte
+        inschrijfpagina's. Het bedrag is nog niet uitgelezen. LET OP — de hier
+        geciteerde bron is de overzichtspagina en bevat zélf geen bedrag; de
+        inschrijfpagina's die de prijs wél dragen staan niet in sources[] en zijn
+        niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie
+        technical-todo.md)."
       source: site-2026-06
     hours_claimed:
       total: 200
@@ -126,6 +136,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     composition:
       type: free_assembly

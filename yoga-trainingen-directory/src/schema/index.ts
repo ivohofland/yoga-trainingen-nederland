@@ -326,7 +326,35 @@ export const Program = strictObject({
     contact: z.number().positive().nullable().optional(),
     self_study: z.number().positive().nullable().optional(),
     supervised_teaching_practice: z.number().nonnegative().nullable().optional(),
+    /** Do they break the total down AT ALL? (§4.3) */
     breakdown_published: Quad,
+    /**
+     * Do they publish the CONTACT-HOUR FIGURE SPECIFICALLY — the number
+     * `pricePerContactHour` needs (§4.3, §6)?
+     *
+     * REQUIRED, like `breakdown_published`, because every programme must answer
+     * it: a quad we may leave out is a quad that silently defaults, and the
+     * default would be a statement about a named business.
+     *
+     * The two questions come apart in BOTH directions, and the corpus holds both:
+     *   - `breakdown_published: yes` + `contact_published: not_published` — three
+     *     providers publish a rich breakdown that is not this one: by delivery mode
+     *     (yogaeasy: 110u pre-recorded / 30u live / 10u lespraktijk), by subject
+     *     (yogic-life ryt200: Asana 100, Anatomie 20, Filosofie 30 …), or as ranges
+     *     (yogic-life ryt300: 100–150, 25–40 …). Subject hours are not contact
+     *     hours; a range cannot be isolated. We looked; the number is not there.
+     *   - `breakdown_published: not_published` + `contact_published: yes` — two
+     *     providers publish the contact figure and nothing else to break down
+     *     (de-yogaschool-enschede: "120 lesblokken × 3u = 360 contacturen";
+     *     pure-yoga: "200 contacturen").
+     *
+     * One quad for two questions forced the directory to call its most transparent
+     * schools either un-investigated (a gap that is OURS, and false) or
+     * non-publishers (a finding that is THEIRS, and also false). So the model asks
+     * twice — and `pphBlocker` (rules.ts) blocks on THIS field, because the field
+     * that stops the derivation is the field we must cite when we say why.
+     */
+    contact_published: Quad,
     source: z.string().optional(),
     /** What the provider says about practice/hours when not given as an isolated
      *  number — keeps the §5 nuance the bare numbers would otherwise drop. */

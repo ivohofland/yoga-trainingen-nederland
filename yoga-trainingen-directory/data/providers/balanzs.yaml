@@ -178,6 +178,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: brochure-2026-06
       note: >
         200u in 2 modules over 10 weekenden: Module 1 = 85u (4 weekenden;

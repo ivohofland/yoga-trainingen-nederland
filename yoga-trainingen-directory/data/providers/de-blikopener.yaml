@@ -66,7 +66,11 @@ programs:
       amount_eur: null
       vat: exempt_crkbo
       published: "yes"
-      note: "prijs op aparte tarievenpagina, nog niet uitgelezen"
+      note: "De Blikopener publiceert wél een prijs: op een aparte tarievenpagina.
+        Die pagina is nog niet uitgelezen. LET OP — de hier geciteerde bron is de
+        site-overzichtspagina en bevat zélf geen bedrag; de tarievenpagina die de
+        prijs wél draagt staat niet in sources[] en is niet gearchiveerd.
+        Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md)."
       source: site-2026-06
     hours_claimed:
       total: null
@@ -74,6 +78,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
       note: "geen urentelling op homepage; meerjarig traject"
     assessment_described:

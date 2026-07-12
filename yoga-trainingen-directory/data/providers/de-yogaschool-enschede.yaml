@@ -167,6 +167,7 @@ programs:
       self_study: 240
       supervised_teaching_practice: null
       breakdown_published: yes
+      contact_published: yes
       source: site-docenten-2026-07
       note: >
         120 lesblokken van wekelijks 3 uur = 360 contacturen over 3 jaar +
@@ -238,6 +239,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: yes
       source: site-meester-2026-07
       note: >
         120 lesblokken van wekelijks 3 uur = 360 contacturen over 3 jaar +
@@ -259,9 +261,9 @@ claims:
   - id: meester-lineage
     scope: program:meesteropleiding-raja
     quote: >
-      "Het eerste jaar: Witte Magie. ... Het tweede jaar: Esoterische
+      Het eerste jaar: Witte Magie. ... Het tweede jaar: Esoterische
       Psychologie. ... [de] intrinsieke conditie volgens de 7 stralenleer. ...
-      Het derde jaar: Esoterische Genezing."
+      Het derde jaar: Esoterische Genezing.
     category: lineage_authority
     source: site-meester-2026-07
     analysis:

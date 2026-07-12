@@ -166,6 +166,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-200-2026-06
       note: >
         Geen urenuitsplitsing op de pagina; "observing in YM classes" inbegrepen
@@ -247,6 +248,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: yes
+      contact_published: yes
       source: site-300-2026-06
       note: >
         "245+ contact hours in 8 required modules" + 45 keuze-uren (electives) +
@@ -360,6 +362,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-ashtanga-2026-06
       note: >
         Geen uren-totaal op de pagina (format via RYS 200). Wel: "Observing and

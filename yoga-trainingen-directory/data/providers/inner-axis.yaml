@@ -140,6 +140,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-maxstrom-2026-06
       note: >
         28 opleidingsdagen totaal, hybride. Segment 1: 15 dagen in-person Inner

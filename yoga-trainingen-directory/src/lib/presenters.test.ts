@@ -200,12 +200,14 @@ test("a programme with no computable price-per-contact-hour carries a caveat, no
  */
 
 /** The blocking field, exactly as pphQuad must read it: no amount → the price is
- *  what's missing; otherwise the hours are. */
+ *  what's missing; otherwise the CONTACT HOURS are — `contact_published`, the field
+ *  about the very number the derivation needs, and not `breakdown_published`, which
+ *  answers a different question (spec v0.4; see pphBlocker). */
 const blockerOf = (providerId: string, programId: string) => {
   const program = programOf(providerId, programId);
   return program.price.amount_eur == null
     ? program.price.published
-    : program.hours_claimed.breakdown_published;
+    : program.hours_claimed.contact_published;
 };
 
 test("PPH: the state is a finding if and only if the record's blocking field says the provider does not publish it", () => {
@@ -278,30 +280,75 @@ test("PPH: a record whose blocking field says the provider does not publish it i
   }
 });
 
-test("PPH: a record that says the provider DOES publish the hours is a gap in our data, never a finding", () => {
-  // These three publish a price AND publish an hours breakdown — the contact
-  // hours are simply missing from OUR record. Calling that "niet gepubliceerd"
-  // would be a false statement about a named business, contradicted by the very
-  // record the page is rendered from.
-  const contradictory = [
+test("PPH: publishing a breakdown that is not a contact-hour figure is a FINDING about them, not a gap in us", () => {
+  // THE spec-v0.4 case, and the reason the field exists. These three publish a
+  // price AND an hours breakdown — but not THIS breakdown. They publish by
+  // delivery mode (yogaeasy: 110u pre-recorded, 30u live, 10u lespraktijk), by
+  // subject (yogic-life 200: Asana 100, Anatomie 20, Filosofie 30 …), or in
+  // ranges (yogic-life 300: 100-150, 25-40 …). Subject hours are not contact
+  // hours; a range cannot be isolated. We LOOKED. The number is not there.
+  //
+  // While the blocker was `breakdown_published`, its "yes" sent all three down the
+  // gap branch and the site said "nog niet onderzocht" about the three most
+  // transparent hour-publishers in the corpus — disowning research we did do, and
+  // burying the actual finding. Blocking on `contact_published` is what makes the
+  // page able to say the true thing: wij keken, zij publiceren geen contacturen.
+  //
+  // THIS TEST FAILS AGAINST THE OLD BLOCKER. With pphBlocker reading
+  // `breakdown_published`, every assertion below reports "unknown".
+  const publishesABreakdownButNoContactHours = [
     ["yogaeasy", "200-hatha-vinyasa"],
     ["yogic-life", "ryt200-multistyle"],
     ["yogic-life", "ryt300-multistyle"],
   ] as const;
   const rows = toListingRows(providers, NOW);
-  for (const [providerId, programId] of contradictory) {
+  for (const [providerId, programId] of publishesABreakdownButNoContactHours) {
     const program = programOf(providerId, programId);
-    // guard: if the data is fixed one day, this test must not quietly pass on a
-    // programme that no longer has the shape it is here to pin.
+    // guard: if the data changes, this test must not quietly pass on a programme
+    // that no longer has the shape it is here to pin — a breakdown they DO publish,
+    // a contact figure they do NOT, and a price, so the hours are the blocker.
     assert.equal(program.price.published, "yes");
+    assert.ok(program.price.amount_eur != null);
     assert.equal(program.hours_claimed.breakdown_published, "yes");
+    assert.equal(program.hours_claimed.contact_published, "not_published");
     assert.equal(program.hours_claimed.contact, null);
+    assert.ok(program.hours_claimed.note, `${providerId}/${programId}: the finding has no note recording WHAT they publish instead`);
 
-    assert.equal(pphQuad(program), "unknown",
-      `${providerId}/${programId}: the record says the provider publishes both — the missing value is ours`);
+    assert.equal(pphQuad(program), "not_published",
+      `${providerId}/${programId}: we looked and they publish no contact-hour figure — that is a sourced ` +
+      `FINDING about them. Rendering it as "unknown" tells the reader we never investigated one of the ` +
+      `most transparent schools in the corpus, and hides the finding we actually made.`);
     const row = rows.find((r) => r.providerId === providerId && r.programId === programId)!;
-    assert.equal(row.pphState, "unknown");
-    assert.notEqual(row.pphState, "not_published");
+    assert.equal(row.pphState, "not_published");
+    assert.notEqual(row.pphState, "unknown");
+    // Amber ink, not grey italic — the two are the whole difference (Quad.tsx).
+    assert.equal(quadClass(row.pphState), "finding");
+    // And the caveat must cite the field that actually blocks the derivation. The
+    // old copy said "publiceert geen urenuitsplitsing" — which about THESE three is
+    // simply false: they publish one.
+    assert.equal(row.pphCaveat, nl.pphHoursNotPublished);
+    assert.ok(!row.pphCaveat!.includes("urenuitsplitsing"),
+      `${providerId}/${programId}: the caveat denies they publish an urenuitsplitsing — they do publish one; ` +
+      `what they do not publish is the contact-hour figure`);
+  }
+});
+
+test("PPH: the two questions come apart in BOTH directions — a contact figure without a breakdown still computes", () => {
+  // The mirror image, and why `contact_published` is its own quad rather than a
+  // refinement of `breakdown_published`. These two publish the contact-hour figure
+  // and nothing else to break down ("120 lesblokken van wekelijks 3 uur = 360
+  // contacturen"; "200 contacturen"). `breakdown_published: not_published` is a
+  // true finding about them — and it must not block a derivation it does not govern.
+  for (const [providerId, programId] of [
+    ["de-yogaschool-enschede", "meesteropleiding-raja"],
+    ["pure-yoga", "200-pureteacher"],
+  ] as const) {
+    const program = programOf(providerId, programId);
+    assert.equal(program.hours_claimed.breakdown_published, "not_published");
+    assert.equal(program.hours_claimed.contact_published, "yes");
+    assert.ok(program.hours_claimed.contact != null);
+    assert.equal(pphQuad(program), "yes",
+      `${providerId}/${programId}: they publish the contact hours and a price — the number computes`);
   }
 });
 
@@ -358,9 +405,34 @@ test("PPH: every caveat string in strings.ts is reachable", () => {
   // The four pph* strings are display copy that duplicates nothing; a dead one
   // is copy nobody maintains and nobody reads. Each must be produced by some row.
   const shown = new Set(toListingRows(providers, NOW).map((r) => r.pphCaveat).filter(Boolean));
-  for (const key of ["pphPriceNotPublished", "pphHoursNotPublished", "pphPriceNotInRecord", "pphHoursNotInRecord"] as const) {
+  for (const key of ["pphPriceNotPublished", "pphHoursNotPublished", "pphPriceNotInRecord"] as const) {
     assert.ok(shown.has(nl[key]), `nl.${key} is never rendered — it is dead copy`);
   }
+
+  // The fourth — the hours GAP — is reachable by the RULE but hit by no record
+  // today, and that is a fact about our research coverage, not about the copy: the
+  // hours blocker is `contact_published` (spec v0.4), it is `unknown` on no
+  // programme in the corpus, and where it is `yes` we hold the number and the value
+  // computes. So every live hours-blocked row is a FINDING. Pin that…
+  assert.ok(
+    !providers.some((p) => p.programs.some((pr) => pr.hours_claimed.contact_published === "unknown")),
+    "some programme's contact hours are now un-investigated — this test must render that row's caveat from " +
+    "the DATA, and the corpus-wide claim above (every hours-blocked €/contactuur is a finding) is stale",
+  );
+
+  // …and prove the copy still reaches a reader, on the record the rule would send
+  // there: a price we hold, contact hours nobody has looked for yet. Deleting the
+  // string instead would leave the first record that reaches this state rendering a
+  // gap with no explanation — or, far worse, falling back to the finding's wording.
+  const provider = providers.find((p) => p.programs.some((pr) => pr.price.amount_eur != null))!;
+  const base = provider.programs.find((pr) => pr.price.amount_eur != null)!;
+  const uninvestigated: Program = {
+    ...base,
+    hours_claimed: { ...base.hours_claimed, contact: null, contact_published: "unknown" },
+  };
+  const row = toListingRows([{ ...provider, programs: [uninvestigated] }], NOW)[0];
+  assert.equal(row.pphState, "unknown", "nobody looked at the hours — that is OUR gap");
+  assert.equal(row.pphCaveat, nl.pphHoursNotInRecord);
 });
 
 test("a price that is not published never renders as a number", () => {
@@ -1079,7 +1151,7 @@ test("RECORD: the €/contactuur row obeys the same rule as the listing, from th
       }
       const blocker = prog.price.amount_eur == null
         ? prog.price.published
-        : prog.hours_claimed.breakdown_published;
+        : prog.hours_claimed.contact_published;
       assert.ok(blocker === "not_published" || blocker === "no",
         `${p.id}/${prog.id}: the row accuses the provider of not publishing it, but the blocking ` +
         `record field says "${blocker}" — that is OUR gap, published as a finding about a named business`);
@@ -1244,12 +1316,25 @@ const rowBacking = (prog: Program, label: string): Backing => {
     case nl.colPrice:
       return prog.price.published;
     case nl.colPph:
-      // The blocker: no amount → the price is what is missing; else the hours.
+      // The blocker: no amount → the price is what is missing; else the CONTACT
+      // HOURS — the one number the derivation needs, governed by its own quad
+      // since spec v0.4. Not `breakdown_published`: three programmes publish a
+      // breakdown with no contact figure in it, and a fourth field-swap here is
+      // exactly how this row would go back to calling that finding a gap.
       return prog.price.amount_eur == null
         ? prog.price.published
-        : prog.hours_claimed.breakdown_published;
+        : prog.hours_claimed.contact_published;
     case nl.rowHours:
+      // NOT contact_published. This row renders the whole breakdown (totaal,
+      // contact, zelfstudie); what licenses it to say "niet gepubliceerd" when we
+      // hold none of the three is the field about the breakdown as a whole.
+      return prog.hours_claimed.breakdown_published;
     case nl.rowSupervised:
+      // Also NOT contact_published — begeleide lespraktijk is a different number
+      // again, and there is no `supervised_published` field. The breakdown is the
+      // only record field that speaks to whether that figure was published at all,
+      // so it remains this row's backing (six programmes publish a breakdown
+      // without it: those are OUR gaps, and must stay grey).
       return prog.hours_claimed.breakdown_published;
     case nl.rowAssessment:
       // undefined exactly when `assessment_described` is absent — `exists` is

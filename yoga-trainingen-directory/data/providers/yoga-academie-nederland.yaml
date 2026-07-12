@@ -76,7 +76,12 @@ programs:
       amount_eur: null
       vat: unknown
       published: "yes"
-      note: "prijzen in gelinkte PDF (datakosten), nog niet geëxtraheerd"
+      note: "Yoga Academie Nederland publiceert wél prijzen: in een vanaf de
+        opleidingspagina gelinkte PDF (datakosten). Die PDF is nog niet
+        geëxtraheerd. LET OP — de hier geciteerde bron is de opleidingspagina zelf en
+        bevat zélf geen bedrag; de gelinkte PDF die de prijzen wél draagt staat niet
+        in sources[] en is niet gearchiveerd. Onderzoeksschuld, geen bevinding over
+        de aanbieder (zie technical-todo.md)."
       source: site-2026-06
     hours_claimed:
       total: 300
@@ -84,6 +89,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     composition:
       type: fixed_modular

@@ -118,6 +118,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
       note: >
         9 weekenden over 9 maanden (3x vrijdagavond 19-21 + za/zo 09:00-17:00),

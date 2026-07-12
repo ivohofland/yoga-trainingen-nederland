@@ -146,6 +146,7 @@ programs:
       self_study: null
       supervised_teaching_practice: 10
       breakdown_published: yes
+      contact_published: not_published
       source: site-academy-tt-2026-06
       note: >
         GEPUBLICEERDE breakdown (transparantie-uitschieter): 110u pre-recorded

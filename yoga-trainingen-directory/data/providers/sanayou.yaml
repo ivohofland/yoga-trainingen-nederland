@@ -161,6 +161,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-klassikaal-2026-06
       note: >
         4 modules van 50u (Yin 1, Yin 2, Yang 1, Yang 2), elk 6 lesdagen.
@@ -235,8 +236,12 @@ programs:
       amount_eur: null
       vat: unknown
       published: yes
-      note: "Modulair online (3 routes); prijs per module/traject — bedragen niet
-        uitgelezen in deze ronde."
+      note: "Modulair online (3 routes). Sanayou publiceert wél prijzen: per
+        module/traject, op de module- en inschrijfpagina's. Bedragen niet uitgelezen
+        in deze ronde. LET OP — de hier geciteerde bron is de overzichtspagina en
+        bevat zélf geen bedrag; de pagina's die de prijzen wél dragen staan niet in
+        sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de
+        aanbieder (zie technical-todo.md)."
       source: site-online-2026-06
     hours_claimed:
       total: 200
@@ -244,6 +249,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-online-2026-06
       note: "200u online, modulair (o.a. Yin Yoga Basics, 5 Elementenleer, Fascia,
         Advanced Yin & Yang Flows)."
@@ -287,6 +293,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-300-2026-06
       note: "300u hybride, modulair (13+ keuzemodules), 2 richtingen (Yin Mastery /
         Yoga Awakening)."

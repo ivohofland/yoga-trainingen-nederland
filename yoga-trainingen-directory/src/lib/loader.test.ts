@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { loadDataset } from "./loader";
+import { integrityErrors, loadDataset } from "./loader";
 import { bundleDelta, pricePerContactHour } from "./derive";
 import { YearMonth, type Program } from "../schema";
 
@@ -139,6 +139,67 @@ test("DERIVED: no bundle delta is invented from a module price we do not hold", 
       }
     }
   }
+});
+
+/* ---------- claim quotes carry no delimiters of their own ----------
+ *
+ * The record page wraps every quote in curly quotes — the renderer owns the
+ * punctuation. One of 34 claims (de-yogaschool-enschede/meester-lineage) was stored
+ * with the researcher's own `"…"` around it, so the page printed “"Het eerste
+ * jaar…"” — doubled. The text inside was never wrong; the delimiters were never the
+ * school's words.
+ *
+ * The fix is in the DATA, and it must stay fixed. Stripping quotes at render time
+ * would put an editor of verbatim text inside the renderer, which §3 forbids
+ * outright: the one thing that may never happen to a quote is that we change it.
+ */
+
+test("INTEGRITY: no claim quote is stored wrapped in its own quote marks", () => {
+  const marks = ['"', "“", "”", "'", "‘", "’"];
+  let checked = 0;
+  for (const p of providers) {
+    for (const claim of p.claims) {
+      const text = claim.quote.trim();
+      checked++;
+      assert.ok(
+        !(marks.includes(text[0]) && marks.includes(text[text.length - 1])),
+        `${p.id}/${claim.id}: the quote is stored inside quote marks (${text.slice(0, 20)}…). The record page ` +
+        `supplies the quotation marks, so this renders doubled — “"…"”. Store the provider's words only.`,
+      );
+    }
+  }
+  assert.ok(checked > 30, `only ${checked} claims walked — the corpus held 34`);
+});
+
+test("INTEGRITY: a quote wrapped in quote marks FAILS the load — the check has a failure branch", () => {
+  // The data assertion above passes vacuously against a check that does nothing.
+  // Put the defect back — the exact one that shipped — and require the loader to
+  // refuse it, by name, saying whose the delimiters are.
+  const real = providerOf("de-yogaschool-enschede");
+  const claim = real.claims.find((c) => c.id === "meester-lineage")!;
+  assert.ok(claim.quote.startsWith("Het eerste jaar"), "the fixed quote must start with the school's own words");
+
+  const wrapped = {
+    ...real,
+    claims: real.claims.map((c) => (c.id === "meester-lineage" ? { ...c, quote: `"${c.quote}"` } : c)),
+  };
+  const errors = integrityErrors(wrapped, "de-yogaschool-enschede.yaml");
+  assert.equal(errors.length, 1, `expected exactly the quote error, got:\n${errors.join("\n")}`);
+  assert.match(errors[0], /meester-lineage/);
+  assert.match(errors[0], /renderer supplies the quotation marks/);
+
+  // Every mark a keyboard or a stylesheet produces, and both halves required: a
+  // quote that merely CONTAINS quote marks (a school quoting someone else) is
+  // untouched, and so is one that only opens or only closes with one.
+  const withQuote = (quote: string) => integrityErrors({ ...real, claims: [{ ...claim, quote }] }, "f.yaml");
+  for (const [open, close] of [['"', '"'], ["“", "”"], ["'", "’"], ["‘", "’"], ["”", "“"]]) {
+    assert.equal(withQuote(`${open}Wij leiden op tot docent.${close}`).length, 1, `${open}…${close} not caught`);
+  }
+  assert.deepEqual(withQuote('Wij noemen dit "de innerlijke leraar" in onze opleiding.'), [],
+    "quote marks INSIDE the provider's words are the provider's — never strip or reject those");
+  assert.deepEqual(withQuote('"De innerlijke leraar" is ons uitgangspunt.'), [],
+    "an opening mark alone is not a delimiter pair");
+  assert.deepEqual(withQuote(""), [], "an empty quote is not delimited (the schema is what requires the text)");
 });
 
 /* ---------- YearMonth: the month range is validated in the SCHEMA, not a renderer ---------- */

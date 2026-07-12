@@ -167,6 +167,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-200-2026-06
       note: >
         10 lesweekenden/jaar (9 modules van 2 dagen + 2 examendagen), elke
@@ -262,6 +263,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-300-2026-06
       note: >
         YA-pad: 6 modules van 50u (geen vrijstelling). VYN-pad: 7 modules +

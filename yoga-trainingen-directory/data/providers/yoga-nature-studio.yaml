@@ -86,6 +86,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-200-2026-06
       note: >
         Geen uren-uitsplitsing. Wel concreet praktijk-/lespraktijkkader:
@@ -167,6 +168,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-300-2026-06
     composition:
       type: free_assembly

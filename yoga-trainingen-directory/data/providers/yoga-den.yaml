@@ -222,6 +222,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-ytt-200-2026-06
       note: >
         1-weekse intensive (14-20 sep) + 3 Amsterdam-weekenden (2-4 okt, 6-8
@@ -296,6 +297,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-ytt-overview-2026-06
       note: >
         200u (foundational) + modules (100H Advanced YTT, 50H Yin, 50H Advanced

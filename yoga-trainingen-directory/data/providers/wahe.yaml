@@ -205,6 +205,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-vinyasa200-2026-06
       note: >
         22 live dagen in Baarn (11 blokken, vr+za 10:30-17:30) + min. 20 min
@@ -272,6 +273,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yin150-2026-06
       note: "Weekenden 10:30-17:30 in Baarn. Geen geïsoleerd contact-urental."
     composition:
@@ -330,6 +332,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-restorative100-2026-06
       note: "8 live dagen (4 weekenden) 10:30-17:30 + min. 20 min eigen practice/dag."
     composition:
@@ -384,6 +387,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-overview-2026-06
       note: "200 + 150 + 100 (+ komende ~50u filosofie/pranayama-module) = 500u."
     composition:

@@ -106,7 +106,13 @@ export const nl = {
   // dataset.ts returns alongside a null value: that one is worded identically
   // for a finding and for a gap, so it can never be shown to a reader as-is.
   pphPriceNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen prijs.",
-  pphHoursNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen urenuitsplitsing.",
+  // "geen CONTACTUREN", not "geen urenuitsplitsing" (spec v0.4). The blocking field
+  // is `hours_claimed.contact_published`, and three aanbieders publish a rich
+  // urenuitsplitsing — per onderdeel, per werkvorm, in bandbreedtes — waar geen
+  // contactuur-getal in staat. Zeggen dat zij "geen urenuitsplitsing publiceren" is
+  // een onware bewering over een met naam genoemd bedrijf; de zin moet het veld
+  // noemen dat de berekening werkelijk blokkeert.
+  pphHoursNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen contacturen.",
   pphPriceNotInRecord:
     "Niet te berekenen: de prijs ontbreekt in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
   pphHoursNotInRecord:

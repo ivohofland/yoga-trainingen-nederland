@@ -429,6 +429,9 @@
                   "breakdown_published": {
                     "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
                   },
+                  "contact_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
                   "source": {
                     "type": "string"
                   },
@@ -437,7 +440,8 @@
                   }
                 },
                 "required": [
-                  "breakdown_published"
+                  "breakdown_published",
+                  "contact_published"
                 ],
                 "additionalProperties": false
               },

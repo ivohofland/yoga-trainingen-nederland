@@ -137,6 +137,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yin-2026-06
       note: >
         200u-format over 10 weekenden (vr 18:30-21:30 masterclass; za/zo
@@ -211,6 +212,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-vinyasa-2026-06
       note: "200u-format, weekenden bij Yagoy Pijp (Karel du Jardinstraat 33);
         november-start."

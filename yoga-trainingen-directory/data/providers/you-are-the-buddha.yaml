@@ -167,6 +167,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
       note: >
         200u over 33 lesdagen (vrijdag 11:00-17:30) in 5 modules + Engelstalig

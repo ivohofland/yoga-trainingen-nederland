@@ -152,6 +152,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-hatha-2026-06
       note: >
         VOLLEDIG ONLINE & SELF-PACED: de "200 uur" is zelfstudie-materiaal
@@ -236,6 +237,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yin-2026-06
       note: >
         VOLLEDIG ONLINE & SELF-PACED (gemiddeld 6-12 mnd, zelf te bepalen): "200
