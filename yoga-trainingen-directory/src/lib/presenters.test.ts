@@ -775,6 +775,104 @@ test("SOURCE: every source a fact cites exists in that provider's sources[] — 
     `promises "bij elk gegeven staat een bron".`);
 });
 
+/* ---------- the derived totals reach the render layer AS OURS (spec §6, v0.5 + v0.6) ----------
+ *
+ * The value of a derived total is not the hard part — `derive.ts` is unit-tested to the
+ * euro and the hour. The hard part is that the number arrives at the READER wearing the
+ * right clothes. A `derived: true` that the view drops on the floor is invisible in every
+ * arithmetic test in the suite, and it publishes de Yogaschool's "600" and de Blikopener's
+ * "€ 5.160" in the same fact ink as the school's own claims, one row below them — figures
+ * that appear in NO source either school published.
+ *
+ * So: the flag must be ON the row (the page keys its ink off `row.derived`), the row must
+ * carry NO citation (a source that never said it), and the working must travel with it.
+ */
+
+test("RENDER: de Yogaschool's 600 reaches the page as OUR sum — flagged, uncited, with its working", () => {
+  const p = providers.find((prov) => prov.id === "de-yogaschool-enschede")!;
+  const prog = toProviderView(p).programs.find((v) => v.id === "docentenopleiding-raja")!;
+
+  const derived = prog.rows.find((r) => r.label === nl.rowTotalHours);
+  assert.ok(derived, "the derived hours total never reached the record page — the reader sees no total at all");
+  assert.equal(derived.state, "yes");
+  assert.equal(derived.value, "± 600 uur");
+
+  // THE FLAG THE INK IS KEYED OFF. Without it the page hands the value to <Quad>, which
+  // paints it in the same colour as the school's own published facts.
+  assert.equal(derived.derived, true,
+    "the row is not flagged as ours — the record page renders it through <Quad>, in fact ink, and 600 " +
+    "becomes de Yogaschool's claimed total: exactly the bug spec v0.6 removed from the data");
+
+  // NO CITATION. Pinning their docentenpagina to "± 600 uur" would credit the school with
+  // a figure that appears in none of their archived sources (§6: derived values carry no
+  // source — the parts they were computed from do).
+  assert.equal(derived.source, null,
+    "our arithmetic is cited to one of THEIR pages — that page never printed this number");
+
+  // The working, so the reader can check it.
+  assert.match(derived.note ?? "", /onze optelling/);
+  assert.match(derived.note ?? "", /360/);
+  assert.match(derived.note ?? "", /240/);
+
+  // And the parts stay theirs, in their own row, with their own source.
+  const hours = prog.rows.find((r) => r.label === nl.rowHours)!;
+  assert.equal(hours.state, "yes");
+  assert.match(hours.value ?? "", /360 contact/);
+  assert.ok(hours.source, "the published parts must keep the citation that carries them");
+  assert.ok(!hours.derived, "the school's own published hours are not our arithmetic");
+});
+
+test("RENDER: Wahé's 500 stays THEIRS — no “onze optelling” row is invented for it", () => {
+  // The other direction, and it is not the smaller error. Wahé publishes the 500 on a page
+  // we captured and cite; giving it the derived row — or the derived flag — would tell the
+  // reader we made up a figure the school states in its own words.
+  const p = providers.find((prov) => prov.id === "wahe")!;
+  const prog = toProviderView(p).programs.find((v) => v.id === "500-pathway")!;
+
+  assert.equal(prog.rows.find((r) => r.label === nl.rowTotalHours), undefined,
+    "a school's PUBLISHED total was given a row labelled “onze optelling” — v0.6's error, backwards");
+
+  const hours = prog.rows.find((r) => r.label === nl.rowHours)!;
+  assert.equal(hours.state, "yes", "their published total must render as the fact it is");
+  assert.match(hours.value ?? "", /500 totaal/);
+  assert.ok(!hours.derived, "Wahé's own 500, relabelled as our arithmetic");
+  assert.ok(hours.source, "their claim must carry the source that states it");
+});
+
+test("RENDER: `derived` is on the two derived totals and on NOTHING else", () => {
+  // The flag is a licence to print a number in non-factual ink. Anywhere else it would do
+  // the opposite of its job: it would strip a provider's own sourced fact of its fact ink.
+  // Conversely, every derived value that HAS a figure must carry it — a new derived row
+  // added without the flag is exactly the regression this pins.
+  const DERIVED_LABELS = new Set([nl.rowTotalPrice, nl.rowTotalHours]);
+  let flagged = 0;
+  for (const p of providers) {
+    for (const prog of toProviderView(p).programs) {
+      for (const row of prog.rows) {
+        if (!row.derived) continue;
+        flagged++;
+        assert.ok(DERIVED_LABELS.has(row.label),
+          `${p.id}/${prog.id}: row "${row.label}" is flagged as OUR arithmetic. A provider's own fact ` +
+          `rendered in the muted “onze berekening” ink tells the reader we made it up.`);
+        assert.equal(row.state, "yes", "the flag only ever governs the ink of a VALUE");
+        assert.equal(row.source, null, "a derived value cites no provider page — see §6");
+        assert.ok(row.note, "a derived number without its working is a number the reader cannot check");
+      }
+      // Every derived row that shows a figure IS flagged — both units.
+      for (const label of DERIVED_LABELS) {
+        const row = prog.rows.find((r) => r.label === label);
+        if (row?.state === "yes") {
+          assert.equal(row.derived, true,
+            `${p.id}/${prog.id}: "${label}" prints a figure WE computed, unflagged — the page paints it ` +
+            `in the provider's own fact ink`);
+        }
+      }
+    }
+  }
+  // Both units must actually be exercised: de Blikopener ×2 (price) + de Yogaschool (hours).
+  assert.ok(flagged >= 3, `only ${flagged} derived rows in the whole corpus — this test tests nothing`);
+});
+
 test("SOURCE: the facts the schema sources are the facts the page cites", () => {
   // Field by field, against the record — so a `source` silently dropped from one
   // kind of fact (as all of them were) fails here, not just in aggregate.

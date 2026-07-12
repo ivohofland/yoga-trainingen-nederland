@@ -163,12 +163,25 @@ const KNOWN_FINDINGS = report.skipped > 0 ? report.findings.map((f) => `${f.prov
   // A page-level check cannot tell those two apart. Only opening the archive can, and
   // guessing wrong invents a programme in one direction or accuses a school in the other.
   //
-  // The cited page prints no BTW at all — so it cannot be the source of a BTW treatment
-  // (§4.11: observed, or not known). Triaged in technical-todo.md, each with the reason
-  // the archive gives:
-  "adhouna/200-multistyle [vat]",
+  // TWO OF THE THREE BTW FINDINGS ARE GONE, and both were type (b): a treatment that was
+  // never observed, only INFERRED — the VAT twin of a stored sum. Neither needed a live
+  // page; the fix was to stop asserting (§4.11: observed, or not known).
+  //
+  //   - adhouna/200-multistyle carried `incl` read off a DIFFERENT programme's page (Yin
+  //     XL: "€ 1.420,00 incl. BTW"). The cited Multi Style page contains no btw/vrijgesteld/
+  //     omzetbelasting/CRKBO string in EITHER artifact — HTML or browser-render.
+  //   - yoga-den/500-pathway carried `incl` inferred from the invoicing entity ("zelfde
+  //     btw-belaste entiteit, Yoga Den B.V., niet-CRKBO"). §4.11 forbids exactly that
+  //     inference, and NO Yoga Den page artifact mentions btw at all.
+  //   Both are now `vat: unknown`, which is the honest value and is exempt from the check.
+  //
+  // WHAT IS LEFT IS THE ONE THE ARCHIVE CANNOT SETTLE. Our note says the page read
+  // "Pricing incl. VAT"; no artifact contains the string, and the capture is NOT partial
+  // (the pricing block is fully there — "Pricing", "Investment: €3597" — with no VAT
+  // wording beside it). Our own note and our own archive contradict each other, and only
+  // the live page can say which is right. Guessing either way is the thing this project
+  // exists not to do, so it stays a finding until someone re-checks it (technical-todo.md).
   "yoga-den/200-vinyasa [vat]",
-  "yoga-den/500-pathway [vat]",
 ];
 
 test("the corpus holds claims for the check to be about", () => {

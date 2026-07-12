@@ -69,10 +69,19 @@ registrations are frequently held under a different BV/holding/person name.
   express: every `source:` ref must exist in `sources[]`, `composition.modules`
   must point at real modules, nested cohorts' `program` field must match the
   parent, claim `scope` (`program:<id>` / `module:<id>`) must resolve.
-- `src/lib/derive.ts` — the **derived values** (`totalPrice`,
+- `src/lib/derive.ts` — the **derived values** (`totalPrice`, `totalHours`,
   `pricePerContactHour`, `contactRatio`, `bundleDelta`, `isMultistyle`,
   `completeness`, `providerQa`). Computed, **never stored** (spec §6) — if you
   find yourself adding a computed field to a YAML record, it belongs here instead.
+  **`totalPrice` (§6, v0.5) and `totalHours` (§6, v0.6) each return a `derived`
+  flag, and it is the licence to print the number:** `false` → the value IS the
+  provider's own published figure (render it as theirs); `true` → it is OUR
+  arithmetic over the parts they publish (de Blikopener's whole-course price, de
+  Yogaschool's 600 hours — figures neither school has ever stated), and every
+  surface must render it **visibly as ours** — muted/italic, never in fact ink,
+  never with a citation, always showing its working. `null` → no comparable total
+  exists; do not band, sort or invent one. **Anything that consumes a total
+  consumes these, never the raw `price.amount_eur` / `hours_claimed.total`.**
 - `src/lib/rules.ts` — **the finding-vs-gap rule** (`priceQuad`, `pphQuad`,
   `missingBecause`, `publishedQuad`, `priceBand`, `pphBlocker`). What any surface
   is ALLOWED to say about a value our record does not hold. Stated once, here.

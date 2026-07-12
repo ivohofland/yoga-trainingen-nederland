@@ -283,13 +283,17 @@ programs:
       modules tot 300/500 uur."
     price:
       amount_eur: null
-      vat: incl
+      vat: unknown
       published: not_published
       note: >
-        Geen totaal- of per-module-bedrag op /ytt of /pricing (die pagina
-        betreft studiolidmaatschappen). vat = incl: zelfde btw-belaste entiteit
-        (Yoga Den B.V., niet-CRKBO). Exacte module-prijzen op de afzonderlijke
-        modulepagina's.
+        Geen totaal- of per-module-bedrag op /ytt of /pricing (die pagina betreft
+        studiolidmaatschappen). vat = unknown (§4.11): de eerdere 'incl' was
+        AFGELEID uit de factuur-entiteit ("zelfde btw-belaste entiteit, Yoga Den
+        B.V., niet-CRKBO") — precies de gevolgtrekking die §4.11 verbiedt, en
+        dezelfde denkfout als btw-vrijstelling afleiden uit een
+        CRKBO-registratie. Geen enkel gearchiveerd Yoga Den-artefact van een
+        pagina noemt btw; een btw-behandeling wordt waargenomen of is niet
+        bekend. Exacte module-prijzen op de afzonderlijke modulepagina's.
       source: site-ytt-overview-2026-06
     hours_claimed:
       total: 500

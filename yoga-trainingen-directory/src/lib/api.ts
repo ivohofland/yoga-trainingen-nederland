@@ -26,7 +26,14 @@
  * This module is pure — it is imported by the export script AND by the test that
  * pins `derived.price_state` to what both site surfaces render.
  */
-import { bundleDelta, contactRatio, isMultistyle, pricePerContactHour, totalPrice } from "./derive";
+import {
+  bundleDelta,
+  contactRatio,
+  isMultistyle,
+  pricePerContactHour,
+  totalHours,
+  totalPrice,
+} from "./derive";
 import { priceBand, priceQuad, pphQuad, type PriceBand } from "./rules";
 import type { Program, Provider, Quad } from "../schema";
 
@@ -63,11 +70,29 @@ export interface ProgramDerived {
    *                    no count). Do not band it, do not rank it.
    */
   total_price: { value: number | null; derived: boolean; caveat: string | null };
+  /**
+   * THE WHOLE-COURSE HOURS FIGURE (spec §6, v0.6) — the same contract as `total_price`,
+   * in the other unit, and shipped here for the same reason: without it a consumer's only
+   * hours total is `hours_claimed.total`, which is null on every school that publishes
+   * its hours as PARTS. Left to re-derive the sum themselves, a consumer either shows no
+   * total for de Yogaschool Enschede (who publish 360 contact + 240 zelfstudie) or adds
+   * the parts up and prints the result as the school's claimed total — which is precisely
+   * the bug v0.6 removed from this repo.
+   *
+   * `derived: false` → `hours_claimed.total` is set: the school's own published figure
+   *                    (Wahé's 500). Render it as theirs.
+   * `derived: true`  → WE ADDED contact + self_study. Render it visibly as the
+   *                    consumer's-side arithmetic, with `caveat` (the working) beside it
+   *                    — never in the ink of a provider claim.
+   * `value: null`    → no total is derivable. Do not invent one.
+   */
+  total_hours: { value: number | null; derived: boolean; caveat: string | null };
   /** Price ÷ CONTACT hours (never total hours), or null when either is missing. */
   pph: number | null;
   /** What may be said when `pph` is null — the same finding-vs-gap rule as price_state. */
   pph_state: Quad;
-  /** contact ÷ total hours. */
+  /** contact ÷ total hours — over the DERIVED total (v0.6), so a school that publishes
+   *  its hours only as parts still has a ratio. */
   contact_ratio: number | null;
   /** Package price minus the sum of its modules. NEGATIVE = the package is CHEAPER. */
   bundle_delta: number | null;
@@ -77,10 +102,12 @@ export interface ProgramDerived {
 
 export function programDerived(provider: Provider, program: Program): ProgramDerived {
   const total = totalPrice(program);
+  const hours = totalHours(program);
   return {
     price_state: priceQuad(program),
     price_band: priceBand(program),
     total_price: { value: total.value, derived: total.derived, caveat: total.caveat ?? null },
+    total_hours: { value: hours.value, derived: hours.derived, caveat: hours.caveat ?? null },
     pph: pricePerContactHour(program).value,
     pph_state: pphQuad(program),
     contact_ratio: contactRatio(program),
@@ -117,7 +144,14 @@ const README =
   "€ 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is " +
   "het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: " +
   "geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare " +
-  "totaalprijs — niet rangschikken.";
+  "totaalprijs — niet rangschikken. " +
+  "DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe " +
+  "`hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN " +
+  "publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun " +
+  "som). Is `total_hours.derived` waar, dan is het getal ONZE optelling (`caveat` toont de som) " +
+  "en geen totaal dat de aanbieder publiceert; is het onwaar, dan is het hún gepubliceerde " +
+  "claim (Wahé: 500 uur) en mag het als zodanig worden weergegeven. Die twee mogen nooit " +
+  "hetzelfde worden weergegeven.";
 
 export function toApiPayload(providers: Provider[]): ApiPayload {
   return {

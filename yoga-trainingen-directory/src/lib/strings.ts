@@ -153,6 +153,22 @@ export const nl = {
     `Geen vergelijkbare totaalprijs: de aanbieder publiceert een prijs per ${period} en niet ` +
     `uit hoeveel perioden de opleiding bestaat.`,
 
+  /* ---------- De afgeleide totaaluren (spec v0.6, §6) ---------- */
+
+  /**
+   * DEZELFDE REGEL, ANDERE EENHEID. De school publiceert contacturen en zelfstudie-uren
+   * apart en noemt hun som nergens; wij tellen op, en het label zegt dat hardop. Waar de
+   * school het totaal WÉL publiceert (Wahé: 500) staat dat gewoon in de rij
+   * "Urenuitsplitsing" hierboven, als hún claim — deze rij verschijnt dan niet.
+   */
+  rowTotalHours: "Totaaluren (onze optelling)",
+  /** De uitgeschreven som, zodat de lezer haar kan narekenen. */
+  totalHoursWorking: (contact: number, selfStudy: number) =>
+    `onze optelling: ${contact} contacturen + ${selfStudy} zelfstudie-uren. De aanbieder ` +
+    `publiceert deze twee getallen apart en noemt hun som niet.`,
+  /** Het afgeleide totaal zelf. Het "±" en het label zeggen samen wiens getal dit is. */
+  hoursDerivedTotal: (hours: number) => `± ${hours} uur`,
+
   // Same rule, applied to the price itself: the record says de aanbieder
   // publiceert een prijs, maar het bedrag staat niet in ons record. Dat gat is
   // van ons, en de regel zegt dat — in plaats van een kale “ja” die een bedrag

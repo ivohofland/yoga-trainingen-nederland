@@ -115,6 +115,47 @@ test("API: the exported total_price is OUR arithmetic, flagged as ours, and neve
   assert.deepEqual(raja.derived.total_price, { value: 4590, derived: false, caveat: null });
 });
 
+test("API: the exported total_hours says whose figure it is — ours or the school's", () => {
+  // The same contract as total_price, in the other unit (spec v0.6, §6), and the same
+  // three ways to turn it into a lie. Both directions are pinned, because a consumer that
+  // gets EITHER wrong publishes a falsehood about a named business:
+  //
+  //   - de Yogaschool: `derived: true`. They publish 360 contacturen and 240 zelfstudie
+  //     and never their sum. Ship `derived: false` and every consumer prints 600 as their
+  //     claimed total — which is what this repo did, until v0.6.
+  //   - Wahé:          `derived: false`. They publish the 500 themselves. Ship
+  //     `derived: true` and we tell every consumer we invented a figure the school states
+  //     on its own page.
+  //
+  // And, as with total_price: the number is NOWHERE in data/. The export renders the
+  // records; it is never a second source of truth.
+  const record = providers.find((p) => p.id === "de-yogaschool-enschede")!;
+  const yaml = fs.readFileSync(
+    path.join(process.cwd(), "data/providers/de-yogaschool-enschede.yaml"),
+    "utf8",
+  );
+  assert.ok(!/^\s*total_hours\s*:/m.test(yaml), "`total_hours` is a DERIVED field (§6) — it has no home in data/");
+  assert.ok(!record.programs.some((pr) => pr.hours_claimed.total === 600),
+    "the stored 600 is back in the record — a sum of ours in a field that renders as their claim");
+
+  const enschede = PAYLOAD.providers.find((p) => p.id === "de-yogaschool-enschede")!;
+  const raja = enschede.programs.find((p) => p.id === "docentenopleiding-raja")!;
+  assert.equal(raja.hours_claimed.total, null, "guard: the raw field a naive consumer would read is null");
+  assert.equal(raja.derived.total_hours.value, 600, "360 + 240 is 600");
+  assert.equal(raja.derived.total_hours.derived, true,
+    "a consumer told `derived: false` would render OUR addition as de Yogaschool's published total");
+  assert.match(raja.derived.total_hours.caveat ?? "", /onze optelling/,
+    "the working must ship with the number, so a consumer can show it");
+  // The ratio a consumer compares on is over the DERIVED total — not null, as the raw
+  // field would have made it.
+  assert.equal(raja.derived.contact_ratio, 0.6);
+
+  const wahe = PAYLOAD.providers.find((p) => p.id === "wahe")!;
+  const pathway = wahe.programs.find((p) => p.id === "500-pathway")!;
+  assert.deepEqual(pathway.derived.total_hours, { value: 500, derived: false, caveat: null },
+    "Wahé PUBLISHES its 500 — the API must hand it to a consumer as the school's own figure");
+});
+
 test("API: every programme that publishes a price we do not hold is OUR gap in the JSON too", () => {
   // Each of these carries `price: { published: "yes" }` with no `amount_eur`. A
   // consumer rendering that raw field through its own quad component prints a bare
@@ -205,6 +246,9 @@ test("API: every programme carries a complete derived block, and the payload doc
     // number a consumer could rank by is `price.amount_eur` — which on de Blikopener
     // buys ONE YEAR of a four-year training.
     "total_price",
+    // v0.6: the same, in hours. Without it, `hours_claimed.total` is a consumer's only
+    // total — and it is null on every school that publishes its hours only as parts.
+    "total_hours",
     "pph",
     "pph_state",
     "contact_ratio",

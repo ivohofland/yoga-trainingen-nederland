@@ -1,7 +1,7 @@
 {
   "data_current_as_of": "2026-07-12",
   "count": 47,
-  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare totaalprijs — niet rangschikken.",
+  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare totaalprijs — niet rangschikken. DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe `hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun som). Is `total_hours.derived` waar, dan is het getal ONZE optelling (`caveat` toont de som) en geen totaal dat de aanbieder publiceert; is het onwaar, dan is het hún gepubliceerde claim (Wahé: 500 uur) en mag het als zodanig worden weergegeven. Die twee mogen nooit hetzelfde worden weergegeven.",
   "providers": [
     {
       "id": "7-yoga-academy",
@@ -113,6 +113,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2499,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -280,6 +285,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -357,6 +367,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2838.6,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -488,9 +503,9 @@
           "price": {
             "amount_eur": null,
             "period": "total",
-            "vat": "incl",
+            "vat": "unknown",
             "published": "not_published",
-            "note": "Geen prijs op de Multi Style-pagina; de Yin XL-opleiding wordt incl. btw geprijsd (btw-belast).",
+            "note": "Geen prijs op de Multi Style-pagina (site-multistyle-2026-06). vat = unknown (§4.11): die pagina rept met geen woord over btw — niet in de HTML, niet in de browser-render. De eerdere 'incl' was overgenomen van de pagina van een ANDERE opleiding (site-yinxl-2026-06: \"Deel I van deze Yin Yoga Opleiding kost € 1.420,00 incl. BTW\"). Een btw-behandeling die van het productblad van een ander product is afgelezen, is geen feit over deze opleiding; btw wordt waargenomen of is niet bekend.\n",
             "source": "site-multistyle-2026-06"
           },
           "hours_claimed": {
@@ -527,6 +542,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -624,6 +644,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2725,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -816,6 +841,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 3250,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -1061,6 +1091,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 3115,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -1386,6 +1421,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1498,6 +1538,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2990,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -1748,6 +1793,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1900,6 +1950,11 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
               "value": null,
               "derived": false,
               "caveat": null
@@ -2059,6 +2114,11 @@
               "derived": true,
               "caveat": "onze berekening: 4 × € 1.290"
             },
+            "total_hours": {
+              "value": 500,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "unknown",
             "contact_ratio": null,
@@ -2146,6 +2206,11 @@
               "value": 3870,
               "derived": true,
               "caveat": "onze berekening: 3 × € 1.290"
+            },
+            "total_hours": {
+              "value": 372,
+              "derived": false,
+              "caveat": null
             },
             "pph": null,
             "pph_state": "unknown",
@@ -2366,6 +2431,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2450,6 +2520,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2531,6 +2606,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2964.5,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -2818,9 +2898,14 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 600,
+              "derived": true,
+              "caveat": "onze optelling: 360 contacturen + 240 zelfstudie-uren. De aanbieder publiceert deze twee getallen apart en noemt hun som niet."
+            },
             "pph": 12.75,
             "pph_state": "yes",
-            "contact_ratio": null,
+            "contact_ratio": 0.6,
             "bundle_delta": null,
             "multistyle": true
           }
@@ -2890,6 +2975,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 4590,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": null,
               "derived": false,
               "caveat": null
             },
@@ -3182,6 +3272,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 13.46,
             "pph_state": "yes",
             "contact_ratio": null,
@@ -3415,6 +3510,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -3675,6 +3775,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -3924,6 +4029,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4005,6 +4115,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 1800,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 75,
               "derived": false,
               "caveat": null
             },
@@ -4209,6 +4324,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -4431,6 +4551,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4496,6 +4621,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2385,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 350,
               "derived": false,
               "caveat": null
             },
@@ -4704,6 +4834,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4891,6 +5026,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2885,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -5109,6 +5249,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5200,6 +5345,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 449,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -5423,6 +5573,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5502,6 +5657,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -5730,6 +5890,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2700,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -5995,6 +6160,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2897,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -6284,6 +6454,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 21.18,
             "pph_state": "yes",
             "contact_ratio": 1,
@@ -6564,6 +6739,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 500,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -6782,6 +6962,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -6843,6 +7028,11 @@
             "price_band": "amount_not_in_record",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -6914,6 +7104,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2250,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -7241,6 +7436,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7332,6 +7532,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -7532,6 +7737,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2795,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -7779,6 +7989,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 3050,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -8052,6 +8267,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8163,6 +8383,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8268,6 +8493,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -8580,6 +8810,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8688,6 +8923,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 1650,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -8955,6 +9195,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9036,6 +9281,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 150,
               "derived": false,
               "caveat": null
             },
@@ -9124,6 +9374,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 100,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9199,6 +9454,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 500,
               "derived": false,
               "caveat": null
             },
@@ -9543,6 +9803,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9625,6 +9890,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2500,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -9845,6 +10115,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 5095,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -10142,6 +10417,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10243,6 +10523,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -10540,6 +10825,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10578,9 +10868,9 @@
           "price": {
             "amount_eur": null,
             "period": "total",
-            "vat": "incl",
+            "vat": "unknown",
             "published": "not_published",
-            "note": "Geen totaal- of per-module-bedrag op /ytt of /pricing (die pagina betreft studiolidmaatschappen). vat = incl: zelfde btw-belaste entiteit (Yoga Den B.V., niet-CRKBO). Exacte module-prijzen op de afzonderlijke modulepagina's.\n",
+            "note": "Geen totaal- of per-module-bedrag op /ytt of /pricing (die pagina betreft studiolidmaatschappen). vat = unknown (§4.11): de eerdere 'incl' was AFGELEID uit de factuur-entiteit (\"zelfde btw-belaste entiteit, Yoga Den B.V., niet-CRKBO\") — precies de gevolgtrekking die §4.11 verbiedt, en dezelfde denkfout als btw-vrijstelling afleiden uit een CRKBO-registratie. Geen enkel gearchiveerd Yoga Den-artefact van een pagina noemt btw; een btw-behandeling wordt waargenomen of is niet bekend. Exacte module-prijzen op de afzonderlijke modulepagina's.\n",
             "source": "site-ytt-overview-2026-06"
           },
           "hours_claimed": {
@@ -10614,6 +10904,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 500,
               "derived": false,
               "caveat": null
             },
@@ -10917,6 +11212,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11047,6 +11347,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 300,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 16.12,
             "pph_state": "yes",
             "contact_ratio": 0.82,
@@ -11141,6 +11446,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2750,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": null,
               "derived": false,
               "caveat": null
             },
@@ -11427,6 +11737,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11503,6 +11818,11 @@
             "price_band": "none_published",
             "total_price": {
               "value": null,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -11739,6 +12059,11 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2950,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -11993,6 +12318,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 500,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12241,6 +12571,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12463,6 +12798,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 3695,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },
@@ -12704,6 +13044,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 3993,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -12950,6 +13295,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -13181,6 +13531,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -13376,6 +13731,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_hours": {
+              "value": 200,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -13443,6 +13803,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 3599,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 300,
               "derived": false,
               "caveat": null
             },
@@ -13700,6 +14065,11 @@
             "price_band": "from3000",
             "total_price": {
               "value": 3450,
+              "derived": false,
+              "caveat": null
+            },
+            "total_hours": {
+              "value": 200,
               "derived": false,
               "caveat": null
             },

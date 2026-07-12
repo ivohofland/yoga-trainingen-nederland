@@ -130,10 +130,16 @@ programs:
       een 100u-Hatha → +100u → 200u-route."
     price:
       amount_eur: null
-      vat: incl
+      vat: unknown
       published: not_published
-      note: "Geen prijs op de Multi Style-pagina; de Yin XL-opleiding wordt incl. btw
-        geprijsd (btw-belast)."
+      note: >
+        Geen prijs op de Multi Style-pagina (site-multistyle-2026-06). vat =
+        unknown (§4.11): die pagina rept met geen woord over btw — niet in de
+        HTML, niet in de browser-render. De eerdere 'incl' was overgenomen van de
+        pagina van een ANDERE opleiding (site-yinxl-2026-06: "Deel I van deze Yin
+        Yoga Opleiding kost € 1.420,00 incl. BTW"). Een btw-behandeling die van
+        het productblad van een ander product is afgelezen, is geen feit over
+        deze opleiding; btw wordt waargenomen of is niet bekend.
       source: site-multistyle-2026-06
     hours_claimed:
       total: 200

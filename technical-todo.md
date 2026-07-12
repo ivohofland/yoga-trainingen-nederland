@@ -172,13 +172,37 @@ cannot be guessed from the YAML — only from the archive:*
   **Consequence, and it is a real one:** the reader now sees **no total** for this
   programme. A derived `total_hours` — same shape as v0.5's derived `total_price` for
   `de-blikopener` (computed in `derive.ts`, rendered *visibly as ours*, never stored) —
-  would restore it honestly. **Not done here: a deliberate follow-up decision, not a
-  drive-by.**
+  would restore it honestly. **Done in spec v0.6** (below).
+
+### Spec v0.6 — `total_hours` is derived (closed)
+
+- [x] **`totalHours()` in `derive.ts`**, mirroring `totalPrice()`. `hours_claimed.total`
+  set → that figure, `derived: false` (**Wahé's 500 is theirs and still reads as theirs**);
+  `total` absent but `contact` + `self_study` both published → their sum, `derived: true`,
+  with the working (*"onze optelling: 360 contacturen + 240 zelfstudie-uren"*). Neither →
+  `null`. de Yogaschool Enschede's **600** is back on the page, as **our** arithmetic.
+- [x] **Rendered visibly as ours, in both units.** The record page keys its ink off
+  `row.derived`: a derived total gets the muted italic `.derived` style, *not* `<Quad>`'s
+  fact ink — the same visual register the listing already used for the derived total price.
+  The derived rows carry **no citation** (§6) and always show their working. The listing
+  shows no hours total at all, so there was nothing to add there.
+- [x] **`contactRatio` now consumes `totalHours`, not the raw field.** It had the total as
+  its denominator, so it returned `null` for every school that publishes its hours only as
+  parts — de Yogaschool, whose breakdown is among the most complete in the corpus, had no
+  contact ratio at all. Now 0,6. `pricePerContactHour` divides by `contact` and never
+  touches a total: **unaffected**, and pinned as such (€ 12,75, not € 7,65).
+- [x] **The API ships `derived.total_hours`** beside `total_price`, with the same
+  `{ value, derived, caveat }` contract and a README that tells consumers to read it
+  instead of `hours_claimed.total` — so a consumer cannot re-derive the wrong figure.
+- [x] **A stored sum cannot sneak back in.** `loader.test.ts` pins the two records whose
+  total legitimately equals contact + zelfstudie (`jai-yoga/pranayama-tt` — *"So number of
+  hours amounts to 350."*; `neo-yoga-delft/200-hatha` — *"200 uur"*). A third record in
+  that shape fails the suite until the archive is opened and it is classified.
 
 *No other stored hours total in the corpus fails the check: the remaining 70 all appear,
 as printed figures, on the page they are cited to.*
 
-### BTW cited to a page that never mentions BTW (3 open)
+### BTW cited to a page that never mentions BTW (1 open)
 
 *§4.11: a VAT treatment is **directly observed or it is not known** — it may never be
 inferred from a CRKBO registration, from the invoicing entity, or from a sibling
@@ -187,21 +211,28 @@ four. `vat: unknown` is the honest value for (b) — that is what the two record
 in v0.5 (`de-blikopener` ×2, `yogatreat/200-functional-yin`) now carry.*
 
 **(b) Inferred, never observed — the VAT twin of a stored sum.** Both records' own notes
-admit the inference in as many words. Neither needs a live page to fix: the fix is to stop
-asserting. *(Left as data changes for the maintainer to sign off — this sweep only
-classified them.)*
+admitted the inference in as many words. Neither needed a live page: the fix was to stop
+asserting. **Both corrected (spec v0.6 pass), each re-verified against the archive first.**
 
-- [ ] **`adhouna/200-multistyle`** — `vat: incl`, cited to `site-multistyle-2026-06`. That
-  page publishes **no price at all** for this programme, and mentions no BTW. The `incl`
-  is carried over from a **different programme's** page (Yin XL, which does state *"€
-  1.420,00 incl. BTW"*). No archived artifact states this programme's VAT. → `unknown`.
-- [ ] **`yoga-den/500-pathway`** — `vat: incl`, cited to `site-ytt-overview-2026-06`. The
-  note infers it outright: *"zelfde btw-belaste entiteit (Yoga Den B.V., niet-CRKBO)"* —
-  precisely the inference §4.11 forbids. **No Yoga Den artifact mentions BTW anywhere.**
-  → `unknown`.
+- [x] **`adhouna/200-multistyle`** — was `vat: incl`, cited to `site-multistyle-2026-06`.
+  That page publishes **no price at all** for this programme, and **neither of its two
+  artifacts (HTML or browser-render) contains `btw` / `vrijgesteld` / `omzetbelasting` /
+  `CRKBO` anywhere** — re-confirmed before the edit. The `incl` was carried over from a
+  **different programme's** page (`site-yinxl-2026-06`, which does state *"Deel I van deze
+  Yin Yoga Opleiding kost € 1.420,00 incl. BTW"*). A VAT treatment read off another
+  product's page is not a fact about this one. → **`vat: unknown`**, note rewritten to state
+  the evidence and the correction.
+- [x] **`yoga-den/500-pathway`** — was `vat: incl`, cited to `site-ytt-overview-2026-06`.
+  The note inferred it outright: *"zelfde btw-belaste entiteit (Yoga Den B.V.,
+  niet-CRKBO)"* — precisely the inference §4.11 forbids, and the same shape as inferring
+  exemption from a CRKBO registration. **Re-confirmed: no Yoga Den *page* artifact mentions
+  BTW at all** (only the CRKBO register capture does, which is a register, not their price
+  page — and the CRKBO inference is the forbidden one). The cited overview shows no money
+  either. → **`vat: unknown`**, note rewritten.
 
-**Cannot be settled from the archive — needs a live re-check** (not done here: this task
-fetched live pages only for `wahe` and `de-yogaschool-enschede`).
+**Cannot be settled from the archive — needs a live re-check.** This is **the only open
+provenance finding in the corpus** (`npm run provenance`: 1 finding, pinned in
+`provenance.test.ts` as `KNOWN_FINDINGS`).
 
 - [ ] **`yoga-den/200-vinyasa`** — `vat: incl`, cited to `site-ytt-200-2026-06`. The record's
   note claims the page *"vermeldde 'Pricing incl. VAT'"* (past tense), but **no Yoga Den

@@ -73,6 +73,50 @@ function formatEuroForCaveat(n: number): string {
   }).format(n);
 }
 
+/**
+ * THE WHOLE-COURSE HOURS FIGURE — the same rule as `totalPrice`, in the other unit
+ * (spec v0.6, §6 `total_hours`).
+ *
+ * `derived` carries the identical licence, and it is worth spelling out why the two
+ * cases below are NOT interchangeable, because getting it wrong once already shipped:
+ *
+ *   - `derived: false` → `hours_claimed.total` is set. The value IS the school's own
+ *     published figure and a surface may print it as theirs. Wahé publishes its 500
+ *     in as many words ("Samen vormen de 200-uurs basisopleiding en de 300 uur aan
+ *     verdiepingsmodules een totaal van 500 uur opleiding") — relabelling that as our
+ *     arithmetic would be its own falsehood, in the opposite direction.
+ *   - `derived: true`  → OUR ADDITION over the parts they publish separately. de
+ *     Yogaschool Enschede states "360 uren" and "minimale zelfstudie van 240 uur" and
+ *     NEVER their sum: the string "600" appears in none of their archived sources. We
+ *     stored 600 in a field that renders as their claimed total; v0.6 computes it here
+ *     instead, and every surface must render it visibly as ours.
+ *   - `value: null`    → they publish no total and not both parts. There is nothing to
+ *     add, and inventing a figure is the fabrication this field exists to stop.
+ *
+ * NO OTHER ADDENDS. Only `contact` + `self_study`, the two parts the schema holds as
+ * published numbers. `supervised_teaching_practice` is a SUBSET of contact hours, not a
+ * third term — adding it in would double-count the very hours it describes.
+ */
+export interface TotalHours {
+  value: number | null;
+  /** How we arrived at the total ("onze optelling: 360 + 240"). Only when we added. */
+  caveat?: string;
+  /** True → we added. The number is OURS and must be labelled so. */
+  derived: boolean;
+}
+
+export function totalHours(program: Program): TotalHours {
+  const { total, contact, self_study: selfStudy } = program.hours_claimed;
+  // The common case: they publish the total. It is theirs, and it stays theirs.
+  if (total != null) return { value: total, derived: false };
+  if (contact == null || selfStudy == null) return { value: null, derived: false };
+  return {
+    value: contact + selfStudy,
+    caveat: nl.totalHoursWorking(contact, selfStudy),
+    derived: true,
+  };
+}
+
 export interface PricePerContactHour {
   value: number | null;
   /** Why no value, or why comparison needs a flag. */
@@ -105,8 +149,23 @@ export function pricePerContactHour(program: Program): PricePerContactHour {
   };
 }
 
+/**
+ * contact ÷ TOTAL hours — over `totalHours`, never the raw `hours_claimed.total`
+ * (spec v0.6, §6: what consumes an hours total consumes the derived one).
+ *
+ * The raw field made this silently unanswerable for every school that publishes its
+ * hours as parts: de Yogaschool Enschede publishes 360 contact + 240 zelfstudie and no
+ * sum, so `total` is null and the ratio came out null — a school whose breakdown is
+ * among the most complete in the corpus, recorded as having no computable contact
+ * ratio. The parts ARE the total; only the addition was missing.
+ *
+ * NOTE the asymmetry with `pricePerContactHour` below, which is deliberate: this ratio
+ * has the total as its DENOMINATOR and must therefore consume it; €/contactuur divides
+ * by `contact` and never touches a total at all, so v0.6 leaves it untouched.
+ */
 export function contactRatio(program: Program): number | null {
-  const { total, contact } = program.hours_claimed;
+  const total = totalHours(program).value;
+  const contact = program.hours_claimed.contact;
   if (total == null || contact == null) return null;
   return Math.round((contact / total) * 100) / 100;
 }

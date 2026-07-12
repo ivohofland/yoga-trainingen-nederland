@@ -169,11 +169,28 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 : prog.name}
             </h3>
 
+            {/* TWO INKS, and the row says which it is (spec §6, v0.5 + v0.6). A quad is a
+                finding or a gap ABOUT the provider, and <Quad> is the only thing allowed
+                to colour one. A DERIVED total — the price we multiplied, the hours we
+                added — is neither: it is our arithmetic over what they published, and
+                printing it through <Quad> put it on the page in the same fact ink as the
+                school's own claims, one row below them. Those figures (de Blikopener's
+                ≈ € 5.160, de Yogaschool's ± 600 uur) appear in NO source either school
+                published. They get the muted, italic ink that says so — the same register
+                the listing already uses for the derived total price.
+
+                A derived row with no value (de Blikopener with no period count) still
+                goes through <Quad>: there the row states a FINDING about them, and a
+                finding is exactly what <Quad> is for. */}
             {prog.rows.map((row, i) => (
               <div key={i} className={styles.kv}>
                 <div className={styles.k}>{row.label}</div>
                 <div className={styles.v}>
-                  <Quad state={row.state}>{row.value}</Quad>
+                  {row.derived && row.state === "yes" ? (
+                    <span className={styles.derived}>{row.value}</span>
+                  ) : (
+                    <Quad state={row.state}>{row.value}</Quad>
+                  )}
                   {row.note && <div className={styles.note}>{row.note}</div>}
                   <Cite source={row.source} />
                 </div>

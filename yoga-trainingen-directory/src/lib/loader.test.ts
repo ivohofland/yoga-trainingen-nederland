@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { integrityErrors, loadDataset } from "./loader";
-import { bundleDelta, pricePerContactHour, totalPrice } from "./derive";
+import { bundleDelta, contactRatio, pricePerContactHour, totalHours, totalPrice } from "./derive";
 import { priceBand } from "./rules";
 import { YearMonth, type Program } from "../schema";
 
@@ -40,9 +40,13 @@ test("every provider id matches its filename slug", () => {
  */
 
 test("DERIVED: €/contactuur is the published price over the published CONTACT hours", () => {
-  // The golden case, by name and by hand: De Yogaschool (Enschede) publishes
-  // €4.590 for the three-year Docentenopleiding Raja Yoga and a breakdown of 600
-  // hours — 360 contact + 240 self-study. €4590 / 360 = €12,75 per contactuur.
+  // The golden case, by name and by hand: De Yogaschool (Enschede) publishes €4.590 for
+  // the three-year Docentenopleiding Raja Yoga, and publishes its hours as PARTS — 360
+  // contacturen and 240 zelfstudie-uren, never their sum (spec v0.6; the string "600"
+  // appears in none of their archived sources). €4590 / 360 = €12,75 per contactuur.
+  //
+  // The denominator is `contact`, so v0.6 changed nothing here: €/contactuur has never
+  // touched an hours TOTAL, derived or stored. That is asserted below, not assumed.
   const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
   // guards: if the record changes, this test must not quietly pass on other numbers
   assert.equal(prog.price.amount_eur, 4590);
@@ -174,6 +178,141 @@ test("TOTAL: the price bands read the TOTAL, never the bare amount", () => {
   assert.equal(priceBand(prog), "from3000",
     "a four-year opleiding costing ≈ € 5.160 must never sit in the under-€3.000 band");
   assert.equal(priceBand(programOf("de-blikopener", "hatha-raja-opleiding-3-jarig")), "from3000");
+});
+
+/* ---------- total_hours: the same rule, the other unit (spec v0.6, §6) ----------
+ *
+ * The disease v0.5 caught in the price field had a twin in the hours field, and the
+ * twin had already shipped: `hours_claimed.total: 600` on de Yogaschool Enschede, in a
+ * field the site renders as the school's own claimed total, on a number the school has
+ * never printed. The `total` is now null in the record and the sum is computed here.
+ *
+ * The two directions are NOT symmetric, and both are pinned below, because getting
+ * either one wrong publishes a falsehood about a named business:
+ *
+ *   - de Yogaschool: publishing OUR sum as THEIR total → invents a claim.
+ *   - Wahé:          publishing THEIR total as OUR sum → strips a school of a figure it
+ *                    does publish, and quietly implies we made it up.
+ */
+
+test("HOURS: a published total IS the school's own figure — derived: false", () => {
+  // Wahé publishes the 500 in as many words, on a page we captured and cite:
+  // "Samen vormen de 200-uurs basisopleiding en de 300 uur aan verdiepingsmodules een
+  // totaal van 500 uur opleiding". It is THEIR claim. Relabelling it "onze optelling"
+  // would be v0.6's error running backwards — no smaller, just pointing the other way.
+  const prog = programOf("wahe", "500-pathway");
+  assert.equal(prog.hours_claimed.total, 500, "guard: the record holds their published total");
+  assert.equal(prog.hours_claimed.contact, null, "guard: they publish no contact-hour figure");
+
+  const hours = totalHours(prog);
+  assert.equal(hours.value, 500);
+  assert.equal(hours.derived, false,
+    "Wahé PUBLISHES its 500 — flagging it `derived: true` would tell every surface and every " +
+    "API consumer that we made up a figure the school states on its own page");
+  assert.equal(hours.caveat, undefined, "their figure needs no working: it is not a sum of ours");
+});
+
+test("HOURS: parts without a total are ADDED, flagged as ours, and show their working", () => {
+  // The record that motivated v0.6. The page states "De opleiding neemt drie jaar of 360
+  // uren in beslag. Daarnaast is er minimale zelfstudie van 240 uur." — two numbers,
+  // published separately, and never their sum.
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  assert.equal(prog.hours_claimed.total, null,
+    "guard: the stored 600 is GONE from the record — a derived value is never stored (§6)");
+  assert.equal(prog.hours_claimed.contact, 360);
+  assert.equal(prog.hours_claimed.self_study, 240);
+
+  const hours = totalHours(prog);
+  assert.equal(hours.value, 600, "360 + 240 is 600");
+  assert.equal(hours.derived, true,
+    "a surface told `derived: false` would print 600 as de Yogaschool's claimed total — the exact " +
+    "bug v0.6 removed, restored");
+  assert.match(hours.caveat ?? "", /onze optelling/,
+    "the working must travel with the number, so a reader can check it");
+  assert.match(hours.caveat ?? "", /360/);
+  assert.match(hours.caveat ?? "", /240/);
+});
+
+test("HOURS: a total with no parts is still the total; neither total nor parts is null", () => {
+  const base = programOf("wahe", "500-pathway");
+  // A total and no breakdown at all — the majority shape in the corpus, and it must not
+  // be nulled by the absence of the addends.
+  const totalOnly: Program = {
+    ...base,
+    hours_claimed: { ...base.hours_claimed, total: 200, contact: null, self_study: null },
+  };
+  assert.deepEqual(totalHours(totalOnly), { value: 200, derived: false });
+
+  // Neither a total nor both parts: there is nothing to add, and a guess would fabricate
+  // the very number this field exists to stop.
+  const nothing: Program = {
+    ...base,
+    hours_claimed: { ...base.hours_claimed, total: null, contact: null, self_study: null },
+  };
+  assert.equal(totalHours(nothing).value, null, "no total and no parts — no figure, not a zero");
+
+  // HALF the parts is not a total either. Publishing contact hours alone and calling them
+  // the whole training would understate it by every hour of homework they set.
+  const contactOnly: Program = {
+    ...base,
+    hours_claimed: { ...base.hours_claimed, total: null, contact: 360, self_study: null },
+  };
+  assert.equal(totalHours(contactOnly).value, null,
+    "contacturen alone are not a course total — one addend is not a sum");
+  assert.equal(totalHours(contactOnly).derived, false, "we derived nothing, so nothing is flagged as ours");
+});
+
+test("HOURS: what consumes an hours total consumes the DERIVED one — contactRatio does", () => {
+  // The point of the field, and the thing a `total`-reading consumer gets wrong: de
+  // Yogaschool publishes the most complete hours breakdown in the corpus, and reading the
+  // raw `hours_claimed.total` gives them NO contact ratio at all — because the one number
+  // they don't print is the sum of the two they do.
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  assert.equal(prog.hours_claimed.total, null, "guard: the raw field is null");
+  assert.equal(contactRatio(prog), 0.6, "360 contact of a 600-hour course is 0,6 — not null");
+
+  // And €/contactuur is UNAFFECTED, because it divides by `contact` and never by a total.
+  // Pinned rather than assumed: routing it through totalHours would quietly turn €12,75
+  // (4590/360) into €7,65 (4590/600) — a third off the published rate of a named business.
+  const pph = pricePerContactHour(prog);
+  assert.equal(pph.value, 12.75, "€/contactuur divides by CONTACT hours, never by the total");
+  assert.notEqual(pph.value, Math.round((4590 / 600) * 100) / 100);
+});
+
+test("HOURS: a stored total that equals contact + zelfstudie must be one the SCHOOL prints", () => {
+  // §6, principle 9, guarded where it can actually be broken. A `total` that is
+  // arithmetically the sum of the parts beside it is EXACTLY what a stored sum looks like
+  // — de Yogaschool's 600 was 360 + 240 — and nothing in the YAML tells the two apart:
+  // the record looks complete and perfectly sourced either way. Only the archive can say
+  // whether the school prints that number, and the check that opens the archive is
+  // `provenance.ts` (hoursFigureRe), whose findings are pinned in provenance.test.ts.
+  //
+  // Two records are in this shape today, and BOTH are legitimate — each school prints its
+  // own total, in as many words:
+  //
+  //   jai-yoga/pranayama-tt      "So number of hours amounts to 350."   (200 + 150)
+  //   neo-yoga-delft/200-hatha   "200 uur"                              (180 + 20)
+  //
+  // They are NAMED here so that a third cannot quietly join them. This test guards the
+  // list, not the arithmetic: a new record whose total is the sum of its parts has to be
+  // held against the archive — and either it is their published figure (add it here, with
+  // the sentence that proves it) or it is our addition (drop `total` to null and let
+  // totalHours() do it, visibly as ours).
+  const PUBLISHED_SUMS = ["jai-yoga/pranayama-tt", "neo-yoga-delft/200-hatha"];
+  const sumShaped = providers.flatMap((p) =>
+    p.programs
+      .filter((prog) => {
+        const { total, contact, self_study: selfStudy } = prog.hours_claimed;
+        return total != null && contact != null && selfStudy != null && total === contact + selfStudy;
+      })
+      .map((prog) => `${p.id}/${prog.id}`),
+  );
+  assert.deepEqual(sumShaped.sort(), PUBLISHED_SUMS,
+    "a programme's stored hours total is exactly contact + zelfstudie. That is the shape of a STORED " +
+    "SUM (spec v0.6): our own arithmetic sitting in a field the site renders as the school's claimed " +
+    "total. Open the archive: if the school prints the figure it is theirs — add it to PUBLISHED_SUMS " +
+    "with the sentence that proves it. If it does not appear, set `total: null` and let totalHours() " +
+    "add the parts up, labelled as ours.");
 });
 
 test("DERIVED: the bundle delta is negative when the package is CHEAPER than its parts", () => {

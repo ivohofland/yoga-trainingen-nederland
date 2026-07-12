@@ -183,6 +183,19 @@
   line-height: 1.5;
 }
 
+/* OUR arithmetic, never the provider's claim (spec §6 — v0.5 for the price, v0.6 for
+   the hours). The same class, and the same reasoning, as `.derived` in
+   ProgrammeTable.module.css: it must NOT look like the facts around it. Muted, italic,
+   mono — the visual register of the "onze berekening" / "onze optelling" it carries in
+   its own words, and deliberately not the ink <Quad> gives a fact about a named
+   business. A derived total in fact ink publishes, in the provider's colours, a figure
+   the provider has never stated. */
+.derived {
+  font-family: var(--mono);
+  font-style: italic;
+  color: var(--muted);
+}
+
 /* Provenance for the fact above it — deliberately quiet. */
 .note {
   font-family: var(--mono);

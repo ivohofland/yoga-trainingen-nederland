@@ -7,7 +7,7 @@
  * It is PURE — it reaches `derive.ts` and `rules.ts`, never `loader.ts` — so a
  * client component may import values from it, not merely types.
  */
-import { bundleDelta, pricePerContactHour, totalPrice } from "./derive";
+import { bundleDelta, pricePerContactHour, totalHours, totalPrice } from "./derive";
 import {
   missingBecause,
   pphBlocker,
@@ -514,7 +514,26 @@ export interface QuadRow {
  * the page would silently drop (it goes in the `note`, which always renders).
  * Neither illegal shape compiles.
  */
-export type KeyValueRow = { label: string; note: string | null; source: SourceRef } & (
+export type KeyValueRow = {
+  label: string;
+  note: string | null;
+  source: SourceRef;
+  /**
+   * OUR ARITHMETIC — the total price we multiplied, the total hours we added (spec §6).
+   * NOT a quad, and that is the point: the value is not a fact we established ABOUT the
+   * provider, it is a sum WE performed over facts they published. The page renders it in
+   * its own visibly non-factual ink instead of handing it to <Quad>, which would print
+   * it in the same colour as the school's own claims — a figure de Blikopener and de
+   * Yogaschool have never stated, wearing their colours.
+   *
+   * The row still carries a `state`, because the row still has to say when there is no
+   * derivable total at all (de Blikopener with no period count: a FINDING about them).
+   * `derived` only ever governs the ink of a value, never whether one exists.
+   *
+   * Absent on every other row — a fact read off a provider's page is theirs, not ours.
+   */
+  derived?: boolean;
+} & (
   | { state: "yes"; value: string }
   /** No value to show → <Quad> renders the state word. `no` belongs here: on the
    *  fields these rows read, “nee” IS the whole statement. */
@@ -876,6 +895,9 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
             value: `± ${formatEuro(total.value)}`,
             note: total.caveat ?? null,
             source: null,
+            // The ink, not merely the label. `state: "yes"` alone put OUR multiplication
+            // in the same colour as the provider's own published price, one row above it.
+            derived: true,
           }
         : {
             label: nl.rowTotalPrice,
@@ -921,6 +943,31 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
           source: h.source ?? null,
         },
   );
+
+  // THE WHOLE-COURSE HOURS FIGURE, on the programmes that publish no such figure
+  // (spec v0.6) — the exact twin of the Totaalprijs row above, in the other unit.
+  //
+  // ONLY where we added it up. Where the school publishes its own total (Wahé's 500, 72
+  // of 78 programmes), that number is already in the Urenuitsplitsing row above as THEIR
+  // claim, cited to the page that states it — and a second row repeating it under a label
+  // that says "onze optelling" would relabel a school's published figure as our
+  // arithmetic. That is v0.6's error running backwards, and it is no smaller.
+  //
+  // NO CITATION, like the Totaalprijs and €/contactuur rows: this is ours (spec §6).
+  // Pinning de Yogaschool's docentenpagina to "± 600 uur" would credit them with a figure
+  // that appears in none of their archived sources. The label says whose sum it is, the
+  // note shows the working, and the ink says it is not a fact about them.
+  const hours = totalHours(program);
+  if (hours.derived && hours.value != null) {
+    rows.push({
+      label: nl.rowTotalHours,
+      state: "yes",
+      value: nl.hoursDerivedTotal(hours.value),
+      note: hours.caveat ?? null,
+      source: null,
+      derived: true,
+    });
+  }
 
   // The §5 field. Its emptiness across the market is the finding — so it gets
   // its own row on every programme, always. With no number, the row says what
