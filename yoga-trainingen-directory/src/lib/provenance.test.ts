@@ -175,13 +175,24 @@ const KNOWN_FINDINGS = report.skipped > 0 ? report.findings.map((f) => `${f.prov
   //     inference, and NO Yoga Den page artifact mentions btw at all.
   //   Both are now `vat: unknown`, which is the honest value and is exempt from the check.
   //
-  // WHAT IS LEFT IS THE ONE THE ARCHIVE CANNOT SETTLE. Our note says the page read
-  // "Pricing incl. VAT"; no artifact contains the string, and the capture is NOT partial
-  // (the pricing block is fully there — "Pricing", "Investment: €3597" — with no VAT
-  // wording beside it). Our own note and our own archive contradict each other, and only
-  // the live page can say which is right. Guessing either way is the thing this project
-  // exists not to do, so it stays a finding until someone re-checks it (technical-todo.md).
-  "yoga-den/200-vinyasa [vat]",
+  // AND THE LAST ONE IS GONE TOO — it was type (b) all along, and it was the SAME bug as
+  // adhouna: a VAT treatment read off a SIBLING PROGRAMME'S page.
+  //
+  //   - yoga-den/200-vinyasa carried `incl`, its note citing "de 200u-pagina vermeldde
+  //     'Pricing incl. VAT'". That wording is real — but it is on the 100-HOUR page
+  //     (/ytt/100h-ytt/: "Pricing (incl VAT)", €1697/€1797). The 200u page says only
+  //     "Pricing / Investment: €3597", in our 2026-06 capture AND live in 2026-07. The
+  //     only "vat"/"incl" hits in that artifact are substrings ("including",
+  //     "wp-includes") — which is why a naive grep looks like a confirmation and is not.
+  //     Now `vat: unknown`. The same phantom quote had also been load-bearing in the
+  //     crkbo note ("btw-belast … consistent met NIET CRKBO-geregistreerd"); one
+  //     misattributed sentence had become evidence for two separate conclusions.
+  //
+  // THE LIST IS EMPTY. Every price, hours total and VAT treatment in the corpus is now
+  // cited to an archived artifact that actually states it. Adding a record that is not
+  // fails this test — which is the point: the check exists so this list can stay empty,
+  // not so it can be curated. If you are here to append an entry, the fix is almost
+  // certainly to cite the page that STATES the fact, and archive it first (CLAUDE.md).
 ];
 
 test("the corpus holds claims for the check to be about", () => {

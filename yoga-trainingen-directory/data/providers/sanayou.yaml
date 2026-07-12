@@ -233,15 +233,39 @@ programs:
       structure: modular
       language: nl
     price:
-      amount_eur: null
+      amount_eur: 1250
       vat: unknown
       published: yes
-      note: "Modulair online (3 routes). Sanayou publiceert wél prijzen: per
-        module/traject, op de module- en inschrijfpagina's. Bedragen niet uitgelezen
-        in deze ronde. LET OP — de hier geciteerde bron is de overzichtspagina en
-        bevat zélf geen bedrag; de pagina's die de prijzen wél dragen staan niet in
-        sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de
-        aanbieder (zie technical-todo.md)."
+      variants:
+        - label: "Yin Yoga (online route)"
+          amount_eur: 1250
+        - label: "Yin & Yang (online route)"
+          amount_eur: 1250
+        - label: "Yang (online route)"
+          amount_eur: 1250
+      note: >
+        € 1.250,- per route, en alle drie de routes (Yin Yoga / Yin & Yang / Yang)
+        kosten hetzelfde — de overzichtspagina zet ze naast elkaar met driemaal
+        "€ 1.250,-" en "Betaling in 1, 5 of 10 termijnen". Er is dus geen keuze te
+        maken tussen routes voor de vergelijkbare basisprijs (§4-conventie): ze zijn
+        identiek. Bedrag uitgelezen uit het gearchiveerde artefact van
+        site-online-2026-06 (vastgelegd 2026-06-20).
+
+        Btw: de pagina noemt geen btw-behandeling bij de prijs. Het enige
+        btw-woord in het artefact is het BTW-nummer in de footer
+        ("BTW nummer: NL001422164B38") — een registratienummer, geen uitspraak
+        over de prijs. SanaYou ís CRKBO-geregistreerd, maar §4.11 verbiedt de
+        vrijstelling daaruit af te leiden → vat blijft unknown.
+
+        CORRECTIE 2026-07-12: deze notitie stelde eerder dat de geciteerde bron
+        "zélf geen bedrag" bevat en dat de prijzen op niet-gearchiveerde
+        module-/inschrijfpagina's stonden. Dat was onjuist en het was ONZE fout,
+        niet die van de aanbieder: het bedrag stond al die tijd in ons eigen
+        archief van deze pagina. De bewering kwam uit een eerste, kapotte versie
+        van de provenance-check die PDF's met `strings` doorzocht — dat leest geen
+        gecomprimeerde tekststromen, dus las het "geen bedrag" waar er drie
+        stonden. De definitieve check (pdftotext, HTML én browser-render) heeft
+        deze bron nooit geflagd.
       source: site-online-2026-06
     hours_claimed:
       total: 200
