@@ -1,7 +1,7 @@
 {
-  "data_current_as_of": "2026-07-01",
+  "data_current_as_of": "2026-07-12",
   "count": 47,
-  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven.",
+  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare totaalprijs — niet rangschikken.",
   "providers": [
     {
       "id": "7-yoga-academy",
@@ -62,6 +62,7 @@
           "prerequisites_claimed": "geen; voor beoefenaars die willen verdiepen én wie docent wil worden",
           "price": {
             "amount_eur": 2499,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "includes": "studiemateriaal & certificaat",
@@ -110,6 +111,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2499,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -211,6 +217,7 @@
           },
           "price": {
             "amount_eur": 2838.6,
+            "period": "total",
             "variants": [
               {
                 "label": "eenmalig, 5% korting",
@@ -268,6 +275,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2838.6,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -296,6 +308,7 @@
           },
           "price": {
             "amount_eur": 2838.6,
+            "period": "total",
             "variants": [
               {
                 "label": "eenmalig, 5% korting",
@@ -342,6 +355,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2838.6,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -469,6 +487,7 @@
           "prerequisites_claimed": "toegankelijk voor alle yoganiveaus, ook beginners. Ook een 100u-Hatha → +100u → 200u-route.",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "incl",
             "published": "not_published",
             "note": "Geen prijs op de Multi Style-pagina; de Yin XL-opleiding wordt incl. btw geprijsd (btw-belast).",
@@ -506,6 +525,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -539,6 +563,7 @@
           "prerequisites_claimed": "toegankelijk voor alle niveaus, ook beginners. Ook een 100u-Yin → +100u → 200u-route.",
           "price": {
             "amount_eur": 2725,
+            "period": "total",
             "variants": [
               {
                 "label": "Deel I (incl. syllabus + examen)",
@@ -597,6 +622,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2725,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -727,6 +757,7 @@
           },
           "price": {
             "amount_eur": 3250,
+            "period": "total",
             "variants": [
               {
                 "label": "slaapzaal (4-7 bedden)",
@@ -783,6 +814,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3250,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -902,6 +938,7 @@
           "prerequisites_claimed": "HBO/BSc denkniveau + min. 1 jaar persoonlijke lichaam-&-geest-beoefening; Module 2 vereist afgeronde Module 1",
           "price": {
             "amount_eur": 3115,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird 200u (tot early-bird-datum)",
@@ -1022,6 +1059,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3115,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1272,6 +1314,7 @@
           "prerequisites_claimed": "voor wie de eigen yogapraktijk wil verdiepen én wie docent wil worden (geen expliciete jaren-eis)",
           "price": {
             "amount_eur": 3150,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird (tot 1 jul 2025)",
@@ -1338,6 +1381,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3150,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1379,6 +1427,7 @@
           "prerequisites_claimed": "voor beoefenaars die Vinyasa willen verdiepen én wie gecertificeerd docent wil worden",
           "price": {
             "amount_eur": 2990,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird (tot 31 jul)",
@@ -1447,6 +1496,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2990,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1648,6 +1702,7 @@
           "prerequisites_claimed": "minimaal twee jaar ervaring met yoga",
           "price": {
             "amount_eur": 2600,
+            "period": "total",
             "vat": "excl",
             "published": "yes",
             "excludes": "evtl. kosten stiltedagen",
@@ -1688,6 +1743,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2600,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1773,6 +1833,7 @@
           "prerequisites_claimed": "geen specifiek aanvangsniveau yoga vereist; opleiding op hbo-niveau",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "exempt_crkbo",
             "published": "no",
             "note": "Prijs voor de volgende NL-cohort (start 2028) \"nog niet bekend\". Aanbetaling EUR 250; jaargeld in één keer te voldoen; bij tussentijds stoppen toch volledig jaargeld verschuldigd.\n",
@@ -1838,6 +1899,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1914,8 +1980,96 @@
       "programs": [
         {
           "id": "hatha-raja-opleiding",
-          "name": "Hatha Raja Yoga docentenopleiding",
-          "url": "https://www.blikopener.info/",
+          "name": "Hatha-Raja Yoga docentenopleiding (500 u, vierjarig)",
+          "url": "https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/",
+          "format_label": "500",
+          "style_claimed": "Hatha en Raja yoga; 'Houding + Adem = Energie'; klassieke traditie",
+          "accreditation": [
+            {
+              "body": "vyn",
+              "label_claimed": "landelijk officieel erkend door de Vereniging Yogadocenten Nederland (V.Y.N.) en de Europese Yogafederatie (U.E.Y.)",
+              "verified": "yes",
+              "source": "vyn-register-2026-06"
+            }
+          ],
+          "delivery": {
+            "mode": "in_person",
+            "structure": "mixed",
+            "duration_months_min": 48,
+            "duration_months_max": 48,
+            "language": "nl"
+          },
+          "prerequisites_claimed": "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan 23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een persoonlijk instapgesprek vooraf",
+          "price": {
+            "amount_eur": 1290,
+            "period": "per_year",
+            "periods": 4,
+            "variants": [
+              {
+                "label": "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli 2026",
+                "amount_eur": 1220
+              }
+            ],
+            "vat": "unknown",
+            "published": "yes",
+            "excludes": "eenmalig € 100,- inschrijf- en boekengeld in het 1e jaar; de verblijfskosten van het jaarlijkse yogaweekend ('vanaf 1 juli 2026 € 335,-').",
+            "note": "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12), niet per opleiding: het traject loopt vier jaar en een totaalprijs publiceren zij nergens. Het totaal in het overzicht is ONZE vermenigvuldiging (4 × € 1.290), als zodanig gemarkeerd. BTW: de tarievenpagina noemt geen btw — `vat` is daarom `unknown` (spec §4.11: een vrijstelling mag niet uit de CRKBO-registratie worden afgeleid). Correctie t.o.v. de eerdere waarde `exempt_crkbo`, die op geen bron rustte.",
+            "source": "tarieven-2026-07"
+          },
+          "hours_claimed": {
+            "total": 500,
+            "contact": null,
+            "self_study": null,
+            "supervised_teaching_practice": null,
+            "breakdown_published": "unknown",
+            "contact_published": "unknown",
+            "source": "opleiding-2026-07",
+            "note": "500 u over vier jaar (opleidingspagina). De pagina verwijst voor de uitsplitsing naar een aparte pagina 'Uren opleiding'; die is nog niet vastgelegd, dus over de contact-/zelfstudie-uren doen wij geen uitspraak."
+          },
+          "coherence_signals": {
+            "single_cohort_intake": "yes",
+            "single_cohort_intake_note": "jaarlijkse start; 1e jaar start eind augustus / begin september, instromen mogelijk t/m eind november",
+            "continuous_lead_teacher": "yes",
+            "continuous_lead_teacher_note": "Hans 't Hart (sinds 1968) en Natasja de Senerpont Domis (sinds 2006), met ondersteunende docenten",
+            "source": "opleiding-2026-07"
+          },
+          "assessment_described": {
+            "exists": "yes",
+            "final": "yes",
+            "quote": "Als je voor het 500 u-traject wilt gaan, kun je aansluitend een 4e jaar volgen met verdiepende modules, dat je afsluit met een praktijkexamen en een afstudeerscriptie."
+          },
+          "track_record": {
+            "source": "opleiding-2026-07",
+            "note": "claimt 'bestaat nu ruim 55 jaar'; de opleidingspagina zegt: 'De opleiding tot Hatha –en Rajayogadocent(e) ontstond in 1982'"
+          },
+          "cohorts": [
+            {
+              "id": "c-2026-08",
+              "start": "2026-08",
+              "status": "announced",
+              "source": "site-2026-06",
+              "note": "1e jaar start 31 aug 2026; proeflessen mei/juni, open dag 23 aug"
+            }
+          ],
+          "derived": {
+            "price_state": "yes",
+            "price_band": "from3000",
+            "total_price": {
+              "value": 5160,
+              "derived": true,
+              "caveat": "onze berekening: 4 × € 1.290"
+            },
+            "pph": null,
+            "pph_state": "unknown",
+            "contact_ratio": null,
+            "bundle_delta": null,
+            "multistyle": false
+          }
+        },
+        {
+          "id": "hatha-raja-opleiding-3-jarig",
+          "name": "Hatha-Raja Yoga docentenopleiding (372 u, driejarig)",
+          "url": "https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/",
           "format_label": "other",
           "style_claimed": "Hatha en Raja yoga; 'Houding + Adem = Energie'; klassieke traditie",
           "accreditation": [
@@ -1929,63 +2083,72 @@
           "delivery": {
             "mode": "in_person",
             "structure": "mixed",
+            "duration_months_min": 36,
+            "duration_months_max": 36,
             "language": "nl"
           },
+          "prerequisites_claimed": "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan 23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een persoonlijk instapgesprek vooraf",
           "price": {
             "amount_eur": 1290,
+            "period": "per_year",
+            "periods": 3,
             "variants": [
               {
-                "label": "per studiejaar (vanaf 1 juni 2026)",
-                "amount_eur": 1290
-              },
-              {
-                "label": "vroegboekkorting 1e jaar 2026, bij inschrijving vóór 5 juli 2026",
+                "label": "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli 2026",
                 "amount_eur": 1220
               }
             ],
-            "vat": "exempt_crkbo",
+            "vat": "unknown",
             "published": "yes",
             "excludes": "eenmalig € 100,- inschrijf- en boekengeld in het 1e jaar; de verblijfskosten van het jaarlijkse yogaweekend ('vanaf 1 juli 2026 € 335,-').",
-            "note": "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12), niet per opleiding: het traject loopt meerdere jaren en een totaalprijs publiceren zij niet. Niet vermenigvuldigd — dat zou een bedrag verzinnen dat zij nergens noemen. LET OP (BTW): de tarievenpagina noemt géén BTW — geen 'incl.', geen 'excl.', geen 'vrijgesteld', geen CRKBO. Volgens spec §4.11 hoort `vat` dan `unknown` te zijn; de bestaande waarde `exempt_crkbo` is hier niet op deze bron te gronden en lijkt afgeleid uit de CRKBO-registratie, wat §4.11 juist verbiedt. Bewust ongewijzigd gelaten en gemeld i.p.v. stil gecorrigeerd.",
+            "note": "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12). De tarievenpagina noemt één tarief voor de Hatha-Raja yogadocentenopleiding en onderscheidt de driejarige variant niet apart; het totaal in het overzicht is ONZE vermenigvuldiging (3 × € 1.290), als zodanig gemarkeerd. BTW: de tarievenpagina noemt geen btw — `vat` is daarom `unknown` (spec §4.11).",
             "source": "tarieven-2026-07"
           },
           "hours_claimed": {
-            "total": null,
+            "total": 372,
             "contact": null,
             "self_study": null,
             "supervised_teaching_practice": null,
-            "breakdown_published": "not_published",
-            "contact_published": "not_published",
-            "source": "site-2026-06",
-            "note": "geen urentelling op homepage; meerjarig traject"
+            "breakdown_published": "unknown",
+            "contact_published": "unknown",
+            "source": "opleiding-2026-07",
+            "note": "372 u over drie jaar (opleidingspagina). Voor de uitsplitsing verwijst de pagina naar een aparte pagina 'Uren opleiding'; die is nog niet vastgelegd."
           },
           "coherence_signals": {
             "single_cohort_intake": "yes",
-            "single_cohort_intake_note": "jaarlijkse start; 1e jaar start 31 aug 2026",
+            "single_cohort_intake_note": "gedeeld eerste jaar met het 500 u-traject; start eind augustus / begin september",
             "continuous_lead_teacher": "yes",
             "continuous_lead_teacher_note": "Hans 't Hart (sinds 1968) en Natasja de Senerpont Domis (sinds 2006), met ondersteunende docenten",
-            "source": "site-2026-06"
+            "source": "opleiding-2026-07"
           },
           "assessment_described": {
-            "exists": "unknown"
+            "exists": "yes",
+            "final": "yes",
+            "quote": "Deze wordt afgesloten met een examen (theorie en praktijk) en een diploma."
           },
           "track_record": {
-            "note": "claimt 'bestaat nu ruim 55 jaar'; site-motto 'sinds 1982'; oudste-generatie NL-opleiding"
+            "source": "opleiding-2026-07",
+            "note": "claimt 'bestaat nu ruim 55 jaar'; de opleidingspagina zegt: 'De opleiding tot Hatha –en Rajayogadocent(e) ontstond in 1982'"
           },
           "cohorts": [
             {
-              "id": "c-2026-08",
+              "id": "c-2026-08-3j",
               "start": "2026-08",
               "status": "announced",
               "source": "site-2026-06",
-              "note": "1e jaar start 31 aug 2026; proeflessen mei/juni, open dag 23 aug"
+              "note": "gedeelde start van het 1e jaar: 31 aug 2026"
             }
           ],
           "derived": {
             "price_state": "yes",
-            "price_band": "under3000",
+            "price_band": "from3000",
+            "total_price": {
+              "value": 3870,
+              "derived": true,
+              "caveat": "onze berekening: 3 × € 1.290"
+            },
             "pph": null,
-            "pph_state": "not_published",
+            "pph_state": "unknown",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": false
@@ -2027,7 +2190,7 @@
           "archived_url": "https://web.archive.org/web/20260613080628/https://www.blikopener.info/",
           "local_snapshot": "data/archives/de-blikopener/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13",
-          "note": "homepage; bevat zélf geen bedrag — linkt via het menu 'Agenda's en Tarieven' naar de tarievenpagina (tarieven-2026-07), die de prijs wél stelt en waaruit die is overgenomen. Uren publiceren zij nergens."
+          "note": "homepage; bevat zélf geen bedrag, geen urental en geen structuur — linkt alleen door naar de pagina's die dat wél stellen (tarieven-2026-07 en opleiding-2026-07). Draagt hier nog uitsluitend de cohortdatum (start 31 aug 2026), die de homepage zelf noemt."
         },
         {
           "id": "vyn-register-2026-06",
@@ -2052,11 +2215,20 @@
           "archived_url": "https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/",
           "local_snapshot": "data/archives/de-blikopener/tarieven-2026-07-2026-07-12.pdf",
           "captured": "2026-07-12",
-          "note": "tarievenpagina — de pagina die de prijs STELT (de homepage linkt er alleen naar)."
+          "note": "tarievenpagina — de pagina die de prijs STELT (de homepage linkt er alleen naar). Noemt géén btw: geen 'incl.', geen 'excl.', geen 'vrijgesteld', geen CRKBO."
+        },
+        {
+          "id": "opleiding-2026-07",
+          "type": "website",
+          "url": "https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/",
+          "archived_url": "https://web.archive.org/web/20260712131118/https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/",
+          "local_snapshot": "data/archives/de-blikopener/opleiding-2026-07-2026-07-12.pdf",
+          "captured": "2026-07-12",
+          "note": "de opleidingspagina zelf — de pagina die de OMVANG en de STRUCTUUR stelt (urental, aantal jaren, beide varianten). De homepage doet dat nergens."
         }
       ],
       "depth": "listed",
-      "last_verified": "2026-06-13"
+      "last_verified": "2026-07-12"
     },
     {
       "id": "de-nieuwe-yogaschool",
@@ -2139,6 +2311,7 @@
           "prerequisites_claimed": "geen vooropleiding nodig; HBO werk- en denkniveau; geen yoga-ervaring vereist",
           "price": {
             "amount_eur": 2964.5,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "excludes": "verplichte literatuur (boekenlijst apart gepubliceerd)",
@@ -2188,6 +2361,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2964.5,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2229,6 +2407,7 @@
           "prerequisites_claimed": "geen vooropleiding nodig; HBO werk- en denkniveau",
           "price": {
             "amount_eur": 2964.5,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "excludes": "verplichte literatuur",
@@ -2266,6 +2445,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2964.5,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2306,6 +2490,7 @@
           },
           "price": {
             "amount_eur": 2964.5,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "note": "€ 2.450 excl. VAT → € 2.964,50 incl. 21% VAT. Early Bird €121 (eerste 5; code EARLYBIRD-VINYASA-INTENSIVE).",
@@ -2344,6 +2529,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2964.5,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2580,6 +2770,7 @@
           "prerequisites_claimed": "Afgeronde Basisopleiding Raja Yoga (1 jaar, €1510) is voorwaarde. Voor wie nog niet bij de school bekend is: kennismakingsgesprek/intake. Gericht op persoonlijke ontwikkeling; wekelijkse lessen + dagelijkse eigen beoefening.\n",
           "price": {
             "amount_eur": 4590,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "note": "€1530/jaar (per 1 jan 2026), betaald in termijnen van €153/mnd (10 mnd); lesboeken inbegrepen. De Docentenopleiding duurt 3 jaar ⇒ ca. €4590 totaal (3 × €1530). Geen btw-vermelding op de pagina → vat unknown (NRTO ≠ btw-vrijstelling; niet CRKBO).\n",
@@ -2622,6 +2813,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 4590,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 12.75,
             "pph_state": "yes",
             "contact_ratio": 0.6,
@@ -2656,6 +2852,7 @@
           "prerequisites_claimed": "Succesvol afgeronde Docentenopleiding Raja Yoga is voorwaarde.",
           "price": {
             "amount_eur": 4590,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "note": "€1530/jaar (termijnen €153/mnd ×10; lesboeken incl.); 3 jaar ⇒ ca. €4590 totaal. Geen btw-vermelding → vat unknown.",
@@ -2691,6 +2888,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 4590,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 12.75,
             "pph_state": "yes",
             "contact_ratio": null,
@@ -2888,6 +3090,7 @@
           "prerequisites_claimed": "enige yoga-ervaring (bijv. wekelijkse yogales); intakegesprek maakt deel uit van de toelatingsprocedure",
           "price": {
             "amount_eur": 2961,
+            "period": "total",
             "variants": [
               {
                 "label": "ineens (voor start opleiding)",
@@ -2974,6 +3177,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2961,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 13.46,
             "pph_state": "yes",
             "contact_ratio": null,
@@ -3128,6 +3336,7 @@
           "prerequisites_claimed": "ervaring/enthousiasme voor yoga; bij voorkeur 1-2 jaar yoga-ervaring. Geschikt voor aankomend docent én verdieping.",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "unknown",
             "published": "not_published",
             "includes": "10 opleidingsweekenden, Syllabus Theorie & Anatomie (80+ pp), Syllabus Alignment (50 houdingen), boek 'Essential Yoga Therapy' (twv €25), online cursus 'Applied Anatomy and Physiology' (twv €250), individueel begeleidingstraject (intake- + voortgangsgesprek)\n",
@@ -3204,6 +3413,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -3398,6 +3612,7 @@
           "prerequisites_claimed": "In principe toegankelijk voor iedereen met een open mind; advies om eerst ~10 lessen te volgen. Bewust dat een Kundalini Yoga opleiding intens en confronterend kan zijn; lichte fysieke/geestelijke beperkingen in overleg.",
           "price": {
             "amount_eur": 4197,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "includes": "de lerarenopleiding (NL), 16 overnachtingen in een 2-persoonskamer, biologisch vegetarisch eten, 2 manuals (Engels), 1× 60 min persoonlijk consult met Guru Gian, levenslang toegang tot de online leeromgeving van de opleiding, 1 jaar gratis toegang tot de Kundalini Yoga Club (200+ kriyas/ meditaties)\n",
@@ -3455,6 +3670,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 4197,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -3632,6 +3852,7 @@
           "prerequisites_claimed": "voor wie yoga dieper wil begrijpen dan alleen als fysieke practice; om docent te worden óf de eigen practice te verdiepen; ook geschikt als lesgeven niet het hoofddoel is. Kleinschalige groep.",
           "price": {
             "amount_eur": 3895,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird (aanmelden vóór 1 aug 2026)",
@@ -3698,6 +3919,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3895,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -3731,6 +3957,7 @@
           "prerequisites_claimed": "geen yogadocent-status of eerdere TT vereist; fijn als je al eens Yin hebt beoefend. Voor docenten die zich willen verdiepen én voor wie Yin beter wil begrijpen en doorgeven.",
           "price": {
             "amount_eur": 1800,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "includes": "verblijf, maaltijden, manual, trainingsmateriaal en certificaat",
@@ -3776,6 +4003,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 1800,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -3929,6 +4161,7 @@
           },
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "unknown",
             "published": "not_published",
             "note": "Geen prijs gepubliceerd op opleidings- of inschrijfpagina; inschrijving via een Kajabi-interesseformulier zonder bedrag of cohortdata. Wie eerder de 40-uurs Breathe to Heal Facilitator Training volgde krijgt korting (\"tuition will be adjusted accordingly\").\n",
@@ -3974,6 +4207,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4152,6 +4390,7 @@
           },
           "price": {
             "amount_eur": 2890,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "excludes": "studieboeken én registratiekosten Yoga Alliance bij afronding",
@@ -4187,6 +4426,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2890,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4217,6 +4461,7 @@
           "prerequisites_claimed": "gericht op 'dedicated yoga teachers or serious practitioners'",
           "price": {
             "amount_eur": 2385,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "excludes": "verplichte boeken (€115 incl. btw, via Jai Yoga verkrijgbaar)",
@@ -4249,6 +4494,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2385,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 11.93,
             "pph_state": "yes",
             "contact_ratio": 0.57,
@@ -4397,6 +4647,7 @@
           },
           "price": {
             "amount_eur": 3000,
+            "period": "total",
             "variants": [
               {
                 "label": "niet-leden",
@@ -4448,6 +4699,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3000,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4559,6 +4815,7 @@
           "prerequisites_claimed": "enige yoga-ervaring (geen complete beginner, geen volleerde yogi). Voertaal Nederlands; non-Dutch kunnen meedoen mits Nederlands verstaanbaar, en mogen in het Engels lesgeven/schrijven",
           "price": {
             "amount_eur": 2885,
+            "period": "total",
             "variants": [
               {
                 "label": "regulier tarief",
@@ -4632,6 +4889,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2885,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 16.03,
             "pph_state": "yes",
             "contact_ratio": 0.9,
@@ -4789,6 +5051,7 @@
           "prerequisites_claimed": "geen; voor beginners én gevorderden, en voor wie de eigen practice wil verdiepen",
           "price": {
             "amount_eur": 449,
+            "period": "total",
             "variants": [
               {
                 "label": "reguliere prijs",
@@ -4841,6 +5104,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 449,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4881,6 +5149,7 @@
           "prerequisites_claimed": "geen; voor beginners én gevorderden, en voor wie de eigen Yin-practice wil verdiepen",
           "price": {
             "amount_eur": 449,
+            "period": "total",
             "variants": [
               {
                 "label": "reguliere prijs",
@@ -4929,6 +5198,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 449,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5098,6 +5372,7 @@
           "prerequisites_claimed": "voor iedereen; geen vooropleiding (zowel aankomend docent als verdieping eigen practice)",
           "price": {
             "amount_eur": 2890,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "includes": "€175 inschrijfkosten; gratis lessen bij Open Yoga + 10% korting op workshops tijdens de opleiding",
@@ -5143,6 +5418,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2890,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5175,6 +5455,7 @@
           "prerequisites_claimed": "afgeronde 200u (Fundamental/Basis) Teacher Training",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "unknown",
             "published": "not_published",
             "note": "Geen vaste totaalprijs gepubliceerd: zelf samen te stellen uit losse modules (ook los te boeken zonder volledige inschrijving); prijs per module via e-mail. Na 200+300 → RYT500 aan te vragen.\n",
@@ -5219,6 +5500,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5381,6 +5667,7 @@
           "prerequisites_claimed": "HBO werk- en denkniveau; voor wie wil verdiepen, transformeren en/of les wil gaan geven",
           "price": {
             "amount_eur": 2700,
+            "period": "total",
             "variants": [
               {
                 "label": "gedeelde kamer",
@@ -5441,6 +5728,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2700,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5610,6 +5902,7 @@
           "prerequisites_claimed": "geen; advies om met de basis-module (Anatomie) te starten. Enige volgorde-eis: Yin Yoga & Energiewerk (Qi Gong) vereist eerst Yin Yoga & Energie (of een basis in meridianenleer + 5 elementen)",
           "price": {
             "amount_eur": 2897,
+            "period": "total",
             "variants": [
               {
                 "label": "1 module (50u)",
@@ -5700,6 +5993,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2897,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5906,6 +6204,7 @@
           "prerequisites_claimed": "Toegankelijk voor beginners t/m gevorderden en docenten. Vereisten: min. 2 jaar eigen yogabeoefening; het is een VEREISTE om naast de opleiding yogalessen bij een yogadocent te blijven volgen; vrij van zware blessures; schriftelijk intake-assessment + intake-gesprek mogelijk. Fysiek/emotioneel veeleisend programma.\n",
           "price": {
             "amount_eur": 4235.2,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "note": "€4.235,20 incl. 9% btw (= €3.885,50 excl.) voor de volledige opleiding (4 modules). Per module ook mogelijk: I €1.346,70 incl.; II €2.066,64 incl.; III €1.346,70 incl.; IV inbegrepen na afronden I-III. Betaling in termijnen mogelijk. Opmerkelijk: 9% laag btw-tarief (niet 21%); prijs wordt incl. btw getoond (ACM-conform). Prijzen vanaf 18 jan 2025.\n",
@@ -5980,6 +6279,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 4235.2,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 21.18,
             "pph_state": "yes",
             "contact_ratio": 1,
@@ -6204,6 +6508,7 @@
           "prerequisites_claimed": "min. 23 jaar; middelbare school afgerond; HBO werk-/denkniveau; min. 1 jaar yoga (bij voorkeur VYN-erkend docent); deelname open dag/gesprek",
           "price": {
             "amount_eur": 2705,
+            "period": "total",
             "vat": "exempt_crkbo",
             "published": "yes",
             "includes": "22 lesdagen, begeleiding/intervisie, 2 individuele gesprekken/jaar, lesmaterialen, retraiteweekend (jaar 4) incl. maaltijden, gebruik matten/kussens",
@@ -6254,6 +6559,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2705,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -6378,6 +6688,7 @@
           "prerequisites_claimed": "geen; voor beginnende docenten én beoefenaars die willen verdiepen",
           "price": {
             "amount_eur": 2999,
+            "period": "total",
             "variants": [
               {
                 "label": "volledige RYT/VYN200 in 1 lesjaar (van €3500)",
@@ -6466,6 +6777,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2999,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -6499,6 +6815,7 @@
           },
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "note": "Modulair online (3 routes). Sanayou publiceert wél prijzen: per module/traject, op de module- en inschrijfpagina's. Bedragen niet uitgelezen in deze ronde. LET OP — de hier geciteerde bron is de overzichtspagina en bevat zélf geen bedrag; de pagina's die de prijzen wél dragen staan niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
@@ -6524,6 +6841,11 @@
           "derived": {
             "price_state": "unknown",
             "price_band": "amount_not_in_record",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "unknown",
             "contact_ratio": null,
@@ -6558,6 +6880,7 @@
           "prerequisites_claimed": "afgeronde RYT200",
           "price": {
             "amount_eur": 2250,
+            "period": "total",
             "variants": [
               {
                 "label": "volledig (van €3500)",
@@ -6589,6 +6912,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2250,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -6826,6 +7154,7 @@
           "prerequisites_claimed": "geen vooropleiding; psychisch gezond (expliciet NIET geschikt bij gevoeligheid voor/voorgeschiedenis van psychose of ander psychiatrisch beeld). Geschikt voor aankomend docent én verdieping eigen practice",
           "price": {
             "amount_eur": 3450,
+            "period": "total",
             "variants": [
               {
                 "label": "niet-flexibel, lesgeld in 1x (start aug 2026)",
@@ -6907,6 +7236,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3450,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -6949,6 +7283,7 @@
           },
           "prerequisites_claimed": "afgeronde 200u-yogaopleiding (elders mag, na overleg over ontbrekende onderdelen); modules ook los te volgen als bijscholing",
           "price": {
+            "period": "total",
             "vat": "exempt_crkbo",
             "published": "no",
             "note": "Geen prijs gepubliceerd op de 300u-pagina ('neem contact op'); modules los te volgen. BTW-behandeling als de 200u (CRKBO) aangenomen, maar geen expliciete 300u-prijsvermelding.",
@@ -6995,6 +7330,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7133,6 +7473,7 @@
           "prerequisites_claimed": "voor verdieping van je yoga practice en zelfontwikkeling; ook geschikt als je niet van plan bent les te gaan geven.",
           "price": {
             "amount_eur": 2795,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "includes": "opleidingsmanual, chantbook, basis-harmoniumles, 5 overnachtingen + maaltijden tijdens de immersion, thuisopdrachten, graduation en persoonlijke begeleiding\n",
@@ -7189,6 +7530,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2795,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7363,6 +7709,7 @@
           "prerequisites_claimed": "enige yoga-ervaring (lessen of eigen practice); gemotiveerd; geschikt voor aankomend docent én verdieping eigen practice",
           "price": {
             "amount_eur": 3050,
+            "period": "total",
             "vat": "exempt_crkbo",
             "published": "yes",
             "includes": "reader; tijdens de training 10% korting op maandabonnement of 20% op strippenkaart",
@@ -7430,6 +7777,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3050,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7627,6 +7979,7 @@
           "prerequisites_claimed": "min. 1 jaar consistente eigen praktijk (~2x/week, studio of thuis); ook geschikt voor bewegingsdocenten (pilates/dans/barre) die willen verbreden. Geen expertise vereist, wel bereidheid je comfortzone te verlaten.",
           "price": {
             "amount_eur": 3150,
+            "period": "total",
             "vat": "exempt_crkbo",
             "published": "yes",
             "includes": "alle trainingsweekenden, de retreat-/weekintensive en de handleidingen + 20% korting op class cards/passes/abonnementen bij Tribes\n",
@@ -7694,6 +8047,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3150,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7734,6 +8092,7 @@
           "prerequisites_claimed": "voor wie Yin wil lesgeven of de eigen praktijk wil verdiepen; module 4 wordt aangeraden na min. één andere module en/of enkele jaren Yin-ervaring. Niet-lesgevers welkom.",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "unknown",
             "published": "not_published",
             "note": "Elke module/retreat is los geprijsd (op de info-pagina per module); de volledige 200u wordt niet als één bedrag gepubliceerd. 20% korting bij commitment aan de volledige 200u binnen 3 jaar. Academy is CRKBO-geregistreerd (Vinyasa-pagina: 0% btw), maar Yin/module-prijs + btw niet vermeld → vat unknown (§4.11).\n",
@@ -7799,6 +8158,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7839,6 +8203,7 @@
           "prerequisites_claimed": "gecertificeerde yogadocenten (200u+) of docenten op weg naar hun 300u; toegewijde, open practitioners die het groepsritme respecteren.",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "unknown",
             "published": "not_published",
             "note": "Elke module/retreat los geprijsd (op de info-pagina per onderdeel); de volledige 300u niet als één bedrag gepubliceerd. 20% korting bij commitment aan de volledige 300u binnen 3 jaar. Geen btw-vermelding op de pagina → vat unknown (§4.11).\n",
@@ -7901,6 +8266,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8131,6 +8501,7 @@
           "prerequisites_claimed": "elk niveau; aangeraden ≥2x/week zelfpractice gedurende ≥2 jaar. Geschikt voor aankomend docent én verdieping eigen practice",
           "price": {
             "amount_eur": 2990,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird (betaald voor 1 aug 2025)",
@@ -8204,6 +8575,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2990,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8238,6 +8614,7 @@
           "prerequisites_claimed": "geen vooropleiding vereist voor het volledige certificaat; LET OP: zonder eerder docentdiploma/Yin-ervaring moeten modules 1 & 2 afgerond zijn voordat je Yin mag lesgeven",
           "price": {
             "amount_eur": 1650,
+            "period": "total",
             "variants": [
               {
                 "label": "volledige training (3 modules)",
@@ -8309,6 +8686,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 1650,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8512,6 +8894,7 @@
           "prerequisites_claimed": "geen ervaring vereist; voor eigen verdieping én aankomend docenten ('Yoga is voor iedereen, ook als je geen les wilt geven').",
           "price": {
             "amount_eur": 2495,
+            "period": "total",
             "vat": "excl",
             "published": "yes",
             "includes": "contacturen + uitgebreide online ondersteuning + theorie-/werkboek",
@@ -8567,6 +8950,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2495,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8600,6 +8988,7 @@
           "prerequisites_claimed": "voor eigen verdieping én aankomend docenten.",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "excl",
             "published": "not_published",
             "note": "Prijs niet op de pagina vermeld; overige Wahé-opleidingen prijzen 'excl. btw'.",
@@ -8645,6 +9034,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8679,6 +9073,7 @@
           "prerequisites_claimed": "voor eigen verdieping of om zelf restorative aan te bieden; iedereen welkom.",
           "price": {
             "amount_eur": 1495,
+            "period": "total",
             "vat": "excl",
             "published": "yes",
             "note": "€1495 excl. btw (~€1809 incl. 21% btw); €250 aanbetaling. Zelfde excl-btw-presentatie als de 200u — zie de ACM-observatie daar + acm-consumentenprijs.",
@@ -8724,6 +9119,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 1495,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8760,6 +9160,7 @@
           "prerequisites_claimed": "stapel de losse Wahé-opleidingen tot 500 uur.",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "excl",
             "published": "not_published",
             "note": "Geen totaalbedrag; som van de losse opleidingen (elk 'excl. btw').",
@@ -8790,6 +9191,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8970,6 +9376,7 @@
           "prerequisites_claimed": "consistente, toegewijde yogapraktijk; tijdens de TT min. 1x/week Yin + min. 1x/maand met Shari of Jonas",
           "price": {
             "amount_eur": 2500,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird (max 10, soms gesloten)",
@@ -9038,6 +9445,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2500,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9070,6 +9482,7 @@
           },
           "price": {
             "amount_eur": 2500,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird (max 10)",
@@ -9117,6 +9530,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2500,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9272,6 +9690,7 @@
           },
           "price": {
             "amount_eur": 5095,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "excludes": "(externe) studieboeken en eventuele andere variabele kosten: 'maximaal €450,-' voor de 300 uur verdiepingsopleiding. Bij betaling in drie termijnen komt er € 25,- administratiekosten bij.",
@@ -9331,6 +9750,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 5095,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9348,6 +9772,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 995,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9361,6 +9786,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 995,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9374,6 +9800,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 725,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9387,6 +9814,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 995,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9400,6 +9828,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 650,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9413,6 +9842,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 430,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9426,6 +9856,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 650,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9439,6 +9870,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 430,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "source": "datakosten-pdf-2026-07"
@@ -9562,6 +9994,7 @@
           },
           "prerequisites_claimed": "geen; ook voor wie zich enkel wil verdiepen (niet per se docent wil worden)",
           "price": {
+            "period": "total",
             "vat": "unknown",
             "published": "no",
             "note": "Geen opleidingsprijs op de site (prijzenpagina dekt alleen rittenkaarten/abonnementen). YA-profiel noemt scholarship/kortingen: early bird €300; via korting/werk te verlagen tot €1500 voor een 200u-training (waarvan €1000 in rentevrije termijnen). Geen btw-vermelding → vat unknown.\n",
@@ -9611,6 +10044,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9644,6 +10082,7 @@
           },
           "prerequisites_claimed": "geen expliciete vooropleiding vermeld",
           "price": {
+            "period": "total",
             "vat": "unknown",
             "published": "no",
             "note": "Geen opleidingsprijs op de site; zelfde scholarship/korting-notitie als Odaka (YA-profiel). Geen btw-vermelding → vat unknown.",
@@ -9709,6 +10148,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9943,6 +10387,7 @@
           "prerequisites_claimed": "zowel aankomend docenten als wie de eigen praktijk wil verdiepen ('not just for aspiring teachers').",
           "price": {
             "amount_eur": 3597,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "includes": "training + certificering + studiomembership tijdens de opleiding",
@@ -9997,6 +10442,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3597,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10034,6 +10484,7 @@
           "prerequisites_claimed": "200H Vinyasa als foundational module; daarop bouw je de modules tot 300/500 uur.",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "incl",
             "published": "not_published",
             "note": "Geen totaal- of per-module-bedrag op /ytt of /pricing (die pagina betreft studiolidmaatschappen). vat = incl: zelfde btw-belaste entiteit (Yoga Den B.V., niet-CRKBO). Exacte module-prijzen op de afzonderlijke modulepagina's.\n",
@@ -10068,6 +10519,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10303,6 +10759,7 @@
           },
           "price": {
             "amount_eur": 2860,
+            "period": "total",
             "vat": "exempt_crkbo",
             "published": "yes",
             "excludes": "studieboeken (±€70), reiskosten, lunch, extra (vinyasa-/alignment-)lessen; €100 niet-restitueerbare aanmeldkosten\n",
@@ -10362,6 +10819,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2860,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10398,6 +10860,7 @@
           "prerequisites_claimed": "200-hour certificate from a recognised school; practising a form of Vinyasa yoga",
           "price": {
             "amount_eur": 3950,
+            "period": "total",
             "variants": [
               {
                 "label": "volledig programma",
@@ -10486,6 +10949,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3950,
+              "derived": false,
+              "caveat": null
+            },
             "pph": 16.12,
             "pph_state": "yes",
             "contact_ratio": 0.82,
@@ -10520,6 +10988,7 @@
           "prerequisites_claimed": "solid foundation in Ashtanga yoga practice (Led classes and/or Mysore) of preferably at least 1 year; min. 3 maanden regelmatige praktijk bij instroom uit andere stijl",
           "price": {
             "amount_eur": 2750,
+            "period": "total",
             "variants": [
               {
                 "label": "regulier",
@@ -10577,6 +11046,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2750,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10774,6 +11248,7 @@
           "prerequisites_claimed": "1-2 jaar regelmatige yoga-ervaring; goede basis practice; begrip NL en Engels",
           "price": {
             "amount_eur": 2700,
+            "period": "total",
             "variants": [
               {
                 "label": "super early bird (voor 20 jul 2026)",
@@ -10854,6 +11329,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2700,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10884,6 +11364,7 @@
           "prerequisites_claimed": "200-uur Yoga Teacher Training of vergelijkbare ervaring; sommige modules ook voor ervaren beoefenaars",
           "price": {
             "amount_eur": null,
+            "period": "total",
             "vat": "unknown",
             "published": "no",
             "note": "geen prijs op opleidingspagina; per module geboekt",
@@ -10927,6 +11408,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11106,6 +11592,7 @@
           "prerequisites_claimed": "minimaal 2 jaar wekelijks yoga (thuis of in groep); goede beheersing van de Engelse taal vereist. Intakegesprek; deelname in onderling overleg besloten. Geen vrijstellingen.",
           "price": {
             "amount_eur": 2950,
+            "period": "total",
             "vat": "exempt_crkbo",
             "published": "yes",
             "includes": "3-daags retreat in Winterswijk",
@@ -11157,6 +11644,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2950,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11327,6 +11819,7 @@
           "prerequisites_claimed": "HBO werk- en denkniveau gewenst; geschikt voor zowel beginners als ervaren beoefenaars. Leerbeperking bespreekbaar.",
           "price": {
             "amount_eur": 4600,
+            "period": "total",
             "variants": [
               {
                 "label": "jaar 1 (RYT 200)",
@@ -11402,6 +11895,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 4600,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11570,6 +12068,7 @@
           "prerequisites_claimed": "min. 2 jaar consistente praktijk + leergierigheid; geschikt voor aankomend docenten, bestaande docenten, verdiepende practitioners en wellness-professionals. Deelnemers worden geselecteerd.",
           "price": {
             "amount_eur": 2500,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "includes": "1 jaar YogaEasy-membership (5000+ classes), digitaal manual + workbook, community-platform, doorlopende support van docenten + groepscoördinator\n",
@@ -11644,6 +12143,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2500,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11807,6 +12311,7 @@
           "prerequisites_claimed": "toelating via inschrijfprocedure; optionele Pre-teacher training vooraf (sep 2026)",
           "price": {
             "amount_eur": 3695,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "includes": "all-in inclusief retreat (interne residentiële trainingsweek)",
@@ -11863,6 +12368,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3695,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12020,6 +12530,7 @@
           "prerequisites_claimed": "RYT 200 vereist voor volledige Yoga Alliance-registratie; modules los toegankelijk",
           "price": {
             "amount_eur": 3993,
+            "period": "total",
             "vat": "incl",
             "published": "yes",
             "includes": "studiemateriaal, opdrachten, certificaten, persoonlijke begeleiding",
@@ -12098,6 +12609,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3993,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12118,6 +12634,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 1452,
+            "period": "total",
             "vat": "incl",
             "source": "site-2026-06"
           }
@@ -12133,6 +12650,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 1452,
+            "period": "total",
             "vat": "incl",
             "source": "site-2026-06"
           }
@@ -12148,6 +12666,7 @@
           "sold_separately": "yes",
           "price": {
             "amount_eur": 1452,
+            "period": "total",
             "vat": "incl",
             "source": "site-2026-06"
           }
@@ -12261,6 +12780,7 @@
           "prerequisites_claimed": "geschikt voor alle niveaus; enige yoga-ervaring is handig maar niet vereist. Voor wie docent wil worden óf de eigen practice wil verdiepen ('ook als lesgeven niet je doel is').",
           "price": {
             "amount_eur": 3497,
+            "period": "total",
             "variants": [
               {
                 "label": "early bird (tot 1 aug 2026)",
@@ -12332,6 +12852,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3497,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12503,7 +13028,7 @@
               "label_claimed": "(CRKBO-Instelling; geen prijs/btw-vermelding op de waitlist-pagina)",
               "verified": "yes",
               "source": "crkbo-register-2026-06",
-              "note": "CRKBO-Instelling 'Yogatreat' register-geverifieerd → opleiding btw-vrijgesteld."
+              "note": "CRKBO-Instelling 'Yogatreat' register-geverifieerd. Wat dat voor de btw op DEZE opleiding betekent, zeggen wij niet: de pagina noemt geen btw en spec §4.11 verbiedt het afleiden van een vrijstelling uit de registratie."
             }
           ],
           "delivery": {
@@ -12515,9 +13040,10 @@
           "prerequisites_claimed": "voor yogabeoefenaars én docenten die hun Yin-praktijk willen verdiepen of Yin willen leren lesgeven; geen strikte ervaringseis genoemd.",
           "price": {
             "amount_eur": null,
-            "vat": "exempt_crkbo",
+            "period": "total",
+            "vat": "unknown",
             "published": "not_published",
-            "note": "Geen prijs op de pagina (momenteel waitlist / \"accept applications again\"). Als CRKBO-Instelling is de opleiding btw-vrijgesteld → vat exempt_crkbo.\n",
+            "note": "Geen prijs op de pagina (momenteel waitlist / \"accept applications again\"), en geen btw-vermelding. `vat: unknown` — de eerdere waarde `exempt_crkbo` was afgeleid uit de CRKBO-registratie van de instelling en rustte op geen enkele bron over DEZE opleiding (spec §4.11).\n",
             "source": "site-yin200-2026-06"
           },
           "hours_claimed": {
@@ -12557,6 +13083,11 @@
           "derived": {
             "price_state": "not_published",
             "price_band": "none_published",
+            "total_price": {
+              "value": null,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12712,6 +13243,7 @@
           },
           "price": {
             "amount_eur": 2399,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "note": "intake verplicht via Zoom-interview à €29 (terugbetaald bij inschrijving)",
@@ -12746,6 +13278,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "under3000",
+            "total_price": {
+              "value": 2399,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12779,6 +13316,7 @@
           "prerequisites_claimed": "afgeronde RYT200 Yoga Docentenopleiding",
           "price": {
             "amount_eur": 3599,
+            "period": "total",
             "vat": "unknown",
             "published": "yes",
             "note": "intake verplicht via Zoom-interview à €29 (terugbetaald bij inschrijving)",
@@ -12810,6 +13348,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3599,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12974,6 +13517,7 @@
           "prerequisites_claimed": "minimaal 1 jaar eigen yogapraktijk; min. 85% aanwezigheid; ruimte voor huiswerk/zelfstudie. Geschikt voor (aankomend) docenten, coaches en zorgprofessionals.",
           "price": {
             "amount_eur": 3450,
+            "period": "total",
             "variants": [
               {
                 "label": "volledige opleiding (5 modules)",
@@ -13061,6 +13605,11 @@
           "derived": {
             "price_state": "yes",
             "price_band": "from3000",
+            "total_price": {
+              "value": 3450,
+              "derived": false,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,

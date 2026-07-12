@@ -12,6 +12,8 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { loadDataset } from "./loader";
 import { toApiPayload } from "./api";
 import { toListingRows, toProviderView } from "./presenters";
@@ -76,6 +78,41 @@ test("API: derived.price_state IS what the listing renders and what the record p
     }
   }
   assert.ok(checked > 0, "the export has no programmes — this test tests nothing");
+});
+
+test("API: the exported total_price is OUR arithmetic, flagged as ours, and never stored", () => {
+  // A consumer's only honest basis for comparing or ranking (spec v0.5, §6). Three
+  // things are asserted, and each one is a way the number could become a lie:
+  //
+  //   1. the value is the whole-course figure, not the per-period one;
+  //   2. `derived: true` says WE made it — a consumer that renders it as the school's
+  //      published price publishes a figure de Blikopener has never stated;
+  //   3. it is NOWHERE in `data/` — the export is a rendering of the records, never a
+  //      second source of truth (spec §6, principle 9).
+  // Against the PARSED record, not the file text: the YAML's comments explain the
+  // derivation and naturally mention the figure, and a check that cannot tell a comment
+  // from a field would forbid the record from explaining itself.
+  const record = providers.find((p) => p.id === "de-blikopener")!;
+  assert.ok(!JSON.stringify(record).includes("5160"),
+    "a derived total was STORED in the record — it would rot the day their price moves, " +
+    "and it would cite a source that never said it");
+  const yaml = fs.readFileSync(path.join(process.cwd(), "data/providers/de-blikopener.yaml"), "utf8");
+  assert.ok(!/^\s*total_price\s*:/m.test(yaml), "`total_price` is a DERIVED field (spec §6) — it has no home in data/");
+
+  const blikopener = PAYLOAD.providers.find((p) => p.id === "de-blikopener")!;
+  const four = blikopener.programs.find((p) => p.id === "hatha-raja-opleiding")!;
+  assert.equal(four.price.amount_eur, 1290, "guard: the record holds their per-year figure");
+  assert.equal(four.derived.total_price.value, 5160, "4 × € 1.290 is € 5.160");
+  assert.equal(four.derived.total_price.derived, true,
+    "a consumer told `derived: false` would render our multiplication as de Blikopener's own price");
+  // The working, so a consumer can show it. (nl-NL formats € with a non-breaking space,
+  // so the comparison normalises it rather than pinning an invisible character.)
+  assert.equal(four.derived.total_price.caveat?.replace(/ /g, " "), "onze berekening: 4 × € 1.290");
+
+  // …and on a school that publishes a whole-course price, the total IS theirs.
+  const enschede = PAYLOAD.providers.find((p) => p.id === "de-yogaschool-enschede")!;
+  const raja = enschede.programs.find((p) => p.id === "docentenopleiding-raja")!;
+  assert.deepEqual(raja.derived.total_price, { value: 4590, derived: false, caveat: null });
 });
 
 test("API: every programme that publishes a price we do not hold is OUR gap in the JSON too", () => {
@@ -164,6 +201,10 @@ test("API: every programme carries a complete derived block, and the payload doc
   const KEYS = [
     "price_state",
     "price_band",
+    // v0.5: the figure a consumer must compare on. Without it in the payload, the only
+    // number a consumer could rank by is `price.amount_eur` — which on de Blikopener
+    // buys ONE YEAR of a four-year training.
+    "total_price",
     "pph",
     "pph_state",
     "contact_ratio",

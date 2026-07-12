@@ -229,6 +229,20 @@
   font-size: 11.5px;
 }
 
+/* OUR arithmetic, never the provider's claim (spec §6, v0.5). The whole point of
+   this class is that it does NOT look like the fact above it: muted, italic, smaller,
+   the same visual register as the "onze berekening" it carries in its own words. A
+   derived whole-course total set in fact ink would publish, in the provider's
+   colours, a figure the provider has never stated. */
+.derived {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-top: 3px;
+}
+
 /* Read by assistive tech, invisible on screen — for text that a sighted reader
    gets some other way (here: the €/contactuur caveat, which was mouse-only in a
    `title`). Never use it to hide something that has no visible equivalent. */

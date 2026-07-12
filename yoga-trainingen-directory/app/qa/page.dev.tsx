@@ -16,7 +16,7 @@
 import { notFound } from "next/navigation";
 import { loadDataset } from "@/lib/loader";
 import { providerQa } from "@/lib/derive";
-import { priceProvenance } from "@/lib/provenance";
+import { providerProvenance } from "@/lib/provenance";
 
 export const metadata = { title: "QA / review — interne werklijst" };
 
@@ -61,19 +61,20 @@ export default function Qa() {
   const { providers, errors } = loadDataset();
   if (errors.length > 0) throw new Error(`Dataset invalid:\n${errors.join("\n")}`);
 
-  // Most-incomplete first: the work list, prioritised. The price-provenance findings
-  // are read off the ARCHIVED ARTIFACTS (node:fs + pdftotext) and injected, because
-  // derive.ts is pure by construction — see providerQa's header.
+  // Most-incomplete first: the work list, prioritised. The provenance findings —
+  // prijs, uren én btw (spec v0.5) — are read off the ARCHIVED ARTIFACTS (node:fs +
+  // pdftotext) and injected, because derive.ts is pure by construction — see
+  // providerQa's header.
   const rows = providers
     .map((p) => ({
       p,
-      qa: providerQa(p, new Date(), priceProvenance(p).findings.map((f) => f.message)),
+      qa: providerQa(p, new Date(), providerProvenance(p).findings.map((f) => `[${f.check}] ${f.message}`)),
     }))
     .sort((a, b) => a.qa.completeness - b.qa.completeness);
 
   const totalGaps = rows.reduce((n, r) => n + r.qa.gaps.length, 0);
   const totalUnarchived = rows.reduce((n, r) => n + r.qa.unarchivedSources, 0);
-  const totalProvenance = rows.reduce((n, r) => n + r.qa.priceProvenance.length, 0);
+  const totalProvenance = rows.reduce((n, r) => n + r.qa.provenance.length, 0);
 
   return (
     <main>
@@ -82,7 +83,7 @@ export default function Qa() {
         Alleen-lezen overzicht (niet gepubliceerd). {providers.length} records ·{" "}
         {totalGaps} open punten · {totalUnarchived} bronnen zonder publiek archief ·{" "}
         <span style={{ color: totalProvenance > 0 ? "#b00" : "#070" }}>
-          {totalProvenance} prijsclaim(s) zonder bewijs in de geciteerde bron
+          {totalProvenance} claim(s) (prijs/uren/btw) zonder bewijs in de geciteerde bron
         </span>
         . “Open punten” zijn uitsluitend <em>nog niet onderzocht</em> (quad-state{" "}
         <code>unknown</code>) — “niet gepubliceerd” is een bevinding, geen gat.
@@ -115,13 +116,13 @@ export default function Qa() {
               <p style={{ margin: "0.4rem 0", color: "#070" }}>geen open gaten</p>
             )}
 
-            {/* Een prijsclaim waarvan de geciteerde pagina geen bedrag toont: geen
-                gat in een quad maar een defect in de BRONVERWIJZING — het record
-                oogt compleet en het archief draagt er niets van. Rood, apart van de
-                gaten-lijst. */}
-            {qa.priceProvenance.length > 0 && (
+            {/* Een claim — prijs, urental of btw-behandeling — waarvan de geciteerde
+                pagina niets van dien aard toont: geen gat in een quad maar een defect
+                in de BRONVERWIJZING — het record oogt compleet en het archief draagt
+                er niets van. Rood, apart van de gaten-lijst. */}
+            {qa.provenance.length > 0 && (
               <ul style={{ margin: "0.4rem 0", color: "#b00" }}>
-                {qa.priceProvenance.map((g, i) => (
+                {qa.provenance.map((g, i) => (
                   <li key={i}>{g}</li>
                 ))}
               </ul>

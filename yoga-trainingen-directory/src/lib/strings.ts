@@ -117,6 +117,41 @@ export const nl = {
     "Niet te berekenen: de prijs ontbreekt in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
   pphHoursNotInRecord:
     "Niet te berekenen: de contacturen ontbreken in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
+  // De derde blokkade (spec v0.5): wél een bedrag, maar per periode — en geen
+  // gepubliceerd aantal perioden. Dan is er geen totaalprijs om door de contacturen
+  // te delen, en er een verzinnen is precies wat v0.5 verbiedt. Dit is een BEVINDING
+  // over de aanbieder (zij publiceren het aantal niet), en de zin moet het veld
+  // noemen dat werkelijk blokkeert: niet de prijs — die publiceren zij wél.
+  pphNoTotalPrice: (period: string) =>
+    `Niet te berekenen: de aanbieder publiceert een prijs per ${period} en niet uit hoeveel ` +
+    `perioden de opleiding bestaat — er is geen vergelijkbare totaalprijs.`,
+
+  /* ---------- Prijs per periode en de afgeleide totaalprijs (spec v0.5) ---------- */
+
+  /** De eenheid die het bedrag koopt. `total` krijgt geen achtervoegsel: dát bedrag
+   *  IS de prijs, en "€ 2.450 / totaal" is ruis. */
+  pricePeriod: {
+    total: "totaal",
+    per_year: "studiejaar",
+    per_module: "module",
+    per_day: "dag",
+  } as const,
+  /** Het bedrag dat de aanbieder ZELF noemt, met de eenheid die zij eraan hangen. */
+  pricePerPeriod: (amount: string, period: string) => `${amount} / ${period}`,
+  /**
+   * ONZE REKENSOM, en de zin zegt dat zelf. Een lezer mag dit getal nooit aanzien
+   * voor een bedrag dat de aanbieder publiceert — zij publiceren geen totaalprijs.
+   * Het "±" en de uitgeschreven vermenigvuldiging staan er om die reden in, en de
+   * pagina zet het bovendien in een eigen, zichtbaar niet-feitelijke stijl.
+   */
+  priceDerivedTotal: (total: string, working: string) => `± ${total} totaal — ${working}`,
+  /** De uitgeschreven som, zodat de lezer haar kan narekenen. */
+  totalPriceWorking: (periods: number, amount: string) => `onze berekening: ${periods} × ${amount}`,
+  /** Geen aantal perioden gepubliceerd → geen totaal. Een bevinding over hen, geen
+   *  gat bij ons: `periods: null` betekent "wij keken; zij noemen het niet". */
+  totalPriceNoPeriodCount: (period: string) =>
+    `Geen vergelijkbare totaalprijs: de aanbieder publiceert een prijs per ${period} en niet ` +
+    `uit hoeveel perioden de opleiding bestaat.`,
 
   // Same rule, applied to the price itself: the record says de aanbieder
   // publiceert een prijs, maar het bedrag staat niet in ons record. Dat gat is
@@ -202,6 +237,9 @@ export const nl = {
   // Record row labels. Reuses colFormat / colDelivery / colPrice / colPph where
   // the listing already names the same field — one field, one word.
   rowStyle: "Stijl (geclaimd)",
+  /** Het label zegt wiens getal het is. De aanbieder publiceert geen totaalprijs —
+   *  wij vermenigvuldigen, en de rij draagt daarom géén bron (spec §6). */
+  rowTotalPrice: "Totaalprijs (onze berekening)",
   rowHours: "Urenuitsplitsing",
   rowSupervised: "Begeleide lespraktijk",
   rowAssessment: "Toetsing",

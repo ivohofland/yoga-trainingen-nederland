@@ -26,7 +26,7 @@
  * This module is pure — it is imported by the export script AND by the test that
  * pins `derived.price_state` to what both site surfaces render.
  */
-import { bundleDelta, contactRatio, isMultistyle, pricePerContactHour } from "./derive";
+import { bundleDelta, contactRatio, isMultistyle, pricePerContactHour, totalPrice } from "./derive";
 import { priceBand, priceQuad, pphQuad, type PriceBand } from "./rules";
 import type { Program, Provider, Quad } from "../schema";
 
@@ -48,6 +48,21 @@ export interface ProgramDerived {
   price_state: Quad;
   /** The filterable band. `none_published` is the finding; `amount_not_in_record` is our gap. */
   price_band: PriceBand;
+  /**
+   * THE COMPARABLE WHOLE-COURSE FIGURE (spec §6, v0.5) — and the flag that says whose
+   * number it is. A consumer must read THIS, never `price.amount_eur`, to compare or
+   * rank: on de Blikopener that field is € 1.290 **per studiejaar** of a four-year
+   * training, and sorting on it puts a ≈ € 5.260 opleiding among the cheapest in the
+   * corpus.
+   *
+   * `derived: false` → it is the provider's own published total; render it as theirs.
+   * `derived: true`  → WE MULTIPLIED. Render it visibly as the consumer's-side
+   *                    arithmetic, with `caveat` (the working: "onze berekening: 4 ×
+   *                    € 1.290") beside it — never in the ink of a provider claim.
+   * `value: null`    → no comparable total exists (they price per period and publish
+   *                    no count). Do not band it, do not rank it.
+   */
+  total_price: { value: number | null; derived: boolean; caveat: string | null };
   /** Price ÷ CONTACT hours (never total hours), or null when either is missing. */
   pph: number | null;
   /** What may be said when `pph` is null — the same finding-vs-gap rule as price_state. */
@@ -61,9 +76,11 @@ export interface ProgramDerived {
 }
 
 export function programDerived(provider: Provider, program: Program): ProgramDerived {
+  const total = totalPrice(program);
   return {
     price_state: priceQuad(program),
     price_band: priceBand(program),
+    total_price: { value: total.value, derived: total.derived, caveat: total.caveat ?? null },
     pph: pricePerContactHour(program).value,
     pph_state: pphQuad(program),
     contact_ratio: contactRatio(program),
@@ -94,7 +111,13 @@ const README =
   "wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een " +
   "harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij " +
   "keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet " +
-  "onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven.";
+  "onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. " +
+  "VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag " +
+  "koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: " +
+  "€ 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is " +
+  "het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: " +
+  "geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare " +
+  "totaalprijs — niet rangschikken.";
 
 export function toApiPayload(providers: Provider[]): ApiPayload {
   return {

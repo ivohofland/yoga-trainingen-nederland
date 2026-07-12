@@ -1,7 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { integrityErrors, loadDataset } from "./loader";
-import { bundleDelta, pricePerContactHour } from "./derive";
+import { bundleDelta, pricePerContactHour, totalPrice } from "./derive";
+import { priceBand } from "./rules";
 import { YearMonth, type Program } from "../schema";
 
 const { providers } = loadDataset();
@@ -76,26 +77,103 @@ test("DERIVED: self-study hours are NEVER counted as contact hours", () => {
   assert.match(pph.caveat ?? "", /contacturen/);
 });
 
-test("DERIVED: every computable €/contactuur equals price ÷ contact hours, to the cent", () => {
+test("DERIVED: every computable €/contactuur equals the WHOLE-COURSE price ÷ contact hours", () => {
   // The golden case above proves one row. This proves all of them, from the record
   // itself — so a scale factor, a swapped denominator or a rounding change cannot
   // hide in the rows the golden case does not name.
+  //
+  // The numerator is `totalPrice`, NOT `amount_eur` (spec v0.5, §6). On 53 of 54 priced
+  // programmes they are the same number, which is exactly why the 54th went unnoticed:
+  // divide de Blikopener's € 1.290 PER STUDIEJAAR by the hours of a four-year training
+  // and the rate comes out four times too low — published, in a comparison column, next
+  // to a named business.
   let checked = 0;
   for (const p of providers) {
     for (const prog of p.programs) {
       const { value } = pricePerContactHour(prog);
-      const amount = prog.price.amount_eur;
+      const total = totalPrice(prog).value;
       const contact = prog.hours_claimed.contact;
-      if (amount == null || contact == null) {
+      if (total == null || contact == null) {
         assert.equal(value, null, `${p.id}/${prog.id}: a €/contactuur computed from a number we do not hold`);
         continue;
       }
-      assert.equal(value, Math.round((amount / contact) * 100) / 100,
-        `${p.id}/${prog.id}: €${amount} over ${contact} contacturen is not what the page shows (${value})`);
+      assert.equal(value, Math.round((total / contact) * 100) / 100,
+        `${p.id}/${prog.id}: €${total} over ${contact} contacturen is not what the page shows (${value})`);
       checked++;
     }
   }
   assert.ok(checked > 0, "no programme has a computable €/contactuur — this test tests nothing");
+});
+
+/* ---------- total_price: the figure the provider does not publish (spec v0.5, §6) ---------- */
+
+test("TOTAL: a whole-course price IS the provider's own figure — derived: false", () => {
+  // The common case, and the schema's default. 53 of 54 priced programmes are this, and
+  // `derived: false` is the licence to print the number in the provider's own ink.
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  assert.equal(prog.price.period, "total", "guard: the default period is a whole-course total");
+  assert.deepEqual(totalPrice(prog), { value: 4590, derived: false });
+});
+
+test("TOTAL: a per-year price is MULTIPLIED, flagged as ours, and shows its working", () => {
+  // The record that motivated v0.5. de Blikopener publishes € 1.290 per studiejaar over
+  // four years and NO total; the bare amount ranked them among the cheapest trainings in
+  // the corpus while the opleiding costs ≈ € 5.260 (our € 5.160 + the € 100 inschrijfgeld
+  // their page lists separately, which we never add in — see below).
+  const prog = programOf("de-blikopener", "hatha-raja-opleiding");
+  assert.equal(prog.price.amount_eur, 1290);
+  assert.equal(prog.price.period, "per_year");
+  assert.equal(prog.price.periods, 4);
+
+  const total = totalPrice(prog);
+  assert.equal(total.value, 5160, "4 × € 1.290 is € 5.160");
+  assert.equal(total.derived, true,
+    "the total must be flagged as OURS — de Blikopener has never published this figure");
+  assert.match(total.caveat ?? "", /4 × /, "the working must travel with the number, so a reader can check it");
+
+  // And the three-year variant is its own programme, with its own total.
+  const short = programOf("de-blikopener", "hatha-raja-opleiding-3-jarig");
+  assert.equal(totalPrice(short).value, 3870, "3 × € 1.290 is € 3.870");
+});
+
+test("TOTAL: `excludes` is NEVER added in — it is free text, not an addend", () => {
+  // The tarievenpagina lists a one-off € 100 inschrijf-/boekengeld and € 335 for the
+  // yogaweekend. Summing either into the total would produce a number that is neither
+  // theirs nor reproducibly ours, out of a prose sentence. It renders ALONGSIDE.
+  const prog = programOf("de-blikopener", "hatha-raja-opleiding");
+  assert.match(prog.price.excludes ?? "", /100/, "guard: the excluded costs are in the record");
+  assert.equal(totalPrice(prog).value, 5160, "the derived total is 4 × 1290 and nothing else");
+});
+
+test("TOTAL: a per-period price with no period count has NO total — and is banded nowhere", () => {
+  // No record is in this state today (both de Blikopener programmes publish their year
+  // count), so the rule holds only because its counter-example is absent. Manufacture
+  // it: a school that prices per year and never says how many years. Guessing a count
+  // to produce a comparable figure is the exact fabrication v0.5 exists to prevent —
+  // and ranking the yearly fee AS a total is the bug it exists to correct. Neither is
+  // allowed, so the programme belongs in no band at all.
+  const base = programOf("de-blikopener", "hatha-raja-opleiding");
+  const noCount: Program = { ...base, price: { ...base.price, periods: null } };
+
+  const total = totalPrice(noCount);
+  assert.equal(total.value, null, "no period count, no total — never the bare yearly fee");
+  assert.match(total.caveat ?? "", /totaalprijs/i);
+  assert.equal(priceBand(noCount), "no_comparable_total");
+  for (const band of ["under3000", "from3000"] as const) {
+    assert.notEqual(priceBand(noCount), band,
+      "a yearly fee banded against whole-course totals is the v0.5 inversion, restored");
+  }
+});
+
+test("TOTAL: the price bands read the TOTAL, never the bare amount", () => {
+  // € 1.290 < € 3.000 and ≈ € 5.160 is not: the same record, banded on the raw field,
+  // lands under "onder €3.000" beside whole-course totals. This is the published
+  // symptom of the whole spec change.
+  const prog = programOf("de-blikopener", "hatha-raja-opleiding");
+  assert.ok(prog.price.amount_eur! < 3000, "guard: the bare amount would have banded as cheap");
+  assert.equal(priceBand(prog), "from3000",
+    "a four-year opleiding costing ≈ € 5.160 must never sit in the under-€3.000 band");
+  assert.equal(priceBand(programOf("de-blikopener", "hatha-raja-opleiding-3-jarig")), "from3000");
 });
 
 test("DERIVED: the bundle delta is negative when the package is CHEAPER than its parts", () => {

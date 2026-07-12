@@ -80,6 +80,30 @@ export type Source = z.infer<typeof Source>;
 export const Price = strictObject({
   /** Comparable base: cheapest generally-available variant (methodology convention). */
   amount_eur: z.number().positive().nullable().optional(),
+  /**
+   * WHAT THE NUMBER ACTUALLY BUYS (spec v0.5, §4 `price`).
+   *
+   * `amount_eur` alone SILENTLY ASSUMED A WHOLE-COURSE TOTAL, and that inversion is
+   * what this field fixes. de Blikopener publishes € 1.290 **per studiejaar** over a
+   * four-year, 500-hour opleiding — and publishes no total at all. Recorded as a bare
+   * amount, it ranked them among the cheapest trainings in the corpus when the real
+   * cost is ≈ € 5.260: a false statement about a named business, produced by a default
+   * nobody ever wrote down.
+   *
+   * `total` is the DEFAULT because it is the common case (53 of 54 priced programmes),
+   * which is exactly why the exception was invisible — and why only the exception has
+   * to carry the field. Every record that already omitted it keeps meaning what it
+   * said.
+   *
+   * THE TOTAL IS DERIVED, NEVER STORED (spec §6, principle 9 — see totalPrice() in
+   * derive.ts). Storing `4 × 1290` would publish a figure the provider never stated,
+   * resting on an assumption their own price line denies ("(vanaf 1 juni 2026)").
+   */
+  period: z.enum(["total", "per_year", "per_module", "per_day"]).default("total"),
+  /** How many periods make up the WHOLE training. `null`/absent = the provider does
+   *  not publish it — and then no total is derivable: a per-period price with no
+   *  period count is not comparable and must never be ranked as though it were. */
+  periods: z.number().int().positive().nullable().optional(),
   variants: z
     .array(strictObject({ label: z.string(), amount_eur: z.number().positive() }))
     .optional(),

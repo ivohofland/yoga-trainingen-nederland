@@ -2,14 +2,15 @@
  * Validates all provider records against the schema + integrity rules.
  * Build fails on invalid data: `npm run build` runs this first.
  *
- * It also runs the PRICE-PROVENANCE check (src/lib/provenance.ts), which no
- * schema can express: it opens the archived artifacts of every cited price source
- * and asserts they actually show an amount. That one is a WARNING, not yet a
- * failure — see the note above the block, and provenance.ts on when to promote it.
+ * It also runs the PROVENANCE check (src/lib/provenance.ts), which no schema can
+ * express: it opens the archived artifacts of every cited source and asserts they
+ * actually state the PRICE, the HOURS and the VAT treatment the record cites them
+ * for. That one is a WARNING, not a failure — see the note above the block, and
+ * provenance.ts on why the build stays green.
  */
 import { loadDataset } from "../src/lib/loader";
 import { pricePerContactHour, contactRatio, bundleDelta, completeness } from "../src/lib/derive";
-import { allPriceProvenance, PdftotextMissing } from "../src/lib/provenance";
+import { allProvenance, PdftotextMissing } from "../src/lib/provenance";
 
 const { providers, errors } = loadDataset();
 
@@ -36,32 +37,32 @@ for (const p of providers) {
     console.log(parts.join(" | "));
   }
 }
-/* ---------- prijs-provenance (waarschuwing, nog geen build-gate) ----------
+/* ---------- provenance: prijs, uren, btw (waarschuwing, geen build-gate) ----------
  *
  * WAARSCHUWING EN GEEN FOUT, met opzet: een vals-positief hier is een beschuldiging
- * aan het adres van ons eigen, wél gesourcete onderzoek, en de regex heeft pas één
- * corpus gezien. Zodra de teller een tijd op 0 blijft staan: promoveer tot harde
- * gate (process.exit(1) hieronder, net als bij een integriteitsfout) — zie de kop
- * van src/lib/provenance.ts.
+ * aan het adres van ons eigen, wél gesourcete onderzoek, en de uren- en btw-regexen
+ * hebben pas één corpus gezien. `npm run provenance` is dezelfde check mét exit-code,
+ * voor na het aanraken van een prijs, een urental of een bron — zie de kop van
+ * src/lib/provenance.ts.
  */
 try {
-  const { findings, examined, skipped } = allPriceProvenance(providers);
+  const { findings, examined, skipped } = allProvenance(providers);
   if (findings.length > 0) {
-    console.warn(`⚠ ${findings.length} record(s) citeren voor de prijs een pagina zonder bedrag:\n`);
-    for (const f of findings) console.warn(`  - ${f.message}`);
+    console.warn(`⚠ ${findings.length} claim(s) citeren een pagina die het niet stelt:\n`);
+    for (const f of findings) console.warn(`  - [${f.check}] ${f.message}`);
     console.warn("");
   } else {
-    console.log(`✓ prijs-provenance: ${examined} gepubliceerde prijs(zen) citeren een gearchiveerd artefact dat een bedrag toont`);
+    console.log(`✓ provenance: ${examined} claim(s) (prijs/uren/btw) citeren een gearchiveerd artefact dat ze draagt`);
   }
   // De bodies zijn gitignored (data/archives/README.md): in CI of een verse clone is
   // er niets te openen. Dat is geen bevinding over een aanbieder maar een grens aan
   // waar deze check draait — dus zeggen we het hardop i.p.v. het te verzwijgen.
   if (skipped > 0)
-    console.log(`  (${skipped} bron(nen) niet doorzocht: snapshot-body niet in deze checkout — hash wél)`);
+    console.log(`  (${skipped} claim(s) niet doorzocht: snapshot-body niet in deze checkout — hash wél)`);
 } catch (e) {
   // Ontbrekende pdftotext is een gat in de GEREEDSCHAPSKIST, geen bevinding over een
   // aanbieder: melden en doorgaan — nooit stilzwijgend "geen bevindingen" rapporteren.
-  if (e instanceof PdftotextMissing) console.warn(`⚠ prijs-provenance overgeslagen — ${e.message}`);
+  if (e instanceof PdftotextMissing) console.warn(`⚠ provenance overgeslagen — ${e.message}`);
   else throw e;
 }
 

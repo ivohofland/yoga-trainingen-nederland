@@ -7,7 +7,7 @@
  * It is PURE — it reaches `derive.ts` and `rules.ts`, never `loader.ts` — so a
  * client component may import values from it, not merely types.
  */
-import { bundleDelta, pricePerContactHour } from "./derive";
+import { bundleDelta, pricePerContactHour, totalPrice } from "./derive";
 import {
   missingBecause,
   pphBlocker,
@@ -94,7 +94,23 @@ export interface ListingRow {
    * verdict — so filterRows collapses to one equality and can re-derive nothing.
    */
   priceBand: PriceBand;
+  /** WHAT THE PROVIDER PUBLISHES, with the unit they attached to it — "€ 1.290 /
+   *  studiejaar". Never our total: that is the field below, and the two must never
+   *  be rendered as one number. */
   priceDisplay: string | null;
+  /**
+   * OUR ARITHMETIC over a per-period price — "± € 5.160 totaal — onze berekening: 4 ×
+   * € 1.290" — or null when the price already IS a total (53 of 54 programmes) or no
+   * total is derivable at all.
+   *
+   * A SEPARATE FIELD, and it is separate on purpose: folding it into `priceDisplay`
+   * would hand the component one string to print in one ink, and the derived half
+   * would arrive at the reader wearing the provider's colours — a figure de Blikopener
+   * has never published, presented as theirs. The component renders this in its own,
+   * visibly non-factual style (see ProgrammeTable). Spec §6: rendered as OUR
+   * arithmetic, with the working shown, never as the school's claim.
+   */
+  priceDerivedTotal: string | null;
   pph: number | null;
   /**
    * The formatted €/contactuur, or null when there is none. Formatted HERE, like
@@ -279,9 +295,29 @@ function deliveryDisplay(d: Program["delivery"]): string {
  */
 function priceDisplay(p: Program["price"]): string | null {
   if (p.amount_eur == null) return null;
-  const base = `${formatEuro(p.amount_eur)} · ${nl.vat[p.vat]}`;
+  const money = formatEuro(p.amount_eur);
+  // The unit is part of the fact (spec v0.5). "€ 1.290" under a column headed "Prijs"
+  // states what a four-year training costs; "€ 1.290 / studiejaar" states what they
+  // actually publish. The suffix is the whole difference between the two.
+  const amount = p.period === "total" ? money : nl.pricePerPeriod(money, nl.pricePeriod[p.period]);
+  const base = `${amount} · ${nl.vat[p.vat]}`;
   const extra = p.variants?.length ? ` · ${nl.priceVariants(p.variants.length + 1)}` : "";
   return base + extra;
+}
+
+/**
+ * The whole-course figure WE computed, or null when there is nothing of ours to show
+ * — the price is already a total, or no total is derivable.
+ *
+ * `derived: false` returns null deliberately: on 53 of 54 programmes our "total" IS
+ * their published amount, and printing it twice would be a second, redundant claim.
+ * This field exists only where the numbers differ, which is exactly where the reader
+ * needs to be told whose number it is.
+ */
+function priceDerivedTotalDisplay(program: Program): string | null {
+  const total = totalPrice(program);
+  if (!total.derived || total.value == null || total.caveat == null) return null;
+  return nl.priceDerivedTotal(formatEuro(total.value), total.caveat);
 }
 
 /**
@@ -299,7 +335,12 @@ function priceDisplay(p: Program["price"]): string | null {
 function pphCaveatFor(program: Program, state: Quad): string | null {
   const { value, caveat } = pricePerContactHour(program);
   if (value != null) return caveat ?? null;
-  const priceIsBlocker = pphBlocker(program).field === "price";
+  const blocker = pphBlocker(program).field;
+  // The v0.5 blocker: they publish a price, and it is not a total. Neither of the two
+  // sentences below would be true of them — "geen prijs" is false, "geen contacturen"
+  // names the wrong field — so it has a sentence of its own, naming the period count.
+  if (blocker === "price_total") return nl.pphNoTotalPrice(nl.pricePeriod[program.price.period]);
+  const priceIsBlocker = blocker === "price";
   if (state === "not_published") {
     return priceIsBlocker ? nl.pphPriceNotPublished : nl.pphHoursNotPublished;
   }
@@ -379,6 +420,7 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
         priceState: priceQuad(program),
         priceBand: priceBand(program),
         priceDisplay: priceDisplay(program.price),
+        priceDerivedTotal: priceDerivedTotalDisplay(program),
         pph: pph.value,
         pphDisplay: pph.value != null ? formatEuro2(pph.value) : null,
         pphState,
@@ -811,6 +853,38 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
       ? { label: nl.colPrice, state: "yes", value: priceValue, note: priceNote, source: priceSource }
       : { label: nl.colPrice, state: noValue(priceState), note: priceNote, source: priceSource },
   );
+
+  // THE WHOLE-COURSE FIGURE, on the programmes that publish no such figure (spec v0.5).
+  //
+  // Only where `period` is not `total` — elsewhere the derived total IS the amount in
+  // the row above, and a second row printing the same number would be a second claim.
+  //
+  // NO CITATION, exactly like €/contactuur below: this is OUR arithmetic (spec §6).
+  // Pinning de Blikopener's tarievenpagina to "± € 5.160" would credit them with a
+  // figure they have never published — the precise fabrication the field exists to
+  // prevent. The label says whose sum it is; the note shows the working, so a reader
+  // can check it. With no period count there is no total, and the row states that as
+  // the finding it is: they publish a price per studiejaar and no count of them.
+  if (program.price.period !== "total") {
+    const total = totalPrice(program);
+    const periodLabel = nl.pricePeriod[program.price.period];
+    rows.push(
+      total.value != null
+        ? {
+            label: nl.rowTotalPrice,
+            state: "yes",
+            value: `± ${formatEuro(total.value)}`,
+            note: total.caveat ?? null,
+            source: null,
+          }
+        : {
+            label: nl.rowTotalPrice,
+            state: "not_published",
+            note: nl.totalPriceNoPeriodCount(periodLabel),
+            source: null,
+          },
+    );
+  }
 
   // The same epistemic rule as the listing's €/contactuur column, from the same
   // pair of helpers — the record must never say something the listing does not.

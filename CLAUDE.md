@@ -51,7 +51,7 @@ rate-limited public save URL.
 
 ## Architecture
 
-**The spec is the source of truth.** `data-model-spec.md` (currently v0.2)
+**The spec is the source of truth.** `data-model-spec.md` (currently v0.5)
 defines the model; `src/schema/index.ts` (Zod) mirrors it. **Change the spec
 first, then the schema.** The schema's inline comments cite the spec sections
 (`§N`) and explain *why* each field exists — read them before changing a field.
@@ -69,13 +69,13 @@ registrations are frequently held under a different BV/holding/person name.
   express: every `source:` ref must exist in `sources[]`, `composition.modules`
   must point at real modules, nested cohorts' `program` field must match the
   parent, claim `scope` (`program:<id>` / `module:<id>`) must resolve.
-- `src/lib/derive.ts` — the **derived values** (`pricePerContactHour`,
-  `contactRatio`, `bundleDelta`, `isMultistyle`, `completeness`, `providerQa`).
-  Computed, **never stored** (spec §6) — if you find yourself adding a computed
-  field to a YAML record, it belongs here instead.
+- `src/lib/derive.ts` — the **derived values** (`totalPrice`,
+  `pricePerContactHour`, `contactRatio`, `bundleDelta`, `isMultistyle`,
+  `completeness`, `providerQa`). Computed, **never stored** (spec §6) — if you
+  find yourself adding a computed field to a YAML record, it belongs here instead.
 - `src/lib/rules.ts` — **the finding-vs-gap rule** (`priceQuad`, `pphQuad`,
-  `missingBecause`, `publishedQuad`, `priceBand`). What any surface is ALLOWED
-  to say about a value our record does not hold. Stated once, here.
+  `missingBecause`, `publishedQuad`, `priceBand`, `pphBlocker`). What any surface
+  is ALLOWED to say about a value our record does not hold. Stated once, here.
 - `src/lib/presenters.ts` — display only: the strings a component renders.
 
 `derive.ts`, `rules.ts`, `quad.ts` and `presenters.ts` **must import nothing
@@ -93,13 +93,14 @@ designed so a future frontend under a different brand can consume it without
 touching this repo. The `@/*` path alias maps to `src/*`.
 
 **The export ships a `derived` block per programme** (`price_state`,
-`price_band`, `pph`, `pph_state`, `contact_ratio`, `bundle_delta`,
-`multistyle`), built in `src/lib/api.ts` by the same functions the site renders
-from. **Consumers must read `derived.price_state`, never the raw
+`price_band`, `total_price`, `pph`, `pph_state`, `contact_ratio`,
+`bundle_delta`, `multistyle`), built in `src/lib/api.ts` by the same functions
+the site renders from. **Consumers must read `derived.price_state`, never the raw
 `price.published`** — a programme can carry `published: "yes"` with no
 `amount_eur` (they publish a price; we have not captured it — five once did, one
 still does), and rendering the raw field states a bare "ja" as established fact
-about a named business.
+about a named business. Likewise **`derived.total_price`, never the raw
+`price.amount_eur`**, for anything that compares or ranks (see below).
 Derived values are computed **at export** and are still never stored in `data/`:
 spec §6 holds — the export is a *rendering* of the records, not the source of
 truth. A test pins `derived.price_state` to what the listing and the record page
@@ -128,6 +129,26 @@ them silently corrupts the dataset's credibility.
   quad for two questions is what made the site call its most transparent schools
   un-investigated. `supervised_teaching_practice` is still governed by
   `breakdown_published` (there is no `supervised_published`).
+- **`price.amount_eur` buys what `price.period` says it buys, and the whole-course
+  total is DERIVED** (spec §4 `price`, §6 `total_price`, v0.5). `period` defaults to
+  `total` — 53 of 54 priced programmes — which is exactly why the exception was
+  invisible: de Blikopener publishes **€ 1.290 per studiejaar** over a four-year, 500-hour
+  opleiding and no total at all, and a bare `amount_eur` ranked them 3rd cheapest of 54
+  trainings when the training costs ≈ € 5.260. `periods` = how many periods make the
+  whole training; `null` = they do not publish it, and then **there is no comparable
+  total**: the programme is banded nowhere and ranked nowhere (`priceBand →
+  `no_comparable_total``). **Price bands, price sorting and €/contactuur all consume
+  `totalPrice()`, never `amount_eur`.** The total is never stored — storing `4 × 1290`
+  would publish a figure the provider never stated, resting on a price stability their
+  own "(vanaf 1 juni 2026)" denies — and it renders **visibly as ours**, with the working
+  shown ("± € 5.160 totaal — onze berekening: 4 × € 1.290"), never in the ink of a
+  provider claim. `excludes` is never added into it: it is free text and cannot be summed.
+- **A BTW treatment is observed, never inferred** (spec §4.11, §10). `vat: exempt_crkbo`
+  requires a page that SAYS so. Deducing the exemption from the school's CRKBO
+  registration is forbidden in as many words, and two records carried exactly that
+  deduction, cited to pages that mention no BTW at all (both now `unknown`). The
+  provenance check enforces it: `incl`/`excl`/`exempt_crkbo` must cite a source whose
+  archived artifact mentions BTW.
 - **Claims are quoted verbatim, never characterized** (legal posture, spec §3).
   Claims are stored as claims with a mandatory `source`, never as facts. Any
   analysis of a claim lives in a separate, methodology-versioned `analysis`
@@ -155,10 +176,15 @@ them silently corrupts the dataset's credibility.
   nothing behind the claim. The record looked perfect; only the ARTIFACT could tell.
   The order is therefore: find the page that states it → add it to `sources[]` →
   **archive it** → extract the value FROM THE CAPTURED FILE. Never from a search
-  summary, never from memory. `src/lib/provenance.ts` now enforces this for prices
-  (warning in `npm run validate`, counted on `/qa`, strict in `npm run provenance`);
-  a linked PDF is exactly the artefact a provider can silently replace, so it gets
-  its own `Source` with its own capture.
+  summary, never from memory. `src/lib/provenance.ts` enforces this for the **price,
+  the hours total and the BTW treatment** (warning in `npm run validate`, counted on
+  `/qa`, strict in `npm run provenance`); a linked PDF is exactly the artefact a
+  provider can silently replace, so it gets its own `Source` with its own capture.
+  The check searches the **visible text** of the HTML (scripts, styles and tags
+  stripped): an hours figure matched against raw markup is a `font-weight:500`
+  vouching for a claim about a named business. Its open findings are triaged in
+  `technical-todo.md` and pinned in `provenance.test.ts` so the count cannot grow
+  unnoticed.
 - **The JS-rendered-price trap: search BOTH artifacts.** Each source is captured as
   `<id>-<date>.html` (raw DOM) *and* `<id>-<date>.pdf` (browser-rendered). Neither
   alone is evidence: 3 providers' prices exist ONLY in the PDF (injected by a JS

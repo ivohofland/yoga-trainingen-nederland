@@ -328,6 +328,27 @@
                       }
                     ]
                   },
+                  "period": {
+                    "type": "string",
+                    "enum": [
+                      "total",
+                      "per_year",
+                      "per_module",
+                      "per_day"
+                    ],
+                    "default": "total"
+                  },
+                  "periods": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
                   "variants": {
                     "type": "array",
                     "items": {
@@ -949,6 +970,12 @@
                 "properties": {
                   "amount_eur": {
                     "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/amount_eur"
+                  },
+                  "period": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/period"
+                  },
+                  "periods": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/periods"
                   },
                   "variants": {
                     "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/variants"

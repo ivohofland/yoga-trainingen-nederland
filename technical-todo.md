@@ -93,10 +93,12 @@ found exactly these records. Four are done; the list below is what it still find
 - [x] **`aalo-yoga-academie/yin-ryt200`** — same lesgeld, but **examengeld € 435,-**:
   same price, different mandatory extra. Sourced + archived as `site-yin-2026-07`.
 - [x] **`de-blikopener/hatha-raja-opleiding`** — € 1.290,- **per studiejaar** (no total
-  is published anywhere; not multiplied). Sourced + archived as `tarieven-2026-07`.
-  **The rates page states no BTW at all**, so `vat: exempt_crkbo` cannot be grounded
-  in it — see `price.note`; §4.11 says the value should be `unknown`. Left as-is,
-  flagged, needs a decision.
+  is published anywhere). Sourced + archived as `tarieven-2026-07`. **Resolved in spec
+  v0.5**: `price.period: per_year` + `periods`, the total DERIVED and shown as ours;
+  the opleidingspagina (`opleiding-2026-07`, now sourced + archived) gave the hours and
+  the two trajects, so the record is now **two programmes** (500 u / 4 jaar and 372 u /
+  3 jaar). `vat` → **`unknown`**: the rates page states no BTW at all and §4.11 forbids
+  inferring the exemption from the CRKBO registration.
 - [ ] **`sanayou/200-online`** — modular online, 3 routes; prices are per
   module/traject on the **module-/inschrijfpagina's** (`site-online-2026-06` = the
   overzicht, which prices the OTHER two routes — which is why the provenance check
@@ -108,6 +110,40 @@ found exactly these records. Four are done; the list below is what it still find
   copy + SHA-256 stands, and the submission must be retried). All 8 module prices
   came from the same PDF, so `bundleDelta` now computes: **−€ 775,-** (bundle below
   the sum of its parts).
+
+### Provenance audit, spec v0.5 — hours and BTW (6 open)
+
+*The provenance check now runs over three claims, not one: the PRICE, the HOURS total,
+and the VAT treatment (`src/lib/provenance.ts`; warning in `npm run validate`, counted
+on `/qa`, strict in `npm run provenance`). Widening it found six citations that the
+archived artifact does not carry. **Every one of these is a defect in OUR sourcing, not
+a finding about the provider** — the record cites a page that does not state the thing
+it is cited for. Triage, do not bulk-fix: each needs a human to find the page that DOES
+state it, archive that page, and re-point the citation. Pinned in `provenance.test.ts`
+(`KNOWN_FINDINGS`), so the count cannot grow unnoticed.*
+
+**BTW cited to a page that never mentions BTW** (4). §4.11: a VAT treatment is directly
+observed or it is not known — it may never be inferred from a CRKBO registration. Each
+needs the page that states the BTW treatment (algemene voorwaarden, inschrijfpagina,
+tarievenpagina), archived; or `vat: unknown`, which is what the two records corrected in
+v0.5 (`de-blikopener` ×2, `yogatreat/200-functional-yin`) now carry.
+
+- [ ] **`adhouna/200-multistyle`** — `vat: incl`, cited to `site-multistyle-2026-06`.
+- [ ] **`wahe/500-pathway`** — `vat: excl`, cited to `site-overview-2026-06`.
+- [ ] **`yoga-den/200-vinyasa`** — `vat: incl`, cited to `site-ytt-200-2026-06`.
+- [ ] **`yoga-den/500-pathway`** — `vat: incl`, cited to `site-ytt-overview-2026-06`.
+
+**An hours total that appears nowhere on the cited page** (2). Both are the same shape,
+and it is a nastier one than a bad citation: the cited page publishes the PARTS, and the
+total in our record is **our own addition** — a derived value, stored, presented as the
+school's claim (spec §6, principle 9). Either cite a page where the provider states the
+total, or record the parts and derive the total in `derive.ts`.
+
+- [ ] **`de-yogaschool-enschede/docentenopleiding-raja`** — record says 600 u; the page
+  (`site-docenten-2026-07`) prints "360 uren" + "240 uur" and never their sum.
+- [ ] **`wahe/500-pathway`** — record says 500 u; the page (`site-overview-2026-06`)
+  prints 200 + 150 + 100 (+ "~50u komende module"), and `hours_claimed.note` says so in
+  as many words: "200 + 150 + 100 (+ komende ~50u …) = 500u".
 
 ## Code health
 

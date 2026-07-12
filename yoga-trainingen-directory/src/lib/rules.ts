@@ -21,7 +21,7 @@
  * so the server pages, the client filter island and the JSON export all call the
  * SAME functions. One rule, three surfaces, no re-derivation possible.
  */
-import { pricePerContactHour } from "./derive";
+import { pricePerContactHour, totalPrice } from "./derive";
 import { saysNotPublished } from "./quad";
 import type { Program, Quad } from "../schema";
 
@@ -77,10 +77,17 @@ export function publishedQuad(published: Quad): Quad {
 
 /**
  * Which field stops `pricePerContactHour` from computing, and what the record says
- * about that field. There are exactly two blockers, and they are findings about
- * two different fields:
- *   - no price amount  → the blocker is the price → `price.published`;
- *   - no contact hours → the blocker is the hours → `hours_claimed.contact_published`.
+ * about that field. There are exactly three blockers, and they are findings about
+ * three different fields:
+ *   - no price amount   → the blocker is the price → `price.published`;
+ *   - no comparable TOTAL → the blocker is `price.periods` (spec v0.5). We hold an
+ *     amount, but it buys a year/a module/a day, and the provider publishes no count
+ *     of them. There is no whole-course figure to divide, and inventing a period
+ *     count to manufacture one is the exact fabrication v0.5 exists to prevent. It is
+ *     a FINDING (`periods: null` means "we looked; they do not publish it"), and the
+ *     cell must name the field that actually blocks it — not the price, which they
+ *     DO publish, and not the hours, which are not what is missing;
+ *   - no contact hours  → the blocker is the hours → `hours_claimed.contact_published`.
  *
  * THE HOURS BLOCKER IS `contact_published`, NOT `breakdown_published` (spec v0.4).
  * The derivation needs ONE number — the contact hours — so the field that must be
@@ -99,10 +106,17 @@ export function publishedQuad(published: Quad): Quad {
  *     they compute, so no blocker is read — but they are why the field is its own
  *     quad rather than a refinement of the other.
  */
-export function pphBlocker(program: Program): { field: "price" | "hours"; published: Quad } {
-  return program.price.amount_eur == null
-    ? { field: "price", published: program.price.published }
-    : { field: "hours", published: program.hours_claimed.contact_published };
+export function pphBlocker(
+  program: Program,
+): { field: "price" | "price_total" | "hours"; published: Quad } {
+  if (program.price.amount_eur == null)
+    return { field: "price", published: program.price.published };
+  // An amount we cannot make comparable is not an amount we can divide. `periods:
+  // null` on a per-period price is the provider's omission, so the quad is the
+  // finding — never `unknown`, which would blame our own research for a gap on
+  // their page.
+  if (totalPrice(program).value == null) return { field: "price_total", published: "not_published" };
+  return { field: "hours", published: program.hours_claimed.contact_published };
 }
 
 /** The quad the €/contactuur cell may render when there is no computable value. */
@@ -185,20 +199,43 @@ export function priceQuad(program: Program): Quad {
  * statement ("it costs this much", "they publish no price") and about these we can
  * honestly make neither.
  *
- * The bands are exhaustive and disjoint over every programme, and they agree with
- * priceQuad() by construction:
- *   under3000 / from3000  ⟺ price_state "yes"
+ * `no_comparable_total` is the FIFTH band, and it is spec v0.5's (§4 `price`, §6
+ * `total_price`). A per-period price with no published period count — "€ 1.290 per
+ * studiejaar", and nowhere how many studiejaren — CANNOT BE BANDED. Banding it on the
+ * bare `amount_eur` is precisely the inversion v0.5 was written to kill: de Blikopener
+ * would sit under "onder €3.000" beside whole-course totals, third-cheapest of 54
+ * trainings, while the training actually costs ≈ € 5.260. A yearly fee is not a price;
+ * it is a price per year, and the reader's band is a statement about the whole course.
+ * So such a programme belongs to NO band, exactly as our own gaps do — and, like them,
+ * it is offered by no chip: we can honestly say neither "it costs this much" nor "they
+ * publish no price". (Empty in the corpus today: both de Blikopener programmes publish
+ * their year count on the opleidingspagina, so both derive a total.)
+ *
+ * The bands are exhaustive and disjoint over every programme:
+ *   under3000 / from3000  ⟺ a comparable TOTAL exists (derived or published)
  *   none_published        ⟺ price_state "not_published"
  *   amount_not_in_record  ⟺ price_state "unknown"
+ *   no_comparable_total   ⟺ an amount, per period, with no period count
  */
-export type PriceBand = "under3000" | "from3000" | "none_published" | "amount_not_in_record";
+export type PriceBand =
+  | "under3000"
+  | "from3000"
+  | "none_published"
+  | "amount_not_in_record"
+  | "no_comparable_total";
 
 const AFFORDABLE_BELOW_EUR = 3000;
 
+/**
+ * THE BAND CONSUMES `totalPrice`, NEVER `amount_eur` (spec §6). The two are the same
+ * number on 53 of 54 priced programmes — which is why reading the raw field looked
+ * right for a year, and why the 54th was published in the wrong band.
+ */
 export function priceBand(program: Program): PriceBand {
-  const amount = program.price.amount_eur;
-  // An amount only exists on a programme that publishes one (pinned by a test on
-  // the RECORD), so the two amount bands are exactly the `yes` rows.
-  if (amount != null) return amount < AFFORDABLE_BELOW_EUR ? "under3000" : "from3000";
+  const total = totalPrice(program).value;
+  // A total only exists on a programme that publishes an amount (pinned by a test on
+  // the RECORD), so the two amount bands are exactly the comparable `yes` rows.
+  if (total != null) return total < AFFORDABLE_BELOW_EUR ? "under3000" : "from3000";
+  if (program.price.amount_eur != null) return "no_comparable_total";
   return saysNotPublished(program.price.published) ? "none_published" : "amount_not_in_record";
 }

@@ -174,8 +174,16 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
           here rendered a bare "ja" in fact ink on the five programmes that
           publish a price we do not hold, while their record pages rendered the
           gap correctly: two pages of one site, opposite claims, same programme. */}
+      {/* TWO LINES, TWO INKS, and never one number (spec v0.5). The <Quad> holds what
+          the PROVIDER publishes — "€ 1.290 / studiejaar", in fact ink, with the unit
+          that makes it true. Beneath it, and only where the two differ, OUR arithmetic:
+          "± € 5.160 totaal — onze berekening: 4 × € 1.290", in the muted, non-factual
+          style. A yearly fee printed as a price is what put de Blikopener among the
+          cheapest trainings in the corpus while their opleiding costs ≈ € 5.260; a
+          derived total printed in the provider's ink would be the same lie, corrected. */}
       <div className={styles.cell}>
         <Quad state={r.priceState}>{r.priceDisplay}</Quad>
+        {r.priceDerivedTotal && <div className={styles.derived}>{r.priceDerivedTotal}</div>}
       </div>
       {/* Both the string and the quad come from the presenter. The quad comes from
           the RECORD, never from the mere absence of a value: see pphQuad() in

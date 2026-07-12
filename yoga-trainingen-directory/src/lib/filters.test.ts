@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./loader";
 import { toListingRows, formatChipLabel } from "./presenters";
+import { totalPrice } from "./derive";
 import { saysNotPublished } from "./quad";
 import { cityCentroid } from "./geo";
 import { nl } from "./strings";
@@ -159,12 +160,28 @@ test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no b
   const from = filterRows(ROWS, { ...EMPTY_FILTERS, price: "from3000" });
   const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "none_published" });
   assert.ok(under.length > 0 && from.length > 0, "a price band matches nothing at all");
-  // The boundary is checked against the RECORD's amount — the row does not carry it.
-  const amountOf = (r: Row) => programOf(r.providerId, r.programId).price.amount_eur as number;
-  assert.ok(under.every((r) => amountOf(r) < 3000),
+  // The boundary is checked against the RECORD — the row does not carry the number.
+  //
+  // Against `totalPrice`, NOT `price.amount_eur` (spec v0.5). What a band claims is what
+  // the WHOLE TRAINING costs, and on de Blikopener the record's amount is € 1.290 PER
+  // STUDIEJAAR of a four-year opleiding: read the raw field here and this test happily
+  // certifies a ≈ € 5.160 training as "onder €3.000", which is what the site did.
+  const totalOf = (r: Row) => totalPrice(programOf(r.providerId, r.programId)).value as number;
+  assert.ok(under.every((r) => totalOf(r) < 3000),
     "'onder €3.000' matched a programme costing €3.000 or more");
-  assert.ok(from.every((r) => amountOf(r) >= 3000),
+  assert.ok(from.every((r) => totalOf(r) >= 3000),
     "'€3.000 en hoger' matched a programme costing less than €3.000");
+  // And the per-period rows are IN a band — banded on our arithmetic, not on their
+  // yearly fee. Without this, the two lines above would pass on a corpus that simply
+  // dropped them.
+  const perPeriod = ROWS.filter((r) => programOf(r.providerId, r.programId).price.period !== "total");
+  assert.ok(perPeriod.length > 0, "no per-period price in the corpus — the v0.5 case is untested here");
+  for (const r of perPeriod) {
+    assert.ok([...under, ...from].some((x) => x.href === r.href),
+      `${r.providerId}/${r.programId}: a per-period price with a derivable total belongs in an amount band`);
+    assert.ok(totalOf(r) > (programOf(r.providerId, r.programId).price.amount_eur as number),
+      `${r.providerId}/${r.programId}: banded on the bare period price, not on the whole-course total`);
+  }
 
   // The bands used to be asserted as a partition of all 77 rows. They are not one,
   // and forcing them to be is precisely how the five gap rows ended up inside an

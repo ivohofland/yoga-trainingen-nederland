@@ -18,6 +18,60 @@
  * spent a release eliminating (see rules.ts, priceQuad).
  */
 import type { Program, Provider } from "../schema";
+import { nl } from "./strings";
+
+/**
+ * THE WHOLE-COURSE PRICE — the figure a reader compares, and on one provider the
+ * figure nobody publishes (spec v0.5, §6 `total_price`).
+ *
+ * `derived` is not decoration, it is the licence to print the number:
+ *
+ *   - `derived: false` → `period` is `total`. The value IS the provider's own
+ *     published figure, and a surface may show it as theirs.
+ *   - `derived: true`  → OUR ARITHMETIC over their per-period price. The caveat
+ *     spells the sum out ("onze berekening: 4 × € 1.290") and every surface must
+ *     render it visibly as ours — never in the ink reserved for their claim.
+ *   - `value: null`    → a per-period price with no published period count. NOT
+ *     comparable, and it must not be banded, sorted or ranked as though it were.
+ *     Guessing the count would fabricate the very number this field exists to stop.
+ *
+ * `excludes` IS NEVER ADDED IN. It is free text ("eenmalig € 100 inschrijfgeld; de
+ * verblijfskosten van het yogaweekend") — it cannot be summed, and a total that
+ * silently absorbed some of it would be neither their figure nor a reproducible one
+ * of ours. It renders ALONGSIDE, as it already does.
+ */
+export interface TotalPrice {
+  value: number | null;
+  /** Why the total is not comparable, or how we arrived at it. */
+  caveat?: string;
+  /** True → we multiplied. The number is OURS and must be labelled so. */
+  derived: boolean;
+}
+
+export function totalPrice(program: Program): TotalPrice {
+  const { amount_eur: amount, period, periods } = program.price;
+  if (amount == null) return { value: null, derived: false };
+  // The common case, and the schema's default: the figure they publish IS the total.
+  if (period === "total") return { value: amount, derived: false };
+  if (periods == null) {
+    return { value: null, caveat: nl.totalPriceNoPeriodCount(nl.pricePeriod[period]), derived: true };
+  }
+  return {
+    value: Math.round(amount * periods * 100) / 100,
+    caveat: nl.totalPriceWorking(periods, formatEuroForCaveat(amount)),
+    derived: true,
+  };
+}
+
+/** Money inside a caveat string. Kept here (not in presenters) because the caveat IS
+ *  the arithmetic — the working has to travel with the number it explains. */
+function formatEuroForCaveat(n: number): string {
+  return new Intl.NumberFormat("nl-NL", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
 
 export interface PricePerContactHour {
   value: number | null;
@@ -25,17 +79,28 @@ export interface PricePerContactHour {
   caveat?: string;
 }
 
+/**
+ * Price ÷ contact hours — over the WHOLE-COURSE price, never a per-period one
+ * (spec §6: "Price bands, price sorting and €/contactuur all consume `total_price`,
+ * never a bare `amount_eur`"). Dividing a yearly fee by the hours of a four-year
+ * training understates the rate by a factor of four.
+ */
 export function pricePerContactHour(program: Program): PricePerContactHour {
-  const amount = program.price.amount_eur;
+  const total = totalPrice(program);
   const contact = program.hours_claimed.contact;
-  if (amount == null) return { value: null, caveat: "prijs niet gepubliceerd" };
+  if (program.price.amount_eur == null) return { value: null, caveat: "prijs niet gepubliceerd" };
+  // A per-period price with no period count: we hold an amount, but not a comparable
+  // one. Saying "prijs niet gepubliceerd" here would be a false finding about a
+  // provider who publishes a price — it is their TOTAL that does not exist.
+  if (total.value == null) return { value: null, caveat: total.caveat };
   if (contact == null) return { value: null, caveat: "contacturen niet gepubliceerd" };
   // Comparability guard: includes/excludes change what the price buys.
   const caveats: string[] = [];
+  if (total.derived && total.caveat) caveats.push(total.caveat);
   if (program.price.includes) caveats.push(`prijs inclusief: ${program.price.includes}`);
   if (program.price.excludes) caveats.push(`prijs exclusief: ${program.price.excludes}`);
   return {
-    value: Math.round((amount / contact) * 100) / 100,
+    value: Math.round((total.value / contact) * 100) / 100,
     caveat: caveats.length ? caveats.join("; ") : undefined,
   };
 }
@@ -98,24 +163,24 @@ export interface ProviderQa {
   /** Open work: only `unknown` quad-states (genuine gaps), never `not_published`
    *  (which is a finding, not a gap — see spec §2). */
   gaps: string[];
-  /** Programmes claiming a published price whose CITED page shows no amount —
-   *  see provenance.ts. A citation defect, not a gap in a quad: the record looks
-   *  complete and the archive backs none of it. */
-  priceProvenance: string[];
+  /** Claims — a price, an hours figure, a VAT treatment — whose CITED page evidences
+   *  none of it (see provenance.ts). A citation defect, not a gap in a quad: the
+   *  record looks complete and the archive backs none of it. */
+  provenance: string[];
 }
 
 /**
  * Surfaces what a record still needs. Pure read — never mutates the dataset.
  *
- * `priceProvenance` is INJECTED rather than computed: answering it means opening
- * the archived artifacts (node:fs + pdftotext), and this module must import nothing
+ * `provenance` is INJECTED rather than computed: answering it means opening the
+ * archived artifacts (node:fs + pdftotext), and this module must import nothing
  * from `node:*` or the JSON export and the client filter island lose their access to
  * the derived values (see the header). The finding lives in `src/lib/provenance.ts`,
  * where the impurity belongs; callers that can reach the disk (`scripts/validate.ts`,
  * the dev-only `/qa` page) pass it in. A caller that cannot simply reports no
  * citation defects — and none of the surfaces that ship to readers is such a caller.
  */
-export function providerQa(p: Provider, now = new Date(), priceProvenance: string[] = []): ProviderQa {
+export function providerQa(p: Provider, now = new Date(), provenance: string[] = []): ProviderQa {
   const gaps: string[] = [];
   if (p.crkbo.registered === "unknown") gaps.push("CRKBO: nog niet onderzocht");
 
@@ -143,6 +208,6 @@ export function providerQa(p: Provider, now = new Date(), priceProvenance: strin
     totalSources: p.sources.length,
     ageMonths,
     gaps,
-    priceProvenance,
+    provenance,
   };
 }

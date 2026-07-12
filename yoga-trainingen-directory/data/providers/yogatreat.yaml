@@ -129,8 +129,9 @@ programs:
         label_claimed: "(CRKBO-Instelling; geen prijs/btw-vermelding op de waitlist-pagina)"
         verified: yes
         source: crkbo-register-2026-06
-        note: "CRKBO-Instelling 'Yogatreat' register-geverifieerd → opleiding
-          btw-vrijgesteld."
+        note: "CRKBO-Instelling 'Yogatreat' register-geverifieerd. Wat dat voor de btw
+          op DEZE opleiding betekent, zeggen wij niet: de pagina noemt geen btw en
+          spec §4.11 verbiedt het afleiden van een vrijstelling uit de registratie."
     delivery:
       mode: online
       structure: mixed
@@ -141,12 +142,18 @@ programs:
       genoemd."
     price:
       amount_eur: null
-      vat: exempt_crkbo
+      # GECORRIGEERD naar `unknown` (was `exempt_crkbo`). De geciteerde bron —
+      # de waitlist-pagina — noemt geen prijs en geen btw; de vrijstelling was
+      # afgeleid uit de CRKBO-registratie van de instelling, en spec §4.11 verbiedt
+      # precies die afleiding. Een btw-behandeling is een DIRECT WAARNEEMBAAR feit
+      # (§10): staat het er niet, dan weten wij het niet.
+      vat: unknown
       published: not_published
       note: >
         Geen prijs op de pagina (momenteel waitlist / "accept applications
-        again"). Als CRKBO-Instelling is de opleiding btw-vrijgesteld → vat
-        exempt_crkbo.
+        again"), en geen btw-vermelding. `vat: unknown` — de eerdere waarde
+        `exempt_crkbo` was afgeleid uit de CRKBO-registratie van de instelling en
+        rustte op geen enkele bron over DEZE opleiding (spec §4.11).
       source: site-yin200-2026-06
     hours_claimed:
       total: 200

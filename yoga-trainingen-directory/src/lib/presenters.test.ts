@@ -402,37 +402,44 @@ test("PPH: the caveat never contradicts the quad it sits next to", () => {
 });
 
 test("PPH: every caveat string in strings.ts is reachable", () => {
-  // The four pph* strings are display copy that duplicates nothing; a dead one
-  // is copy nobody maintains and nobody reads. Each must be produced by some row.
+  // The pph* strings are display copy that duplicates nothing; a dead one is copy
+  // nobody maintains and nobody reads. Each must be produced by some row.
+  //
+  // All FOUR are now hit by the data. The hours GAP was the odd one out — reachable by
+  // the rule, hit by no record — until de Blikopener: their opleidingspagina states 500 u
+  // and links an "Uren opleiding" page we have not captured, so their contact hours are
+  // honestly `unknown`. Recording that as `not_published` would have been a finding
+  // against a named business that their own page contradicts.
   const shown = new Set(toListingRows(providers, NOW).map((r) => r.pphCaveat).filter(Boolean));
-  for (const key of ["pphPriceNotPublished", "pphHoursNotPublished", "pphPriceNotInRecord"] as const) {
+  for (const key of [
+    "pphPriceNotPublished",
+    "pphHoursNotPublished",
+    "pphPriceNotInRecord",
+    "pphHoursNotInRecord",
+  ] as const) {
     assert.ok(shown.has(nl[key]), `nl.${key} is never rendered — it is dead copy`);
   }
 
-  // The fourth — the hours GAP — is reachable by the RULE but hit by no record
-  // today, and that is a fact about our research coverage, not about the copy: the
-  // hours blocker is `contact_published` (spec v0.4), it is `unknown` on no
-  // programme in the corpus, and where it is `yes` we hold the number and the value
-  // computes. So every live hours-blocked row is a FINDING. Pin that…
-  assert.ok(
-    !providers.some((p) => p.programs.some((pr) => pr.hours_claimed.contact_published === "unknown")),
-    "some programme's contact hours are now un-investigated — this test must render that row's caveat from " +
-    "the DATA, and the corpus-wide claim above (every hours-blocked €/contactuur is a finding) is stale",
-  );
-
-  // …and prove the copy still reaches a reader, on the record the rule would send
-  // there: a price we hold, contact hours nobody has looked for yet. Deleting the
-  // string instead would leave the first record that reaches this state rendering a
-  // gap with no explanation — or, far worse, falling back to the finding's wording.
-  const provider = providers.find((p) => p.programs.some((pr) => pr.price.amount_eur != null))!;
-  const base = provider.programs.find((pr) => pr.price.amount_eur != null)!;
-  const uninvestigated: Program = {
+  // The FIFTH — the v0.5 blocker — is reachable by the rule and hit by no record: both
+  // de Blikopener programmes publish their year count, so both derive a total. It is a
+  // fact about our corpus, not about the copy. Prove the copy still reaches a reader on
+  // the record the rule WOULD send there: a per-period price with no period count.
+  // Deleting the string instead would leave the first record in that state rendering a
+  // blocked cell with no explanation — or, far worse, borrowing a sentence that names
+  // the wrong field ("zij publiceren geen prijs", of a school that publishes one).
+  const provider = providers.find((p) => p.id === "de-blikopener")!;
+  const base = provider.programs[0];
+  const noCount: Program = {
     ...base,
-    hours_claimed: { ...base.hours_claimed, contact: null, contact_published: "unknown" },
+    price: { ...base.price, periods: null },
+    hours_claimed: { ...base.hours_claimed, contact: 400, contact_published: "yes" },
   };
-  const row = toListingRows([{ ...provider, programs: [uninvestigated] }], NOW)[0];
-  assert.equal(row.pphState, "unknown", "nobody looked at the hours — that is OUR gap");
-  assert.equal(row.pphCaveat, nl.pphHoursNotInRecord);
+  const row = toListingRows([{ ...provider, programs: [noCount] }], NOW)[0];
+  assert.equal(row.pph, null, "no comparable total, no €/contactuur — never the bare yearly fee ÷ hours");
+  assert.equal(row.pphState, "not_published", "they publish no period count — a finding about THEM, not our gap");
+  assert.equal(row.pphCaveat, nl.pphNoTotalPrice(nl.pricePeriod.per_year));
+  assert.ok(!/publiceert geen prijs/.test(row.pphCaveat!),
+    "the caveat names the wrong field: this school DOES publish a price — what it does not publish is the count");
 });
 
 test("a price that is not published never renders as a number", () => {
