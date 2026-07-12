@@ -20,6 +20,7 @@ import { toListingRows, toProviderView } from "./presenters";
 import { priceAmountIsOurGap, priceQuad } from "./rules";
 import { saysNotPublished, quadClass } from "./quad";
 import { nl } from "./strings";
+import { priceGapProvider } from "./price-gap.fixture";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z");
@@ -157,44 +158,71 @@ test("API: the exported total_hours says whose figure it is — ours or the scho
 });
 
 test("API: every programme that publishes a price we do not hold is OUR gap in the JSON too", () => {
-  // Each of these carries `price: { published: "yes" }` with no `amount_eur`. A
-  // consumer rendering that raw field through its own quad component prints a bare
-  // "ja" in FACT ink about a named business; rendering it as the absence of a price
-  // prints an accusation instead. Both are false.
+  // A programme carrying `price: { published: "yes" }` with no `amount_eur`. A consumer
+  // rendering that raw field through its own quad component prints a bare "ja" in FACT
+  // ink about a named business; rendering it as the absence of a price prints an
+  // accusation instead. Both are false.
   //
   // `derived.price_state` is what it must read, and it says "unknown": a gap in OUR
   // research. This is exactly the correction the site makes, now reachable by anyone
   // holding nothing but the JSON file.
   //
-  // THE LIST IS DERIVED, NOT NAMED. It used to name the five programmes it pinned,
-  // and it was right to: the accusation would be named. But four of them have since
-  // been paid off (their price sources were captured and the amounts extracted), and
-  // a hard-coded list of records-in-a-state rots the moment the state changes — it
-  // failed the build for having been FIXED. `priceAmountIsOurGap` is the same
-  // predicate the rule itself uses, so the set is whatever the data currently holds
-  // (today: sanayou/200-online), and the messages below still name every one of them.
+  // THE CASE IS NOW SYNTHETIC, AND THAT IS THE POINT. This test used to NAME the five
+  // programmes in this state, then (when four were paid off) DERIVE them from the live
+  // corpus via `priceAmountIsOurGap`. Both versions had the same flaw, and the derived
+  // one merely postponed it: the fifth has now been researched, sourced, archived and
+  // extracted too, so the corpus holds NO programme in this state — and a test that
+  // finds its case by sweeping the data has nothing left to exercise. Its anti-vacuity
+  // guard fired and the build went red for having FIXED the data.
+  //
+  // A test that pins a RULE must not depend on the corpus containing a DEFECT. The rule
+  // is unchanged and still load-bearing — the next record that lands in this state must
+  // reach every API consumer as our gap — so the case is constructed (price-gap.fixture.ts)
+  // and the rule is pinned against it. The live corpus is still swept below, but its
+  // emptiness is now a fact about our research, not a hole in our tests.
+  const { provider: gapProvider, program: gapProgram } = priceGapProvider(providers);
+  assert.ok(priceAmountIsOurGap(gapProgram),
+    "the fixture is not in the state this test exists to pin — it pins nothing");
+
+  const gapPayload = toApiPayload([gapProvider]);
+  const api = gapPayload.providers[0].programs[0];
+  const listing = toListingRows([gapProvider], NOW)[0];
+  const record = toProviderView(gapProvider)
+    .programs[0].rows.find((r) => r.label === nl.colPrice)!;
+
+  // The derived state a consumer must read — and all three surfaces say it.
+  assert.equal(api.derived.price_state, "unknown",
+    `the JSON API hands a consumer "${api.derived.price_state}" — the record says they DO publish a ` +
+    `price, so the missing amount is OURS, not their omission`);
+  assert.equal(api.derived.price_band, "amount_not_in_record",
+    "banded as something we could state about them");
+  assert.equal(listing.priceState, "unknown");
+  assert.equal(record.state, "unknown");
+
+  // And it is never the accusation, on any surface.
+  assert.ok(!saysNotPublished(api.derived.price_state),
+    "our own gap, published to every API consumer as a finding about a named business");
+  assert.equal(quadClass(api.derived.price_state), "gap");
+  // Nor a value-less fact: the raw field a naive consumer would read still says "yes".
+  assert.equal(api.price.published, "yes", "guard: the raw field is the trap this rule exists to disarm");
+  assert.equal(api.price.amount_eur, null);
+
+  // INFORMATIONAL, and deliberately allowed to be empty: if the corpus ever holds a real
+  // programme in this state again, it obeys the same rule — and the message names it, as
+  // an accusation about a named business would be named.
   const ourGaps = providers.flatMap((p) =>
     p.programs.filter(priceAmountIsOurGap).map((program) => [p.id, program.id] as const),
   );
-  assert.ok(ourGaps.length > 0, "no programme is in this state any more — the rule this pins is untested");
-
   for (const [providerId, programId] of ourGaps) {
-    const { api, listing, record } = surfaces(providerId, programId);
-
-    // The derived state a consumer must read — and all three surfaces say it.
-    assert.equal(api.derived.price_state, "unknown",
-      `${providerId}/${programId}: the JSON API hands a consumer "${api.derived.price_state}" — the ` +
+    const s = surfaces(providerId, programId);
+    assert.equal(s.api.derived.price_state, "unknown",
+      `${providerId}/${programId}: the JSON API hands a consumer "${s.api.derived.price_state}" — the ` +
       `record says they DO publish a price, so the missing amount is OURS, not their omission`);
-    assert.equal(api.derived.price_band, "amount_not_in_record",
+    assert.equal(s.api.derived.price_band, "amount_not_in_record",
       `${providerId}/${programId}: banded as something we could state about them`);
-    assert.equal(listing.priceState, "unknown");
-    assert.equal(record.state, "unknown");
-
-    // And it is never the accusation, on any surface.
-    assert.ok(!saysNotPublished(api.derived.price_state),
-      `${providerId}/${programId}: our own gap, published to every API consumer as a finding about a ` +
-      `named business`);
-    assert.equal(quadClass(api.derived.price_state), "gap");
+    assert.equal(s.listing.priceState, "unknown");
+    assert.equal(s.record.state, "unknown");
+    assert.equal(quadClass(s.api.derived.price_state), "gap");
   }
 });
 
@@ -205,10 +233,22 @@ test("API: no derived price_state is a value-less FACT — the bare “ja”/“
   // where an amount exists, and it is never "no" at all (priceQuad normalises `no`
   // into the one finding on this *_published field, so the API cannot ship the same
   // finding under two spellings).
+  //
+  // THE GAP DIRECTION IS EXERCISED BY A SYNTHETIC PROGRAMME. It used to be exercised by
+  // five real ones, then by one; today the corpus holds none — every published price has
+  // been researched and its amount extracted. That is the outcome we want, and it must
+  // not silently retire the rule: `quadClass("unknown") === "gap"` is what keeps a
+  // value-less price out of fact ink, and it has to stay pinned for the next record that
+  // lands in that state. So the property runs over the real export PLUS the constructed
+  // case (price-gap.fixture.ts), and the `gaps > 0` guard below is met honestly rather
+  // than by waiting for a defect to reappear in the data.
+  const { provider: gapProvider } = priceGapProvider(providers);
+  const exported = [...PAYLOAD.providers, ...toApiPayload([gapProvider]).providers];
+
   let facts = 0;
   let findings = 0;
   let gaps = 0;
-  for (const provider of PAYLOAD.providers) {
+  for (const provider of exported) {
     for (const program of provider.programs) {
       const state = program.derived.price_state;
       assert.notEqual(state, "no",
@@ -230,10 +270,14 @@ test("API: no derived price_state is a value-less FACT — the bare “ja”/“
       if (state === "unknown") gaps++;
     }
   }
-  // None of the three directions may go quiet.
+  // None of the three directions may go quiet. Facts and findings come from the real
+  // corpus; the gap comes from the fixture, which guarantees it can never go vacuous
+  // again — however thoroughly the data is researched.
   assert.ok(facts > 0, "no programme in the export has a price — this test tests nothing");
   assert.ok(findings > 0, "the export carries no price FINDING any more — that direction is untested");
-  assert.ok(gaps > 0, "the export carries no price GAP any more — that direction is untested");
+  assert.ok(gaps > 0,
+    "the price GAP direction is untested — the fixture that guarantees it is gone, so a value-less " +
+    "price could ship as fact ink again with nothing to catch it");
 });
 
 test("API: every programme carries a complete derived block, and the payload documents it", () => {

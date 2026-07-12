@@ -4,6 +4,7 @@ import { z } from "zod";
 import { loadDataset } from "./loader";
 import { toListingRows, datasetStats, formatEuro, formatMonth, cohortLabel, nextCohortLabel, toProviderView } from "./presenters";
 import { pphQuad, priceAmountIsOurGap, priceQuad } from "./rules";
+import { priceGapProvider } from "./price-gap.fixture";
 import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 // The SCHEMA, as a value — the contract test walks its shape rather than
@@ -405,12 +406,32 @@ test("PPH: every caveat string in strings.ts is reachable", () => {
   // The pph* strings are display copy that duplicates nothing; a dead one is copy
   // nobody maintains and nobody reads. Each must be produced by some row.
   //
-  // All FOUR are now hit by the data. The hours GAP was the odd one out — reachable by
-  // the rule, hit by no record — until de Blikopener: their opleidingspagina states 500 u
-  // and links an "Uren opleiding" page we have not captured, so their contact hours are
-  // honestly `unknown`. Recording that as `not_published` would have been a finding
-  // against a named business that their own page contradicts.
-  const shown = new Set(toListingRows(providers, NOW).map((r) => r.pphCaveat).filter(Boolean));
+  // "REACHABLE" MEANS REACHABLE BY THE RULE — not "happens to be hit by today's corpus".
+  // Three of the four are produced by real records. The fourth, `pphPriceNotInRecord`, is
+  // the copy for a programme that publishes a price whose amount we do not hold: five
+  // records were once that shape, and none is today — all five have been researched,
+  // sourced, archived and their amounts extracted. The string is NOT dead copy; it is the
+  // sentence the site must print the moment the next such record lands, and deleting it
+  // (which is what this test demanded when it swept only the live data) would leave that
+  // record's cell either unexplained or — far worse — borrowing the sentence that names
+  // the wrong field: "de aanbieder publiceert geen prijs", of a school that publishes one.
+  //
+  // So the price GAP is exercised through the constructed record (price-gap.fixture.ts),
+  // which is built on a base that publishes its contact hours precisely so that the PRICE
+  // is the only blocker — making this string, and not the hours sentence, the one under
+  // test. Same technique as the fifth string below, which has been synthetic all along.
+  const { provider: gapProvider } = priceGapProvider(providers);
+  const gapRow = toListingRows([gapProvider], NOW)[0];
+  assert.equal(gapRow.pphState, "unknown",
+    "the fixture's €/contactuur is not OUR gap — it would exercise the wrong sentence");
+  assert.equal(gapRow.pphCaveat, nl.pphPriceNotInRecord,
+    "a programme whose price we do not hold must be explained as OUR gap, naming the price as the blocker");
+  assert.ok(!/publiceert geen/.test(gapRow.pphCaveat!),
+    "the caveat accuses a school that DOES publish its price of publishing none");
+
+  const shown = new Set(
+    toListingRows([...providers, gapProvider], NOW).map((r) => r.pphCaveat).filter(Boolean),
+  );
   for (const key of [
     "pphPriceNotPublished",
     "pphHoursNotPublished",
@@ -559,20 +580,46 @@ test("PRICE: every row in the “niet gepubliceerd” band renders the FINDING c
 });
 
 test("PRICE: every programme that publishes a price we do not hold is OUR gap, on BOTH pages", () => {
-  // The record says each of these DOES publish a price; the amount is missing from
-  // our record. Amber ("niet gepubliceerd") on either page is a false statement
-  // about them.
+  // The record says the school DOES publish a price; the amount is missing from our
+  // record. Amber ("niet gepubliceerd") on either page is a false statement about them,
+  // and a bare "ja" in fact ink is a price we do not hold, asserted as established fact.
+  // It must be grey on both pages — and it must be the SAME grey, from the same rule.
   //
-  // DERIVED, not named — see the twin test in api.test.ts. It named five programmes;
-  // four have since been paid off (price sources captured, amounts extracted), and a
-  // hard-coded roster of records-in-a-state fails the build for having been FIXED.
-  // The predicate is the rule's own, so the set is whatever the data holds today
-  // (sanayou/200-online), and every failure message still names the record.
+  // SYNTHETIC, and no longer swept from the corpus — the twin of the api.test.ts test,
+  // and the same history: five programmes were named here; then, when four were paid off,
+  // the set was DERIVED from `priceAmountIsOurGap` so that fixing a record could not fail
+  // the build. The fifth has now been paid off too, and the derived set is empty. Deriving
+  // only postponed the flaw: a test that finds its case in the data dies when the data is
+  // fixed, and the rule it pinned dies silently with it.
+  //
+  // The rule outlives the defect. It is pinned against the constructed record below; the
+  // live corpus is still checked, but it is allowed to be empty.
+  const { provider: gapProvider, program: gapProgram } = priceGapProvider(providers);
+  assert.ok(priceAmountIsOurGap(gapProgram),
+    "the fixture is not in the state this test exists to pin — it pins nothing");
+
+  const gapListing = toListingRows([gapProvider], NOW)[0];
+  const gapRecord = toProviderView(gapProvider)
+    .programs[0].rows.find((r) => r.label === nl.colPrice)!;
+
+  assert.equal(gapListing.priceState, "unknown",
+    `the listing states "${gapListing.priceState}" — the record says they DO publish a price, so the ` +
+    `missing amount is ours`);
+  assert.equal(gapRecord.state, "unknown", "the record page and the listing must make ONE claim, not two");
+  assert.equal(gapListing.priceState, gapRecord.state);
+  assert.ok(!saysNotPublished(gapListing.priceState),
+    "our own gap, published as a finding about a named business");
+  assert.equal(quadClass(gapListing.priceState), "gap",
+    "the Prijs cell renders in fact or finding ink — a price we do not hold, shown as something we know");
+  // Neither page shows a number, because there is none to show.
+  assert.equal(gapListing.priceDisplay, null);
+  assert.equal(gapRecord.value ?? null, null);
+
+  // INFORMATIONAL, and allowed to be empty: any real programme that lands in this state
+  // obeys the same rule, and the message names it.
   const ourGaps = providers.flatMap((p) =>
     p.programs.filter(priceAmountIsOurGap).map((program) => [p.id, program.id] as const),
   );
-  assert.ok(ourGaps.length > 0, "no programme is in this state any more — the rule this pins is untested");
-
   const rows = toListingRows(providers, NOW);
   for (const [providerId, programId] of ourGaps) {
     const listing = rows.find((r) => r.providerId === providerId && r.programId === programId)!;
@@ -844,7 +891,9 @@ test("RENDER: `derived` is on the two derived totals and on NOTHING else", () =>
   // the opposite of its job: it would strip a provider's own sourced fact of its fact ink.
   // Conversely, every derived value that HAS a figure must carry it — a new derived row
   // added without the flag is exactly the regression this pins.
-  const DERIVED_LABELS = new Set([nl.rowTotalPrice, nl.rowTotalHours]);
+  // `Set<string>`, not the literal union TS infers: `row.label` is a string, and a Set
+  // narrowed to the two label literals rejects `.has()` on it (a pre-existing tsc error).
+  const DERIVED_LABELS = new Set<string>([nl.rowTotalPrice, nl.rowTotalHours]);
   let flagged = 0;
   for (const p of providers) {
     for (const prog of toProviderView(p).programs) {
@@ -1266,12 +1315,22 @@ test("RECORD: the €/contactuur row obeys the same rule as the listing, from th
 });
 
 test("RECORD: a published price with no amount is OUR gap, never a bare “ja”", () => {
-  // Five programmes: price.published is "yes" and amount_eur is null. A row
-  // labelled "Prijs" promises a value; "ja" with no number asserts as an
-  // established fact something our record does not hold. The record says they
-  // DO publish it — so the missing number is ours. Same rule, same direction.
+  // price.published is "yes" and amount_eur is null. A row labelled "Prijs" promises a
+  // value; "ja" with no number asserts as an established fact something our record does
+  // not hold. The record says they DO publish it — so the missing number is ours, and the
+  // row must say so. Same rule, same direction.
+  //
+  // Five real programmes were this shape when the rule was written (and the site printed
+  // that bare "ja" for every one of them). None is today: all five have been researched,
+  // sourced, archived and their amounts extracted. So the case is CONSTRUCTED
+  // (price-gap.fixture.ts) and swept alongside the real corpus — every real programme is
+  // still checked by the `else` branch below, and the rule itself is pinned by a case that
+  // paying off the data can never remove. The `checked > 0` guard therefore still means
+  // what it says: this test exercised the state it exists to police.
+  const { provider: gapProvider } = priceGapProvider(providers);
+
   let checked = 0;
-  for (const p of providers) {
+  for (const p of [...providers, gapProvider]) {
     const view = toProviderView(p);
     for (const prog of p.programs) {
       const row = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.colPrice)!;
@@ -1295,7 +1354,9 @@ test("RECORD: a published price with no amount is OUR gap, never a bare “ja”
       }
     }
   }
-  assert.ok(checked > 0, "no programme publishes a price without an amount any more");
+  assert.ok(checked > 0,
+    "the price-gap case was never exercised — the fixture that guarantees it is gone, and a bare “ja” " +
+    "with no amount behind it could reach the record page again with nothing to catch it");
 });
 
 test("RECORD: a provider's verbatim assessment quote is never dropped", () => {

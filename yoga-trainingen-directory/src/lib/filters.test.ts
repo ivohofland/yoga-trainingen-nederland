@@ -6,6 +6,7 @@ import { totalPrice } from "./derive";
 import { saysNotPublished } from "./quad";
 import { cityCentroid } from "./geo";
 import { nl } from "./strings";
+import { priceGapProvider } from "./price-gap.fixture";
 import {
   EMPTY_FILTERS,
   chipGroups,
@@ -187,27 +188,49 @@ test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no b
   // and forcing them to be is precisely how the five gap rows ended up inside an
   // accusation: every row had to land in SOME band, so the leftover bucket took
   // them. A price band is a statement — "it costs this much", "they publish no
-  // price" — and about these five we can honestly make neither. They are OUR gap;
-  // they belong in no band, and they are visible in the unfiltered list, where a
-  // reader meets them as "nog niet onderzocht".
+  // price" — and about such a row we can honestly make neither. It is OUR gap;
+  // it belongs in no band, and it stays visible in the unfiltered list, where a
+  // reader meets it as "nog niet onderzocht".
   //
-  // They now have a band NAME of their own — `amount_not_in_record` — which says
-  // out loud that "we hold no amount" is its own category rather than a cheap
-  // synonym for "they publish no price". It is offered by no chip: see ProgrammeTable.
-  const ourGaps = ROWS.filter((r) => r.priceState === "unknown");
+  // It has a band NAME of its own — `amount_not_in_record` — which says out loud that
+  // "we hold no amount" is its own category rather than a cheap synonym for "they
+  // publish no price". It is offered by no chip: see ProgrammeTable.
+  //
+  // THE GAP ROW IS MANUFACTURED, exactly like the unplaceable "Nergenshuizen" row below
+  // and for exactly the same reason: today's corpus contains no programme in this state
+  // (all five have been researched and their amounts extracted), so every assertion
+  // about the gap band would be vacuously true — delete the `amount_not_in_record`
+  // branch from priceBand() and this test would still have passed. A rule that holds
+  // only because its trigger is absent from the data is not a rule.
+  //
+  // Built through toListingRows() from a synthetic RECORD (price-gap.fixture.ts), never
+  // by hand-setting `priceBand` on a Row: the band under test is the one the presenter
+  // derives, so a row whose band we assigned ourselves would test only our own typing.
+  const { provider: gapProvider } = priceGapProvider(providers);
+  const gapRow = toListingRows([gapProvider], NOW)[0];
+  assert.equal(gapRow.priceState, "unknown",
+    "the fixture is not a price gap — this test would pin nothing");
+  const ALL = [...ROWS, gapRow];
+
+  const ourGaps = ALL.filter((r) => r.priceState === "unknown");
   assert.ok(ourGaps.length > 0, "no programme is a price gap any more — this test tests nothing");
   for (const g of ourGaps) {
     assert.equal(g.priceBand, "amount_not_in_record",
       `${g.providerId}/${g.programId}: our own gap, banded as something we could state about them`);
     for (const band of ["under3000", "from3000", "none_published"] as const) {
-      const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
+      const got = filterRows(ALL, { ...EMPTY_FILTERS, price: band });
       assert.ok(!got.some((r) => r.href === g.href),
         `${g.providerId}/${g.programId} is a gap in OUR record, yet the '${band}' band claims it`);
     }
   }
 
-  // Nothing else is lost: the three bands plus our gaps account for every row.
-  assert.equal(under.length + from.length + notPub.length + ourGaps.length, ROWS.length,
+  // Nothing else is lost: the three bands plus our gaps account for every row — and the
+  // gap row is accounted for by being in NO band, which is the whole claim.
+  const bandedAll = (b: Filters["price"]) => filterRows(ALL, { ...EMPTY_FILTERS, price: b });
+  assert.equal(
+    bandedAll("under3000").length + bandedAll("from3000").length + bandedAll("none_published").length +
+      ourGaps.length,
+    ALL.length,
     "the price bands and the gaps do not account for every programme");
   // The bands are disjoint — no row is counted in two.
   const hrefs = [...under, ...from, ...notPub].map((r) => r.href);
