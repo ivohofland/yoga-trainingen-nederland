@@ -4,262 +4,130 @@
 in `project-decisions.md` and the READMEs. Items reference the spec (`§N`) and
 the decision log (`#N`) where relevant.*
 
-## Publication features (gate first launch)
+*Last pruned 2026-07-12, after the public site shipped (PR #1) and the
+provenance work landed (PR #2). Closed items are one-liners; their full
+reasoning is in the PRs and the git history, which is where it belongs.*
 
-These are required by the project's own decisions before any critical/assessed
-content can go live, and the code to render them does not exist yet.
+---
 
-- [ ] **Render the methodology page.** `content/methodologie.md` exists but no
-  route serves it. Decision #5 makes it a founding deliverable that must be
-  public before the first critical content; the schema's `methodology_version`
-  points at it. Add a route that renders the markdown.
-- [ ] **Provider detail pages.** Only the listing (`app/page.tsx`) exists. A
-  detail view per provider needs to render: claims *verbatim* with their
-  sources, the full §5 hour decomposition (incl. `supervised_teaching_practice`
-  emptiness as a finding), quad-state fields as findings vs gaps, and the
-  `coherence_signals`.
-- [ ] **Sources + archive links in the views.** Transparency is the product
-  (decision #6/#8). Render each `source` with its `archived_url` and
-  `local_snapshot`, and surface `archived_url: null` as "not yet archived"
-  rather than hiding it.
-- [ ] **Disclosure rendering.** The schema has `provider.disclosure`
-  (author–provider relationship); the methodology promises it's shown
-  prominently on the listing. Currently unrendered.
+## Open — publication features
+
+These are required by the project's own decisions before critical/assessed
+content goes live. The site itself now exists; these are the parts of the
+*publication* apparatus that don't.
+
 - [ ] **"Meld een fout" / correction route.** Decision #7: a lightweight
   correction channel whose validated reports enter the dataset as a
-  `reader_report` source. Needs a public form/route + an intake path into
-  `data/`.
+  `reader_report` source. Needs a public route + an intake path into `data/`.
+  The imported design drew a form; it was cut because a static export has no
+  endpoint and `inquiries[]` models inquiries *we* sent, not a submission inbox.
+  Needs a real decision about where submissions land.
 - [ ] **Complaints/correction procedure page.** Decision #3 — operate like a
-  publication from day one; this page precedes publication.
+  publication from day one; this page precedes any assessed content. The
+  methodology already promises it ("een formele klachten- en correctieprocedure
+  is in ontwikkeling").
 - [ ] **Public per-record change history from git.** Decision #7 wants the git
-  history of each `data/providers/<id>.yaml` shown publicly as a trust feature.
-- [ ] **Inquiry / right-of-reply display.** Schema models `inquiries` with
+  history of each `data/providers/<id>.yaml` rendered publicly — the audit trail
+  as a visible trust feature. The methodology already promises it: *"elke
+  vermelding heeft een openbare wijzigingsgeschiedenis … Stilzwijgende correcties
+  bestaan hier niet."* Nothing renders it yet.
+- [ ] **Inquiry / right-of-reply display.** The schema models `inquiries` with
   `response: "none"` as defensible silence after the window; no view renders it.
+  Not urgent — no record has an inquiry yet — but it gates `depth: assessed`.
 
-## Build pipeline & data integrity
+## Open — the publication bar
 
-- [x] **Wire `export-json` into the build.** Now chained into `build`
-  (`validate && export-json && next build`) so the static API can't drift.
-  Currency is derived from the data (`data_current_as_of` = max `last_verified`)
-  instead of build time, so unchanged data rebuilds byte-identically.
-- [x] **CI on push.** `.github/workflows/validate.yml` runs `npm run validate`
-  on every push and pull request.
-- [ ] **Publication-bar check.** Encode the rule that a record above
-  `depth: listed` (or anything published critically) must have non-null
-  `archived_url` on its cited sources — surface it as a validate-time warning,
-  not just prose in the README.
+- [ ] **110 of 220 sources have no public archive.** The methodology states the
+  bar: *"elke geciteerde pagina wordt dubbel bewaard: in een publiek webarchief
+  … én als eigen kopie."* Today 104 sources meet it, 103 are local-only, 5 are
+  public-only, 8 have neither. The record pages now show **both halves
+  honestly** (`publiek — · lokaal ✓`), so the site no longer implies a bar it
+  doesn't meet — but the gap is real and it is the largest one left.
+  Many local-only sources are legitimate (Wayback-excluded domains,
+  JS-rendered registers), but that distinction is not currently recorded, so a
+  reader cannot tell a deliberate skip from a missing submission. Consider a
+  reason field, or a retry pass with `npm run archive`.
+- [ ] **Promote the provenance check to a build gate.** `src/lib/provenance.ts`
+  currently *warns* (in `validate`, on `/qa`, strict via `npm run provenance`).
+  It is at **1 finding**. Once that clears and it holds at zero, make it fail
+  the build — the comment in the file says so.
 
-## Authoring & QA tooling
+## Open — research debt
 
-The deliberate position (see *Decisions* below) is **no general admin/edit UI** —
-records stay files-in-git. These items make that workflow fast and safe instead.
+*Named, actionable extraction work the records already admit to.*
 
-- [x] **Editor schema validation.** `scripts/gen-schema.ts` generates
-  `data/provider.schema.json` from the Zod schema (wired into `build`,
-  deterministic so it can't drift); each `data/providers/*.yaml` references it
-  with a `# yaml-language-server: $schema=` header for autocomplete, quad-state
-  enum hints, and inline validation. New record files should start with the same
-  header line.
-- [x] **Read-only QA / review dashboard.** `providerQa()` in `dataset.ts` +
-  the `/qa` route surface, per record, open `unknown` gaps, unarchived sources,
-  completeness, depth, and `last_verified` age — most-incomplete-first. Never
-  writes.
-
-## Research debt
-
-*Not engineering: named, actionable extraction work that the records themselves
-already admit to. Each item below is a record whose `price.published: yes` is
-**cited against a source that does not evidence it** — the overview page we
-captured carries no € amount at all, and the page that does carry the price was
-never captured and never archived. `published: yes` is CORRECT (they do publish a
-price); the amount and its source are missing from our record, and each
-`price.note` now says so in as many words. Until these are done, the price on
-these is our gap, never a finding about them.*
-
-The fix for each: read the page that carries the price, add it to that record's
-`sources[]` (with `captured`), archive it (`npm run archive -- <id>` — public +
-local, per the publication bar), set `price.amount_eur` (cheapest
-generally-available variant, per the §4 convention) or `variants[]`, set `vat`
-where the page states it, and trim the note back to what is still true.
-
-**The class of bug is now caught automatically** — `src/lib/provenance.ts` opens the
-archived artifacts of every cited price source and warns (in `npm run validate`, on
-`/qa`, and strictly in `npm run provenance`) when they contain no amount at all. It
-found exactly these records. Four are done; the list below is what it still finds.
-
-- [x] **`aalo-yoga-academie/yin-yang-ryt200`** — lesgeld € 2.988,- (€ 2.838,60 bij
-  eenmalige betaling, 5% korting) + **examengeld € 553,-** apart; sourced +
-  archived as `site-yin-yang-2026-07`.
-- [x] **`aalo-yoga-academie/yin-ryt200`** — same lesgeld, but **examengeld € 435,-**:
-  same price, different mandatory extra. Sourced + archived as `site-yin-2026-07`.
-- [x] **`de-blikopener/hatha-raja-opleiding`** — € 1.290,- **per studiejaar** (no total
-  is published anywhere). Sourced + archived as `tarieven-2026-07`. **Resolved in spec
-  v0.5**: `price.period: per_year` + `periods`, the total DERIVED and shown as ours;
-  the opleidingspagina (`opleiding-2026-07`, now sourced + archived) gave the hours and
-  the two trajects, so the record is now **two programmes** (500 u / 4 jaar and 372 u /
-  3 jaar). `vat` → **`unknown`**: the rates page states no BTW at all and §4.11 forbids
-  inferring the exemption from the CRKBO registration.
 - [ ] **`sanayou/200-online`** — modular online, 3 routes; prices are per
-  module/traject on the **module-/inschrijfpagina's** (`site-online-2026-06` = the
-  overzicht, which prices the OTHER two routes — which is why the provenance check
-  passes it: it is page-level, not fact-level). Needs a decision on the comparable
-  base across the 3 routes as well as the extraction.
-- [x] **`yoga-academie-nederland/300-hatha-verdieping`** — € 5.095,- from the linked
-  datakosten PDF, sourced + archived as `datakosten-pdf-2026-07` (Wayback refused it
-  on the day — daily limit for that resource type — so `archived_url: null`; the local
-  copy + SHA-256 stands, and the submission must be retried). All 8 module prices
-  came from the same PDF, so `bundleDelta` now computes: **−€ 775,-** (bundle below
-  the sum of its parts).
+  module/traject on the inschrijfpagina's. The cited overzicht prices the *other
+  two* routes, which is why the provenance check passes it — the check is
+  **page-level, not fact-level**, and this is its known false negative. Needs an
+  editorial decision on the comparable base across the three routes, then the
+  extraction.
+- [ ] **`yoga-den/200-vinyasa`** — `vat: incl`, cited to `site-ytt-200-2026-06`.
+  The note claims the page *"vermeldde 'Pricing incl. VAT'"*, but **no Yoga Den
+  artifact contains that string**, and this is not a partial capture (the pricing
+  block IS captured: *"Pricing"*, *"Investment: €3597"*, no VAT wording beside
+  it). **Our note and our own archive contradict each other.** Only the live page
+  can settle it: if the wording is there → recapture + re-cite; if not →
+  `vat: unknown` (§4.11). *The only open provenance finding in the corpus.*
+- [ ] **20 providers have `crkbo.registered: unknown`.** The spec calls this "a
+  1-minute register lookup". It is a **gap** (ours), not a finding (theirs), so
+  the site correctly says nothing about them — but it is cheap to close and it
+  suppresses a real signal.
+- [ ] **`supervised_teaching_practice` is unrecorded on 72 of 77 programmes.**
+  Expected — its emptiness across the market *is* the finding (§5), and the site
+  renders it as one. Listed here only so it is not mistaken for an oversight.
 
-### Provenance audit, spec v0.5 — hours and BTW (6 open)
+## Open — code health & SEO
 
-*The provenance check now runs over three claims, not one: the PRICE, the HOURS total,
-and the VAT treatment (`src/lib/provenance.ts`; warning in `npm run validate`, counted
-on `/qa`, strict in `npm run provenance`). Widening it found six citations that the
-archived artifact does not carry. **Every one of these is a defect in OUR sourcing, not
-a finding about the provider** — the record cites a page that does not state the thing
-it is cited for. Triage, do not bulk-fix: each needs a human to find the page that DOES
-state it, archive that page, and re-point the citation. Pinned in `provenance.test.ts`
-(`KNOWN_FINDINGS`), so the count cannot grow unnoticed.*
+- [ ] **Linter + formatter.** No ESLint/Prettier config exists.
+- [ ] **Per-page metadata, sitemap, `robots`.** Only the root `layout.tsx` sets
+  metadata. It's a static publication meant to be found and cited.
 
-### The corpus sweep (all 48 records) — and the ONE distinction that matters
+---
 
-*Run over every record: **170 claims examined, 0 skipped** (all snapshot bodies present
-locally), of which **72 are a stored `hours_claimed.total`**. Both hours findings are now
-closed, and they closed for **opposite reasons**. That split is the whole point, and it
-cannot be guessed from the YAML — only from the archive:*
+## Closed
 
-- **(a) A SOURCING ERROR** — the school **does** publish the figure, on a page we never
-  captured or never cited. The record is right; our citation was pointing at the wrong
-  page. → *Find the page, archive it, cite it.*
-- **(b) A STORED SUM** — the school **does not** publish the figure; we computed it and
-  stored it in a field that renders as their claim. → *Stop storing it* (§6, principle 9:
-  derived values are never stored).
+*Reasoning lives in the PRs; kept here as one-liners so the file does not
+understate the project.*
 
-**Hours — (a) sourcing errors** (1, fixed)
+**The public site (PR #1).**
+- [x] Listing at `/` — filters, sort, and a postcode + radius distance filter.
+- [x] Provider detail pages at `/aanbieder/[id]` — 48 statically generated.
+- [x] Methodology page at `/methodologie` — renders `content/methodologie.md`.
+- [x] Sources + archive status in the views — **both** halves always shown.
+- [x] Disclosure rendering — bordered block on the record, marker on the listing.
+- [x] Styling approach — CSS Modules + design tokens. `<Quad>` is the only place
+  a quad becomes pixels, and `--finding`/`--gap` appear in no other stylesheet.
+- [x] **Unit tests.** 153, `node:test` via `tsx --test`, wired into `npm run build`
+  after `validate`. They exist to lock the *editorial* invariants, not to chase
+  coverage — chiefly that `not_published` (a finding) and `unknown` (a gap) can
+  never render identically.
+- [x] `export-json` wired into the build; CI runs `validate` on every push.
+- [x] Editor schema validation (`gen-schema` → `data/provider.schema.json`).
+- [x] Read-only QA dashboard at `/qa` — **excluded from production builds**.
 
-- [x] **`wahe/500-pathway`** — **the 500-hour route is real; our sourcing was wrong.** The
-  figure was flagged because the cited overview page never prints "500" — but Wahé markets
-  the stacked route explicitly, on `https://wahe-by-gitty.nl/yoga-alliance/`, a page we had
-  never captured: *"Samen vormen de 200-uurs basisopleiding en de 300 uur aan
-  verdiepingsmodules een totaal van 500 uur opleiding, wat voldoet aan de eisen voor
-  registratie op het 500-uurs niveau bij Yoga Alliance."* Archived as
-  `site-yoga-alliance-2026-07` (Wayback + local); `hours_claimed` and `accreditation` now
-  cite it, the sentences are in `claims[]` **verbatim**, and `composition.modules` lists
-  the four components the school itself names (200 + 150 + 100 + 50). `total: 500` is
-  therefore **their published claim**, not our sum. `label_claimed` was *"RYS 500
-  (YA-leerroute, gestapeld uit de losse opleidingen)"* — half our characterisation, in a
-  field that exists to hold the school's words; it is now the school's own phrase
-  (*"registratie op het 500-uurs niveau bij Yoga Alliance"*), with our commentary moved to
-  `note`.
-  **A real finding fell out of it:** of the four components, three (200u Vinyasa, 150u
-  Yin/Lunar, 100u Restorative) have their own opleidingspagina with dates and enrolment;
-  the **50u Filosofie, Pranayama en meditatie** module has none — the overview page files
-  it under *"Coming:"* and publishes no dates and no price. **The published 500-hour route
-  is currently not completable: 450 of the 500 hours are bookable.** Stated as fact in
-  `hours_claimed.note`, not as characterisation.
+**Provenance and the data model (PR #2).**
+- [x] **`src/lib/provenance.ts`** — opens the archived artifacts of every cited
+  source and warns when they do not evidence the price, the hours total, or the
+  VAT treatment they are cited for. It found six defects. It searches **both**
+  the raw HTML and the browser-rendered PDF and passes on either: neither alone
+  is sufficient (JS-injected prices appear only in the PDF).
+- [x] **spec v0.3** — `YYYY-MM` rejects a month outside 01–12. A typo'd month was
+  schema-valid data that only blew up inside a date formatter during `next build`.
+- [x] **spec v0.4** — `hours_claimed.contact_published`. One quad was answering
+  two questions, so the market's three most transparent schools were being told
+  to readers as "not investigated".
+- [x] **spec v0.5** — `price.period` + `periods`; `total_price` derived.
+  `amount_eur` silently assumed a whole-course total, which ranked de Blikopener
+  3rd cheapest of 54 when the real cost is ≈ € 5.260.
+- [x] **spec v0.6** — `total_hours` derived. Two records stored *our* sum in a
+  field that renders as the school's claim.
+- [x] Five prices sourced, archived and extracted (AALO ×2, de Blikopener,
+  Yoga Academie Nederland); de Blikopener split into two properly-sourced
+  programmes; Wahé's 500-hour route re-cited to the page that actually states it;
+  four VAT treatments corrected to `unknown` per §4.11.
 
-**Hours — (b) stored sums** (1, fixed)
-
-- [x] **`de-yogaschool-enschede/docentenopleiding-raja`** — **confirmed against every
-  artifact this provider has: the string "600" appears ZERO times.** The page states
-  *"De opleiding neemt drie jaar of 360 uren in beslag. Daarnaast is er minimale zelfstudie
-  van 240 uur."* — they publish 360 and 240, separately, and **never their sum**. The 600
-  was OUR arithmetic, stored in a field that renders as the school's claimed total.
-  `hours_claimed.total` → **`null`**; `contact: 360` and `self_study: 240` stay (those ARE
-  published and sourced), and the note now says plainly that the school publishes no
-  combined total.
-  **Consequence, and it is a real one:** the reader now sees **no total** for this
-  programme. A derived `total_hours` — same shape as v0.5's derived `total_price` for
-  `de-blikopener` (computed in `derive.ts`, rendered *visibly as ours*, never stored) —
-  would restore it honestly. **Done in spec v0.6** (below).
-
-### Spec v0.6 — `total_hours` is derived (closed)
-
-- [x] **`totalHours()` in `derive.ts`**, mirroring `totalPrice()`. `hours_claimed.total`
-  set → that figure, `derived: false` (**Wahé's 500 is theirs and still reads as theirs**);
-  `total` absent but `contact` + `self_study` both published → their sum, `derived: true`,
-  with the working (*"onze optelling: 360 contacturen + 240 zelfstudie-uren"*). Neither →
-  `null`. de Yogaschool Enschede's **600** is back on the page, as **our** arithmetic.
-- [x] **Rendered visibly as ours, in both units.** The record page keys its ink off
-  `row.derived`: a derived total gets the muted italic `.derived` style, *not* `<Quad>`'s
-  fact ink — the same visual register the listing already used for the derived total price.
-  The derived rows carry **no citation** (§6) and always show their working. The listing
-  shows no hours total at all, so there was nothing to add there.
-- [x] **`contactRatio` now consumes `totalHours`, not the raw field.** It had the total as
-  its denominator, so it returned `null` for every school that publishes its hours only as
-  parts — de Yogaschool, whose breakdown is among the most complete in the corpus, had no
-  contact ratio at all. Now 0,6. `pricePerContactHour` divides by `contact` and never
-  touches a total: **unaffected**, and pinned as such (€ 12,75, not € 7,65).
-- [x] **The API ships `derived.total_hours`** beside `total_price`, with the same
-  `{ value, derived, caveat }` contract and a README that tells consumers to read it
-  instead of `hours_claimed.total` — so a consumer cannot re-derive the wrong figure.
-- [x] **A stored sum cannot sneak back in.** `loader.test.ts` pins the two records whose
-  total legitimately equals contact + zelfstudie (`jai-yoga/pranayama-tt` — *"So number of
-  hours amounts to 350."*; `neo-yoga-delft/200-hatha` — *"200 uur"*). A third record in
-  that shape fails the suite until the archive is opened and it is classified.
-
-*No other stored hours total in the corpus fails the check: the remaining 70 all appear,
-as printed figures, on the page they are cited to.*
-
-### BTW cited to a page that never mentions BTW (1 open)
-
-*§4.11: a VAT treatment is **directly observed or it is not known** — it may never be
-inferred from a CRKBO registration, from the invoicing entity, or from a sibling
-programme's page. The same (a)/(b) logic applies, and the archives settle three of the
-four. `vat: unknown` is the honest value for (b) — that is what the two records corrected
-in v0.5 (`de-blikopener` ×2, `yogatreat/200-functional-yin`) now carry.*
-
-**(b) Inferred, never observed — the VAT twin of a stored sum.** Both records' own notes
-admitted the inference in as many words. Neither needed a live page: the fix was to stop
-asserting. **Both corrected (spec v0.6 pass), each re-verified against the archive first.**
-
-- [x] **`adhouna/200-multistyle`** — was `vat: incl`, cited to `site-multistyle-2026-06`.
-  That page publishes **no price at all** for this programme, and **neither of its two
-  artifacts (HTML or browser-render) contains `btw` / `vrijgesteld` / `omzetbelasting` /
-  `CRKBO` anywhere** — re-confirmed before the edit. The `incl` was carried over from a
-  **different programme's** page (`site-yinxl-2026-06`, which does state *"Deel I van deze
-  Yin Yoga Opleiding kost € 1.420,00 incl. BTW"*). A VAT treatment read off another
-  product's page is not a fact about this one. → **`vat: unknown`**, note rewritten to state
-  the evidence and the correction.
-- [x] **`yoga-den/500-pathway`** — was `vat: incl`, cited to `site-ytt-overview-2026-06`.
-  The note inferred it outright: *"zelfde btw-belaste entiteit (Yoga Den B.V.,
-  niet-CRKBO)"* — precisely the inference §4.11 forbids, and the same shape as inferring
-  exemption from a CRKBO registration. **Re-confirmed: no Yoga Den *page* artifact mentions
-  BTW at all** (only the CRKBO register capture does, which is a register, not their price
-  page — and the CRKBO inference is the forbidden one). The cited overview shows no money
-  either. → **`vat: unknown`**, note rewritten.
-
-**Cannot be settled from the archive — needs a live re-check.** This is **the only open
-provenance finding in the corpus** (`npm run provenance`: 1 finding, pinned in
-`provenance.test.ts` as `KNOWN_FINDINGS`).
-
-- [ ] **`yoga-den/200-vinyasa`** — `vat: incl`, cited to `site-ytt-200-2026-06`. The record's
-  note claims the page *"vermeldde 'Pricing incl. VAT'"* (past tense), but **no Yoga Den
-  artifact contains the string** — and this is not a partial capture: the cited page's
-  pricing block IS fully captured (*"Pricing"*, *"Investment: €3597"*) and carries no VAT
-  wording beside it. Either the page changed after it was read, or the wording was never
-  there. **Our note and our archive contradict each other**, and only the live page can say
-  which is right: re-check → if the wording is there, this is **(a)** (recapture + re-cite);
-  if not, it is **(b)** (→ `unknown`).
-
-## Code health
-
-- [ ] **Linter + formatter.** No ESLint/Prettier config exists. Add `next lint`
-  (eslint-config-next) and a formatter before the view layer grows.
-- [ ] **Unit tests.** There is no test runner. The derived-value functions in
-  `src/lib/dataset.ts` (`pricePerContactHour`, `contactRatio`, `bundleDelta`,
-  `completeness`) and the referential-integrity checks (`integrityErrors`) are
-  pure and the highest-value things to lock down with tests — they encode
-  methodology rules (e.g. incomplete inputs → `null`, never a guessed number).
-- [ ] **Styling approach.** Views use ad-hoc inline styles. Pick a convention
-  (CSS Modules / a small token set) before building the detail pages so the
-  publication has a consistent, accessible presentation.
-
-## SSG / SEO for a publication
-
-- [ ] Per-page metadata, a sitemap, and `robots` — it's a static publication
-  meant to be found and cited; only the root `layout.tsx` sets metadata today.
+---
 
 ## Decisions
 
@@ -270,7 +138,21 @@ provenance finding in the corpus** (`npm run provenance`: 1 finding, pinned in
   (sourcing, archiving, verbatim quotes), not data entry, so an editor wouldn't
   move the needle, and it's a large surface to maintain on a hobby project
   (decision #4). The value is captured instead by *editor schema validation* and
-  the *read-only QA dashboard* above. The one editing UI worth building is the
-  narrow **"Meld een fout" intake** for outside corrections (already listed under
-  publication features), not a general editor for the author. Revisit only if
-  non-technical contributors need to author records directly.
+  the *read-only QA dashboard*. The one editing UI worth building is the narrow
+  **"Meld een fout" intake** for outside corrections (listed above), not a
+  general editor for the author. Revisit only if non-technical contributors need
+  to author records directly.
+
+- **Archive bodies are not published; their hashes are.** The repo is public.
+  `data/archives/**/*.pdf|*.html` are gitignored and live in the private,
+  git-dated archive repo; the `.sha256` beside each one *is* committed and proves
+  the snapshot exists and is unaltered. Quoting a provider verbatim is
+  citaatrecht (Art. 15a Aw); republishing their entire brochure is not. See
+  `data/archives/README.md`.
+
+- **Cite the page that states the fact.** If it is not captured, capture it —
+  never cite the page that merely links to it. Enforced by `provenance.ts`.
+  Note the trap it exists to catch: a raw HTML capture misses JS-injected prices
+  (add-to-cart widgets), exactly as it misses the Salesforce-rendered YA
+  registers — so the browser-rendered PDF is part of the evidence, not a
+  convenience.
