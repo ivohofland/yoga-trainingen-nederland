@@ -582,22 +582,12 @@
           },
           "prerequisites_claimed": "toegankelijk voor alle niveaus, ook beginners. Ook een 100u-Yin → +100u → 200u-route.",
           "price": {
-            "amount_eur": 2725,
-            "period": "total",
-            "variants": [
-              {
-                "label": "Deel I (incl. syllabus + examen)",
-                "amount_eur": 1420
-              },
-              {
-                "label": "Deel II (incl. syllabus + examen)",
-                "amount_eur": 1305
-              }
-            ],
+            "amount_eur": null,
+            "period": "per_module",
             "vat": "incl",
             "published": "yes",
             "includes": "syllabus en examen (per deel)",
-            "note": "€2725 incl. btw totaal (Deel I €1420 / Deel II €1305, beide incl. btw); herexamen €50. Inschrijven per deel; Deel II start na Deel I en gaat door bij voldoende belangstelling.\n",
+            "note": "ADHOUNA PUBLICEERT GEEN TOTAALPRIJS. De pagina noemt twee bedragen, apart: \"Deel I van deze Yin Yoga Opleiding kost € 1.420,00 incl. BTW (€ 1.173,55 excl. BTW)\" en \"Deel II ... kost € 1.305,00 incl. BTW (€ 1.078,50 excl. BTW)\", beide \"inclusief syllabus en examen\"; een herexamen kost € 50,00. € 1.420 + € 1.305 = € 2.725 is ONZE optelling — het getal 2725 staat op geen enkele gearchiveerde pagina van deze school, en `amount_eur` blijft daarom leeg (spec §6/v0.8: afgeleide waarden worden niet opgeslagen; het totaal wordt bij het renderen als het onze getoond). Inschrijven per deel; Deel II wordt ná de start van Deel I opengesteld en gaat door bij voldoende belangstelling. btw = incl (directe waarneming, §4.11).\n",
             "source": "site-yinxl-2026-06"
           },
           "hours_claimed": {
@@ -611,7 +601,11 @@
             "note": "2 delen, lesdagen 10:00-18:00 te Brunssum. 100u-Yin-houders kunnen met +100u de 200u voltooien."
           },
           "composition": {
-            "type": "fixed_modular"
+            "type": "fixed_modular",
+            "modules": [
+              "deel-1",
+              "deel-2"
+            ]
           },
           "coherence_signals": {
             "modules_sold_separately": "yes",
@@ -644,8 +638,8 @@
             "price_band": "under3000",
             "total_price": {
               "value": 2725,
-              "derived": false,
-              "caveat": null
+              "derived": true,
+              "caveat": "onze optelling: € 1.420 + € 1.305. De aanbieder publiceert de delen apart en noemt hun som niet."
             },
             "total_hours": {
               "value": 200,
@@ -660,7 +654,36 @@
           }
         }
       ],
-      "modules": [],
+      "modules": [
+        {
+          "id": "deel-1",
+          "name": "Yin Yoga XL Docent Opleiding — Deel I",
+          "url": "https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/",
+          "type": "core_pedagogy",
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 1420,
+            "period": "total",
+            "vat": "incl",
+            "source": "site-yinxl-2026-06"
+          },
+          "note": "\"Deel I van deze Yin Yoga Opleiding kost € 1.420,00 incl. BTW (€ 1.173,55 excl. BTW). Dit is inclusief syllabus en examen.\" (site-yinxl-2026-06). Inschrijven gebeurt per deel; je schrijft je eerst in voor deel I.\n"
+        },
+        {
+          "id": "deel-2",
+          "name": "Yin Yoga XL Docent Opleiding — Deel II",
+          "url": "https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/",
+          "type": "core_pedagogy",
+          "sold_separately": "yes",
+          "price": {
+            "amount_eur": 1305,
+            "period": "total",
+            "vat": "incl",
+            "source": "site-yinxl-2026-06"
+          },
+          "note": "\"Deel II van deze Yin Yoga Opleiding kost € 1.305,00 incl. BTW (€ 1.078,50 excl. BTW). Dit is inclusief syllabus en examen.\" (site-yinxl-2026-06). \"De inschrijving voor deel II wordt ná de start van deel I opengesteld. Deel II vindt doorgang bij voldoende belangstelling!\"\n"
+        }
+      ],
       "claims": [],
       "people": [],
       "inquiries": [],
@@ -681,7 +704,7 @@
           "archived_url": "https://web.archive.org/web/20260629191031/https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/",
           "local_snapshot": "data/archives/adhouna/site-yinxl-2026-06-2026-06-29.pdf",
           "captured": "2026-06",
-          "note": "LIVE \"Yin Yoga XL Docent Opleiding 200 uur (Yoga Alliance)\", in 2 delen: Yin yoga (geschiedenis/principes/filosofie, anatomie, meridianen & chakra's, pranayama, meditatie, Yin & Yang, lesopbouw/lespraktijk) + mindfulness + \"Anatomie van de Mind\" + Yoga Nidra theorie & praktijk; RYT 200. Tarieven: Deel I €1420 incl. btw (€1173,55 excl.) + Deel II €1305 incl. btw (€1078,50 excl.) = €2725 incl. btw; incl. syllabus + examen; herexamen €50; inschrijven per deel (Deel II bij voldoende belangstelling). Brunssum, 10:00-18:00.\n"
+          "note": "LIVE \"Yin Yoga XL Docent Opleiding 200 uur (Yoga Alliance)\", in 2 delen: Yin yoga (geschiedenis/principes/filosofie, anatomie, meridianen & chakra's, pranayama, meditatie, Yin & Yang, lesopbouw/lespraktijk) + mindfulness + \"Anatomie van de Mind\" + Yoga Nidra theorie & praktijk; RYT 200. Tarieven, zoals de pagina ze afdrukt: \"Deel I ... kost € 1.420,00 incl. BTW (€ 1.173,55 excl. BTW)\" en \"Deel II ... kost € 1.305,00 incl. BTW (€ 1.078,50 excl. BTW)\", beide \"inclusief syllabus en examen\"; herexamen € 50,00. GEEN TOTAALPRIJS op de pagina — de som van de twee delen zou de onze zijn, niet die van hen. Inschrijven per deel (Deel II bij voldoende belangstelling). Brunssum, 10:00-18:00.\n"
         },
         {
           "id": "overview-image-2026-06",
@@ -1283,7 +1306,7 @@
         "holder": "Bluebirds BV",
         "checked": "2026-06-25",
         "source": "crkbo-register-2026-06",
-        "note": "Register-geverifieerd: Instelling \"Bluebirds BV\", Amsterdam, www.blue-birds.nl (2026-06-25). Bluebirds is de boekings-, factuur- én CRKBO-entiteit van de opleidingen; beide opleidingspagina's stellen EXPLICIET \"all prices at 0% VAT as we are CRKBO registered\" → price.vat = exempt_crkbo (§4.11).\n"
+        "note": "Register-geverifieerd: Instelling \"Bluebirds BV\", Amsterdam, www.blue-birds.nl (2026-06-25). Bluebirds is de boekings-, factuur- én CRKBO-entiteit van de huidige opleiding.\nLET OP — DE BTW-BEHANDELING VERSCHILT PER COHORT, en de registratie zegt daar op zichzelf niets over (§4.11). De blue-birds.nl-pagina van het 2026-cohort stelt EXPLICIET \"(all prices at 0% VAT as we are CRKBO registered)\" → dat programma: price.vat = exempt_crkbo. De pagina van het 2025-cohort is een ANDERE pagina — de (inmiddels gearchiveerde) eigen site van Marlene (yoginimarleen.wixsite.com) — en die stelt het tegendeel: \"€2950,- Excl BTW\" / \"€3150,- Excl BTW\". Dat programma: price.vat = excl. De CRKBO-zin van de ene pagina op de opleiding van de andere plakken is precies de afleiding die §4.11 verbiedt; de prijs die tussen de cohorten bewoog is vastgelegd in Cohort.price_at_time (§4.5) en is een BEVINDING, geen correctie om weg te werken.\n"
       },
       "registrations": [
         {
@@ -1331,13 +1354,6 @@
               "verified": "yes",
               "source": "ya-register-marlene-2026-06",
               "note": "Certificerende RYS = MarleneYoga (Marlene Henny, E-RYT 500). Lead teachers Fleur & Marlene; gastdocenten voor o.a. anatomie/Ayurveda."
-            },
-            {
-              "body": "crkbo",
-              "label_claimed": "all prices at 0% VAT as we are CRKBO registered",
-              "verified": "yes",
-              "source": "crkbo-register-2026-06",
-              "note": "Via Bluebirds BV (CRKBO-Instelling)."
             }
           ],
           "delivery": {
@@ -1352,21 +1368,17 @@
             "period": "total",
             "variants": [
               {
-                "label": "early bird (tot 1 jul 2025)",
+                "label": "Early Bird (tot 1 jul 2025)",
                 "amount_eur": 2950
               },
               {
-                "label": "reguliere prijs",
+                "label": "Regular",
                 "amount_eur": 3150
-              },
-              {
-                "label": "Bluebirds member (10% korting)",
-                "amount_eur": 2835
               }
             ],
-            "vat": "exempt_crkbo",
+            "vat": "excl",
             "published": "yes",
-            "note": "EXPLICIET 0% btw (CRKBO via Bluebirds). Anatomie via online cursus David Keil inbegrepen.",
+            "note": "DE GECITEERDE PAGINA ZEGT HET TEGENDEEL VAN WAT HIER STOND. Verbatim, en het is alles wat zij over btw zegt: \"PRICING OPTIONS — Early Bird €2950,- Excl BTW (1st of July) / Regular €3150,- Excl BTW\" (site-2025-vinyasa-2026-06, de eigen site van Marlene). Dit record droeg `vat: exempt_crkbo` plus de zin \"all prices at 0% VAT as we are CRKBO registered\" — maar die zin staat op de blue-birds.nl-pagina van het ANDERE (2026-)cohort, niet op deze. Een btw-behandeling wordt waargenomen op de pagina die haar stelt, of is niet bekend; van een zusteropleiding aflezen is precies wat §4.11 verbiedt. → vat = excl. Ook de eerder genoteerde variant \"Bluebirds member (10% korting) €2835\" is verwijderd: die staat niet op deze pagina. Anatomie via de online cursus van David Keil is inbegrepen. De prijs én de btw-behandeling BEWOGEN tussen de cohorten (2025: €3150 excl. btw op Marlene's site; 2026: €2990 tegen 0% btw onder Bluebirds BV) — vastgelegd per cohort in `price_at_time` (§4.5).\n",
             "source": "site-2025-vinyasa-2026-06"
           },
           "hours_claimed": {
@@ -1399,8 +1411,12 @@
               "end": "2026-03",
               "status": "confirmed_ran",
               "source": "site-2025-vinyasa-2026-06",
+              "price_at_time": {
+                "amount_eur": 3150,
+                "vat": "excl"
+              },
               "language": "en",
-              "note": "13 sep 2025-15 mrt 2026; 8 weekenden + 6 zaterdagen; gecertificeerd door MarleneYoga."
+              "note": "13 sep 2025-15 mrt 2026; 8 weekenden + 6 zaterdagen; gecertificeerd door MarleneYoga. Verkocht via Marlene's eigen site voor \"€3150,- Excl BTW\" (regulier; early bird €2950,- excl. btw). Het cohort van 2026 hieronder wordt onder Bluebirds BV verkocht tegen 0% btw — dezelfde opleidingsplek, een andere prijs én een andere btw-behandeling.\n"
             }
           ],
           "teachers": [
@@ -1519,8 +1535,12 @@
               "end": "2026-11",
               "status": "announced",
               "source": "site-2026-hybrid-2026-06",
+              "price_at_time": {
+                "amount_eur": 2990,
+                "vat": "exempt_crkbo"
+              },
               "language": "en",
-              "note": "Online vanaf half sep; studio-immersie 19-24 okt 2026; residentieel 21-27 nov 2026 (Mariënkroon)."
+              "note": "Online vanaf half sep; studio-immersie 19-24 okt 2026; residentieel 21-27 nov 2026 (Mariënkroon). AANGEKONDIGD, niet bevestigd (§8). Verkocht onder Bluebirds BV tegen 0% btw (\"all prices at 0% VAT as we are CRKBO registered\"); het cohort van 2025 hierboven werd op een andere site verkocht tegen €3150 EXCL. btw.\n"
             }
           ],
           "teachers": [
@@ -1647,7 +1667,7 @@
           "archived_url": "https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr",
           "local_snapshot": "data/archives/bluebirds/site-2025-vinyasa-2026-06-2026-06-27.pdf",
           "captured": "2025-08-09",
-          "note": "2025-cohort Vinyasa Flow Teacher Training (200u) — tekst door gebruiker aangereikt (gearchiveerde MarleneYoga-pagina; web.archive.org op fetch- blocklist, dus niet zelf machine-gelezen). Inhoud: 8 weekenden + 6 zaterdagen over 7 mnd (13 sep 2025-15 mrt 2026), max 16, lead Fleur & Marlene, prijzen €2950/€3150/€2835, 0% btw CRKBO.\n"
+          "note": "2025-cohort Vinyasa Flow Teacher Training (200u) — Wayback-capture van de EIGEN SITE VAN MARLENE (yoginimarleen.wixsite.com), niet van blue-birds.nl. Inhoud: 8 weekenden + 6 zaterdagen over 7 mnd (13 sep 2025-15 mrt 2026), max 16, lead Fleur & Marlene. PRICING OPTIONS, verbatim: \"Early Bird €2950,- Excl BTW (1st of July)\" en \"Regular €3150,- Excl BTW\". Dat is ALLES wat deze pagina over btw zegt — géén CRKBO, géén 0%-vermelding, en geen member-korting. De eerder genoteerde derde prijs (€2835) en de zin \"all prices at 0% VAT as we are CRKBO registered\" stonden op de blue-birds.nl- pagina van het ANDERE (2026-)cohort en zijn hier verwijderd (§4.11).\n"
         },
         {
           "id": "site-2026-hybrid-2026-06",
@@ -2849,11 +2869,12 @@
           },
           "prerequisites_claimed": "Afgeronde Basisopleiding Raja Yoga (1 jaar, €1510) is voorwaarde. Voor wie nog niet bij de school bekend is: kennismakingsgesprek/intake. Gericht op persoonlijke ontwikkeling; wekelijkse lessen + dagelijkse eigen beoefening.\n",
           "price": {
-            "amount_eur": 4590,
-            "period": "total",
+            "amount_eur": 1530,
+            "period": "per_year",
+            "periods": 3,
             "vat": "unknown",
             "published": "yes",
-            "note": "€1530/jaar (per 1 jan 2026), betaald in termijnen van €153/mnd (10 mnd); lesboeken inbegrepen. De Docentenopleiding duurt 3 jaar ⇒ ca. €4590 totaal (3 × €1530). Geen btw-vermelding op de pagina → vat unknown (NRTO ≠ btw-vrijstelling; niet CRKBO).\n",
+            "note": "DE SCHOOL PUBLICEERT GEEN TOTAALPRIJS. Ze publiceert een JAARPRIJS: \"De kosten voor de docentenopleiding zijn: per 1 januari 2026: €1530,00 per jaar. Wordt betaald in termijnen van €153,00 per maand (10 maanden).\" Lesboeken zijn inbegrepen. En ze publiceert de duur: \"De opleiding neemt drie jaar of 360 uren in beslag.\" 3 × €1530 = €4590 is ONZE rekensom — het getal 4590 komt in geen enkel gearchiveerd artefact van deze school voor, en werd tot v0.8 in `amount_eur` bewaard en als hún gepubliceerde prijs gerenderd. Nu: `period: per_year` + `periods: 3`; het totaal wordt afgeleid en zichtbaar als het onze getoond (spec §6). Geen btw-vermelding op de pagina → vat unknown (§4.11; NRTO is een kwaliteitskeurmerk, geen btw-vrijstelling, en de school staat niet in het CRKBO-register).\n",
             "source": "site-docenten-2026-07"
           },
           "hours_claimed": {
@@ -2895,8 +2916,8 @@
             "price_band": "from3000",
             "total_price": {
               "value": 4590,
-              "derived": false,
-              "caveat": null
+              "derived": true,
+              "caveat": "onze berekening: 3 × € 1.530"
             },
             "total_hours": {
               "value": 600,
@@ -2936,11 +2957,12 @@
           },
           "prerequisites_claimed": "Succesvol afgeronde Docentenopleiding Raja Yoga is voorwaarde.",
           "price": {
-            "amount_eur": 4590,
-            "period": "total",
+            "amount_eur": 1530,
+            "period": "per_year",
+            "periods": 3,
             "vat": "unknown",
             "published": "yes",
-            "note": "€1530/jaar (termijnen €153/mnd ×10; lesboeken incl.); 3 jaar ⇒ ca. €4590 totaal. Geen btw-vermelding → vat unknown.",
+            "note": "GEEN TOTAALPRIJS op de pagina, wél een jaarprijs en een duur: \"Kosten € 1530,00 per jaar. Wordt betaald in termijnen van € 153,00 per maand (10 maanden). De lesboeken per jaar zijn inbegrepen in de prijs.\" en \"In totaal studeer je minimaal 3 jaar.\" 3 × €1530 = €4590 is ONZE rekensom; 4590 staat op geen enkele gearchiveerde pagina van deze school. Let op: drie jaar is het MINIMUM dat de school noemt (\"Je kunt daarna aanvullend verder studeren\") — het afgeleide totaal is dus een ondergrens. Geen btw-vermelding → vat unknown (§4.11).\n",
             "source": "site-meester-2026-07"
           },
           "hours_claimed": {
@@ -2975,8 +2997,8 @@
             "price_band": "from3000",
             "total_price": {
               "value": 4590,
-              "derived": false,
-              "caveat": null
+              "derived": true,
+              "caveat": "onze berekening: 3 × € 1.530"
             },
             "total_hours": {
               "value": null,
@@ -6999,11 +7021,25 @@
             "language": "nl"
           },
           "price": {
-            "amount_eur": null,
+            "amount_eur": 1250,
             "period": "total",
+            "variants": [
+              {
+                "label": "Yin Yoga (online route)",
+                "amount_eur": 1250
+              },
+              {
+                "label": "Yin & Yang (online route)",
+                "amount_eur": 1250
+              },
+              {
+                "label": "Yang (online route)",
+                "amount_eur": 1250
+              }
+            ],
             "vat": "unknown",
             "published": "yes",
-            "note": "Modulair online (3 routes). Sanayou publiceert wél prijzen: per module/traject, op de module- en inschrijfpagina's. Bedragen niet uitgelezen in deze ronde. LET OP — de hier geciteerde bron is de overzichtspagina en bevat zélf geen bedrag; de pagina's die de prijzen wél dragen staan niet in sources[] en zijn niet gearchiveerd. Onderzoeksschuld, geen bevinding over de aanbieder (zie technical-todo.md).",
+            "note": "€ 1.250,- per route, en alle drie de routes (Yin Yoga / Yin & Yang / Yang) kosten hetzelfde — de overzichtspagina zet ze naast elkaar met driemaal \"€ 1.250,-\" en \"Betaling in 1, 5 of 10 termijnen\". Er is dus geen keuze te maken tussen routes voor de vergelijkbare basisprijs (§4-conventie): ze zijn identiek. Bedrag uitgelezen uit het gearchiveerde artefact van site-online-2026-06 (vastgelegd 2026-06-20).\nBtw: de pagina noemt geen btw-behandeling bij de prijs. Het enige btw-woord in het artefact is het BTW-nummer in de footer (\"BTW nummer: NL001422164B38\") — een registratienummer, geen uitspraak over de prijs. SanaYou ís CRKBO-geregistreerd, maar §4.11 verbiedt de vrijstelling daaruit af te leiden → vat blijft unknown.\nCORRECTIE 2026-07-12: deze notitie stelde eerder dat de geciteerde bron \"zélf geen bedrag\" bevat en dat de prijzen op niet-gearchiveerde module-/inschrijfpagina's stonden. Dat was onjuist en het was ONZE fout, niet die van de aanbieder: het bedrag stond al die tijd in ons eigen archief van deze pagina. De bewering kwam uit een eerste, kapotte versie van de provenance-check die PDF's met `strings` doorzocht — dat leest geen gecomprimeerde tekststromen, dus las het \"geen bedrag\" waar er drie stonden. De definitieve check (pdftotext, HTML én browser-render) heeft deze bron nooit geflagd.\n",
             "source": "site-online-2026-06"
           },
           "hours_claimed": {
@@ -7024,10 +7060,10 @@
             "source": "ya-register-2026-06"
           },
           "derived": {
-            "price_state": "unknown",
-            "price_band": "amount_not_in_record",
+            "price_state": "yes",
+            "price_band": "under3000",
             "total_price": {
-              "value": null,
+              "value": 1250,
               "derived": false,
               "caveat": null
             },
@@ -7037,7 +7073,7 @@
               "caveat": null
             },
             "pph": null,
-            "pph_state": "unknown",
+            "pph_state": "not_published",
             "contact_ratio": null,
             "bundle_delta": null,
             "multistyle": true
@@ -7484,9 +7520,9 @@
           "prerequisites_claimed": "afgeronde 200u-yogaopleiding (elders mag, na overleg over ontbrekende onderdelen); modules ook los te volgen als bijscholing",
           "price": {
             "period": "total",
-            "vat": "exempt_crkbo",
+            "vat": "unknown",
             "published": "no",
-            "note": "Geen prijs gepubliceerd op de 300u-pagina ('neem contact op'); modules los te volgen. BTW-behandeling als de 200u (CRKBO) aangenomen, maar geen expliciete 300u-prijsvermelding.",
+            "note": "Geen prijs gepubliceerd op de 300u-pagina (\"neem contact op\"); modules los te volgen. BTW: NIET WAARGENOMEN → unknown (§4.11). Dit record droeg `exempt_crkbo`, en de note zei er zelf bij dat de behandeling \"als de 200u (CRKBO) aangenomen\" was — een afleiding van de pagina van een ANDERE opleiding, precies wat §4.11 verbiedt. De enige twee treffers op deze pagina die op een vrijstelling lijken, gaan over VRIJSTELLING VAN MODULES, niet over belasting: \"er is geen vrijstelling mogelijk\" (voor YA-erkenning) en \"staat de Vereniging Yogadocenten Nederland wel vrijstellingen toe\" (bij eerder gevolgde trainingen). Over btw zegt deze pagina niets. (De 200u-pagina zegt het wél, in zoveel woorden — \"De opleiding is BTW-vrijgesteld, omdat het een CRKBO-erkende...\" — en dáár staat `exempt_crkbo` dan ook, terecht.)\n",
             "source": "site-300-2026-06"
           },
           "hours_claimed": {
@@ -10706,7 +10742,7 @@
         "registered": "unknown",
         "checked": "2026-06-27",
         "source": "crkbo-register-2026-06",
-        "note": "Geen treffer: naam \"Yoga Den\" én website \"yogaden\" → 0 in het Instellingenregister (2026-06-27). De 200u-opleiding is btw-belast (de 200u-pagina vermeldde \"Pricing incl. VAT\"), consistent met NIET CRKBO- geregistreerd. KvK/juridische naam (\"Yoga Den B.V.\") + docentnamen niet in het register doorzocht → registered unknown (niet no; §2.2/§4.11). price.vat = incl.\n"
+        "note": "Geen treffer: naam \"Yoga Den\" én website \"yogaden\" → 0 in het Instellingenregister (2026-06-27). KvK/juridische naam (\"Yoga Den B.V.\") + docentnamen niet in het register doorzocht → registered unknown (niet no; §2.2/§4.11).\nCORRECTIE 2026-07-12: deze notitie voerde eerder een tweede argument aan — \"de 200u-opleiding is btw-belast (de 200u-pagina vermeldde 'Pricing incl. VAT'), consistent met NIET CRKBO-geregistreerd\". Die formulering staat op de 100u-pagina (yogaden.nl/ytt/100h-ytt/: \"Pricing (incl VAT)\"), niet op de 200u-pagina: ons archief daarvan (site-ytt-200-2026-06, 2026-06-28) noemt geen btw, en de live 200u-pagina evenmin (2026-07-12). Btw van de ene opleiding is geen feit over de andere (§4.11), dus het argument is verwijderd. De registerbevinding hierboven (0 treffers) staat op eigen benen en verandert niet. Zie price.vat = unknown bij 200-vinyasa.\n"
       },
       "registrations": [
         {
@@ -10766,10 +10802,10 @@
           "price": {
             "amount_eur": 3597,
             "period": "total",
-            "vat": "incl",
+            "vat": "unknown",
             "published": "yes",
             "includes": "training + certificering + studiomembership tijdens de opleiding",
-            "note": "Investering €3597. Super early bird tot €1500 korting (vóór 15 mrt) en €200 korting (vóór 31 mrt) — beide deadlines inmiddels verstreken. Btw: de 200u-pagina vermeldde \"Pricing incl. VAT\"; studio is btw-belast (niet-CRKBO) → vat = incl.\n",
+            "note": "Investering €3597. Super early bird tot €1500 korting (vóór 15 mrt) en €200 korting (vóór 31 mrt) — beide deadlines inmiddels verstreken.\nBtw: CORRECTIE 2026-07-12, vat was \"incl\". De vorige notitie stelde dat \"de 200u-pagina vermeldde 'Pricing incl. VAT'\". Die formulering bestaat wél — maar op een ANDERE pagina: de 100u Advanced YTT (yogaden.nl/ytt/100h-ytt/) kopt \"Pricing (incl VAT)\" boven €1697/€1797. De 200u-pagina zelf (site-ytt-200-2026-06, vastgelegd 2026-06-28, HTML én browser-render) zegt over btw niets: het prijsblok luidt letterlijk \"Pricing / Super Early Bird Special … / Investment: €3597 / (200 euro discount before March 31st)\". De enige \"vat\"/\"incl\"-treffers in dat artefact zijn deelstrings (\"including\", \"wp-includes\"). Ook de live 200u-pagina vermeldt per 2026-07-12 geen btw (extern bevestigd).\nEen btw-behandeling van de ene opleiding is geen feit over de andere — §4.11 verbiedt precies deze afleiding (zelfde fout als adhouna/200-multistyle, waar \"incl. BTW\" van de Yin XL-pagina naar de Multi Style-opleiding was overgenomen). Voor de 200u is de btw dus niet waargenomen → unknown.\nLos daarvan een observatie, geen oordeel: dezelfde school vermeldt de btw-behandeling wél bij haar 100u-opleiding en niet bij haar 200u- opleiding.\n",
             "source": "site-ytt-200-2026-06"
           },
           "hours_claimed": {

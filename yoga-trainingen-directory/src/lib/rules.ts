@@ -23,7 +23,7 @@
  */
 import { pricePerContactHour, totalPrice } from "./derive";
 import { saysNotPublished } from "./quad";
-import type { Program, Quad } from "../schema";
+import type { Program, Provider, Quad } from "../schema";
 
 /**
  * A value is missing from our record. Some *_published quad governs whether it
@@ -107,22 +107,29 @@ export function publishedQuad(published: Quad): Quad {
  *     quad rather than a refinement of the other.
  */
 export function pphBlocker(
+  provider: Provider,
   program: Program,
 ): { field: "price" | "price_total" | "hours"; published: Quad } {
-  if (program.price.amount_eur == null)
-    return { field: "price", published: program.price.published };
-  // An amount we cannot make comparable is not an amount we can divide. `periods:
-  // null` on a per-period price is the provider's omission, so the quad is the
-  // finding — never `unknown`, which would blame our own research for a gap on
-  // their page.
-  if (totalPrice(program).value == null) return { field: "price_total", published: "not_published" };
+  // THE TOTAL IS ASKED FIRST, not `amount_eur` (spec v0.8) — a programme priced per module
+  // holds no amount of its own and still has a comparable total (Adhouna: € 1.420 + € 1.305).
+  // Reading the bare field first would name the PRICE as the blocker on a page that prints
+  // two of them, when what is actually missing is the contact hours.
+  if (totalPrice(provider, program).value == null) {
+    if (program.price.amount_eur == null)
+      return { field: "price", published: program.price.published };
+    // An amount we cannot make comparable is not an amount we can divide. `periods:
+    // null` on a per-period price is the provider's omission, so the quad is the
+    // finding — never `unknown`, which would blame our own research for a gap on
+    // their page.
+    return { field: "price_total", published: "not_published" };
+  }
   return { field: "hours", published: program.hours_claimed.contact_published };
 }
 
 /** The quad the €/contactuur cell may render when there is no computable value. */
-export function pphQuad(program: Program): Quad {
-  if (pricePerContactHour(program).value != null) return "yes";
-  return missingBecause(pphBlocker(program).published);
+export function pphQuad(provider: Provider, program: Program): Quad {
+  if (pricePerContactHour(provider, program).value != null) return "yes";
+  return missingBecause(pphBlocker(provider, program).published);
 }
 
 /**
@@ -134,8 +141,18 @@ export function pphQuad(program: Program): Quad {
  * Do not re-hardcode a roster here or in a test: `provenance.ts` finds them, and the
  * tests derive the set from THIS predicate, so paying one off cannot break a build.
  */
-export function priceAmountIsOurGap(program: Program): boolean {
-  return program.price.published === "yes" && program.price.amount_eur == null;
+export function priceAmountIsOurGap(provider: Provider, program: Program): boolean {
+  return (
+    program.price.published === "yes" &&
+    program.price.amount_eur == null &&
+    // AND we cannot derive one. A programme priced PER MODULE (spec v0.8) legitimately
+    // holds no `amount_eur` — the provider states no whole-course figure, they state the
+    // parts, and we add them up. That is not a hole in our research; it is the record
+    // saying precisely what the page says. Without this clause, Adhouna's Yin XL — whose
+    // two part-prices we hold, cited and archived — would be published to readers as a
+    // price we simply failed to capture.
+    totalPrice(provider, program).value == null
+  );
 }
 
 /**
@@ -173,8 +190,8 @@ export function priceAmountIsOurGap(program: Program): boolean {
  * `contract.min_participants.clause: "no"` likewise means "there is no such
  * clause". Only the *_published family collapses `no` into the finding.
  */
-export function priceQuad(program: Program): Quad {
-  if (priceAmountIsOurGap(program)) return "unknown";
+export function priceQuad(provider: Provider, program: Program): Quad {
+  if (priceAmountIsOurGap(provider, program)) return "unknown";
   return publishedQuad(program.price.published);
 }
 
@@ -231,10 +248,11 @@ const AFFORDABLE_BELOW_EUR = 3000;
  * number on 53 of 54 priced programmes — which is why reading the raw field looked
  * right for a year, and why the 54th was published in the wrong band.
  */
-export function priceBand(program: Program): PriceBand {
-  const total = totalPrice(program).value;
-  // A total only exists on a programme that publishes an amount (pinned by a test on
-  // the RECORD), so the two amount bands are exactly the comparable `yes` rows.
+export function priceBand(provider: Provider, program: Program): PriceBand {
+  const total = totalPrice(provider, program).value;
+  // A total exists only where the provider publishes amounts we can compare — their own
+  // whole-course figure, a per-period one with a count, or the parts of a per-module one
+  // (spec v0.8). Those are exactly the bandable rows.
   if (total != null) return total < AFFORDABLE_BELOW_EUR ? "under3000" : "from3000";
   if (program.price.amount_eur != null) return "no_comparable_total";
   return saysNotPublished(program.price.published) ? "none_published" : "amount_not_in_record";

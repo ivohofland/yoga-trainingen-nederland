@@ -251,11 +251,21 @@ programs:
     prerequisites_claimed: "afgeronde 200u-yogaopleiding (elders mag, na overleg
       over ontbrekende onderdelen); modules ook los te volgen als bijscholing"
     price:
-      vat: exempt_crkbo
+      vat: unknown
       published: no
-      note: "Geen prijs gepubliceerd op de 300u-pagina ('neem contact op'); modules
-        los te volgen. BTW-behandeling als de 200u (CRKBO) aangenomen, maar geen
-        expliciete 300u-prijsvermelding."
+      note: >
+        Geen prijs gepubliceerd op de 300u-pagina ("neem contact op"); modules
+        los te volgen. BTW: NIET WAARGENOMEN → unknown (§4.11). Dit record droeg
+        `exempt_crkbo`, en de note zei er zelf bij dat de behandeling "als de 200u
+        (CRKBO) aangenomen" was — een afleiding van de pagina van een ANDERE
+        opleiding, precies wat §4.11 verbiedt. De enige twee treffers op deze
+        pagina die op een vrijstelling lijken, gaan over VRIJSTELLING VAN MODULES,
+        niet over belasting: "er is geen vrijstelling mogelijk" (voor
+        YA-erkenning) en "staat de Vereniging Yogadocenten Nederland wel
+        vrijstellingen toe" (bij eerder gevolgde trainingen). Over btw zegt deze
+        pagina niets. (De 200u-pagina zegt het wél, in zoveel woorden — "De
+        opleiding is BTW-vrijgesteld, omdat het een CRKBO-erkende..." — en dáár
+        staat `exempt_crkbo` dan ook, terecht.)
       source: site-300-2026-06
     hours_claimed:
       total: 300

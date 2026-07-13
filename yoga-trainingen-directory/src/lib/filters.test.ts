@@ -26,8 +26,9 @@ const UTRECHT = cityCentroid("Utrecht")!;
 
 /** The record behind a row — a filter's claim is checked against the RECORD, never
  *  against the predicate the filter itself is built from. */
+const providerOf = (providerId: string) => providers.find((p) => p.id === providerId)!;
 const programOf = (providerId: string, programId: string) =>
-  providers.find((p) => p.id === providerId)!.programs.find((p) => p.id === programId)!;
+  providerOf(providerId).programs.find((p) => p.id === programId)!;
 
 /** Both "we cannot place this" groups. They are two groups because they are two
  *  different statements (see Placement in geo.ts); for the "nothing is dropped"
@@ -68,16 +69,23 @@ test("PRICE: the two amount bands match only programmes whose RECORD says they p
   // whether the implementation is right is not a test.
   //
   // The band is a STATEMENT about a named business — "this training costs less than
-  // €3.000" — so the record must license it: an amount, and a `published` that says
-  // the amount is theirs to state.
+  // €3.000" — so the record must license it: a COMPARABLE TOTAL, and a `published` that
+  // says the figures behind it are theirs to state.
+  //
+  // A TOTAL, not an `amount_eur` (spec v0.8). Adhouna prices its Yin XL per DEEL and
+  // publishes no whole-course figure at all; its total is our sum of the two prices they
+  // DO publish (€ 1.420 + € 1.305), and it bands on that — correctly, because the band
+  // claims what the training costs, and € 2.725 is what it costs. Demanding a bare
+  // `amount_eur` here would have forced the sum back into that field, which is the
+  // fabrication v0.8 exists to undo.
   for (const band of ["under3000", "from3000"] as const) {
     const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
     assert.ok(got.length > 0, `price band '${band}' matches nothing at all`);
     for (const r of got) {
       const price = programOf(r.providerId, r.programId).price;
-      assert.notEqual(price.amount_eur ?? null, null,
+      assert.notEqual(totalPrice(providerOf(r.providerId), programOf(r.providerId, r.programId)).value, null,
         `${r.providerId}/${r.programId}: banded '${band}' — a claim about what this training costs — ` +
-        `while our record holds no amount for it at all`);
+        `while our record yields no comparable total for it at all`);
       assert.equal(price.published, "yes",
         `${r.providerId}/${r.programId}: banded '${band}' while the record says price.published is ` +
         `"${price.published}" — we would be quoting a price the provider is not recorded as publishing`);
@@ -167,7 +175,8 @@ test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no b
   // the WHOLE TRAINING costs, and on de Blikopener the record's amount is € 1.290 PER
   // STUDIEJAAR of a four-year opleiding: read the raw field here and this test happily
   // certifies a ≈ € 5.160 training as "onder €3.000", which is what the site did.
-  const totalOf = (r: Row) => totalPrice(programOf(r.providerId, r.programId)).value as number;
+  const totalOf = (r: Row) =>
+    totalPrice(providerOf(r.providerId), programOf(r.providerId, r.programId)).value as number;
   assert.ok(under.every((r) => totalOf(r) < 3000),
     "'onder €3.000' matched a programme costing €3.000 or more");
   assert.ok(from.every((r) => totalOf(r) >= 3000),

@@ -222,6 +222,13 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                   {prog.cohorts.map((c) => (
                     <div key={c.id}>
                       {cohortLabel(c)}
+                      {/* THE PRICE AS IT STOOD WHEN THIS RUN WAS SOLD (spec v0.7, §4.5).
+                          A price that moved between cohorts is a FINDING about the school
+                          — Bluebirds' 2025 run was sold "€3150,- Excl BTW", its 2026 run at
+                          "0% VAT as we are CRKBO registered" — and the field that holds it
+                          was populated nowhere and rendered nowhere until now. It stands
+                          beside the cohort's own source, which is what makes it evidence. */}
+                      {c.priceAtTime && <div className={styles.note}>{c.priceAtTime}</div>}
                       {c.note && <div className={styles.note}>{c.note}</div>}
                       <Cite source={c.source} />
                     </div>

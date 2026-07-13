@@ -23,9 +23,11 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { loadDataset } from "./loader";
 import {
   allProvenance,
+  artifactsFor,
   evidencesAmount,
   evidencesHours,
   evidencesPrice,
@@ -309,62 +311,45 @@ test("every cited source evidences the claim it is cited for — or the finding 
 });
 
 /**
- * The triage list. Each entry is a record whose cited source does not evidence what it is
- * cited for, and each is classified — because the two classes need OPPOSITE fixes and a
- * page-level check can never tell them apart:
+ * The triage list — EMPTY, and it was earned rather than declared.
+ *
+ * Nine entries stood here. Each was a record whose cited source did not evidence what it
+ * was cited for, and each was classified — because the two classes need OPPOSITE fixes and
+ * a page-level check can never tell them apart:
  *
  *   (a) SOURCING ERROR — the provider DOES state it, we cited the wrong page. The fix is
  *       to find the page that states it, archive that, and re-point the citation. Nothing
  *       about the record's content is wrong. (wahe/500-pathway was one: the school really
  *       does publish "een totaal van 500 uur opleiding" — on /yoga-alliance/, a page we
- *       had never captured. Archived, cited, gone from this list.)
+ *       had never captured. Archived, cited, gone.)
  *   (b) FABRICATED / INFERRED — the provider states NOTHING of the kind anywhere, and the
  *       value in the record came out of our own head: a sum WE computed (§6), or a VAT
  *       treatment deduced from a CRKBO registration (§4.11). The fix is to STOP ASSERTING
  *       — `null`, or `vat: unknown` — never to go hunting for a page that agrees with us.
  *
- * Guessing wrong invents a programme in one direction and accuses a school in the other.
- * Sorted as allProvenance() sorts (by record, then check).
+ * All nine were class (b), and all nine are now paid off — none by re-pointing a citation
+ * at a friendlier page, and none by softening the check (provenance.ts is byte-for-byte
+ * what found them):
+ *
+ *   adhouna/200-yin-xl [price]          € 2.725 was OUR sum of € 1.420 + € 1.305. The parts
+ *                                       are now Modules with their own prices and sources;
+ *                                       the total is derived (spec v0.8, §6) and rendered
+ *                                       as ours. `amount_eur` is null, because they publish
+ *                                       no total — see PAGE_TIER_CLAIMS below.
+ *   bluebirds/200-vinyasa-2025 [vat]    `exempt_crkbo` came from the OTHER programme's page.
+ *                                       Its own cited page says "€3150,- Excl BTW" → `excl`.
+ *   de-yogaschool-enschede ×2 [price]   € 4.590 was OUR 3 × € 1.530. Now `period: per_year`
+ *                                       + `periods: 3`; the total is derived (v0.5).
+ *   queno-sportopleidingen ×4 [vat]     `exempt_crkbo` from a FOOTER BADGE → `unknown`.
+ *   spark-of-light/300-verdieping [vat] `exempt_crkbo` "aangenomen" from the 200u page →
+ *                                       `unknown`. (The 200u page states it outright and
+ *                                       keeps its `exempt_crkbo` — the control.)
+ *
+ * KEEP THE LIST. Emptiness is the state we want, not the state we assume: the next record
+ * that cites a page which does not state its fact must land here, be classified, and be
+ * seen. Sorted as allProvenance() sorts (by record, then check).
  */
-const KNOWN_FINDINGS = [
-  // (b) FABRICATED. `amount_eur: 2725` is OUR sum of the two parts the page prices
-  //     separately (€ 1.420,00 + € 1.305,00, "incl. BTW" each). "2725" appears in neither
-  //     artifact. Adhouna never published a total for Yin XL — and the two parts are sold
-  //     as separate enrolments, so the total is not even obviously the price of anything.
-  "adhouna/200-yin-xl [price]",
-
-  // (b) INFERRED — and the exact inference §4.11 (v0.7) names. The cited page prices the
-  //     training "€2950,- Excl BTW … €3150,- Excl BTW"; the record says `exempt_crkbo`.
-  //     The page states the OPPOSITE of an exemption. (Bluebirds' OTHER training is the
-  //     control: its hybrid page really does say "all prices at 0% VAT as we are CRKBO
-  //     registered", and it passes — in the HTML only, which is why both artifacts are read.)
-  "bluebirds/200-vinyasa-2025 [vat]",
-
-  // (b) FABRICATED, twice. `amount_eur: 4590` is OUR 3 × € 1530: the page prints
-  //     "€ 1530,00 per jaar" and the school never publishes a course total. Same disease
-  //     as their hours (spec v0.6: `total: 600` for a school that publishes 360 + 240 and
-  //     never the sum). The fix is `price.period: year` + the derived total (§6), which is
-  //     shown as OUR arithmetic — not a number laid at their door.
-  "de-yogaschool-enschede/docentenopleiding-raja [price]",
-  "de-yogaschool-enschede/meesteropleiding-raja [price]",
-
-  // (b) INFERRED ×4 — the CRKBO deduction in its purest form, and the one the old check
-  //     BLESSED: the cited page has zero hits for btw/vrijgesteld/omzetbelasting and one
-  //     for CRKBO — a footer badge next to the street address. `\bcrkbo\b` was in the VAT
-  //     pattern, so a badge grounded a tax treatment on four programmes at once.
-  //     NB: this record is UNCOMMITTED WIP; on a checkout without it these four simply do
-  //     not appear (see expectedFindings), which is correct — there is nothing to check.
-  "queno-sportopleidingen/cyt200-hatha [vat]",
-  "queno-sportopleidingen/cyt200-power [vat]",
-  "queno-sportopleidingen/cyt200-yin [vat]",
-  "queno-sportopleidingen/cyt500-yoga [vat]",
-
-  // (b) INFERRED. The record's own note admits it: "BTW-behandeling als de 200u (CRKBO)
-  //     AANGENOMEN". A treatment read off a SIBLING PROGRAMME's page is precisely what
-  //     §4.11 forbids. The 300-hour page's only "vrijstelling" is about COURSE CREDIT
-  //     ("er is geen vrijstelling mogelijk") — and the old regex matched on that word.
-  "spark-of-light/300-verdieping [vat]",
-];
+const KNOWN_FINDINGS: string[] = [];
 
 /**
  * KNOWN_FINDINGS, restricted to the records this checkout actually holds.
@@ -411,11 +396,112 @@ test("the report states its own coverage, so no consumer can overstate the check
   assert.equal(report.coverage, report.claims === 0 ? 1 : report.examined / report.claims);
   assert.ok(report.coverage <= 1);
   assert.equal(report.skipped > 0, report.coverage < 1, "coverage < 1 exactly when something was skipped");
-  // Everything in the corpus today is held against the VALUE IN THE RECORD, not merely
-  // against the subject matter of the page. `page` would mean some claim fell back to the
-  // weaker question (a `published: yes` with no `amount_eur`).
-  assert.equal(report.granularity, "fact");
+  // AND IT SAYS WHICH QUESTION IT ASKED. `granularity` is the WEAKEST question any examined
+  // claim was held to, and the corpus is `page` exactly when some claim fell back to "does
+  // this page print *a* price at all" — a `published: yes` with no `amount_eur`.
+  //
+  // It used to be `fact`, flatly. It is `page` now, and that is not a slackening: it is the
+  // report refusing to overstate itself, which is the single thing this field exists to do.
+  // Adhouna publishes NO whole-course price for its Yin XL — it prices the two Delen — so
+  // the record holds no amount to hold the page to, and the honest claim it makes is the
+  // weaker one ("they publish a price"). The alternative was keeping € 2.725 in `amount_eur`
+  // to keep this line green: a fact-tier pass bought with a fabricated fact.
+  //
+  // The fallback tier is therefore LICENSED, never assumed — PAGE_TIER_CLAIMS below names
+  // every claim entitled to it and holds its parts to the artifact at FACT level.
+  assert.equal(report.granularity, PAGE_TIER_CLAIMS.length > 0 ? "page" : "fact");
 });
+
+/**
+ * Every claim the check may hold to the WEAKER question — named, with why.
+ *
+ * The page tier is the right question for a record that says only "they publish a price"
+ * and holds no amount. It is also the tier a lazy record would hide in, so it is spent
+ * from a budget rather than granted: a new entry here has to be argued for, in the same
+ * place a reader can see it.
+ */
+const PAGE_TIER_CLAIMS = [
+  // Adhouna prices its 200-hour Yin XL per DEEL and states no total (v0.8). The whole-course
+  // figure is our sum; `amount_eur` is null, so the page tier is all that is left to ask of
+  // the programme's own price claim — and the two numbers that MATTER are the parts, which
+  // the test below holds to the artifact at fact level.
+  "adhouna/200-yin-xl",
+];
+
+test("the page tier is LICENSED, and the parts behind it are still held to the artifact", () => {
+  // The hole the page tier would otherwise leave. `claimsOf` (provenance.ts) checks a
+  // programme's own `price.amount_eur`; a Module's price is not a claim it walks. So a
+  // per-module programme could, in principle, publish € 1.420 and € 1.305 about a named
+  // business with nothing machine-checking either number — the page tier having waved the
+  // programme through on "there is *a* price here somewhere".
+  //
+  // That is not acceptable and it is not necessary: the same three functions the check uses
+  // are exported, so the parts are held to the SAME question the fact tier asks — does the
+  // cited artifact PRINT this amount? Nothing in provenance.ts is changed to do it; the
+  // check is extended to reach a claim it does not yet walk, in the layer where extending
+  // it costs nobody a build.
+  const pageTier = new Set(PAGE_TIER_CLAIMS);
+  let partsChecked = 0;
+
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      const at = `${p.id}/${prog.id}`;
+      // 1. Only the licensed claims may sit on the weaker tier.
+      const onPageTier = prog.price.published === "yes" && prog.price.amount_eur == null;
+      if (onPageTier) {
+        assert.ok(pageTier.has(at),
+          `${at}: this record claims a published price and holds no amount, so the provenance check can ` +
+          `only ask the WEAK question of it ("is there a price on this page?"). Either capture the amount, ` +
+          `or add it to PAGE_TIER_CLAIMS with the reason the weaker question is the right one.`);
+      }
+
+      // 2. And where the total is COMPOSED (v0.8), every part is held to the artifact.
+      if (prog.price.period !== "per_module") continue;
+      const moduleIds = prog.composition?.modules ?? [];
+      assert.ok(moduleIds.length > 0, `${at}: priced per module with no composition to compose from`);
+
+      for (const id of moduleIds) {
+        const mod = p.modules.find((m) => m.id === id)!;
+        const amount = mod.price?.amount_eur;
+        assert.ok(amount != null,
+          `${at}: module '${id}' carries no price, so the derived total is an incomplete sum — a guess`);
+        const source = p.sources.find((src) => src.id === mod.price?.source);
+        assert.ok(source, `${at}: module '${id}' prices € ${amount} with no source that states it`);
+
+        const { readable, bodyWithheld } = artifactsFor(source, process.cwd());
+        if (bodyWithheld && readable.length === 0) continue; // partial checkout: no claim made
+        const texts = readable.map(readArtifact).filter((t) => t.trim().length > 0);
+        if (texts.length === 0) continue; // unreadable is a hole in OUR tooling, not a finding
+        assert.ok(texts.some((t) => evidencesAmount(t, amount)),
+          `${at}: module '${id}' is priced € ${amount} in our record, and the archived artifact of ` +
+          `'${source.id}' does not print that amount. A part of a total we publish is a claim about a ` +
+          `named business like any other — cite the page that STATES it.`);
+        partsChecked++;
+      }
+    }
+  }
+  // Allowed to be zero on a partial checkout (the bodies are gitignored), never silently so
+  // where the evidence is present.
+  if (report.skipped === 0) {
+    assert.ok(partsChecked > 0, "no composed part was held to its artifact — this test tests nothing");
+  }
+});
+
+/** One artifact, as text — the same two extractions providerProvenance does, and no others.
+ *  (`pdftotext` for PDFs, tag-stripped HTML for the DOM: a citation is a claim that a READER
+ *  can go and see the fact, so the text we hold it against is the text a reader sees.) */
+function readArtifact(file: string): string {
+  if (file.toLowerCase().endsWith(".pdf")) {
+    if (!pdftotextAvailable()) return "";
+    try {
+      return execFileSync("pdftotext", ["-q", file, "-"], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    } catch {
+      return "";
+    }
+  }
+  const raw = fs.readFileSync(file, "utf8");
+  return file.toLowerCase().endsWith(".html") ? visibleText(raw) : raw;
+}
 
 test("where the snapshot bodies are present, the check is not vacuously green", () => {
   // The bodies are gitignored (data/archives/README.md), so in CI and in a fresh

@@ -293,8 +293,22 @@ function deliveryDisplay(d: Program["delivery"]): string {
  * error that violates the invariant must fail the build loudly, because
  * hiding it here would be worse than the build failing.
  */
-function priceDisplay(p: Program["price"]): string | null {
-  if (p.amount_eur == null) return null;
+function priceDisplay(provider: Provider, program: Program): string | null {
+  const p = program.price;
+  // PRICED PER MODULE, AND SO SHOWN PER MODULE (spec v0.8). The provider publishes no
+  // whole-course amount and two part-prices — "€ 1.420,00 incl. BTW" and "€ 1.305,00
+  // incl. BTW" — so THEIR row shows THOSE, in fact ink, cited to the page that prints
+  // them. Our sum of the two lives one row down, in ours. Storing the sum here is what
+  // v0.8 exists to undo; showing nothing here would call a provider who prints two prices
+  // a non-publisher.
+  if (p.amount_eur == null) {
+    if (p.period !== "per_module") return null;
+    const parts = (program.composition?.modules ?? [])
+      .map((id) => provider.modules.find((m) => m.id === id)?.price?.amount_eur)
+      .filter((a): a is number => a != null);
+    if (!parts.length || parts.length !== (program.composition?.modules?.length ?? 0)) return null;
+    return `${nl.pricePerModuleParts(parts.map(formatEuro))} · ${nl.vat[p.vat]}`;
+  }
   const money = formatEuro(p.amount_eur);
   // The unit is part of the fact (spec v0.5). "€ 1.290" under a column headed "Prijs"
   // states what a four-year training costs; "€ 1.290 / studiejaar" states what they
@@ -314,8 +328,8 @@ function priceDisplay(p: Program["price"]): string | null {
  * This field exists only where the numbers differ, which is exactly where the reader
  * needs to be told whose number it is.
  */
-function priceDerivedTotalDisplay(program: Program): string | null {
-  const total = totalPrice(program);
+function priceDerivedTotalDisplay(provider: Provider, program: Program): string | null {
+  const total = totalPrice(provider, program);
   if (!total.derived || total.value == null || total.caveat == null) return null;
   return nl.priceDerivedTotal(formatEuro(total.value), total.caveat);
 }
@@ -332,10 +346,10 @@ function priceDerivedTotalDisplay(program: Program): string | null {
  * caveats (what the price includes/excludes, which exist only when there IS a
  * value) are display copy; those we pass through.
  */
-function pphCaveatFor(program: Program, state: Quad): string | null {
-  const { value, caveat } = pricePerContactHour(program);
+function pphCaveatFor(provider: Provider, program: Program, state: Quad): string | null {
+  const { value, caveat } = pricePerContactHour(provider, program);
   if (value != null) return caveat ?? null;
-  const blocker = pphBlocker(program).field;
+  const blocker = pphBlocker(provider, program).field;
   // The v0.5 blocker: they publish a price, and it is not a total. Neither of the two
   // sentences below would be true of them — "geen prijs" is false, "geen contacturen"
   // names the wrong field — so it has a sentence of its own, naming the period count.
@@ -400,8 +414,8 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
   for (const provider of providers) {
     const cities = [...new Set(provider.locations.map((l) => l.city).filter((c): c is string => c != null))];
     for (const program of provider.programs) {
-      const pph = pricePerContactHour(program);
-      const pphState = pphQuad(program);
+      const pph = pricePerContactHour(provider, program);
+      const pphState = pphQuad(provider, program);
       const chips = registers(program);
       rows.push({
         providerId: provider.id,
@@ -417,14 +431,14 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
         mode: program.delivery.mode,
         language: program.delivery.language ?? null,
         deliveryDisplay: deliveryDisplay(program.delivery),
-        priceState: priceQuad(program),
-        priceBand: priceBand(program),
-        priceDisplay: priceDisplay(program.price),
-        priceDerivedTotal: priceDerivedTotalDisplay(program),
+        priceState: priceQuad(provider, program),
+        priceBand: priceBand(provider, program),
+        priceDisplay: priceDisplay(provider, program),
+        priceDerivedTotal: priceDerivedTotalDisplay(provider, program),
         pph: pph.value,
         pphDisplay: pph.value != null ? formatEuro2(pph.value) : null,
         pphState,
-        pphCaveat: pphCaveatFor(program, pphState),
+        pphCaveat: pphCaveatFor(provider, program, pphState),
         registers: chips,
         crkboRegistered: provider.crkbo.registered,
         yaVerified: yaVerified(chips),
@@ -438,14 +452,17 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
 }
 
 export function datasetStats(providers: Provider[]): DatasetStats {
-  const programs = providers.flatMap((p) => p.programs);
+  // The pairs, not the bare programmes: a derived price is a function of the PROVIDER and
+  // the programme (spec v0.8 — a per-module total is composed from the provider's modules),
+  // and a programme divorced from its provider can no longer be asked what it costs.
+  const pairs = providers.flatMap((p) => p.programs.map((program) => [p, program] as const));
   const dates = providers.map((p) => p.last_verified).sort();
   const oldest = dates[0];
   const newest = dates.at(-1);
   return {
     providers: providers.length,
-    programs: programs.length,
-    pphComputable: programs.filter((p) => pricePerContactHour(p).value != null).length,
+    programs: pairs.length,
+    pphComputable: pairs.filter(([p, program]) => pricePerContactHour(p, program).value != null).length,
     // Both ends, or neither — see VerificationWindow. A sorted non-empty array has
     // both, so the window is null exactly when the corpus is empty.
     verified: oldest != null && newest != null ? { oldest, newest } : null,
@@ -551,6 +568,22 @@ export interface CohortView {
   start: string;
   status: Cohort["status"];
   note: string | null;
+  /**
+   * THE PRICE AND VAT TREATMENT AS THEY STOOD WHEN THIS RUN WAS SOLD (spec v0.7, §4.5).
+   *
+   * A DEAD FIELD MADE VISIBLE. `Cohort.price_at_time` existed in the schema, was populated
+   * in ZERO records, and was rendered NOWHERE — and that absence had a cost: when a
+   * training's price or VAT treatment changed between runs, the change had nowhere to
+   * live. Bluebirds' 2025 cohort was sold at *"€3150,- Excl BTW"* on the teacher's own
+   * Wix site; its 2026 cohort at *"0% VAT as we are CRKBO registered"* under Bluebirds BV.
+   * Two runs, two treatments, and the record silently carried the 2026 sentence on the
+   * 2025 programme — a treatment its OWN cited page contradicts (§4.11).
+   *
+   * It rides on the cohort row and it carries the cohort's own `source`, because that is
+   * what makes it a fact rather than a memory. A price that moved is a FINDING about the
+   * school, not a correction to bury.
+   */
+  priceAtTime: string | null;
   /** REQUIRED by the schema (spec §8): an announced cohort is not one that ran,
    *  and only the source can tell a reader which this is. Never null. */
   source: string;
@@ -840,8 +873,8 @@ function contractRows(program: Program): QuadRow[] {
 
 function programRows(provider: Provider, program: Program): KeyValueRow[] {
   const h = program.hours_claimed;
-  const pphState = pphQuad(program);
-  const pph = pricePerContactHour(program);
+  const pphState = pphQuad(provider, program);
+  const pph = pricePerContactHour(provider, program);
   const delta = bundleDelta(provider, program);
   const rows: KeyValueRow[] = [];
 
@@ -858,10 +891,10 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // does not hold; the note says whose gap that is, rather than leaving the reader
   // to infer an omission by the provider. The type now makes that promise
   // unbreakable: a "yes" that has no amount to show cannot be constructed at all.
-  const priceState = priceQuad(program);
-  const priceValue = priceDisplay(program.price);
+  const priceState = priceQuad(provider, program);
+  const priceValue = priceDisplay(provider, program);
   const priceNote = joinDot([
-    priceAmountIsOurGap(program) && nl.priceAmountNotInRecord,
+    priceAmountIsOurGap(provider, program) && nl.priceAmountNotInRecord,
     program.price.includes && `${nl.priceIncludes}: ${program.price.includes}`,
     program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
     program.price.note,
@@ -885,8 +918,7 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // can check it. With no period count there is no total, and the row states that as
   // the finding it is: they publish a price per studiejaar and no count of them.
   if (program.price.period !== "total") {
-    const total = totalPrice(program);
-    const periodLabel = nl.pricePeriod[program.price.period];
+    const total = totalPrice(provider, program);
     rows.push(
       total.value != null
         ? {
@@ -895,14 +927,22 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
             value: `± ${formatEuro(total.value)}`,
             note: total.caveat ?? null,
             source: null,
-            // The ink, not merely the label. `state: "yes"` alone put OUR multiplication
-            // in the same colour as the provider's own published price, one row above it.
+            // The ink, not merely the label. `state: "yes"` alone put OUR arithmetic in
+            // the same colour as the provider's own published price, one row above it.
             derived: true,
           }
         : {
             label: nl.rowTotalPrice,
             state: "not_published",
-            note: nl.totalPriceNoPeriodCount(periodLabel),
+            // WHICH arithmetic we could not do, because the two absences are different
+            // facts about the provider: no published period count ("€ 1.290 per studiejaar,
+            // and no count of studiejaren"), or an unpriced part in a per-module composition
+            // (spec v0.8 — an incomplete sum is a guess). Naming the wrong one is a false
+            // statement about a named business, in the smallest possible print.
+            note:
+              program.price.amount_eur == null
+                ? nl.totalPriceIncompleteSum
+                : nl.totalPriceNoPeriodCount(nl.pricePeriod[program.price.period]),
             source: null,
           },
     );
@@ -916,7 +956,7 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // row below. Pinning one of those two sources to our own arithmetic would credit
   // the provider with a number they never published.
   const pphValue = pph.value != null ? formatEuro2(pph.value) : null;
-  const pphNote = pphCaveatFor(program, pphState);
+  const pphNote = pphCaveatFor(provider, program, pphState);
   rows.push(
     pphState === "yes" && pphValue != null
       ? { label: nl.colPph, state: "yes", value: pphValue, note: pphNote, source: null }
@@ -1164,6 +1204,10 @@ export function toProviderView(p: Provider): ProviderView {
         start: c.start,
         status: c.status,
         note: c.note ?? null,
+        // The price as it stood WHEN THIS RUN WAS SOLD (spec v0.7) — see CohortView.
+        priceAtTime: c.price_at_time
+          ? nl.cohortPriceAtTime(formatEuro(c.price_at_time.amount_eur), nl.vat[c.price_at_time.vat])
+          : null,
         source: c.source, // required by the schema (spec §8)
       })),
       // The claims made about THIS programme, anchored by the scope the record

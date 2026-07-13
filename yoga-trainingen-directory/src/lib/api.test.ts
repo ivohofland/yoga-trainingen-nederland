@@ -58,7 +58,7 @@ test("API: derived.price_state IS what the listing renders and what the record p
       const record = view.programs
         .find((v) => v.id === program.id)!
         .rows.find((r) => r.label === nl.colPrice)!;
-      const rule = priceQuad(program);
+      const rule = priceQuad(providers.find((p) => p.id === provider.id)!, program);
 
       assert.equal(program.derived.price_state, listing.priceState,
         `${provider.id}/${program.id}: the JSON API says the price is "${program.derived.price_state}" and ` +
@@ -110,10 +110,47 @@ test("API: the exported total_price is OUR arithmetic, flagged as ours, and neve
   // so the comparison normalises it rather than pinning an invisible character.)
   assert.equal(four.derived.total_price.caveat?.replace(/ /g, " "), "onze berekening: 4 × € 1.290");
 
-  // …and on a school that publishes a whole-course price, the total IS theirs.
-  const enschede = PAYLOAD.providers.find((p) => p.id === "de-yogaschool-enschede")!;
-  const raja = enschede.programs.find((p) => p.id === "docentenopleiding-raja")!;
-  assert.deepEqual(raja.derived.total_price, { value: 4590, derived: false, caveat: null });
+  // THE THIRD DERIVATION (spec v0.8): a SUM of unequal parts, and it is ours too. Adhouna
+  // prices its Yin XL as Deel I € 1.420 + Deel II € 1.305 and states no total; € 2.725 was
+  // STORED in `amount_eur` and shipped to every consumer as Adhouna's own published price.
+  const adhounaRecord = providers.find((p) => p.id === "adhouna")!;
+  // NO FIELD HOLDS IT — and the assertion says "field", not "string", deliberately. The
+  // price note EXPLAINS the derivation ("€ 1.420 + € 1.305 = € 2.725 is ONZE optelling"),
+  // which is exactly what a record should do; a substring check would forbid the record
+  // from explaining itself and, worse, would pass the moment someone rephrased the prose.
+  // What may never exist is a NUMERIC FIELD carrying the sum, because that is the field a
+  // surface renders in the school's ink. So the numbers are what we look at.
+  const numbersIn = (v: unknown): number[] =>
+    typeof v === "number"
+      ? [v]
+      : Array.isArray(v)
+        ? v.flatMap(numbersIn)
+        : v != null && typeof v === "object"
+          ? Object.values(v).flatMap(numbersIn)
+          : [];
+  assert.ok(!numbersIn(adhounaRecord).includes(2725),
+    "a derived total was STORED in a field of the record — '2725' appears in none of Adhouna's artifacts, " +
+    "and a field is what a surface renders as their published price (spec §6, principle 9)");
+  const adhouna = PAYLOAD.providers.find((p) => p.id === "adhouna")!;
+  const yinxl = adhouna.programs.find((p) => p.id === "200-yin-xl")!;
+  assert.equal(yinxl.price.amount_eur, null, "guard: the record holds no whole-course amount, because they publish none");
+  assert.equal(yinxl.derived.total_price.value, 2725, "€ 1.420 + € 1.305 is € 2.725");
+  assert.equal(yinxl.derived.total_price.derived, true,
+    "a consumer told `derived: false` would render our ADDITION as Adhouna's own published price");
+  // The working, so a consumer can show it — asserted on its PARTS rather than as one
+  // long literal: nl-NL puts a NON-BREAKING space after the €, and pinning an invisible
+  // character is how this assertion would fail for the wrong reason.
+  const sum = yinxl.derived.total_price.caveat ?? "";
+  assert.match(sum, /onze optelling/, "the working must say whose sum it is");
+  assert.match(sum, /1\.420/);
+  assert.match(sum, /1\.305/);
+
+  // …and on a school that publishes a whole-course price, the total IS theirs. Wahé states
+  // € 2.495 on the page we cite; relabelling it `derived: true` is the same falsehood
+  // pointing the other way, and no smaller.
+  const wahe = PAYLOAD.providers.find((p) => p.id === "wahe")!;
+  const vinyasa = wahe.programs.find((p) => p.id === "200-vinyasa-ayurveda")!;
+  assert.deepEqual(vinyasa.derived.total_price, { value: 2495, derived: false, caveat: null });
 });
 
 test("API: the exported total_hours says whose figure it is — ours or the school's", () => {
@@ -181,7 +218,7 @@ test("API: every programme that publishes a price we do not hold is OUR gap in t
   // and the rule is pinned against it. The live corpus is still swept below, but its
   // emptiness is now a fact about our research, not a hole in our tests.
   const { provider: gapProvider, program: gapProgram } = priceGapProvider(providers);
-  assert.ok(priceAmountIsOurGap(gapProgram),
+  assert.ok(priceAmountIsOurGap(gapProvider, gapProgram),
     "the fixture is not in the state this test exists to pin — it pins nothing");
 
   const gapPayload = toApiPayload([gapProvider]);
@@ -211,7 +248,7 @@ test("API: every programme that publishes a price we do not hold is OUR gap in t
   // programme in this state again, it obeys the same rule — and the message names it, as
   // an accusation about a named business would be named.
   const ourGaps = providers.flatMap((p) =>
-    p.programs.filter(priceAmountIsOurGap).map((program) => [p.id, program.id] as const),
+    p.programs.filter((program) => priceAmountIsOurGap(p, program)).map((program) => [p.id, program.id] as const),
   );
   for (const [providerId, programId] of ourGaps) {
     const s = surfaces(providerId, programId);
@@ -256,9 +293,15 @@ test("API: no derived price_state is a value-less FACT — the bare “ja”/“
         `the SAME finding as "not_published", and shipping both lets a consumer render one finding in ` +
         `two colours (that is the bug, exactly)`);
       if (quadClass(state) === "fact") {
-        assert.ok(program.price.amount_eur != null,
-          `${provider.id}/${program.id}: price_state "${state}" is a FACT with no amount behind it — a ` +
-          `bare “ja” about a named business`);
+        // A NUMBER MUST BE BEHIND IT — but "the number" is no longer `amount_eur` alone
+        // (spec v0.8). Adhouna prices its Yin XL per DEEL (€ 1.420 + € 1.305) and states
+        // no whole-course figure, so `amount_eur` is null and the comparable total is the
+        // sum we derive from the parts they DO publish. That is not a bare “ja”: the cell
+        // shows their two prices and the row below shows our sum. What must never exist is
+        // a fact with NOTHING behind it — no amount, and no total either.
+        assert.ok(program.price.amount_eur != null || program.derived.total_price.value != null,
+          `${provider.id}/${program.id}: price_state "${state}" is a FACT with no amount and no derivable ` +
+          `total behind it — a bare “ja” about a named business`);
         facts++;
       }
       if (state === "not_published") {

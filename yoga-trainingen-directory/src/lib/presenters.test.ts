@@ -4,6 +4,10 @@ import { z } from "zod";
 import { loadDataset } from "./loader";
 import { toListingRows, datasetStats, formatEuro, formatMonth, cohortLabel, nextCohortLabel, toProviderView } from "./presenters";
 import { pphQuad, priceAmountIsOurGap, priceQuad } from "./rules";
+// The RECORD-side mirror of the price rules reads the derived total, not `price.amount_eur`
+// (spec v0.8): a programme priced per module holds no amount and still has a comparable
+// total. See blockerOf and rowBacking.
+import { totalPrice } from "./derive";
 import { priceGapProvider } from "./price-gap.fixture";
 import { quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
@@ -14,8 +18,9 @@ import { Program, Quad, type Cohort, type Provider } from "../schema";
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z"); // fixed — never let a test depend on the wall clock
 
+const providerOf = (providerId: string) => providers.find((p) => p.id === providerId)!;
 const programOf = (providerId: string, programId: string) =>
-  providers.find((p) => p.id === providerId)!.programs.find((p) => p.id === programId)!;
+  providerOf(providerId).programs.find((p) => p.id === programId)!;
 
 test("every programme in the dataset becomes exactly one row", () => {
   const rows = toListingRows(providers, NOW);
@@ -200,15 +205,24 @@ test("a programme with no computable price-per-contact-hour carries a caveat, no
  * shipped. Each direction below must be able to fail on its own.
  */
 
-/** The blocking field, exactly as pphQuad must read it: no amount → the price is
- *  what's missing; otherwise the CONTACT HOURS are — `contact_published`, the field
+/** The blocking field, exactly as pphQuad must read it: no comparable TOTAL → the price
+ *  is what's missing; otherwise the CONTACT HOURS are — `contact_published`, the field
  *  about the very number the derivation needs, and not `breakdown_published`, which
- *  answers a different question (spec v0.4; see pphBlocker). */
+ *  answers a different question (spec v0.4; see pphBlocker).
+ *
+ *  THE TOTAL, NOT `amount_eur` (spec v0.8). A programme priced per module holds no amount
+ *  of its own and still divides perfectly: Adhouna's € 1.420 + € 1.305 over its contact
+ *  hours. Reading the bare field here would name the PRICE as the blocker on a page that
+ *  prints two of them — and the whole point of this biconditional is that it be able to
+ *  fail when the rule and the record disagree. */
 const blockerOf = (providerId: string, programId: string) => {
+  const provider = providerOf(providerId);
   const program = programOf(providerId, programId);
-  return program.price.amount_eur == null
-    ? program.price.published
-    : program.hours_claimed.contact_published;
+  if (totalPrice(provider, program).value != null) return program.hours_claimed.contact_published;
+  // No total. Either we hold no amount at all (the price is the blocker, and the record's
+  // own quad says whose absence that is), or we hold a per-period amount with no count —
+  // which is the provider's omission, hence the finding.
+  return program.price.amount_eur == null ? program.price.published : ("not_published" as const);
 };
 
 test("PPH: the state is a finding if and only if the record's blocking field says the provider does not publish it", () => {
@@ -272,7 +286,7 @@ test("PPH: a record whose blocking field says the provider does not publish it i
     assert.ok(blocker === "no" || blocker === "not_published",
       `${providerId}/${programId} no longer blocks on a "does not publish" field (got "${blocker}")`);
 
-    assert.equal(pphQuad(programOf(providerId, programId)), "not_published",
+    assert.equal(pphQuad(providerOf(providerId), programOf(providerId, programId)), "not_published",
       `${providerId}/${programId}: the record says the provider does not publish it — that is a ` +
       `sourced finding about them, not a gap in our research`);
     const row = rows.find((r) => r.providerId === providerId && r.programId === programId)!;
@@ -315,7 +329,7 @@ test("PPH: publishing a breakdown that is not a contact-hour figure is a FINDING
     assert.equal(program.hours_claimed.contact, null);
     assert.ok(program.hours_claimed.note, `${providerId}/${programId}: the finding has no note recording WHAT they publish instead`);
 
-    assert.equal(pphQuad(program), "not_published",
+    assert.equal(pphQuad(providerOf(providerId), program), "not_published",
       `${providerId}/${programId}: we looked and they publish no contact-hour figure — that is a sourced ` +
       `FINDING about them. Rendering it as "unknown" tells the reader we never investigated one of the ` +
       `most transparent schools in the corpus, and hides the finding we actually made.`);
@@ -348,7 +362,7 @@ test("PPH: the two questions come apart in BOTH directions — a contact figure 
     assert.equal(program.hours_claimed.breakdown_published, "not_published");
     assert.equal(program.hours_claimed.contact_published, "yes");
     assert.ok(program.hours_claimed.contact != null);
-    assert.equal(pphQuad(program), "yes",
+    assert.equal(pphQuad(providerOf(providerId), program), "yes",
       `${providerId}/${programId}: they publish the contact hours and a price — the number computes`);
   }
 });
@@ -508,7 +522,7 @@ test("PRICE: the listing row's price quad IS the record page's price quad — ev
       assert.equal(listing.priceState, record.state,
         `${p.id}/${prog.id}: the listing says the price is "${listing.priceState}" and the record page ` +
         `says "${record.state}" — one site, one programme, two contradictory claims about a named business`);
-      assert.equal(listing.priceState, priceQuad(prog),
+      assert.equal(listing.priceState, priceQuad(p, prog),
         `${p.id}/${prog.id}: the listing re-derived the price quad instead of calling priceQuad()`);
       // and the same value, too — a matching quad over a differing number is no
       // better than a differing quad. (A non-fact row carries no `value` at all
@@ -595,7 +609,7 @@ test("PRICE: every programme that publishes a price we do not hold is OUR gap, o
   // The rule outlives the defect. It is pinned against the constructed record below; the
   // live corpus is still checked, but it is allowed to be empty.
   const { provider: gapProvider, program: gapProgram } = priceGapProvider(providers);
-  assert.ok(priceAmountIsOurGap(gapProgram),
+  assert.ok(priceAmountIsOurGap(gapProvider, gapProgram),
     "the fixture is not in the state this test exists to pin — it pins nothing");
 
   const gapListing = toListingRows([gapProvider], NOW)[0];
@@ -618,7 +632,7 @@ test("PRICE: every programme that publishes a price we do not hold is OUR gap, o
   // INFORMATIONAL, and allowed to be empty: any real programme that lands in this state
   // obeys the same rule, and the message names it.
   const ourGaps = providers.flatMap((p) =>
-    p.programs.filter(priceAmountIsOurGap).map((program) => [p.id, program.id] as const),
+    p.programs.filter((program) => priceAmountIsOurGap(p, program)).map((program) => [p.id, program.id] as const),
   );
   const rows = toListingRows(providers, NOW);
   for (const [providerId, programId] of ourGaps) {
@@ -1293,17 +1307,22 @@ test("RECORD: the €/contactuur row obeys the same rule as the listing, from th
     for (const prog of p.programs) {
       const row = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.colPph);
       assert.ok(row, `${p.id}/${prog.id} has no €/contactuur row`);
-      assert.equal(row.state, pphQuad(prog),
+      assert.equal(row.state, pphQuad(p, prog),
         `${p.id}/${prog.id}: the record's €/contactuur row says "${row.state}" where the one rule ` +
-        `says "${pphQuad(prog)}" — the record must never say something the listing does not`);
+        `says "${pphQuad(p, prog)}" — the record must never say something the listing does not`);
 
       if (row.state !== "not_published") {
         if (row.state === "unknown") gaps++;
         continue;
       }
-      const blocker = prog.price.amount_eur == null
-        ? prog.price.published
-        : prog.hours_claimed.contact_published;
+      // THE TOTAL decides which field blocks, not `amount_eur` (spec v0.8) — the same
+      // reading as blockerOf above, and for the same reason: Adhouna publishes two prices
+      // and no contact hours, so the HOURS are its blocker, not the price.
+      const blocker = totalPrice(p, prog).value != null
+        ? prog.hours_claimed.contact_published
+        : prog.price.amount_eur == null
+          ? prog.price.published
+          : ("not_published" as const);
       assert.ok(blocker === "not_published" || blocker === "no",
         `${p.id}/${prog.id}: the row accuses the provider of not publishing it, but the blocking ` +
         `record field says "${blocker}" — that is OUR gap, published as a finding about a named business`);
@@ -1334,7 +1353,12 @@ test("RECORD: a published price with no amount is OUR gap, never a bare “ja”
     const view = toProviderView(p);
     for (const prog of p.programs) {
       const row = view.programs.find((v) => v.id === prog.id)!.rows.find((r) => r.label === nl.colPrice)!;
-      if (prog.price.published === "yes" && prog.price.amount_eur == null) {
+      // THE RULE, not a second derivation of it (spec v0.8): `published: yes` with no
+      // `amount_eur` is OUR gap ONLY where no total can be derived either. A programme
+      // priced per module legitimately holds no amount — the provider states the parts,
+      // not a total — and its Prijs cell shows those parts. Re-deriving the predicate here
+      // from the raw fields would call Adhouna's two published prices a hole in our research.
+      if (priceAmountIsOurGap(p, prog)) {
         assert.equal(row.value ?? null, null);
         assert.equal(row.state, "unknown",
           `${p.id}/${prog.id}: "Prijs: ja" with no amount — a fact we do not hold`);
@@ -1346,7 +1370,7 @@ test("RECORD: a published price with no amount is OUR gap, never a bare “ja”
         // one normalisation priceQuad makes on this *_published field: `no` and
         // `not_published` are one finding, so both render as the finding. (Before,
         // `no` rendered as a bare "nee" in fact ink; see the band test above.)
-        assert.equal(row.state, priceQuad(prog));
+        assert.equal(row.state, priceQuad(p, prog));
         assert.equal(row.state,
           saysNotPublished(prog.price.published) ? "not_published" : prog.price.published,
           `${p.id}/${prog.id}: the Prijs row says "${row.state}" where the record says ` +
@@ -1475,19 +1499,27 @@ test("RECORD: the source count never overstates what is archived", () => {
  */
 type Backing = Quad | undefined | null;
 
-const rowBacking = (prog: Program, label: string): Backing => {
+const rowBacking = (provider: Provider, prog: Program, label: string): Backing => {
   switch (label) {
     case nl.colPrice:
       return prog.price.published;
     case nl.colPph:
-      // The blocker: no amount → the price is what is missing; else the CONTACT
-      // HOURS — the one number the derivation needs, governed by its own quad
+      // The blocker: no comparable TOTAL → the price is what is missing; else the
+      // CONTACT HOURS — the one number the derivation needs, governed by its own quad
       // since spec v0.4. Not `breakdown_published`: three programmes publish a
       // breakdown with no contact figure in it, and a fourth field-swap here is
-      // exactly how this row would go back to calling that finding a gap.
-      return prog.price.amount_eur == null
-        ? prog.price.published
-        : prog.hours_claimed.contact_published;
+      // exactly how this row would go back to calling that finding a gap. And the TOTAL,
+      // not `amount_eur` (spec v0.8): a per-module price holds no amount and still divides.
+      if (totalPrice(provider, prog).value != null) return prog.hours_claimed.contact_published;
+      return prog.price.amount_eur == null ? prog.price.published : "not_published";
+    case nl.rowTotalPrice:
+      // OUR arithmetic, and the row is a FINDING exactly where the provider gives us no
+      // way to it: a per-period price with no `periods` count, or a per-module composition
+      // with an unpriced part (spec v0.5/v0.8). Neither absence has a *_published quad —
+      // the recorded absence IS the finding, and rules.ts calls it one for that reason —
+      // so the backing is that absence. Where a total exists the row holds a value and
+      // governs nothing.
+      return totalPrice(provider, prog).value == null ? "not_published" : null;
     case nl.rowHours:
       // NOT contact_published. This row renders the whole breakdown (totaal,
       // contact, zelfstudie); what licenses it to say "niet gepubliceerd" when we
@@ -1523,7 +1555,7 @@ test("RECORD: every row's state is backed by the record — a finding needs a fi
       const rendered = view.programs.find((v) => v.id === prog.id)!;
       for (const row of rendered.rows) {
         rowsWalked++;
-        const backing = rowBacking(prog, row.label);
+        const backing = rowBacking(p, prog, row.label);
         const where = `${p.id}/${prog.id} · "${row.label}"`;
 
         // 1. An accusation must be backed by a record field that literally makes it.

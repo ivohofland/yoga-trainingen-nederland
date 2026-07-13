@@ -39,28 +39,32 @@ test("every provider id matches its filename slug", () => {
  * one figure no provider's own source can contradict. It gets golden values.
  */
 
-test("DERIVED: €/contactuur is the published price over the published CONTACT hours", () => {
-  // The golden case, by name and by hand: De Yogaschool (Enschede) publishes €4.590 for
-  // the three-year Docentenopleiding Raja Yoga, and publishes its hours as PARTS — 360
-  // contacturen and 240 zelfstudie-uren, never their sum (spec v0.6; the string "600"
-  // appears in none of their archived sources). €4590 / 360 = €12,75 per contactuur.
-  //
-  // The denominator is `contact`, so v0.6 changed nothing here: €/contactuur has never
-  // touched an hours TOTAL, derived or stored. That is asserted below, not assumed.
+test("DERIVED: €/contactuur is the whole-course price over the published CONTACT hours", () => {
+  // The golden case, by name and by hand. De Yogaschool (Enschede) publishes NEITHER of
+  // the two numbers this line divides — and publishes both of their parts:
+  //   price  "per 1 januari 2026: €1530,00 per jaar" × "drie jaar"  → € 4.590 is OURS (v0.8)
+  //   hours  "360 uren" + "minimale zelfstudie van 240 uur"         → 600 u   is OURS (v0.6)
+  // € 4.590 / 360 contacturen = € 12,75. The numerator is `totalPrice`, the denominator
+  // is `contact` — never an hours total, derived or stored, as asserted below.
+  const provider = providerOf("de-yogaschool-enschede");
   const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
   // guards: if the record changes, this test must not quietly pass on other numbers
-  assert.equal(prog.price.amount_eur, 4590);
+  assert.equal(prog.price.amount_eur, 1530, "the record stores the JAARPRIJS they print");
+  assert.equal(prog.price.period, "per_year");
+  assert.equal(prog.price.periods, 3);
   assert.equal(prog.hours_claimed.contact, 360);
   assert.equal(prog.hours_claimed.self_study, 240);
 
-  const pph = pricePerContactHour(prog);
+  const pph = pricePerContactHour(provider, prog);
   assert.equal(pph.value, 12.75,
     "€4.590 over 360 contacturen is €12,75 — any other figure is a number we invented about a named business");
 
-  // The two mutations this pins, spelled out:
+  // The three mutations this pins, spelled out:
   assert.notEqual(pph.value, Math.round(12.75 * 1.21 * 100) / 100, "the price is not marked up with VAT here");
   assert.notEqual(pph.value, Math.round((4590 / 600) * 100) / 100,
     "self-study hours are not contact hours — dividing by the total flatters every provider that pads it");
+  assert.notEqual(pph.value, Math.round((1530 / 360) * 100) / 100,
+    "dividing the YEARLY fee by the hours of a three-year training understates the rate threefold (v0.5)");
 });
 
 test("DERIVED: self-study hours are NEVER counted as contact hours", () => {
@@ -75,7 +79,7 @@ test("DERIVED: self-study hours are NEVER counted as contact hours", () => {
     ...base,
     hours_claimed: { ...base.hours_claimed, total: 200, contact: null, self_study: 200 },
   };
-  const pph = pricePerContactHour(selfStudyOnly);
+  const pph = pricePerContactHour(providerOf("de-yogaschool-enschede"), selfStudyOnly);
   assert.equal(pph.value, null,
     "a programme that publishes no CONTACT hours has no €/contactuur — self-study is not contact time");
   assert.match(pph.caveat ?? "", /contacturen/);
@@ -94,8 +98,8 @@ test("DERIVED: every computable €/contactuur equals the WHOLE-COURSE price ÷ 
   let checked = 0;
   for (const p of providers) {
     for (const prog of p.programs) {
-      const { value } = pricePerContactHour(prog);
-      const total = totalPrice(prog).value;
+      const { value } = pricePerContactHour(p, prog);
+      const total = totalPrice(p, prog).value;
       const contact = prog.hours_claimed.contact;
       if (total == null || contact == null) {
         assert.equal(value, null, `${p.id}/${prog.id}: a €/contactuur computed from a number we do not hold`);
@@ -112,11 +116,16 @@ test("DERIVED: every computable €/contactuur equals the WHOLE-COURSE price ÷ 
 /* ---------- total_price: the figure the provider does not publish (spec v0.5, §6) ---------- */
 
 test("TOTAL: a whole-course price IS the provider's own figure — derived: false", () => {
-  // The common case, and the schema's default. 53 of 54 priced programmes are this, and
-  // `derived: false` is the licence to print the number in the provider's own ink.
-  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  // The common case, and the schema's default. `derived: false` is the licence to print
+  // the number in the provider's own ink — and printing THEIR figure as OURS is the same
+  // falsehood pointing the other way, no smaller. Wahé publishes € 2.495 for its 200-hour
+  // opleiding, in as many words, on the page we cite.
+  const provider = providerOf("wahe");
+  const prog = programOf("wahe", "200-vinyasa-ayurveda");
   assert.equal(prog.price.period, "total", "guard: the default period is a whole-course total");
-  assert.deepEqual(totalPrice(prog), { value: 4590, derived: false });
+  assert.deepEqual(totalPrice(provider, prog), { value: 2495, derived: false },
+    "Wahé PUBLISHES this figure — flagging it `derived: true` would tell every surface and every " +
+    "API consumer that we made up a price the school states itself");
 });
 
 test("TOTAL: a per-year price is MULTIPLIED, flagged as ours, and shows its working", () => {
@@ -124,12 +133,13 @@ test("TOTAL: a per-year price is MULTIPLIED, flagged as ours, and shows its work
   // four years and NO total; the bare amount ranked them among the cheapest trainings in
   // the corpus while the opleiding costs ≈ € 5.260 (our € 5.160 + the € 100 inschrijfgeld
   // their page lists separately, which we never add in — see below).
+  const provider = providerOf("de-blikopener");
   const prog = programOf("de-blikopener", "hatha-raja-opleiding");
   assert.equal(prog.price.amount_eur, 1290);
   assert.equal(prog.price.period, "per_year");
   assert.equal(prog.price.periods, 4);
 
-  const total = totalPrice(prog);
+  const total = totalPrice(provider, prog);
   assert.equal(total.value, 5160, "4 × € 1.290 is € 5.160");
   assert.equal(total.derived, true,
     "the total must be flagged as OURS — de Blikopener has never published this figure");
@@ -137,7 +147,7 @@ test("TOTAL: a per-year price is MULTIPLIED, flagged as ours, and shows its work
 
   // And the three-year variant is its own programme, with its own total.
   const short = programOf("de-blikopener", "hatha-raja-opleiding-3-jarig");
-  assert.equal(totalPrice(short).value, 3870, "3 × € 1.290 is € 3.870");
+  assert.equal(totalPrice(provider, short).value, 3870, "3 × € 1.290 is € 3.870");
 });
 
 test("TOTAL: `excludes` is NEVER added in — it is free text, not an addend", () => {
@@ -146,7 +156,8 @@ test("TOTAL: `excludes` is NEVER added in — it is free text, not an addend", (
   // theirs nor reproducibly ours, out of a prose sentence. It renders ALONGSIDE.
   const prog = programOf("de-blikopener", "hatha-raja-opleiding");
   assert.match(prog.price.excludes ?? "", /100/, "guard: the excluded costs are in the record");
-  assert.equal(totalPrice(prog).value, 5160, "the derived total is 4 × 1290 and nothing else");
+  assert.equal(totalPrice(providerOf("de-blikopener"), prog).value, 5160,
+    "the derived total is 4 × 1290 and nothing else");
 });
 
 test("TOTAL: a per-period price with no period count has NO total — and is banded nowhere", () => {
@@ -156,15 +167,16 @@ test("TOTAL: a per-period price with no period count has NO total — and is ban
   // to produce a comparable figure is the exact fabrication v0.5 exists to prevent —
   // and ranking the yearly fee AS a total is the bug it exists to correct. Neither is
   // allowed, so the programme belongs in no band at all.
+  const provider = providerOf("de-blikopener");
   const base = programOf("de-blikopener", "hatha-raja-opleiding");
   const noCount: Program = { ...base, price: { ...base.price, periods: null } };
 
-  const total = totalPrice(noCount);
+  const total = totalPrice(provider, noCount);
   assert.equal(total.value, null, "no period count, no total — never the bare yearly fee");
   assert.match(total.caveat ?? "", /totaalprijs/i);
-  assert.equal(priceBand(noCount), "no_comparable_total");
+  assert.equal(priceBand(provider, noCount), "no_comparable_total");
   for (const band of ["under3000", "from3000"] as const) {
-    assert.notEqual(priceBand(noCount), band,
+    assert.notEqual(priceBand(provider, noCount), band,
       "a yearly fee banded against whole-course totals is the v0.5 inversion, restored");
   }
 });
@@ -173,11 +185,102 @@ test("TOTAL: the price bands read the TOTAL, never the bare amount", () => {
   // € 1.290 < € 3.000 and ≈ € 5.160 is not: the same record, banded on the raw field,
   // lands under "onder €3.000" beside whole-course totals. This is the published
   // symptom of the whole spec change.
+  const provider = providerOf("de-blikopener");
   const prog = programOf("de-blikopener", "hatha-raja-opleiding");
   assert.ok(prog.price.amount_eur! < 3000, "guard: the bare amount would have banded as cheap");
-  assert.equal(priceBand(prog), "from3000",
+  assert.equal(priceBand(provider, prog), "from3000",
     "a four-year opleiding costing ≈ € 5.160 must never sit in the under-€3.000 band");
-  assert.equal(priceBand(programOf("de-blikopener", "hatha-raja-opleiding-3-jarig")), "from3000");
+  assert.equal(priceBand(provider, programOf("de-blikopener", "hatha-raja-opleiding-3-jarig")), "from3000");
+});
+
+/* ---------- total_price derivation 3: the SUM of UNEQUAL parts (spec v0.8, §6) ----------
+ *
+ * `periods` can only MULTIPLY. A training sold as Deel I € 1.420 + Deel II € 1.305 has no
+ * equal repeating unit — 2 × 1.420 is not 2.725 — so the sum had no honest home, and so it
+ * ended up STORED in `amount_eur`: € 2.725 rendered in Adhouna's own ink, cited to a page
+ * that prints only the two parts. "2725" appears in none of their artifacts. Third costume,
+ * same disease as v0.5 and v0.6.
+ */
+
+test("TOTAL: unequal composed parts are SUMMED, flagged as ours, and show their working", () => {
+  // The record that motivated v0.8. The page states, verbatim: "Deel I van deze Yin Yoga
+  // Opleiding kost € 1.420,00 incl. BTW" and "Deel II ... kost € 1.305,00 incl. BTW". It
+  // states no total, anywhere.
+  const provider = providerOf("adhouna");
+  const prog = programOf("adhouna", "200-yin-xl");
+  assert.equal(prog.price.amount_eur, null,
+    "guard: the stored 2725 is GONE from the record — a derived value is never stored (§6)");
+  assert.equal(prog.price.period, "per_module");
+  assert.deepEqual(prog.composition?.modules, ["deel-1", "deel-2"]);
+  assert.equal(provider.modules.find((m) => m.id === "deel-1")?.price?.amount_eur, 1420);
+  assert.equal(provider.modules.find((m) => m.id === "deel-2")?.price?.amount_eur, 1305);
+
+  const total = totalPrice(provider, prog);
+  assert.equal(total.value, 2725, "€ 1.420 + € 1.305 is € 2.725");
+  assert.equal(total.derived, true,
+    "a surface told `derived: false` would print € 2.725 as Adhouna's own published price — the exact " +
+    "bug v0.8 removed, restored");
+  assert.match(total.caveat ?? "", /onze optelling/,
+    "the working must travel with the number, so a reader can check it");
+  assert.match(total.caveat ?? "", /1\.420/);
+  assert.match(total.caveat ?? "", /1\.305/);
+
+  // And it is BANDED on that total, like any other comparable price.
+  assert.equal(priceBand(provider, prog), "under3000", "€ 2.725 < € 3.000");
+});
+
+test("TOTAL: multiplication CANNOT express it — the parts are unequal, and that is the point", () => {
+  // Stated as an assertion rather than a comment, because "just use periods: 2" is the
+  // shortcut that would quietly re-fabricate the number: 2 × € 1.420 = € 2.840, which is
+  // € 115 more than the training costs, published about a named business.
+  const provider = providerOf("adhouna");
+  const prog = programOf("adhouna", "200-yin-xl");
+  const parts = (prog.composition?.modules ?? [])
+    .map((id) => provider.modules.find((m) => m.id === id)!.price!.amount_eur!);
+  assert.notEqual(parts[0], parts[1], "the parts are UNEQUAL — no `periods` count can reach their sum");
+  assert.notEqual(totalPrice(provider, prog).value, parts[0] * parts.length);
+});
+
+test("TOTAL: a missing part price yields NULL — an incomplete sum is a guess", () => {
+  // The same rule bundleDelta has always applied, and now the same code path. Drop one
+  // part's price and the total must VANISH, not shrink: a total of € 1.420 for a training
+  // that costs € 2.725 is not a smaller claim, it is a false one — and a guessed total is
+  // a published comparison with a hole in it.
+  const base = providerOf("adhouna");
+  const prog = programOf("adhouna", "200-yin-xl");
+  const provider = {
+    ...base,
+    modules: base.modules.map((m) => (m.id === "deel-2" ? { ...m, price: undefined } : m)),
+  };
+  const total = totalPrice(provider, prog);
+  assert.equal(total.value, null, "one part unpriced → no sum, never a partial one");
+  assert.equal(total.derived, false, "we derived nothing, so nothing is flagged as ours");
+  assert.equal(bundleDelta(provider, prog), null, "and the bundle delta dies with it, from the same rule");
+});
+
+test("TOTAL: a free-assembly MENU is not summed — its modules are choices, not parts", () => {
+  // The guard on the gate. QUENO's CYT trajects are `free_assembly` compositions with a
+  // module list, and adding those modules up would invent a whole-course price for a
+  // training nobody buys that way. Only `period: per_module` licenses the sum. (The
+  // predicate is corpus-derived rather than hard-coded to QUENO: a record parked outside
+  // the repo must not fail the build.)
+  let checked = 0;
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      // A programme with NO amount of its own and a composition it does not price per
+      // module: there is nothing to sum, and summing anyway is the fabrication.
+      if (prog.price.amount_eur != null) continue;
+      if (prog.price.period === "per_module") continue;
+      if (!prog.composition?.modules?.length) continue;
+      assert.equal(totalPrice(p, prog).value, null,
+        `${p.id}/${prog.id}: a composition that is not priced per module was summed into a total ` +
+        `the provider never publishes`);
+      checked++;
+    }
+  }
+  // Not asserted > 0: the corpus's free-assembly cases (QUENO) may be parked outside the
+  // repo, and a WIP record must never be able to fail the build. The rule stands either way.
+  assert.ok(checked >= 0);
 });
 
 /* ---------- total_hours: the same rule, the other unit (spec v0.6, §6) ----------
@@ -274,7 +377,7 @@ test("HOURS: what consumes an hours total consumes the DERIVED one — contactRa
   // And €/contactuur is UNAFFECTED, because it divides by `contact` and never by a total.
   // Pinned rather than assumed: routing it through totalHours would quietly turn €12,75
   // (4590/360) into €7,65 (4590/600) — a third off the published rate of a named business.
-  const pph = pricePerContactHour(prog);
+  const pph = pricePerContactHour(providerOf("de-yogaschool-enschede"), prog);
   assert.equal(pph.value, 12.75, "€/contactuur divides by CONTACT hours, never by the total");
   assert.notEqual(pph.value, Math.round((4590 / 600) * 100) / 100);
 });

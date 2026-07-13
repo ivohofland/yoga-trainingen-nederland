@@ -152,14 +152,23 @@ programs:
       persoonlijke ontwikkeling; wekelijkse lessen + dagelijkse eigen
       beoefening.
     price:
-      amount_eur: 4590
+      amount_eur: 1530
+      period: per_year
+      periods: 3
       vat: unknown
       published: yes
       note: >
-        €1530/jaar (per 1 jan 2026), betaald in termijnen van €153/mnd (10 mnd);
-        lesboeken inbegrepen. De Docentenopleiding duurt 3 jaar ⇒ ca. €4590
-        totaal (3 × €1530). Geen btw-vermelding op de pagina → vat unknown (NRTO
-        ≠ btw-vrijstelling; niet CRKBO).
+        DE SCHOOL PUBLICEERT GEEN TOTAALPRIJS. Ze publiceert een JAARPRIJS: "De
+        kosten voor de docentenopleiding zijn: per 1 januari 2026: €1530,00 per
+        jaar. Wordt betaald in termijnen van €153,00 per maand (10 maanden)."
+        Lesboeken zijn inbegrepen. En ze publiceert de duur: "De opleiding neemt
+        drie jaar of 360 uren in beslag." 3 × €1530 = €4590 is ONZE rekensom —
+        het getal 4590 komt in geen enkel gearchiveerd artefact van deze school
+        voor, en werd tot v0.8 in `amount_eur` bewaard en als hún gepubliceerde
+        prijs gerenderd. Nu: `period: per_year` + `periods: 3`; het totaal wordt
+        afgeleid en zichtbaar als het onze getoond (spec §6). Geen btw-vermelding
+        op de pagina → vat unknown (§4.11; NRTO is een kwaliteitskeurmerk, geen
+        btw-vrijstelling, en de school staat niet in het CRKBO-register).
       source: site-docenten-2026-07
     hours_claimed:
       total: null
@@ -232,11 +241,20 @@ programs:
       language: nl
     prerequisites_claimed: "Succesvol afgeronde Docentenopleiding Raja Yoga is voorwaarde."
     price:
-      amount_eur: 4590
+      amount_eur: 1530
+      period: per_year
+      periods: 3
       vat: unknown
       published: yes
-      note: "€1530/jaar (termijnen €153/mnd ×10; lesboeken incl.); 3 jaar ⇒ ca. €4590
-        totaal. Geen btw-vermelding → vat unknown."
+      note: >
+        GEEN TOTAALPRIJS op de pagina, wél een jaarprijs en een duur: "Kosten €
+        1530,00 per jaar. Wordt betaald in termijnen van € 153,00 per maand (10
+        maanden). De lesboeken per jaar zijn inbegrepen in de prijs." en "In
+        totaal studeer je minimaal 3 jaar." 3 × €1530 = €4590 is ONZE rekensom;
+        4590 staat op geen enkele gearchiveerde pagina van deze school. Let op:
+        drie jaar is het MINIMUM dat de school noemt ("Je kunt daarna aanvullend
+        verder studeren") — het afgeleide totaal is dus een ondergrens. Geen
+        btw-vermelding → vat unknown (§4.11).
       source: site-meester-2026-07
     hours_claimed:
       total: null

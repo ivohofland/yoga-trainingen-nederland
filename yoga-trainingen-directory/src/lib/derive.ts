@@ -26,36 +26,94 @@ import type { ProvenanceFinding } from "./provenance";
 import { nl } from "./strings";
 
 /**
- * THE WHOLE-COURSE PRICE — the figure a reader compares, and on one provider the
- * figure nobody publishes (spec v0.5, §6 `total_price`).
+ * THE PUBLISHED PRICES OF A PROGRAMME'S COMPOSED PARTS — all of them, or NONE.
+ *
+ * The one place the module prices of a `composition` are read, and therefore the one
+ * place the all-or-nothing rule lives. `bundleDelta` has enforced it since v0.1 (a
+ * package discount computed against a partial sum is not a discount, it is a number)
+ * and `totalPrice`'s third derivation (spec v0.8) needs the identical rule for the
+ * identical reason: AN INCOMPLETE SUM IS A GUESS, and a guessed total is a published
+ * comparison with a hole in it. Written twice, the two would drift; written once, a
+ * missing part price can only ever produce `null` on both.
+ *
+ * Returns the PARTS, not their sum — because the working ("€ 1.420 + € 1.305") is what
+ * makes the total checkable, and a caller handed only a number cannot show it.
+ */
+function composedPartPrices(provider: Provider, moduleIds: string[] | undefined): number[] | null {
+  if (!moduleIds?.length) return null;
+  const parts: number[] = [];
+  for (const id of moduleIds) {
+    const mod = provider.modules.find((m) => m.id === id);
+    if (mod?.price?.amount_eur == null) return null; // incomplete → no derivation
+    parts.push(mod.price.amount_eur);
+  }
+  return parts;
+}
+
+/**
+ * THE WHOLE-COURSE PRICE — the figure a reader compares, and the one a provider often
+ * does not publish (spec §6 `total_price`; v0.5, then v0.8).
  *
  * `derived` is not decoration, it is the licence to print the number:
  *
  *   - `derived: false` → `period` is `total`. The value IS the provider's own
  *     published figure, and a surface may show it as theirs.
- *   - `derived: true`  → OUR ARITHMETIC over their per-period price. The caveat
- *     spells the sum out ("onze berekening: 4 × € 1.290") and every surface must
- *     render it visibly as ours — never in the ink reserved for their claim.
- *   - `value: null`    → a per-period price with no published period count. NOT
- *     comparable, and it must not be banded, sorted or ranked as though it were.
- *     Guessing the count would fabricate the very number this field exists to stop.
+ *   - `derived: true`  → OUR ARITHMETIC. The caveat spells the working out ("onze
+ *     berekening: 4 × € 1.290", "onze optelling: € 1.420 + € 1.305") and every surface
+ *     must render it visibly as ours — never in the ink reserved for their claim.
+ *   - `value: null`    → no comparable total exists. NOT bandable, sortable or rankable,
+ *     and manufacturing one would fabricate the very number this field exists to stop.
  *
- * `excludes` IS NEVER ADDED IN. It is free text ("eenmalig € 100 inschrijfgeld; de
- * verblijfskosten van het yogaweekend") — it cannot be summed, and a total that
- * silently absorbed some of it would be neither their figure nor a reproducible one
- * of ours. It renders ALONGSIDE, as it already does.
+ * THREE DERIVATIONS, AND THE THIRD IS NOT OPTIONAL (spec v0.8).
+ *
+ *   1. `period: total`            → the amount itself. THEIRS.
+ *   2. amount × `periods`         → OURS. Equal, repeating parts: "€ 1.290 / studiejaar,
+ *                                   4 studiejaren". de Blikopener.
+ *   3. Σ of the composed modules  → OURS. UNEQUAL parts, which multiplication CANNOT
+ *                                   express: Adhouna's 200-hour Yin XL is Deel I € 1.420
+ *                                   + Deel II € 1.305, and 2 × 1.420 is not € 2.725.
+ *
+ * Derivation 3 exists because its absence had a cost, and the cost is this project's
+ * cardinal sin. With no honest home for a sum of unequal parts, € 2.725 was STORED in
+ * `amount_eur` — a figure Adhouna has never published, rendered in Adhouna's own ink,
+ * cited to a page that prints only the two parts. The string "2725" appears in none of
+ * their artifacts. The same disease as v0.5 and v0.6, in its third costume.
+ *
+ * `null` IF ANY PART'S PRICE IS MISSING — see composedPartPrices. An incomplete sum is a
+ * guess, and this project does not publish guesses about named businesses.
+ *
+ * `excludes` IS NEVER ADDED IN, in any of the three. It is free text ("eenmalig € 100
+ * inschrijfgeld; de verblijfskosten van het yogaweekend") — it cannot be summed, and a
+ * total that silently absorbed some of it would be neither their figure nor a
+ * reproducible one of ours. It renders ALONGSIDE, as it already does.
  */
 export interface TotalPrice {
   value: number | null;
   /** Why the total is not comparable, or how we arrived at it. */
   caveat?: string;
-  /** True → we multiplied. The number is OURS and must be labelled so. */
+  /** True → we did the arithmetic. The number is OURS and must be labelled so. */
   derived: boolean;
 }
 
-export function totalPrice(program: Program): TotalPrice {
+export function totalPrice(provider: Provider, program: Program): TotalPrice {
   const { amount_eur: amount, period, periods } = program.price;
-  if (amount == null) return { value: null, derived: false };
+
+  // DERIVATION 3 — the sum of unequal parts. The programme carries no amount of its own
+  // BECAUSE the provider states none: they price per module, and the whole is what the
+  // parts come to. Gated on `period: per_module` and NOT merely on "it has modules": a
+  // `free_assembly` path (QUENO) is a menu, not a fixed sum, and adding its modules up
+  // would invent a total for a training nobody buys that way.
+  if (amount == null) {
+    if (period !== "per_module") return { value: null, derived: false };
+    const parts = composedPartPrices(provider, program.composition?.modules);
+    if (parts == null) return { value: null, derived: false };
+    return {
+      value: Math.round(parts.reduce((a, b) => a + b, 0) * 100) / 100,
+      caveat: nl.totalPriceSum(parts.map(formatEuroForCaveat)),
+      derived: true,
+    };
+  }
+
   // The common case, and the schema's default: the figure they publish IS the total.
   if (period === "total") return { value: amount, derived: false };
   if (periods == null) {
@@ -134,14 +192,20 @@ export interface PricePerContactHour {
  * never a bare `amount_eur`"). Dividing a yearly fee by the hours of a four-year
  * training understates the rate by a factor of four.
  */
-export function pricePerContactHour(program: Program): PricePerContactHour {
-  const total = totalPrice(program);
+export function pricePerContactHour(provider: Provider, program: Program): PricePerContactHour {
+  const total = totalPrice(provider, program);
   const contact = program.hours_claimed.contact;
-  if (program.price.amount_eur == null) return { value: null, caveat: "prijs niet gepubliceerd" };
-  // A per-period price with no period count: we hold an amount, but not a comparable
-  // one. Saying "prijs niet gepubliceerd" here would be a false finding about a
-  // provider who publishes a price — it is their TOTAL that does not exist.
-  if (total.value == null) return { value: null, caveat: total.caveat };
+  // THE TOTAL IS ASKED FIRST, not `amount_eur` — spec v0.8. A programme priced per module
+  // holds NO amount of its own and still has a perfectly comparable total (Adhouna: € 1.420
+  // + € 1.305). Reading the bare field first would call that provider a non-publisher of
+  // prices, on a page that prints two of them.
+  if (total.value == null) {
+    // A per-period price with no period count: we hold an amount, but not a comparable
+    // one. Saying "prijs niet gepubliceerd" here would be a false finding about a
+    // provider who publishes a price — it is their TOTAL that does not exist.
+    if (program.price.amount_eur != null) return { value: null, caveat: total.caveat };
+    return { value: null, caveat: "prijs niet gepubliceerd" };
+  }
   if (contact == null) return { value: null, caveat: "contacturen niet gepubliceerd" };
   // Comparability guard: includes/excludes change what the price buys.
   const caveats: string[] = [];
@@ -184,15 +248,17 @@ export function isMultistyle(program: Program): boolean {
   return specific.length >= 2;
 }
 
+/**
+ * Package price − Σ module prices. `null` if any part is missing (composedPartPrices),
+ * and `null` where the programme holds no amount of its own: a bundle discount needs a
+ * BUNDLE, and a training sold only as its parts (Adhouna's Yin XL: `amount_eur: null`,
+ * `period: per_module`) has no package price to compare the sum against. Its "delta"
+ * would be zero by construction — a fact about our arithmetic, not about the school.
+ */
 export function bundleDelta(provider: Provider, program: Program): number | null {
-  const moduleIds = program.composition?.modules;
-  if (!moduleIds?.length || program.price.amount_eur == null) return null;
-  let sum = 0;
-  for (const id of moduleIds) {
-    const mod = provider.modules.find((m) => m.id === id);
-    if (mod?.price?.amount_eur == null) return null; // incomplete → no derivation
-    sum += mod.price.amount_eur;
-  }
+  const parts = composedPartPrices(provider, program.composition?.modules);
+  if (parts == null || program.price.amount_eur == null) return null;
+  const sum = parts.reduce((a, b) => a + b, 0);
   return Math.round((program.price.amount_eur - sum) * 100) / 100;
 }
 

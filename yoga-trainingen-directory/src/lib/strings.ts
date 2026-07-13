@@ -153,6 +153,32 @@ export const nl = {
     `Geen vergelijkbare totaalprijs: de aanbieder publiceert een prijs per ${period} en niet ` +
     `uit hoeveel perioden de opleiding bestaat.`,
 
+  /* ---------- De DERDE afleiding: de som van ONGELIJKE delen (spec v0.8, §6) ---------- */
+
+  /**
+   * DE PRIJZEN DIE ZIJ WEL NOEMEN, zoals zij ze noemen: per deel. Adhouna's Yin XL kost
+   * "€ 1.420,00 incl. BTW" (Deel I) + "€ 1.305,00 incl. BTW" (Deel II) en géén totaal —
+   * dus toont de rij Prijs precies die twee bedragen, in hún inkt, met hún bron. Het
+   * totaal staat een rij lager, in de onze.
+   */
+  pricePerModuleParts: (parts: string[]) => parts.join(" + "),
+  /**
+   * De uitgeschreven OPTELLING, zodat de lezer haar kan narekenen — en zodat niemand
+   * € 2.725 kan aanzien voor een bedrag dat op de pagina staat. Het staat er niet: de
+   * pagina drukt alleen de delen af. Vermenigvuldigen kan dit niet uitdrukken (2 × 1.420
+   * is geen 2.725), en precies daarom stond de som eerst in `amount_eur` — in de inkt van
+   * de school, geciteerd aan een pagina die haar nooit noemt.
+   */
+  totalPriceSum: (parts: string[]) =>
+    `onze optelling: ${parts.join(" + ")}. De aanbieder publiceert de delen apart en ` +
+    `noemt hun som niet.`,
+  /** Een deel zonder gepubliceerde prijs → geen som. Een onvolledige optelling is een
+   *  gok, en een gegokt totaal is een gepubliceerde vergelijking met een gat erin
+   *  (dezelfde regel die `bundleDelta` al hanteert). */
+  totalPriceIncompleteSum:
+    "Geen vergelijkbare totaalprijs: de aanbieder prijst per module en niet elke module " +
+    "heeft een gepubliceerde prijs — een onvolledige optelling zou een gok zijn.",
+
   /* ---------- De afgeleide totaaluren (spec v0.6, §6) ---------- */
 
   /**
@@ -281,6 +307,18 @@ export const nl = {
   cohortLabel: (month: string, status: string) => `${month} — ${status}`,
   /** The same line on the listing, where it is the NEXT start rather than a log entry. */
   nextCohortLabel: (month: string, status: string) => `start ${month} — ${status}`,
+  /**
+   * DE PRIJS ZOALS DIE TOEN GOLD (spec v0.7, §4.5 `price_at_time`).
+   *
+   * Een prijs die tussen twee cohorten veranderde is een BEVINDING over de school, geen
+   * correctie om weg te werken. Bluebirds' cohort van 2025 werd verkocht voor "€3150,-
+   * Excl BTW" op de eigen site van de docent; het cohort van 2026 voor "0% VAT as we are
+   * CRKBO registered" onder Bluebirds BV. Twee runs, twee btw-behandelingen — en zonder
+   * deze rij had die verandering nergens te wonen (het veld stond in 0 records en werd
+   * nergens getoond). De rij draagt de bron van het cohort zelf: wat er stond, stond
+   * daar toen.
+   */
+  cohortPriceAtTime: (amount: string, vat: string) => `prijs toen: ${amount} · ${vat}`,
   hoursTotal: "totaal",
   hoursContact: "contact",
   hoursSelfStudy: "zelfstudie",

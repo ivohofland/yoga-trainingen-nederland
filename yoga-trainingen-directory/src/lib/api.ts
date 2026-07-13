@@ -101,15 +101,15 @@ export interface ProgramDerived {
 }
 
 export function programDerived(provider: Provider, program: Program): ProgramDerived {
-  const total = totalPrice(program);
+  const total = totalPrice(provider, program);
   const hours = totalHours(program);
   return {
-    price_state: priceQuad(program),
-    price_band: priceBand(program),
+    price_state: priceQuad(provider, program),
+    price_band: priceBand(provider, program),
     total_price: { value: total.value, derived: total.derived, caveat: total.caveat ?? null },
     total_hours: { value: hours.value, derived: hours.derived, caveat: hours.caveat ?? null },
-    pph: pricePerContactHour(program).value,
-    pph_state: pphQuad(program),
+    pph: pricePerContactHour(provider, program).value,
+    pph_state: pphQuad(provider, program),
     contact_ratio: contactRatio(program),
     bundle_delta: bundleDelta(provider, program),
     multistyle: isMultistyle(program),

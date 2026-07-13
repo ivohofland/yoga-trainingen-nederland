@@ -26,12 +26,18 @@
  * because its trigger is absent is not a rule.)
  *
  * It is built by SPREADING A REAL RECORD, so it cannot drift from the schema: a real,
- * schema-valid programme with exactly ONE field removed — the amount. The base is de
- * Yogaschool Enschede's Docentenopleiding Raja, chosen deliberately because it publishes
- * its contact hours (360, `contact_published: "yes"`) and its price as a whole-course
- * total. With the amount gone, the PRICE is then unambiguously the only thing blocking
+ * schema-valid programme with exactly ONE field removed — the amount. The base must
+ * publish its contact hours (`contact_published: "yes"`) AND its price as a whole-course
+ * total, so that with the amount gone the PRICE is unambiguously the only thing blocking
  * €/contactuur — which is what makes `nl.pphPriceNotInRecord` the correct copy for it,
- * rather than the hours sentence or the v0.5 period-count sentence.
+ * rather than the hours sentence, the v0.5 period-count sentence, or v0.8's sum.
+ *
+ * IT WAS de Yogaschool Enschede's Docentenopleiding Raja, and v0.8 moved it out from
+ * under this fixture: that record now prices € 1.530 PER STUDIEJAAR over three years (the
+ * € 4.590 it used to carry was our own multiplication, stored). The guards below caught
+ * that in as many words rather than silently constructing some other case — which is what
+ * they are for. Re-based on Dru Yoga's 200-uurs, which publishes € 2.961 as a whole-course
+ * total and 220 contacturen.
  *
  * The ids are nobody's: no assertion made against this fixture is a statement about a
  * named business, and none of it may ever be mistaken for one.
@@ -42,8 +48,8 @@ export const PRICE_GAP_PROVIDER_ID = "synthetisch-prijs-zonder-bedrag";
 export const PRICE_GAP_PROGRAM_ID = "prijs-zonder-bedrag";
 export const PRICE_GAP_HREF = `/aanbieder/${PRICE_GAP_PROVIDER_ID}#programma-${PRICE_GAP_PROGRAM_ID}`;
 
-const BASE_PROVIDER_ID = "de-yogaschool-enschede";
-const BASE_PROGRAM_ID = "docentenopleiding-raja";
+const BASE_PROVIDER_ID = "dru-yoga";
+const BASE_PROGRAM_ID = "200-dru";
 
 /**
  * The synthetic provider, carrying exactly one programme: the price gap.
@@ -75,7 +81,10 @@ export function priceGapProvider(providers: Provider[]): { provider: Provider; p
     );
   }
   if (baseProgram.price.period !== "total") {
-    throw new Error("price-gap fixture: the base price is no longer a whole-course total — the v0.5 blocker would mask the price blocker");
+    throw new Error(
+      "price-gap fixture: the base price is no longer a whole-course total — a per-period or per-module " +
+        "price would put the v0.5/v0.8 total blocker in front of the price blocker this fixture pins",
+    );
   }
   if (baseProgram.hours_claimed.contact == null || baseProgram.hours_claimed.contact_published !== "yes") {
     throw new Error(

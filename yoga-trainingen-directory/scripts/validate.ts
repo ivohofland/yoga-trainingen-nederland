@@ -29,7 +29,7 @@ console.log();
 for (const p of providers) {
   console.log(`  ${p.name} [${p.depth}] — completeness ${completeness(p)}%`);
   for (const program of p.programs) {
-    const pph = pricePerContactHour(program);
+    const pph = pricePerContactHour(p, program);
     const ratio = contactRatio(program);
     const delta = bundleDelta(p, program);
     const parts = [
