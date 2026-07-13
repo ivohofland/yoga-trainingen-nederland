@@ -18,6 +18,11 @@
  * spent a release eliminating (see rules.ts, priceQuad).
  */
 import type { Program, Provider } from "../schema";
+// TYPE-ONLY, and that is what keeps this module `node:*`-free: `import type` is erased
+// at compile time, so provenance.ts's `node:fs`/`pdftotext` never enter the import graph
+// of the client filter island or the JSON export. The finding stays TYPED all the way to
+// /qa — see ProviderQa.provenance on why flattening it to strings was the bug.
+import type { ProvenanceFinding } from "./provenance";
 import { nl } from "./strings";
 
 /**
@@ -224,8 +229,16 @@ export interface ProviderQa {
   gaps: string[];
   /** Claims — a price, an hours figure, a VAT treatment — whose CITED page evidences
    *  none of it (see provenance.ts). A citation defect, not a gap in a quad: the
-   *  record looks complete and the archive backs none of it. */
-  provenance: string[];
+   *  record looks complete and the archive backs none of it.
+   *
+   *  TYPED, NOT `string[]`. Flattening these to messages threw away the one field that
+   *  matters most — `reason` — and with it the distinction this whole project turns on,
+   *  applied to our own work: `no_snapshot` ("we never archived this page") is OUR DEBT,
+   *  a GAP; `no_evidence` ("the archived page says nothing of the kind") is a DEFECT in
+   *  a citation about a NAMED BUSINESS. Same red list, two different sentences, and /qa
+   *  could not tell them apart. It is exactly the `unknown` vs `not_published` rule
+   *  (spec §2) turned on the researcher. */
+  provenance: ProvenanceFinding[];
 }
 
 /**
@@ -239,7 +252,7 @@ export interface ProviderQa {
  * the dev-only `/qa` page) pass it in. A caller that cannot simply reports no
  * citation defects — and none of the surfaces that ship to readers is such a caller.
  */
-export function providerQa(p: Provider, now = new Date(), provenance: string[] = []): ProviderQa {
+export function providerQa(p: Provider, now = new Date(), provenance: ProvenanceFinding[] = []): ProviderQa {
   const gaps: string[] = [];
   if (p.crkbo.registered === "unknown") gaps.push("CRKBO: nog niet onderzocht");
 

@@ -15,20 +15,36 @@
  * A human cannot catch that by reading YAML: the record looks perfect. Only the
  * ARTIFACT can answer it. So this check reads the artifacts.
  *
- * THREE CLAIMS, ONE MACHINERY (spec v0.5). The price was never the only field whose
- * citation could point at the wrong page — it was only the one we had caught:
+ * THREE CLAIMS, ONE MACHINERY, AND EACH ASKS FOR **THE FACT WE RECORDED** (v0.7).
+ * The first version asked a weaker question — "is there *a* price / *an* hours-like
+ * number / *any* mention of tax on this page?" — and a weaker question is a weaker
+ * check: it certified as sourced six statements the cited page does not make. What
+ * each check asks now:
  *
- *   - PRICE — `price.published: yes` → the cited artifact must show a money amount.
- *   - HOURS — `hours_claimed.total` set → the cited artifact must show that figure, or
- *     an hours-like number. de Blikopener's hours were cited to the HOMEPAGE, which
- *     states no hours anywhere; the 500 u / 372 u sentence lives on the opleidingspagina,
- *     which was not a source at all until v0.5.
- *   - VAT — `price.vat` of `incl`/`excl`/`exempt_crkbo` → the cited artifact must
- *     mention VAT. A VAT treatment is DIRECTLY OBSERVED (§10) or it is not known: two
- *     records carried `exempt_crkbo` INFERRED from the school's CRKBO registration,
- *     which §4.11 forbids in as many words, on pages that mention no BTW at all. The
- *     schema cannot see the difference between a fact read off a page and a fact
- *     deduced in a researcher's head. The artifact can.
+ *   - PRICE — `price.amount_eur` set → the cited artifact must print THAT AMOUNT.
+ *     "Is there a price on the page" passed de Yogaschool Enschede, whose page prints
+ *     "€ 1530,00 per jaar" while the record said 4590 (= our 3 × 1530: OUR arithmetic
+ *     sold as their published price, spec §6), and Adhouna's Yin XL, whose page prints
+ *     € 1.420,00 and € 1.305,00 while the record said 2725 (our sum again). "2725" and
+ *     "4590" appear in NONE of those providers' artifacts. Where `amount_eur` is null
+ *     and `published: yes`, the old page-level question is still the right one — that
+ *     record only claims *they publish a price* — and it survives as a FALLBACK TIER,
+ *     named in the finding so a reader knows which question failed.
+ *   - HOURS — `hours_claimed.total` set → the cited artifact must print THAT FIGURE,
+ *     NEXT TO AN HOURS WORD. Bare digit-boundaries let a PRICE ground an hours claim:
+ *     in "€ 2.500" the character before `500` is `.`, not a digit, so `(?<!\d)500`
+ *     matched, and 200/300/500 are exactly the standard formats while Dutch prices use
+ *     `.` as the thousands separator. `hours(200)` matched "€ 1.200" and "logo-200x200".
+ *   - VAT — `price.vat` of `incl`/`excl`/`exempt_crkbo` → the cited artifact must state
+ *     **THAT TREATMENT**. Asking only "does the page mention tax" is the check
+ *     CERTIFYING the very inference it was built to forbid: spec §4.11 (v0.7) says
+ *     `price.vat` is observed on the page that states it, or it is `unknown` — never
+ *     deduced from a CRKBO registration, from the invoicing entity, or from a sibling
+ *     programme's page. A bare `\bcrkbo\b` in the pattern grounded `exempt_crkbo` on a
+ *     FOOTER BADGE beside a street address; `vrijstelling` (in Dutch: *any* exemption)
+ *     grounded it on "er is geen vrijstelling mogelijk", which is about COURSE CREDIT;
+ *     and with no direction check, a page reading "€3150,- Excl BTW" grounded
+ *     `exempt_crkbo`. The three treatments have near-disjoint vocabularies. Use them.
  *
  * HOW IT READS THEM, and why both:
  *
@@ -45,7 +61,9 @@
  *     pure-energy-yoga, thrive-yoga, tula, yogapoint, yogaschool-noord): print CSS
  *     and lazy sections drop them out of the PDF render. de Blikopener's own
  *     opleidingspagina is now the extreme case — its PDF renders as an empty shell,
- *     and every sentence on it survives only in the HTML.
+ *     and every sentence on it survives only in the HTML. Bluebirds' hybrid page is
+ *     the same story in the VAT field: "(all prices at 0% VAT as we are CRKBO
+ *     registered)" is in the HTML and NOT in the render.
  *
  * Search only the HTML and 3 truthful records are called liars; only the PDF and 7
  * are. Search BOTH and pass if EITHER evidences the fact: zero false positives over
@@ -66,23 +84,26 @@
  * The `.sha256` sidecar — which IS committed, and which lists every file captured
  * for that source — is what tells the two apart: it names an artifact that exists
  * but is not in this checkout, so the source is SKIPPED, and the skip is counted and
- * reported. The check is therefore fully meaningful only on the researcher's machine
- * (and in the private archive repo), which is exactly where facts get extracted.
+ * reported.
  *
- * THE LIMIT, stated honestly because the check cannot state it itself: this is
- * PAGE-LEVEL, not FACT-LEVEL. It proves the cited page mentions *a* price, *an* hours
- * figure, *the* subject of VAT. It does not prove the page mentions *this* price, nor
- * that `amount_eur` is the number printed on it. sanayou/200-online passes on an
- * overview page that prices the other two routes but not that one. It is a floor under
- * the citation, not a ceiling over it — it can only ever catch a record citing a page
- * that is silent on the whole subject, which is exactly the class of bug it was built
- * for, and exactly the class that produced every one of its findings so far.
+ * WHICH MAKES IT VACUOUS IN CI UNLESS IT SAYS SO OUT LOUD — and for one release it
+ * did not. On a fresh checkout 158 of 167 claims are skipped, and both runners
+ * printed a green tick over the other 9: `✓ elk gedekt`, exit 0. A check that
+ * reports "all covered" while holding 5% of the evidence is the `strings` disaster
+ * wearing a clean shirt. Hence `coverage` and `granularity` ON THE REPORT, so a
+ * consumer CANNOT summarise this check as more than it is, and the rule that no
+ * runner may print `✓` while `skipped > 0`.
+ *
+ * THE LIMIT, stated honestly because the check cannot state it itself: it holds a
+ * claim against the WHOLE cited artifact, not against the sentence next to the
+ * programme's own name. A page that prices three routes and states the amount for
+ * two of them still evidences the third's amount if the number happens to be there.
+ * It is a floor under the citation, not a ceiling over it.
  *
  * NOT A BUILD GATE. It reports as a warning in `npm run validate` and counts on
  * `/qa`; `npm run provenance` is the same check with a non-zero exit, for use after
  * touching a price, an hour count or a source. The reason to keep the build green is
- * that a false positive here is an accusation against our own sourced research, and
- * the hours and VAT regexes have seen exactly one corpus.
+ * that a false positive here is an accusation against our own sourced research.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -90,7 +111,10 @@ import { execFileSync } from "node:child_process";
 import type { Program, Provider, Source } from "../schema";
 
 /**
- * A money amount, as an ARTIFACT prints it — not as a human writes it.
+ * A money amount, as an ARTIFACT prints it — not as a human writes it. THE FALLBACK
+ * TIER: it answers "does this page print *a* price at all", which is the right and
+ * only question for a record that says `published: yes` and holds no `amount_eur`.
+ * Where we DO hold the amount, `priceFigureRe` asks the real question instead.
  *
  * The euro sign and its digits routinely land in SEPARATE TEXT RUNS: a
  * browser-rendered PDF puts the `€` in one span and `449,-` in the next, so
@@ -104,65 +128,224 @@ import type { Program, Provider, Source } from "../schema";
 export const MONEY_RE = /€[\s\r\n]*\d|\d[\d.,]{2,}[\s\r\n]*(euro|EUR)\b|\bEUR[\s\r\n]*\d/i;
 
 /**
- * THE HOURS FIGURE ITSELF — the number in the record, printed on the page.
+ * THE AMOUNT ITSELF — the number in the record, printed on the page it is cited to.
  *
- * NOT "an hours-like number somewhere on the page", which was the first design and is
- * WORTHLESS: de Blikopener's homepage — the page whose miscitation motivated this whole
- * check — advertises its class times as "19 – 22 u", and `\d{2,4}\s*uur?` reads that as
- * an hours claim. The check would have green-lit the exact record it exists to catch.
- * A check that passes everything is worse than no check (see the `strings` disaster
- * above); "the page mentions hours" is not evidence for "this training is 500 hours".
+ * `evidencesPrice` (above) asks whether the page shows A price. That question passed
+ * both records that stored OUR ARITHMETIC as the school's published price: de
+ * Yogaschool Enschede (`amount_eur: 4590`; the page prints "€ 1530,00 per jaar" — the
+ * 4590 is our 3 × 1530, and appears in NONE of their artifacts) and Adhouna's Yin XL
+ * (`amount_eur: 2725`; the page prints € 1.420,00 and € 1.305,00 — our sum again).
+ * Both pages are FULL of euro signs, so the page-level check waved both through. The
+ * record holds the number; the artifact either prints it or it does not.
+ *
+ * MATCHING IT IS THE WHOLE JOB, and the corpus punctuates money four ways:
+ *   nl-NL   `€ 4.590`  `€4.590,-`  `4590,00`     (dot = thousands, comma = decimals)
+ *   en      `€ 2,385`  `€3,150`    `€ 2,964.50`  (jai-yoga, tribes, de-nieuwe-yogaschool)
+ *   no sign `KOSTEN: 3,050 E`                    (thrive-yoga — so a € is NOT required)
+ *   cents   `€ 2.838,60`                         (aalo; six amounts in the corpus are
+ *                                                 not integers, and rounding one away
+ *                                                 would flag a correctly sourced record)
+ * Hence: a separator between thousands groups that may be `.`, `,`, nbsp or absent;
+ * decimals that must match when the record HAS cents (2838.6 → `,60`) and are optional
+ * when it does not (`,-` and `,00` are the same 4590).
+ *
+ * AND IT MUST NOT MATCH A SUBSTRING OF A LARGER NUMBER. `(?<![\d.,])` refuses a figure
+ * that sits after a digit or a separator — "€ 1.875" is not 875, "1.4590" is not 4590 —
+ * and the trailing `(?![\d]|[.,]\d)` refuses one with a number continuing after it, so
+ * `4` does not match "4.590" and 2450 does not match "€ 2.450,50" (which is not 2450).
+ */
+export function priceFigureRe(amount: number): RegExp {
+  const inCents = Math.round(amount * 100);
+  const cents = inCents % 100;
+  const digits = String(Math.floor(inCents / 100));
+
+  const groups: string[] = [];
+  for (let i = digits.length; i > 0; i -= 3) groups.unshift(digits.slice(Math.max(0, i - 3), i));
+  const integer = groups.join(String.raw`[.,\u00a0]?`);
+
+  // `,-` is Dutch for "and no cents", and so are `,00` and nothing at all.
+  const decimals =
+    cents === 0
+      ? String.raw`(?:[.,](?:00|-|–))?`
+      : String.raw`[.,]${String(cents).padStart(2, "0")}`;
+
+  return new RegExp(String.raw`(?<![\d.,])${integer}${decimals}(?![\d]|[.,]\d)`);
+}
+
+/**
+ * THE HOURS FIGURE, NEXT TO AN HOURS WORD — because otherwise A PRICE GROUNDS IT.
+ *
+ * The figure alone (`(?<!\d)${total}(?!\d)`) was the second-worst design and shipped:
+ * in "€ 2.500" the character before `500` is `.`, NOT a digit, so it matched — and
+ * 200/300/500 are precisely the three standard yoga formats while Dutch prices use `.`
+ * as the thousands separator. Verified: it read "€ 2.500" as evidence for 500 hours,
+ * "€ 1.200" and "logo-200x200" as evidence for 200. A price thereby certified an hours
+ * claim about a named business.
+ *
+ * The figure is now refused unless it sits in an HOURS CONTEXT, and the corpus dictates
+ * all three shapes of that context — this is where the school actually puts the number:
+ *
+ *   1. an hours word AFTER it — "500 u", "500u", "372 u.", "500-uurs niveau", "200h",
+ *      "200 hours", and the Dutch compound "200 opleidingsuren" (namaste-studios), where
+ *      the hours noun is the TAIL of the following word, not a word of its own.
+ *   2. a FORMAT LABEL before it — "RYT300" (sanayou), "RYT 200" (yoga-centrum-oosterwold).
+ *      The label is not decoration: RYT300 *is* Yoga Alliance's name for the 300-hour
+ *      registration, so the page printing it does state the figure.
+ *   3. an hours noun BEFORE it, within a few words and across no digits and no € —
+ *      "So number of hours amounts to 350." (jai-yoga). The `[^.\d€\n]` window is what
+ *      keeps this alternative from re-admitting money: it cannot cross a euro sign, a
+ *      sentence end or another number to reach the figure.
  *
  * Digit boundaries, not `\b`: "500u" has NO word boundary between `0` and `u` (both are
  * word characters), so `\b500\b` fails on the most common way a Dutch yoga school writes
  * it. That regex flagged open-yoga and samsara — two records whose cited page prints the
- * figure in as many characters — as unsourced.
+ * figure in as many characters — as unsourced. And `(?<![\d.,])`, not `(?<!\d)`: the `.`
+ * is the whole "€ 2.500" bug.
  *
- * What it therefore catches, and this is the useful class: a total that appears NOWHERE
- * on the cited page because WE SUMMED IT. wahe's 500 is "200 + 150 + 100 (+ ~50u)" —
- * our arithmetic, stored as their claim. That is spec §6 violated in the hours field,
- * and only the artifact could see it.
+ * What it therefore still catches, and this is the useful class: a total that appears
+ * NOWHERE on the cited page because WE SUMMED IT (spec §6) — de Yogaschool Enschede
+ * published 360 contact + 240 self-study hours and never the 600, which is why
+ * `hours_claimed.total` is null there today.
  */
+const HOURS_WORD_AFTER = String.raw`(?:uur|uren|u\b|hours?\b|hrs?\b|h\b|[a-z-]{1,15}(?:uur|uren)\b)`;
+const HOURS_FORMAT_LABEL = String.raw`(?:E-?RYT|RYT|RYS|RPYT|CYT|YTT)`;
+const HOURS_NOUN_BEFORE = String.raw`(?:uur|uren|hours?)`;
+
 export function hoursFigureRe(total: number): RegExp {
-  return new RegExp(String.raw`(?<!\d)${total}(?!\d)`);
+  const figure = String.raw`(?<![\d.,])${total}(?!\d)`;
+  return new RegExp(
+    [
+      String.raw`${figure}[\s\u00a0]*[-\u2011]?[\s\u00a0]*${HOURS_WORD_AFTER}`,
+      String.raw`${HOURS_FORMAT_LABEL}[\s\u00a0\u2011-]{0,2}${figure}`,
+      String.raw`${HOURS_NOUN_BEFORE}\b[^.\d€\n]{0,25}${figure}(?![\s\r\n]*(?:euro|EUR)\b)`,
+    ].join("|"),
+    "i",
+  );
 }
 
 /**
- * VAT, as a page MENTIONS it — the subject, never the treatment.
+ * A VAT REGISTRATION NUMBER IS NOT A VAT TREATMENT. Stripped before we read anything.
  *
- * The check this serves is deliberately weak in one direction and strict in the other:
- * it cannot tell `incl` from `excl` from `exempt_crkbo` (only a reader can), but it
- * CAN tell that a page says nothing about VAT at all — and a page that says nothing
- * about VAT cannot be the source of a VAT treatment. That is the whole bug: `vat:
- * exempt_crkbo` deduced from a CRKBO registration and cited to a rates page that never
- * mentions BTW (spec §4.11 forbids exactly this inference). "CRKBO" is IN the pattern
- * on purpose — a page that says "CRKBO-geregistreerd, dus btw-vrij" IS stating a VAT
- * treatment, and the check has no business calling that unsourced.
+ * SanaYou's footer prints "BTW nummer: NL001422164B38" on every page. That is a company
+ * identifier — it says the entity is registered for VAT, and precisely NOTHING about what
+ * this training costs or whether tax is charged on it. Left in, the word "BTW" in that
+ * footer is a VAT string on every page of the site, and the check would let a footer
+ * ground a treatment. (SanaYou's own records read `vat: unknown`, which is the honest
+ * value and needs no evidence — but the hole was real and load-bearing for anyone who
+ * next wrote `incl` on that page.)
  */
-export const VAT_RE = /\bbtw\b|\bvat\b|vrijgesteld|vrijstelling|omzetbelasting|\bcrkbo\b/i;
+export const VAT_REGISTRATION_RE = /\b(?:btw|vat)[-\s]?(?:nummer|nr\.?|number|no\.?|id)\b|\bNL\d{9}B\d{2}\b/gi;
 
-/** Does this artifact's text show a money amount anywhere? (Pure — the unit under test.) */
+/**
+ * WHICH TREATMENT THE PAGE STATES — the question the old regex refused to ask.
+ *
+ * It asked whether the page mentioned tax AT ALL (`btw|vat|vrijgesteld|vrijstelling|
+ * omzetbelasting|crkbo`) and let any hit ground any treatment. Four holes, each of them
+ * live in the corpus, and each of them the check BLESSING the inference it exists to
+ * forbid (spec §4.11 v0.7: observed on the page that states it, or `unknown`):
+ *
+ *   - `\bcrkbo\b` — a bare CRKBO badge grounded `exempt_crkbo`. Queno Sportopleidingen's
+ *     cited page has ZERO hits for btw/vrijgesteld/omzetbelasting and ONE for CRKBO: a
+ *     footer badge next to the street address. "They are CRKBO-registered, therefore the
+ *     price is VAT-free" is a deduction, and it is the deduction §4.11 names. The
+ *     alternative was defending the sentence "CRKBO-geregistreerd, dus btw-vrij" — which
+ *     still matches, on `btw-vrij`, where it belongs.
+ *   - `vrijstelling` — in Dutch this is ANY exemption. Spark of Light's 300-hour page
+ *     says "er is geen vrijstelling mogelijk" about COURSE-CREDIT exemptions, and Yoga
+ *     Spot's says "Er wordt geen vrijstelling verleend voor onderdelen van de training".
+ *     Neither sentence is about tax. Only `vrijstelling VAN BTW/omzetbelasting` is.
+ *   - the footer registration number — see VAT_REGISTRATION_RE.
+ *   - no direction — "€3150,- Excl BTW" grounded `exempt_crkbo` (bluebirds/200-vinyasa-2025).
+ *     A page whose only VAT string is `excl. btw` states the OPPOSITE of an exemption.
+ *
+ * The vocabularies below are disjoint by construction and every alternative is here
+ * because a page in the corpus writes it that way — the directory is bilingual, so each
+ * treatment gets both languages:
+ */
+export const VAT_PATTERNS: Record<"exempt_crkbo" | "incl" | "excl", RegExp> = {
+  /** No VAT is charged. `btw-vrij(gesteld)` (spark-of-light), `vrij van BTW` (yoga-spot),
+   *  `vrijgesteld van btw` (thrive-yoga), `0% VAT` (bluebirds hybrid), `no VAT charged`
+   *  (tribes-academy), `thus no VAT` (yoga-moves) — and TULA, which spells the exemption
+   *  out in two clauses: "These prices do not include VAT, NOR WILL THIS BE ADDED, since
+   *  TULA is a registered vocational institute at CRKBO". The first clause alone reads as
+   *  `excl` in English; only the second makes it an exemption, so the alternative demands
+   *  both. `vrijstelling` is admitted ONLY as `vrijstelling van btw/omzetbelasting` — bare
+   *  `vrijstelling` is course credit, not tax (see above).
+   *
+   *  `exempt(ed|ion)`, not `exempt\b`: Yagoy heads its price table "Training fee (VAT
+   *  exempted)" — an exemption stated in as many words — and a trailing `\b` after
+   *  `exempt` refuses the participle. That regex made a FALSE POSITIVE of the two records
+   *  in this corpus whose VAT treatment is quoted most explicitly of all, which is the
+   *  failure mode that matters here: a false positive is an accusation against our own
+   *  sourced research. */
+  exempt_crkbo:
+    /\bbtw[-\s]?vrij|\bvrij(?:gesteld)?\s+van\s+(?:de\s+)?(?:btw|omzetbelasting)|\bvrijstelling\s+van\s+(?:de\s+)?(?:btw|omzetbelasting)|\bgeen\s+btw\b|\bno\s+vat\b|\b0\s?%\s?(?:btw|vat)\b|\b(?:btw|vat)[-\s]?(?:vrijstelling|exempt(?:ed|ion)?)\b|\bexempt(?:ed)?\s+from\s+(?:btw|vat)\b|\bnot\s+include\b[^.]{0,20}\bvat\b[^.]{0,30}\bnor\b[^.]{0,40}\bbe\s+added\b/i,
+
+  /** VAT is in the price. `incl. BTW` (adhouna), `inclusief 9% btw` (pure-yoga — note the
+   *  rate between the words), `incl. 21% VAT` (yoga-nature-studio), `including VAT`
+   *  (jai-yoga). The `(?:btw|vat)` is MANDATORY and adjacent: bare `incl` matched
+   *  "including" and "wp-includes" in yoga-den's artifact, and that phantom hit was once
+   *  load-bearing for two separate conclusions about that school. */
+  incl: /\bincl(?:\.|usief|uding|udes)?\s*(?:\d{1,2}\s?%\s?)?(?:btw|vat|omzetbelasting)\b/i,
+
+  /** VAT comes on top. `Excl BTW` (bluebirds 2025), `excl. btw` (wahe), `exclusief btw`
+   *  (pure-yoga, adhouna — both pages print the net figure beside the gross), and the
+   *  contractual `te vermeerderen met btw`. */
+  excl: /\bexcl(?:\.|usief|uding|udes)?\s*(?:\d{1,2}\s?%\s?)?(?:btw|vat|omzetbelasting)\b|\bte\s+vermeerderen\s+met\s+(?:btw|omzetbelasting)\b/i,
+};
+
+/** The VAT treatments that ASSERT something. `unknown` asserts nothing and is exempt from
+ *  the check by design — demanding evidence for "wij weten het niet" would invert the rule. */
+export type VatTreatment = keyof typeof VAT_PATTERNS;
+
+export function isVatTreatment(vat: string): vat is VatTreatment {
+  return vat === "incl" || vat === "excl" || vat === "exempt_crkbo";
+}
+
+/** Does this artifact's text show a money amount anywhere? The FALLBACK tier — only for a
+ *  `published: yes` that holds no amount. See MONEY_RE. */
 export function evidencesPrice(text: string): boolean {
   return MONEY_RE.test(text);
 }
 
-/** Does this artifact's text print the hours figure the record claims? See hoursFigureRe. */
+/** Does this artifact's text print THE AMOUNT the record claims? See priceFigureRe. */
+export function evidencesAmount(text: string, amount: number): boolean {
+  return priceFigureRe(amount).test(text);
+}
+
+/** Does this artifact's text print the hours figure the record claims, as hours? See hoursFigureRe. */
 export function evidencesHours(text: string, total: number): boolean {
   return hoursFigureRe(total).test(text);
 }
 
-/** Does this artifact's text mention VAT at all? (It cannot say WHICH treatment — see VAT_RE.) */
-export function evidencesVat(text: string): boolean {
-  return VAT_RE.test(text);
+/** Does this artifact's text state THE VAT TREATMENT the record records? Not "does it
+ *  mention tax" — see VAT_PATTERNS, and spec §4.11. */
+export function evidencesVat(text: string, treatment: VatTreatment): boolean {
+  return VAT_PATTERNS[treatment].test(text.replace(VAT_REGISTRATION_RE, " "));
 }
 
 /** Which claim a finding is about. The message names the field; this makes it filterable. */
 export type ProvenanceCheck = "price" | "hours" | "vat";
 
-/** Why a cited source carries no evidence. Each is a different failure, and the
- *  message must say which: "never captured" is a hole in the archive, "captured and
- *  shows nothing of the kind" is a hole in the citation. */
-export type ProvenanceReason = "no_source" | "no_snapshot" | "no_artifact" | "no_evidence";
+/**
+ * WHICH QUESTION WAS ASKED of the artifact — and therefore what a pass is worth.
+ *
+ * `fact` = "the artifact prints the value in the record" (the amount, the hours figure,
+ * the recorded VAT treatment). `page` = "the artifact prints *a* value of that kind" —
+ * true only of a `published: yes` price with no `amount_eur`, where that IS the whole
+ * claim. It rides on the finding so a human knows which question failed, and on the
+ * report so no consumer can summarise this check as more than it is.
+ */
+export type Granularity = "page" | "fact";
+
+/** Why a cited source carries no evidence. Each is a different failure, and the message
+ *  must say which: `no_snapshot` is a hole in OUR archive (a gap, our debt);
+ *  `no_evidence` is a hole in OUR citation about a NAMED BUSINESS (a defect); and
+ *  `unreadable` is neither — it is an artifact we could not extract a single character
+ *  from (an image-only capture, a shell PDF). Calling that last one `no_evidence` —
+ *  "the page contains no amount" — is an ACCUSATION built on our own broken extractor,
+ *  and the two sentences must never be collapsed. */
+export type ProvenanceReason = "no_source" | "no_snapshot" | "no_artifact" | "unreadable" | "no_evidence";
 
 export interface ProvenanceFinding {
   providerId: string;
@@ -170,6 +353,8 @@ export interface ProvenanceFinding {
   check: ProvenanceCheck;
   sourceId: string | null;
   reason: ProvenanceReason;
+  /** Which question the artifact failed — see Granularity. */
+  granularity: Granularity;
   /** Dutch, record-first — it is read in `npm run validate` output and on /qa. */
   message: string;
 }
@@ -238,6 +423,15 @@ export function visibleText(html: string): string {
  *  without this, adding hours and VAT tripled the cost of every build. */
 const textCache = new Map<string, string>();
 
+/** An artifact we hold but could not turn into text: a corrupt or image-only PDF, a
+ *  capture that extracted to nothing. NOT evidence of absence — see ProvenanceReason. */
+export class ArtifactUnreadable extends Error {
+  constructor(readonly file: string, readonly cause: string) {
+    super(`${path.basename(file)}: ${cause}`);
+    this.name = "ArtifactUnreadable";
+  }
+}
+
 function artifactText(file: string): string {
   const hit = textCache.get(file);
   if (hit != null) return hit;
@@ -245,9 +439,16 @@ function artifactText(file: string): string {
   let text: string;
   if (lower.endsWith(".pdf")) {
     if (!pdftotextAvailable()) throw new PdftotextMissing();
-    // `-` = write to stdout. 64MB ceiling: a full-page capture of a long page can
-    // run to a few hundred KB of text; the default 1MB would truncate silently.
-    text = execFileSync("pdftotext", ["-q", file, "-"], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    try {
+      // `-` = write to stdout. 64MB ceiling: a full-page capture of a long page can
+      // run to a few hundred KB of text; the default 1MB would truncate silently.
+      text = execFileSync("pdftotext", ["-q", file, "-"], { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 });
+    } catch (e) {
+      // A corrupt PDF used to throw a raw execFileSync error straight through
+      // scripts/validate.ts: the BUILD DIED on a stack trace that named neither the
+      // provider nor the source. One bad artifact is a fact about that artifact.
+      throw new ArtifactUnreadable(file, e instanceof Error ? e.message.split("\n")[0] : String(e));
+    }
   } else if (lower.endsWith(".html")) {
     text = visibleText(fs.readFileSync(file, "utf8"));
   } else {
@@ -308,6 +509,15 @@ export interface ProvenanceReport {
   /** Claims whose cited source's body is not in this checkout (gitignored). Not a
    *  finding — an honest limit of where the check is running. */
   skipped: number;
+  /** Every claim the check had a subject for: examined + skipped + the ones that never
+   *  reached a search (no source, no snapshot, nothing captured, nothing readable). */
+  claims: number;
+  /** examined / claims. It is 1 ONLY where the whole archive is on disk. In CI it is
+   *  ~0.05, and a consumer that prints a green tick over 0.05 is lying for us. */
+  coverage: number;
+  /** The WEAKEST question any examined claim was held to (see Granularity): `fact` only
+   *  when every single one was held to the value in the record. */
+  granularity: Granularity;
 }
 
 /**
@@ -318,6 +528,7 @@ export interface ProvenanceReport {
  */
 interface Claimed {
   check: ProvenanceCheck;
+  granularity: Granularity;
   programId: string;
   sourceId: string | null;
   /** The claim the record makes, in Dutch — used to open every message about it. */
@@ -332,46 +543,69 @@ function claimsOf(program: Program): Claimed[] {
   const claims: Claimed[] = [];
   const price = program.price;
 
-  // PRICE. Runs over `published: "yes"` regardless of whether we hold an `amount_eur`:
-  // a record WITH an amount whose cited page shows no money is the same bug wearing a
-  // number — the amount would then have come from somewhere we cannot show a reader.
+  // PRICE. Two tiers, and the finding says which one failed. With an `amount_eur` the
+  // claim is "they publish THIS number" and only that number will do — the alternative
+  // is publishing our own arithmetic under their name (spec §6). Without one, the record
+  // claims no more than "they publish a price", and the page-level question is the whole
+  // question: a `published: yes` still owes the reader *a* price on the cited page.
   if (price.published === "yes") {
-    claims.push({
-      check: "price",
-      programId: program.id,
-      sourceId: price.source ?? null,
-      claim: "prijs gepubliceerd volgens het record",
-      evidences: evidencesPrice,
-      missing: "bevat nergens een bedrag",
-    });
+    const amount = price.amount_eur;
+    claims.push(
+      amount != null
+        ? {
+            check: "price",
+            granularity: "fact",
+            programId: program.id,
+            sourceId: price.source ?? null,
+            claim: `prijs €${amount} volgens het record`,
+            evidences: (text) => evidencesAmount(text, amount),
+            missing: `drukt dat bedrag nergens af (staat er een ANDER bedrag, dan is €${amount} ONZE rekensom — spec §6)`,
+          }
+        : {
+            check: "price",
+            granularity: "page",
+            programId: program.id,
+            sourceId: price.source ?? null,
+            claim: "prijs gepubliceerd volgens het record (geen bedrag vastgelegd)",
+            evidences: evidencesPrice,
+            missing: "bevat nergens een bedrag",
+          },
+    );
   }
 
   // HOURS. The figure is a fact about a named business ("this training is 500 hours"),
-  // and it must stand on the page that says so.
+  // and it must stand on the page that says so — beside an hours word, not beside a €.
   const total = program.hours_claimed.total;
   if (total != null) {
     claims.push({
       check: "hours",
+      granularity: "fact",
       programId: program.id,
       sourceId: program.hours_claimed.source ?? null,
       claim: `${total} uur volgens het record`,
       evidences: (text) => evidencesHours(text, total),
-      missing: `noemt het getal ${total} nergens (staat het er als som van deelgetallen, dan is het totaal ONZE optelling — spec §6)`,
+      missing: `noemt ${total} nergens als urental (staat het er als som van deelgetallen, dan is het totaal ONZE optelling — spec §6)`,
     });
   }
 
   // VAT. `unknown` is exempt from the check BY DESIGN — it is the honest value for a
   // page that says nothing, and demanding evidence for "wij weten het niet" would
   // invert the whole rule. The three others each assert a treatment, and a treatment is
-  // observed or it is not known (§10, §4.11).
-  if (price.vat === "incl" || price.vat === "excl" || price.vat === "exempt_crkbo") {
+  // OBSERVED ON THE PAGE THAT STATES IT or it is not known (§4.11 v0.7) — never deduced
+  // from a CRKBO registration, an invoicing entity, or a sibling programme's page.
+  if (isVatTreatment(price.vat)) {
+    const vat = price.vat;
     claims.push({
       check: "vat",
+      granularity: "fact",
       programId: program.id,
       sourceId: price.source ?? null,
-      claim: `btw-behandeling '${price.vat}' volgens het record`,
-      evidences: evidencesVat,
-      missing: "rept met geen woord over btw (geen 'btw', 'vrijgesteld', 'vrijstelling', 'omzetbelasting', 'CRKBO')",
+      claim: `btw-behandeling '${vat}' volgens het record`,
+      evidences: (text) => evidencesVat(text, vat),
+      missing:
+        vat === "exempt_crkbo"
+          ? "stelt nergens dat er géén btw wordt gerekend (een CRKBO-vermelding, een 'vrijstelling' van iets anders, of een 'excl. btw' is dat niet — §4.11)"
+          : `stelt nergens dat de prijs '${vat}. btw' is`,
     });
   }
 
@@ -386,17 +620,20 @@ export function providerProvenance(p: Provider, cwd = process.cwd()): Provenance
   const findings: ProvenanceFinding[] = [];
   let examined = 0;
   let skipped = 0;
+  let claims = 0;
+  let pageTierExamined = 0;
 
   for (const program of p.programs) {
     for (const c of claimsOf(program)) {
+      claims++;
       const at = `${p.id}/${c.programId}`;
-      const base = { providerId: p.id, programId: c.programId, check: c.check };
+      const base = { providerId: p.id, programId: c.programId, check: c.check, granularity: c.granularity };
       const source = c.sourceId ? p.sources.find((s) => s.id === c.sourceId) : undefined;
 
       if (!source) {
         findings.push({
           ...base, sourceId: c.sourceId, reason: "no_source",
-          message: `${at}: ${c.claim}, maar er is geen bron opgegeven die dat draagt`,
+          message: `${at}: ${c.claim}, maar er is geen bron opgegeven die dat stelt`,
         });
         continue;
       }
@@ -418,8 +655,27 @@ export function providerProvenance(p: Provider, cwd = process.cwd()): Provenance
         continue;
       }
 
-      if (readable.some((f) => c.evidences(artifactText(f)))) {
+      // Read every artifact we hold. An artifact that yields NO TEXT (image-only capture,
+      // shell PDF, corrupt file) is not evidence of absence: it is a hole in our tooling,
+      // and reporting it as "de pagina bevat geen bedrag" would accuse a named business
+      // of not publishing something we simply failed to read.
+      const texts: string[] = [];
+      const unreadable: string[] = [];
+      for (const f of readable) {
+        try {
+          const t = artifactText(f);
+          if (t.trim().length === 0) unreadable.push(`${path.basename(f)}: geen tekst geëxtraheerd`);
+          else texts.push(t);
+        } catch (e) {
+          if (e instanceof PdftotextMissing) throw e; // a hole in the TOOLBOX, not in a record
+          if (e instanceof ArtifactUnreadable) unreadable.push(e.message);
+          else throw e;
+        }
+      }
+
+      if (texts.some((t) => c.evidences(t))) {
         examined++;
+        if (c.granularity === "page") pageTierExamined++;
         continue;
       }
 
@@ -431,23 +687,45 @@ export function providerProvenance(p: Provider, cwd = process.cwd()): Provenance
         continue;
       }
 
+      if (texts.length === 0) {
+        findings.push({
+          ...base, sourceId: source.id, reason: "unreadable",
+          message:
+            `${at}: ${c.claim}, maar geen enkel artefact van bron '${source.id}' liet zich uitlezen ` +
+            `(${unreadable.join("; ") || "geen leesbaar artefact"}). Dit is een gat in ONS gereedschap, ` +
+            `geen bevinding over de aanbieder — leg de bron opnieuw vast.`,
+        });
+        continue;
+      }
+
       examined++;
+      if (c.granularity === "page") pageTierExamined++;
       findings.push({
         ...base, sourceId: source.id, reason: "no_evidence",
         message:
           `${at}: ${c.claim}, maar het gearchiveerde artefact van bron '${source.id}' ${c.missing} ` +
-          `(${readable.length} artefact(en) doorzocht). ` +
+          `(${texts.length} artefact(en) doorzocht${unreadable.length ? `, ${unreadable.length} onleesbaar` : ""}). ` +
           `Citeer de pagina die het STÉLT, niet de pagina die ernaar linkt — en archiveer die eerst.`,
       });
     }
   }
 
-  return { findings, examined, skipped };
+  return {
+    findings,
+    examined,
+    skipped,
+    claims,
+    coverage: claims === 0 ? 1 : examined / claims,
+    granularity: pageTierExamined > 0 ? "page" : "fact",
+  };
 }
 
 /** The whole corpus. Findings sorted by record, so the warning reads like a work list. */
 export function allProvenance(providers: Provider[], cwd = process.cwd()): ProvenanceReport {
   const reports = providers.map((p) => providerProvenance(p, cwd));
+  const sum = (pick: (r: ProvenanceReport) => number) => reports.reduce((n, r) => n + pick(r), 0);
+  const claims = sum((r) => r.claims);
+  const examined = sum((r) => r.examined);
   return {
     findings: reports
       .flatMap((r) => r.findings)
@@ -456,7 +734,12 @@ export function allProvenance(providers: Provider[], cwd = process.cwd()): Prove
           `${a.providerId}/${a.programId}`.localeCompare(`${b.providerId}/${b.programId}`) ||
           a.check.localeCompare(b.check),
       ),
-    examined: reports.reduce((n, r) => n + r.examined, 0),
-    skipped: reports.reduce((n, r) => n + r.skipped, 0),
+    examined,
+    skipped: sum((r) => r.skipped),
+    claims,
+    coverage: claims === 0 ? 1 : examined / claims,
+    // The weakest question asked anywhere in the corpus is the strongest thing the
+    // corpus-wide report may claim.
+    granularity: reports.some((r) => r.granularity === "page") ? "page" : "fact",
   };
 }

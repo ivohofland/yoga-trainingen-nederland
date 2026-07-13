@@ -16,7 +16,7 @@
 import { notFound } from "next/navigation";
 import { loadDataset } from "@/lib/loader";
 import { providerQa } from "@/lib/derive";
-import { providerProvenance } from "@/lib/provenance";
+import { providerProvenance, type ProvenanceFinding } from "@/lib/provenance";
 
 export const metadata = { title: "QA / review — interne werklijst" };
 
@@ -64,17 +64,22 @@ export default function Qa() {
   // Most-incomplete first: the work list, prioritised. The provenance findings —
   // prijs, uren én btw (spec v0.5) — are read off the ARCHIVED ARTIFACTS (node:fs +
   // pdftotext) and injected, because derive.ts is pure by construction — see
-  // providerQa's header.
+  // providerQa's header. They arrive TYPED: the `reason` is the difference between a
+  // gap in our archive and a defect in our citation, and it must survive to the screen.
   const rows = providers
-    .map((p) => ({
-      p,
-      qa: providerQa(p, new Date(), providerProvenance(p).findings.map((f) => `[${f.check}] ${f.message}`)),
-    }))
+    .map((p) => ({ p, qa: providerQa(p, new Date(), providerProvenance(p).findings) }))
     .sort((a, b) => a.qa.completeness - b.qa.completeness);
 
   const totalGaps = rows.reduce((n, r) => n + r.qa.gaps.length, 0);
   const totalUnarchived = rows.reduce((n, r) => n + r.qa.unarchivedSources, 0);
-  const totalProvenance = rows.reduce((n, r) => n + r.qa.provenance.length, 0);
+  // TWO COUNTS, NEVER ONE. `no_evidence` = the archived page states nothing of the kind:
+  // a DEFECT in a citation about a named business, and the most serious thing on this
+  // page. Everything else (no source, no snapshot, never captured, unreadable capture) is
+  // OUR ARCHIVE DEBT — real work, but nobody has claimed anything false about anybody.
+  // Adding them up would bury the first in the second.
+  const isDefect = (f: ProvenanceFinding) => f.reason === "no_evidence";
+  const totalDefects = rows.reduce((n, r) => n + r.qa.provenance.filter(isDefect).length, 0);
+  const totalDebt = rows.reduce((n, r) => n + r.qa.provenance.filter((f) => !isDefect(f)).length, 0);
 
   return (
     <main>
@@ -82,9 +87,10 @@ export default function Qa() {
       <p style={{ color: "#555" }}>
         Alleen-lezen overzicht (niet gepubliceerd). {providers.length} records ·{" "}
         {totalGaps} open punten · {totalUnarchived} bronnen zonder publiek archief ·{" "}
-        <span style={{ color: totalProvenance > 0 ? "#b00" : "#070" }}>
-          {totalProvenance} claim(s) (prijs/uren/btw) zonder bewijs in de geciteerde bron
-        </span>
+        <span style={{ color: totalDefects > 0 ? "#b00" : "#070" }}>
+          {totalDefects} claim(s) (prijs/uren/btw) die de geciteerde bron NIET stelt
+        </span>{" "}
+        · <span style={{ color: "#777" }}>{totalDebt} bron(nen) niet uitleesbaar/niet vastgelegd</span>
         . “Open punten” zijn uitsluitend <em>nog niet onderzocht</em> (quad-state{" "}
         <code>unknown</code>) — “niet gepubliceerd” is een bevinding, geen gat.
       </p>
@@ -116,15 +122,32 @@ export default function Qa() {
               <p style={{ margin: "0.4rem 0", color: "#070" }}>geen open gaten</p>
             )}
 
-            {/* Een claim — prijs, urental of btw-behandeling — waarvan de geciteerde
-                pagina niets van dien aard toont: geen gat in een quad maar een defect
-                in de BRONVERWIJZING — het record oogt compleet en het archief draagt
-                er niets van. Rood, apart van de gaten-lijst. */}
-            {qa.provenance.length > 0 && (
+            {/* TWEE LIJSTEN, want het zijn twee verschillende dingen — en juist dát
+                onderscheid ging verloren toen deze bevindingen als platte strings
+                aankwamen. ROOD: de gearchiveerde pagina STELT de claim niet (prijs,
+                urental of btw-behandeling) — een defect in ONZE bronverwijzing over een
+                MET NAAM GENOEMD BEDRIJF; het record oogt compleet en het archief draagt
+                er niets van. GRIJS: we konden het bewijs niet openen (nooit gearchiveerd,
+                geen bron, onleesbaar artefact) — ons eigen archiefwerk, geen bewering
+                over wie dan ook. Ze optellen zou het eerste in het tweede begraven. */}
+            {qa.provenance.filter(isDefect).length > 0 && (
               <ul style={{ margin: "0.4rem 0", color: "#b00" }}>
-                {qa.provenance.map((g, i) => (
-                  <li key={i}>{g}</li>
+                {qa.provenance.filter(isDefect).map((f, i) => (
+                  <li key={i}>
+                    [{f.check}/{f.granularity}] {f.message}
+                  </li>
                 ))}
+              </ul>
+            )}
+            {qa.provenance.filter((f) => !isDefect(f)).length > 0 && (
+              <ul style={{ margin: "0.4rem 0", color: "#777" }}>
+                {qa.provenance
+                  .filter((f) => !isDefect(f))
+                  .map((f, i) => (
+                    <li key={i}>
+                      [{f.check}/{f.reason}] {f.message}
+                    </li>
+                  ))}
               </ul>
             )}
 
