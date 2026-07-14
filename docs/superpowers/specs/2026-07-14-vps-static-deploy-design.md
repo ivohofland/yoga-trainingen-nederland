@@ -143,7 +143,10 @@ Nothing in `CLAUDE.md` or CI invokes it; leaving it would leave a script that li
 ### 6.3 The correction address
 
 The personal address is retired in favour of **`research@ivohofland.nl`**, on every tracked
-line (8 lines, 4 files). The site is unpublished, so it goes before it is ever exposed to a
+line that held it: the constant, both issue templates, the tests, and this spec — which
+became one of them the moment it was written. No count is given here on purpose: a count
+in prose goes stale silently, and the guard test (below) is the one that cannot. The site
+is unpublished, so the address goes before it is ever exposed to a
 harvester; the role address that replaces it can be filtered, forwarded or retired without
 touching a person's inbox. The old address is not written out here either — a guard test
 (Task 1) holds that it appears in no tracked file, and a spec that printed it would fail the
