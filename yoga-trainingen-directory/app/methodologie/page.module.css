@@ -25,6 +25,33 @@
   margin: 0 0 18px;
 }
 
+/* Lists read like the prose around them — same size, same rhythm.
+   There were no list rules here at all: the methodology has no lists, so `li` quietly
+   inherited the browser default (a tight line-height and no gap between items) and nobody
+   saw it until /correcties put a numbered procedure on the page. Its steps came out packed
+   against each other while the paragraph above them breathed. Same 17px/1.65 as `p`, and a
+   real gap between items, because each step is its own thought. */
+.prose ul,
+.prose ol {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink);
+  margin: 0 0 18px;
+  padding-left: 24px;
+}
+
+.prose li {
+  margin-bottom: 10px;
+}
+
+.prose li:last-child {
+  margin-bottom: 0;
+}
+
+.prose li > p {
+  margin-bottom: 8px;
+}
+
 .prose strong {
   font-weight: 600;
 }
