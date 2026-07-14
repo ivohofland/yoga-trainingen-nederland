@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "npm run gen-schema && npm run validate && npm run provenance && npm test && npm run test:ci && npm run export-json && next build",
-    "start": "next start",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "test:ci": "PROVENANCE_WITHHOLD_BODIES=1 tsx --test \"src/**/*.test.ts\"",
     "validate": "tsx scripts/validate.ts",

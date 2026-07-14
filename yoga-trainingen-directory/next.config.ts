@@ -28,6 +28,21 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const nextConfig: NextConfig = {
   pageExtensions: [...(isProduction ? [] : ["dev.tsx"]), "tsx", "ts", "jsx", "js"],
+  // A STATIC EXPORT, because there is no server in this site. No route handlers, no server
+  // actions, no middleware, no next/image: every page is prerendered, and the correction
+  // "form" is a GitHub issue form and a mailto (src/lib/corrections.ts). So `next build`
+  // writes out/, nginx serves those bytes, and the deploy has no app process to restart —
+  // which is also why deploy/deploy.sh needs no sudo at all.
+  //
+  // `next start` does not work under this and is not supposed to: the `start` script is
+  // gone from package.json. Local preview is `npm run dev`.
+  output: "export",
+  // TRAILING SLASHES, so that a STOCK static vhost serves every route. The export then
+  // writes `aanbieder/<id>/index.html` rather than `aanbieder/<id>.html`, and CloudPanel's
+  // default `try_files $uri $uri/ =404` finds it. Without this, /aanbieder/<id> is a 404
+  // until someone hand-edits `$uri.html` into the vhost — and the nginx config we never
+  // have to write is the nginx config that can never drift from this repo.
+  trailingSlash: true,
   // TEMPORARY, LOCAL, NOT COMMITTED — see the report. The default 60s per-page
   // guard trips on a machine whose CPU is saturated by unrelated processes; it is
   // a wall-clock guard, not a correctness one.
