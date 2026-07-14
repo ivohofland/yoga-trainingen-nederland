@@ -1,0 +1,55 @@
+name: Deploy
+
+# Runs ONLY after the `validate` workflow succeeds on main.
+#
+# The workflow name here must match `name:` in validate.yml exactly. ivohofland.dev's copy
+# of this file watches a workflow called "CI"; ours is called "validate", and a typo here
+# does not error — the trigger simply never fires, and the site quietly stops deploying.
+on:
+  workflow_run:
+    workflows: ["validate"]
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      # Stays green and no-ops until the DEPLOY_WEBHOOK_* secrets are configured, so this
+      # file can land before the server exists.
+      - name: Check deploy config
+        id: cfg
+        env:
+          URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+        run: |
+          if [ -z "${URL:-}" ]; then
+            echo "DEPLOY_WEBHOOK_URL not set — skipping (add the webhook secrets to enable)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # A signed HTTPS ping, and nothing else. The server pulls itself; there is no inbound
+      # SSH and no IP to whitelist. The only inbound is this POST on 443, authenticated by
+      # an HMAC-SHA256 signature the listener verifies before it runs anything.
+      - name: Trigger deploy webhook
+        if: ${{ steps.cfg.outputs.ready == 'true' }}
+        env:
+          URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
+        run: |
+          body='{"ref":"refs/heads/main"}'
+          sig="sha256=$(printf '%s' "$body" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $NF}')"
+          code=$(curl -sS -X POST "$URL" \
+            --max-time 30 \
+            -H 'Content-Type: application/json' \
+            -H "X-Hub-Signature-256: $sig" \
+            --data "$body" \
+            -o /dev/null -w '%{http_code}')
+          echo "webhook responded: HTTP $code"
+          test "$code" = "200"
