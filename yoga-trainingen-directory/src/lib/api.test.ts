@@ -16,6 +16,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { loadDataset } from "./loader";
 import { toApiPayload } from "./api";
+import { ourWorking } from "./derive";
 import { toListingRows, toProviderView } from "./presenters";
 import { priceAmountIsOurGap, priceQuad } from "./rules";
 import { saysNotPublished, quadClass } from "./quad";
@@ -72,7 +73,7 @@ test("API: derived.price_state IS what the listing renders and what the record p
       // The same rule governs the €/contactuur the API ships.
       assert.equal(program.derived.pph_state, listing.pphState,
         `${provider.id}/${program.id}: the API and the listing disagree about the €/contactuur state`);
-      assert.equal(program.derived.pph, listing.pph,
+      assert.equal(program.derived.pph.value, listing.pph,
         `${provider.id}/${program.id}: the API and the listing publish different €/contactuur figures`);
       assert.equal(program.derived.price_band, listing.priceBand);
       checked++;
@@ -104,11 +105,15 @@ test("API: the exported total_price is OUR arithmetic, flagged as ours, and neve
   const four = blikopener.programs.find((p) => p.id === "hatha-raja-opleiding")!;
   assert.equal(four.price.amount_eur, 1290, "guard: the record holds their per-year figure");
   assert.equal(four.derived.total_price.value, 5160, "4 × € 1.290 is € 5.160");
-  assert.equal(four.derived.total_price.derived, true,
-    "a consumer told `derived: false` would render our multiplication as de Blikopener's own price");
-  // The working, so a consumer can show it. (nl-NL formats € with a non-breaking space,
-  // so the comparison normalises it rather than pinning an invisible character.)
-  assert.equal(four.derived.total_price.caveat?.replace(/ /g, " "), "onze berekening: 4 × € 1.290");
+  assert.equal(four.derived.total_price.kind, "computed",
+    "a consumer told `kind: \"published\"` would render our multiplication as de Blikopener's own price");
+  // THE WORKING — and it exists ONLY on the `computed` variant, which is the whole design.
+  // A consumer that prints `working` whenever it finds one is now correct BY ACCIDENT; under
+  // `{value, derived, caveat}` the same laziness (destructure `{value}`, ignore the flag) printed
+  // our multiplication as the school's own price. The safe path is now the lazy path.
+  // (nl-NL formats € with a non-breaking space, so this normalises it rather than pinning an
+  // invisible character.)
+  assert.equal(ourWorking(four.derived.total_price)?.replace(/ /g, " "), "onze berekening: 4 × € 1.290");
 
   // THE THIRD DERIVATION (spec v0.8): a SUM of unequal parts, and it is ours too. Adhouna
   // prices its Yin XL as Deel I € 1.420 + Deel II € 1.305 and states no total; € 2.725 was
@@ -135,12 +140,12 @@ test("API: the exported total_price is OUR arithmetic, flagged as ours, and neve
   const yinxl = adhouna.programs.find((p) => p.id === "200-yin-xl")!;
   assert.equal(yinxl.price.amount_eur, null, "guard: the record holds no whole-course amount, because they publish none");
   assert.equal(yinxl.derived.total_price.value, 2725, "€ 1.420 + € 1.305 is € 2.725");
-  assert.equal(yinxl.derived.total_price.derived, true,
-    "a consumer told `derived: false` would render our ADDITION as Adhouna's own published price");
+  assert.equal(yinxl.derived.total_price.kind, "computed",
+    "a consumer told `kind: \"published\"` would render our ADDITION as Adhouna's own published price");
   // The working, so a consumer can show it — asserted on its PARTS rather than as one
   // long literal: nl-NL puts a NON-BREAKING space after the €, and pinning an invisible
   // character is how this assertion would fail for the wrong reason.
-  const sum = yinxl.derived.total_price.caveat ?? "";
+  const sum = ourWorking(yinxl.derived.total_price) ?? "";
   assert.match(sum, /onze optelling/, "the working must say whose sum it is");
   assert.match(sum, /1\.420/);
   assert.match(sum, /1\.305/);
@@ -150,7 +155,11 @@ test("API: the exported total_price is OUR arithmetic, flagged as ours, and neve
   // pointing the other way, and no smaller.
   const wahe = PAYLOAD.providers.find((p) => p.id === "wahe")!;
   const vinyasa = wahe.programs.find((p) => p.id === "200-vinyasa-ayurveda")!;
-  assert.deepEqual(vinyasa.derived.total_price, { value: 2495, derived: false, caveat: null });
+  assert.deepEqual(vinyasa.derived.total_price, { kind: "published", value: 2495 });
+  // NO `working` KEY AT ALL — not `working: null`, no key. The key set IS the claim, and a
+  // consumer holding this object cannot be told that our arithmetic produced it.
+  assert.ok(!("working" in vinyasa.derived.total_price),
+    "a school's own published price shipped with a `working` — our arithmetic's clothing on their fact");
 });
 
 test("API: the exported total_path_cost is what it costs to QUALIFY — and it is always ours", () => {
@@ -162,9 +171,9 @@ test("API: the exported total_path_cost is what it costs to QUALIFY — and it i
   const docent = enschede.programs.find((p) => p.id === "docentenopleiding-raja")!;
   assert.equal(docent.derived.total_price.value, 4590, "guard: the course itself");
   assert.equal(docent.derived.total_path_cost.value, 6180, "…and € 1.590 more to be allowed to start it");
-  assert.equal(docent.derived.total_path_cost.derived, true,
+  assert.equal(docent.derived.total_path_cost.kind, "computed",
     "the PATH is never the school's own figure, even where the course price is — € 6.180 is on no page of theirs");
-  assert.match(docent.derived.total_path_cost.caveat ?? "", /Basisopleiding/);
+  assert.match(ourWorking(docent.derived.total_path_cost) ?? "", /Basisopleiding/);
 
   const meester = enschede.programs.find((p) => p.id === "meesteropleiding-raja")!;
   assert.equal(meester.derived.total_path_cost.value, 10770, "three links: Basis → Docenten → Meester");
@@ -174,7 +183,10 @@ test("API: the exported total_path_cost is what it costs to QUALIFY — and it i
   const wahe = PAYLOAD.providers.find((p) => p.id === "wahe")!;
   const vinyasa = wahe.programs.find((p) => p.id === "200-vinyasa-ayurveda")!;
   assert.equal(vinyasa.derived.total_path_cost.value, vinyasa.derived.total_price.value);
-  assert.equal(vinyasa.derived.total_path_cost.caveat, null, "no gate, no working: there is nothing to show");
+  assert.equal(vinyasa.derived.total_path_cost.kind, "no_gates");
+  assert.equal(ourWorking(vinyasa.derived.total_path_cost), null,
+    "no gate, no working: there is nothing to show, and printing an 'onze optelling' over a school's " +
+    "own published price would manufacture a second figure out of one number");
 
   // And, like every derived value: nowhere in data/ (§6).
   const yaml = fs.readFileSync(path.join(process.cwd(), "data/providers/de-yogaschool-enschede.yaml"), "utf8");
@@ -209,18 +221,26 @@ test("API: the exported total_hours says whose figure it is — ours or the scho
   const raja = enschede.programs.find((p) => p.id === "docentenopleiding-raja")!;
   assert.equal(raja.hours_claimed.total, null, "guard: the raw field a naive consumer would read is null");
   assert.equal(raja.derived.total_hours.value, 600, "360 + 240 is 600");
-  assert.equal(raja.derived.total_hours.derived, true,
-    "a consumer told `derived: false` would render OUR addition as de Yogaschool's published total");
-  assert.match(raja.derived.total_hours.caveat ?? "", /onze optelling/,
+  assert.equal(raja.derived.total_hours.kind, "computed",
+    "a consumer told `kind: \"published\"` would render OUR addition as de Yogaschool's published total");
+  assert.match(ourWorking(raja.derived.total_hours) ?? "", /onze optelling/,
     "the working must ship with the number, so a consumer can show it");
   // The ratio a consumer compares on is over the DERIVED total — not null, as the raw
   // field would have made it.
-  assert.equal(raja.derived.contact_ratio, 0.6);
+  assert.equal(raja.derived.contact_ratio.value, 0.6);
+  // AND IT IS OURS. It shipped as a bare `0.6` with no flag and no working — a figure no school
+  // publishes, over a denominator that is ITSELF our addition (360 + 240). Our arithmetic over our
+  // arithmetic, handed to every consumer as a plain fact about a named business.
+  assert.equal(raja.derived.contact_ratio.kind, "computed",
+    "no school publishes a contact ratio — there is no `published` variant, and there must not be");
+  assert.match(ourWorking(raja.derived.contact_ratio) ?? "", /onze berekening/);
 
   const wahe = PAYLOAD.providers.find((p) => p.id === "wahe")!;
   const pathway = wahe.programs.find((p) => p.id === "500-pathway")!;
-  assert.deepEqual(pathway.derived.total_hours, { value: 500, derived: false, caveat: null },
+  assert.deepEqual(pathway.derived.total_hours, { kind: "published", value: 500 },
     "Wahé PUBLISHES its 500 — the API must hand it to a consumer as the school's own figure");
+  assert.ok(!("working" in pathway.derived.total_hours),
+    "the school's own figure shipped with a working — the one mark that says a number is ours");
 });
 
 test("API: every programme that publishes a price we do not hold is OUR gap in the JSON too", () => {
@@ -404,4 +424,62 @@ test("API: the export is a rendering, not a source — nothing derived is writte
       assert.ok(!("derived" in program), `${p.id}/${program.id}: a derived block reached the loaded record`);
     }
   }
+});
+
+test("API: data_current_as_of is the NEWEST last_verified — never the oldest", () => {
+  // ZERO ASSERTIONS. Change `.sort().at(-1)` to `.at(0)` and the whole suite stayed green,
+  // while the API told every consumer the corpus was no fresher than its STALEST record —
+  // understating our own work, and pinning any cache key a consumer builds on it to a date
+  // that stops moving the moment we re-verify anything.
+  //
+  // NOTE THE ASYMMETRY WITH THE SITE, which is deliberate and is why both need a test. The
+  // site's freshness line shows BOTH ends and anchors on the OLDEST, because "records
+  // geverifieerd jul 2026" printed from a max claims for 48 records what is true of two.
+  // This field answers a different question — "how fresh is the DATA in this file?" — and
+  // only the newest can answer it. The two are opposite by design, so each one's test has to
+  // pin its own direction; the site has had one since that bug, and its API twin had none.
+  const all = providers.map((p) => p.last_verified).sort();
+  const oldest = all[0];
+  const newest = all.at(-1)!;
+  assert.notEqual(oldest, newest,
+    "every record shares one last_verified — the two directions are indistinguishable and this test " +
+    "would prove nothing");
+
+  assert.equal(PAYLOAD.data_current_as_of, newest,
+    `the API dates the corpus at ${PAYLOAD.data_current_as_of}. The newest record is ${newest}.`);
+  assert.notEqual(PAYLOAD.data_current_as_of, oldest,
+    "the API reports the corpus as no fresher than its OLDEST record — every consumer is told the data " +
+    "is months more stale than it is, and re-verifying a record moves nothing");
+
+  // ...and it is a function of the DATA, never of the clock: unchanged data must re-export
+  // byte-identically, or the committed JSON churns on every build.
+  assert.equal(toApiPayload(providers).data_current_as_of, PAYLOAD.data_current_as_of);
+  // An empty corpus has no date at all — not today's, and not the epoch.
+  assert.equal(toApiPayload([]).data_current_as_of, null);
+});
+
+test("API: multistyle is published per programme, and a single-style school is never 'allround'", () => {
+  // It ships as a bare boolean about a named business, and it had no assertion anywhere.
+  // `specific.length >= 1` publishes EVERY single-style programme in the corpus as
+  // "allround/multistyle" — to every consumer, about every Iyengar-only and Ashtanga-only
+  // school in the Netherlands. (The rule itself is truth-tabled in loader.test.ts; this pins
+  // that what the API ships IS that rule, on every programme, and that both directions occur.)
+  let multi = 0;
+  let single = 0;
+  for (const provider of PAYLOAD.providers) {
+    for (const program of provider.programs) {
+      const tags = program.styles ?? [];
+      const specific = tags.filter((t) => t !== "other" && t !== "own_method");
+      const expected = tags.includes("multistyle") || specific.length >= 2;
+      assert.equal(program.derived.multistyle, expected,
+        `${provider.id}/${program.id}: the API publishes multistyle=${program.derived.multistyle} for a ` +
+        `programme whose styles are [${tags.join(", ")}] — a claim about what a named business teaches`);
+      if (expected) multi++;
+      else single++;
+    }
+  }
+  assert.ok(multi > 0, "no programme in the export is multistyle — that direction is untested");
+  assert.ok(single > 0,
+    "every programme in the export is multistyle — which is exactly what the `>= 1` mutation produces, " +
+    "and this test could not tell the difference");
 });

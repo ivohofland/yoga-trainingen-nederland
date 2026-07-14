@@ -17,13 +17,83 @@
  * straight from them reconstructed, from scratch, the exact bug this project
  * spent a release eliminating (see rules.ts, priceQuad).
  */
-import type { Program, Provider } from "../schema";
+import type { PricePeriod, Program, Provider } from "../schema";
 // TYPE-ONLY, and that is what keeps this module `node:*`-free: `import type` is erased
 // at compile time, so provenance.ts's `node:fs`/`pdftotext` never enter the import graph
 // of the client filter island or the JSON export. The finding stays TYPED all the way to
 // /qa — see ProviderQa.provenance on why flattening it to strings was the bug.
 import type { ProvenanceFinding } from "./provenance";
 import { nl } from "./strings";
+
+/**
+ * WHOSE NUMBER IS THIS? — the question every derived figure in this module must answer,
+ * and the reason they are all discriminated unions rather than `{ value, derived }`.
+ *
+ * A number published about a named business is either THEIR CLAIM (fact ink, cited) or
+ * VISIBLY OUR ARITHMETIC (muted, uncited, working shown). Spec §6 says so in as many
+ * words, and v0.5, v0.6, v0.8 and v0.9 each exist because a number crossed that line.
+ *
+ * `{ value: number | null; caveat?: string; derived: boolean }` — the old shape — made
+ * the two indistinguishable to the TYPE SYSTEM. Three independent fields, eight
+ * combinations, four of them legal, and every one of the illegal four compiled:
+ *
+ *   { value: 5160, derived: false }                → OUR multiplication, called de
+ *                                                    Blikopener's published price.
+ *   { value: 2495, derived: true, caveat: "…" }    → Wahé's OWN figure, called ours.
+ *   { value: 5160, derived: true }                 → ours, with NO working — and the
+ *                                                    presenter, needing a caveat to print,
+ *                                                    SILENTLY DROPPED THE ROW.
+ *   { value: null,  derived: true, caveat: "…" }   → a working for a number that is not there.
+ *
+ * And worst of all on the wire: a consumer that destructures `{ value }` and ignores
+ * `derived` prints our multiplication as the school's own price. The README warned them
+ * in prose. Prose is not a type, and the lazy path was the wrong path.
+ *
+ * The variants below have DIFFERENT KEY SETS. `working` — the shown arithmetic — exists
+ * on the `computed` variant AND NOWHERE ELSE, and it is REQUIRED there. So:
+ *
+ *   - "ours, with no working" does not compile;
+ *   - "theirs, with a working" does not compile;
+ *   - a consumer that prints `working` whenever it is present is CORRECT BY ACCIDENT —
+ *     the inverse of the old shape, where the accident was a falsehood.
+ *
+ * `value` is present on every variant (null where there is none) so that a caller asking
+ * only "is there a comparable figure?" needs no switch — that question has one honest
+ * answer everywhere. Asking "is it MINE to print in their ink?" requires the `kind`.
+ */
+
+/** A figure we computed, and the working that lets a reader check it. */
+interface Computed {
+  kind: "computed";
+  value: number;
+  /** THE WORKING — "onze berekening: 4 × € 1.290", "onze optelling: 360 + 240". Required:
+   *  a number of ours that cannot be checked is a number that may as well be theirs. */
+  working: string;
+}
+
+/** A figure the provider PUBLISHES. Fact ink, cited to the page that prints it. */
+interface Published {
+  kind: "published";
+  value: number;
+}
+
+/**
+ * THE WORKING, IF THE FIGURE IS OURS — and `null` if it is theirs, or if there is no
+ * figure at all. The one question every surface must ask before choosing an ink, asked in
+ * one place.
+ *
+ * Structurally typed, so it reads the wire shapes (api.ts) as well as the ones above: the
+ * export is a rendering of these very unions, and a second, subtly different accessor for
+ * it is exactly the duplication that lets two surfaces disagree about whose number a
+ * number is.
+ *
+ * `working` exists ONLY on `kind: "computed"`, and is REQUIRED there — so this is total,
+ * and a caller that simply prints whatever it returns cannot mislabel a school's own
+ * published figure as our arithmetic, or ours as theirs.
+ */
+export function ourWorking(t: { kind: string; working?: string }): string | null {
+  return t.kind === "computed" ? (t.working ?? null) : null;
+}
 
 /**
  * THE PUBLISHED PRICES OF A PROGRAMME'S COMPOSED PARTS — all of them, or NONE.
@@ -87,13 +157,23 @@ function composedPartPrices(provider: Provider, moduleIds: string[] | undefined)
  * total that silently absorbed some of it would be neither their figure nor a
  * reproducible one of ours. It renders ALONGSIDE, as it already does.
  */
-export interface TotalPrice {
-  value: number | null;
-  /** Why the total is not comparable, or how we arrived at it. */
-  caveat?: string;
-  /** True → we did the arithmetic. The number is OURS and must be labelled so. */
-  derived: boolean;
-}
+export type TotalPrice =
+  /** THEIRS — `period: total`. The figure they publish IS the total (53 of 54 priced
+   *  programmes). Fact ink, cited to the page that prints it. */
+  | Published
+  /** OURS — derivation 2 (× periods) or 3 (Σ parts). Muted, uncited, working shown. */
+  | Computed
+  /**
+   * They publish an AMOUNT, and nothing that makes it a whole course. A FINDING about
+   * them, never a gap in us: `periods: null` means "we looked; they do not say".
+   *
+   * NOT BANDABLE, NOT SORTABLE, NOT RANKABLE. Manufacturing a count to produce a
+   * comparable figure is the exact fabrication v0.5 exists to prevent — and ranking the
+   * yearly fee AS a total is the bug it exists to correct.
+   */
+  | { kind: "no_comparable_total"; value: null; period: PricePeriod; reason: string }
+  /** No amount at all, and none derivable from parts. */
+  | { kind: "no_price"; value: null };
 
 export function totalPrice(provider: Provider, program: Program): TotalPrice {
   const { amount_eur: amount, period, periods } = program.price;
@@ -104,25 +184,40 @@ export function totalPrice(provider: Provider, program: Program): TotalPrice {
   // `free_assembly` path (QUENO) is a menu, not a fixed sum, and adding its modules up
   // would invent a total for a training nobody buys that way.
   if (amount == null) {
-    if (period !== "per_module") return { value: null, derived: false };
+    if (period !== "per_module") return { kind: "no_price", value: null };
     const parts = composedPartPrices(provider, program.composition?.modules);
-    if (parts == null) return { value: null, derived: false };
+    // An unpriced part → an incomplete sum → a GUESS. Not "no price": they price per
+    // module and print some of the modules' prices, so calling them a non-publisher of
+    // prices would be false. What is missing is the comparable TOTAL.
+    if (parts == null) {
+      return {
+        kind: "no_comparable_total",
+        value: null,
+        period,
+        reason: nl.totalPriceIncompleteSum,
+      };
+    }
     return {
+      kind: "computed",
       value: Math.round(parts.reduce((a, b) => a + b, 0) * 100) / 100,
-      caveat: nl.totalPriceSum(parts.map(formatEuroForCaveat)),
-      derived: true,
+      working: nl.totalPriceSum(parts.map(formatEuroForCaveat)),
     };
   }
 
   // The common case, and the schema's default: the figure they publish IS the total.
-  if (period === "total") return { value: amount, derived: false };
+  if (period === "total") return { kind: "published", value: amount };
   if (periods == null) {
-    return { value: null, caveat: nl.totalPriceNoPeriodCount(nl.pricePeriod[period]), derived: true };
+    return {
+      kind: "no_comparable_total",
+      value: null,
+      period,
+      reason: nl.totalPriceNoPeriodCount(nl.pricePeriod[period]),
+    };
   }
   return {
+    kind: "computed",
     value: Math.round(amount * periods * 100) / 100,
-    caveat: nl.totalPriceWorking(periods, formatEuroForCaveat(amount)),
-    derived: true,
+    working: nl.totalPriceWorking(periods, formatEuroForCaveat(amount)),
   };
 }
 
@@ -157,46 +252,46 @@ export function totalPrice(provider: Provider, program: Program): TotalPrice {
  * for it would publish a total for a route that does not exist. `seen` here only guarantees
  * termination — the record never loads.
  */
-export interface TotalPathCost {
-  value: number | null;
-  /** The working, always — the path total is ours in every case. */
-  caveat?: string;
-  /** Always true. Present so the shape matches TotalPrice/TotalHours and no consumer has
-   *  to remember which of the three is exempt from the labelling rule. None is. */
-  derived: true;
-  /** The purchasable gates, flattened, in the order the student must buy them. Empty →
-   *  the path IS the programme, and no surface may render a second row (see presenters). */
-  gates: { label: string; total: number | null }[];
+/** A training you must BUY before you may start this one. `total` is its whole cost. */
+export interface Gate {
+  label: string;
+  total: number | null;
 }
+
+export type TotalPathCost =
+  /**
+   * NOTHING MUST BE BOUGHT FIRST — 76 of 78 programmes. The path cost IS the programme's
+   * own total, whatever that total's provenance, and this variant carries NO `working`
+   * precisely because there is nothing to show: printing "onze optelling: € 2.495" over a
+   * school's own published price would manufacture a second figure out of one number.
+   * Presenters render NO second row here, and the empty `gates` is what they key that off.
+   */
+  | { kind: "no_gates"; value: number | null; gates: [] }
+  /** OURS — always, even where the programme's own price is the school's published figure.
+   *  No page of de Yogaschool's prints € 6.180. Muted, uncited, working shown. */
+  | (Computed & { gates: Gate[] })
+  /** A required link's price is not in our record. An incomplete path is a GUESS, and a
+   *  guessed comparison would be published in a band and a sort order beside real ones. */
+  | { kind: "incomplete"; value: null; reason: string; gates: Gate[] };
 
 export function totalPathCost(provider: Provider, program: Program): TotalPathCost {
   const gates = purchasableGates(provider, program, new Set([program.id]));
   const own = totalPrice(provider, program);
 
-  if (gates.length === 0) {
-    // No gate to buy: the path cost IS the total price. It still reports `derived: true` —
-    // this function's number is always ours — but presenters render NO second row, because
-    // there is no second number and printing one would relabel their total as our sum.
-    return { value: own.value, derived: true, gates };
+  // No gate to buy: the path cost IS the total price, and it is not a second figure.
+  if (gates.length === 0) return { kind: "no_gates", value: own.value, gates: [] };
+
+  if (own.value == null || gates.some((g) => g.total == null)) {
+    return { kind: "incomplete", value: null, reason: nl.totalPathCostIncomplete, gates };
   }
 
-  const missing = own.value == null || gates.some((g) => g.total == null);
-  if (missing) {
-    return {
-      value: null,
-      caveat: nl.totalPathCostIncomplete,
-      derived: true,
-      gates,
-    };
-  }
-
-  const total = gates.reduce((sum, g) => sum + (g.total ?? 0), own.value ?? 0);
+  const total = gates.reduce((sum, g) => sum + (g.total ?? 0), own.value);
   return {
+    kind: "computed",
     value: Math.round(total * 100) / 100,
-    caveat: nl.totalPathCostWorking(
+    working: nl.totalPathCostWorking(
       gates.map((g) => `${g.label} ${formatEuroForCaveat(g.total ?? 0)}`),
     ),
-    derived: true,
     gates,
   };
 }
@@ -210,12 +305,8 @@ export function totalPathCost(provider: Provider, program: Program): TotalPathCo
  * integrity check long before any surface calls this, so the truncated result is never
  * rendered — but a stack overflow inside a presenter would be a worse way to find out.
  */
-function purchasableGates(
-  provider: Provider,
-  program: Program,
-  seen: Set<string>,
-): { label: string; total: number | null }[] {
-  const out: { label: string; total: number | null }[] = [];
+function purchasableGates(provider: Provider, program: Program, seen: Set<string>): Gate[] {
+  const out: Gate[] = [];
   for (const pre of program.prerequisite ?? []) {
     if (pre.kind !== "program") continue; // experience / other: real gates, no euros
     const target = pre.program ? provider.programs.find((p) => p.id === pre.program) : undefined;
@@ -277,38 +368,57 @@ function formatEuroForCaveat(n: number): string {
  * published numbers. `supervised_teaching_practice` is a SUBSET of contact hours, not a
  * third term — adding it in would double-count the very hours it describes.
  */
-export interface TotalHours {
-  value: number | null;
-  /** How we arrived at the total ("onze optelling: 360 + 240"). Only when we added. */
-  caveat?: string;
-  /** True → we added. The number is OURS and must be labelled so. */
-  derived: boolean;
-}
+export type TotalHours =
+  /** THEIRS — `hours_claimed.total` is set. Wahé publishes its 500 in as many words. */
+  | Published
+  /** OURS — contact + zelfstudie, which de Yogaschool publishes separately and never sums. */
+  | Computed
+  /** No total, and not both parts. There is nothing to add, and inventing a figure is the
+   *  fabrication this field exists to stop. */
+  | { kind: "no_total"; value: null };
 
 export function totalHours(program: Program): TotalHours {
   const { total, contact, self_study: selfStudy } = program.hours_claimed;
   // The common case: they publish the total. It is theirs, and it stays theirs.
-  if (total != null) return { value: total, derived: false };
-  if (contact == null || selfStudy == null) return { value: null, derived: false };
+  if (total != null) return { kind: "published", value: total };
+  if (contact == null || selfStudy == null) return { kind: "no_total", value: null };
   return {
+    kind: "computed",
     value: contact + selfStudy,
-    caveat: nl.totalHoursWorking(contact, selfStudy),
-    derived: true,
+    working: nl.totalHoursWorking(contact, selfStudy),
   };
 }
 
-export interface PricePerContactHour {
-  value: number | null;
-  /** Why no value, or why comparison needs a flag. */
-  caveat?: string;
-}
-
 /**
- * Price ÷ contact hours — over the WHOLE-COURSE price, never a per-period one
- * (spec §6: "Price bands, price sorting and €/contactuur all consume `total_price`,
- * never a bare `amount_eur`"). Dividing a yearly fee by the hours of a four-year
- * training understates the rate by a factor of four.
+ * €/CONTACTUUR — PRICE ÷ CONTACT HOURS, AND IT IS OURS ON EVERY SINGLE PROGRAMME.
+ *
+ * There is no `published` variant here, and that absence is the correction (spec §6, and
+ * KeyValueRow's own docblock: *"a fact read off a provider's page is theirs, not ours"*).
+ * €/contactuur is read off NOBODY's page. Not one school in the corpus publishes it; it
+ * is the one figure on this site that no provider's source can contradict, because no
+ * provider's source contains it — and for a year it rendered on ~40 record pages through
+ * <Quad>, in the ink reserved for the schools' own claims, one row below their real
+ * prices. On a `period: per_year` provider it is our arithmetic OVER our arithmetic:
+ * (€ 1.530 × 3) ÷ 360.
+ *
+ * So the only variants are "we computed it" and "we could not". Whichever it is, it is
+ * never theirs, and the type no longer lets a surface believe otherwise.
+ *
+ * THE NUMERATOR IS `totalPrice`, never a bare `amount_eur` (spec §6: "price bands, price
+ * sorting and €/contactuur all consume `total_price`"). Dividing a yearly fee by the hours
+ * of a four-year training understates the rate by a factor of four.
+ *
+ * NOT the PATH cost, deliberately: that buys another course's hours too, and € 6.180 ÷ 360
+ * would put a numerator including the Basisopleiding over a denominator that excludes it.
+ * The only honest ratio is price ÷ hours of the same course.
  */
+export type PricePerContactHour =
+  /** OURS. `caveat` is the COMPARABILITY guard (what the price includes/excludes) — a
+   *  different thing from `working`, which is the arithmetic itself. */
+  | (Computed & { caveat: string | null })
+  /** No comparable price, or no contact-hour figure. `caveat` names which. */
+  | { kind: "not_computable"; value: null; caveat: string | null };
+
 export function pricePerContactHour(provider: Provider, program: Program): PricePerContactHour {
   const total = totalPrice(provider, program);
   const contact = program.hours_claimed.contact;
@@ -320,18 +430,42 @@ export function pricePerContactHour(provider: Provider, program: Program): Price
     // A per-period price with no period count: we hold an amount, but not a comparable
     // one. Saying "prijs niet gepubliceerd" here would be a false finding about a
     // provider who publishes a price — it is their TOTAL that does not exist.
-    if (program.price.amount_eur != null) return { value: null, caveat: total.caveat };
-    return { value: null, caveat: "prijs niet gepubliceerd" };
+    if (program.price.amount_eur != null) {
+      return {
+        kind: "not_computable",
+        value: null,
+        caveat: total.kind === "no_comparable_total" ? total.reason : null,
+      };
+    }
+    return { kind: "not_computable", value: null, caveat: "prijs niet gepubliceerd" };
   }
-  if (contact == null) return { value: null, caveat: "contacturen niet gepubliceerd" };
-  // Comparability guard: includes/excludes change what the price buys.
+  if (contact == null) {
+    return { kind: "not_computable", value: null, caveat: "contacturen niet gepubliceerd" };
+  }
+
+  // THE WORKING. It shows the division — and, where the numerator is ITSELF ours, it
+  // carries that arithmetic too: on de Yogaschool the reader is looking at (3 × € 1.530)
+  // ÷ 360, and neither half of that appears on any page they publish.
+  const working = [
+    nl.pphWorking(formatEuroForCaveat(total.value), contact),
+    ourWorking(total),
+  ]
+    .filter((s): s is string => s != null)
+    .join(" ");
+
+  // Comparability guard: includes/excludes change what the price buys, and a residential
+  // price including room and board is not comparable to a studio price excluding
+  // mandatory literature. Kept SEPARATE from the working — the working says how we got
+  // the number, the caveat says what the number is not safe to compare against.
   const caveats: string[] = [];
-  if (total.derived && total.caveat) caveats.push(total.caveat);
   if (program.price.includes) caveats.push(`prijs inclusief: ${program.price.includes}`);
   if (program.price.excludes) caveats.push(`prijs exclusief: ${program.price.excludes}`);
+
   return {
+    kind: "computed",
     value: Math.round((total.value / contact) * 100) / 100,
-    caveat: caveats.length ? caveats.join("; ") : undefined,
+    working,
+    caveat: caveats.length ? caveats.join("; ") : null,
   };
 }
 
@@ -345,19 +479,55 @@ export function pricePerContactHour(provider: Provider, program: Program): Price
  * among the most complete in the corpus, recorded as having no computable contact
  * ratio. The parts ARE the total; only the addition was missing.
  *
- * NOTE the asymmetry with `pricePerContactHour` below, which is deliberate: this ratio
- * has the total as its DENOMINATOR and must therefore consume it; €/contactuur divides
- * by `contact` and never touches a total at all, so v0.6 leaves it untouched.
+ * AND IT IS OURS, LIKE €/CONTACTUUR — which is precisely what consuming `totalHours()`
+ * made unavoidable. On de Yogaschool the denominator is a sum WE performed over two
+ * numbers they publish apart; the ratio is therefore our arithmetic over our arithmetic,
+ * and it shipped in the API as a bare `0.6` with no flag and no working. No school
+ * publishes a contact ratio. There is no `published` variant.
+ *
+ * NOTE the asymmetry with `pricePerContactHour`, which is deliberate: this ratio has the
+ * total as its DENOMINATOR and must therefore consume it; €/contactuur divides by
+ * `contact` and never touches an hours total at all.
  */
-export function contactRatio(program: Program): number | null {
-  const total = totalHours(program).value;
+export type ContactRatio =
+  | Computed
+  | { kind: "no_ratio"; value: null };
+
+export function contactRatio(program: Program): ContactRatio {
+  const hours = totalHours(program);
   const contact = program.hours_claimed.contact;
-  if (total == null || contact == null) return null;
-  return Math.round((contact / total) * 100) / 100;
+  if (hours.value == null || contact == null) return { kind: "no_ratio", value: null };
+  return {
+    kind: "computed",
+    value: Math.round((contact / hours.value) * 100) / 100,
+    // The working carries the DENOMINATOR's provenance too: where the hours total is
+    // itself our addition, a reader deserves to see both steps.
+    working: [nl.contactRatioWorking(contact, hours.value), ourWorking(hours)]
+      .filter((s): s is string => s != null)
+      .join(" "),
+  };
 }
 
-/** "allround/multistyle" is derived, never stored (spec §4.12): the school
- *  self-tagged multistyle, or named >=2 co-equal specific styles. */
+/**
+ * "ALLROUND/MULTISTYLE" — DERIVED, NEVER STORED (spec §4.12), and it ships to every API
+ * consumer as a bare boolean about a named business.
+ *
+ * TWO ways to be true, and they are not the same statement:
+ *
+ *   1. THE SCHOOL SELF-TAGS IT. The `multistyle` tag records THEIR label ("multistyle",
+ *      "allround") — their word, not our conclusion.
+ *   2. THEY NAME ≥2 CO-EQUAL SPECIFIC STYLES. Then "allround" is OUR reading of what they
+ *      list, and `>= 2` is the whole of it: **a school that names ONE style is not
+ *      multistyle.** `>= 1` compiles, passes every test in the suite, and publishes every
+ *      single-style programme in the corpus — every Iyengar-only, every Ashtanga-only
+ *      school — to every consumer as "allround". That is a claim about what a named
+ *      business teaches, and they never made it.
+ *
+ * `other` and `own_method` are NOT specific styles and are filtered out: they name no
+ * tradition, so two of them are not two styles. And a programme that states no style gets
+ * `styles: []` → false. Absence of a statement is not a finding, and never a residual
+ * "allround" (spec §4.12, in as many words).
+ */
 export function isMultistyle(program: Program): boolean {
   const tags = program.styles ?? [];
   if (tags.includes("multistyle")) return true;
@@ -366,17 +536,35 @@ export function isMultistyle(program: Program): boolean {
 }
 
 /**
- * Package price − Σ module prices. `null` if any part is missing (composedPartPrices),
- * and `null` where the programme holds no amount of its own: a bundle discount needs a
+ * THE PACKAGE PRICE − Σ MODULE PRICES, and the package price is the WHOLE-COURSE TOTAL
+ * (spec §6, v0.5) — never the bare `amount_eur`.
+ *
+ * It read the raw field and never consulted `period`, which is the v0.5 bug surviving in
+ * a corner nobody looked at: a modular training priced per studiejaar would have had ONE
+ * YEAR's fee compared against the sum of ALL its modules, and the record page would have
+ * published the package as thousands of euros CHEAPER than its own parts — a comparison,
+ * about a named business, in the school's own ink. Nothing in the corpus is that shape
+ * today, which is exactly why it was invisible; `totalPrice()` is where "what does this
+ * course cost" is answered, and every consumer of that answer must ask it there.
+ *
+ * `null` if any part is missing (composedPartPrices): an incomplete sum is a guess.
+ *
+ * `null` where the programme holds NO AMOUNT OF ITS OWN: a bundle discount needs a
  * BUNDLE, and a training sold only as its parts (Adhouna's Yin XL: `amount_eur: null`,
- * `period: per_module`) has no package price to compare the sum against. Its "delta"
- * would be zero by construction — a fact about our arithmetic, not about the school.
+ * `period: per_module`) has no package price to compare the sum against. Its "delta" would
+ * be zero by construction — a fact about our arithmetic, not about the school.
  */
 export function bundleDelta(provider: Provider, program: Program): number | null {
   const parts = composedPartPrices(provider, program.composition?.modules);
-  if (parts == null || program.price.amount_eur == null) return null;
+  if (parts == null) return null;
+  // No package price of their own → no bundle → no delta. Asked BEFORE the total, because
+  // a per-module total IS the sum of these very parts (derivation 3).
+  if (program.price.amount_eur == null) return null;
+  const bundle = totalPrice(provider, program).value;
+  // A price we cannot make comparable cannot be compared. A yearly fee is not a package price.
+  if (bundle == null) return null;
   const sum = parts.reduce((a, b) => a + b, 0);
-  return Math.round((program.price.amount_eur - sum) * 100) / 100;
+  return Math.round((bundle - sum) * 100) / 100;
 }
 
 /** % of layer-1 fields filled → powers the depth badge honestly. */

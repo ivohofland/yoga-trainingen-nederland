@@ -345,8 +345,11 @@ function priceDisplay(provider: Provider, program: Program): string | null {
  */
 function priceDerivedTotalDisplay(provider: Provider, program: Program): string | null {
   const total = totalPrice(provider, program);
-  if (!total.derived || total.value == null || total.caveat == null) return null;
-  return nl.priceDerivedTotal(formatEuro(total.value), total.caveat);
+  // `kind === "computed"` is the WHOLE question, and the union answers it once: it is the
+  // only variant that carries a `working`, so there is no way to reach this line holding a
+  // figure of theirs, and no way to print one of ours without the arithmetic beside it.
+  if (total.kind !== "computed") return null;
+  return nl.priceDerivedTotal(formatEuro(total.value), total.working);
 }
 
 /**
@@ -361,8 +364,10 @@ function priceDerivedTotalDisplay(provider: Provider, program: Program): string 
  */
 function priceDerivedPathCostDisplay(provider: Provider, program: Program): string | null {
   const path = totalPathCost(provider, program);
-  if (path.gates.length === 0 || path.value == null || path.caveat == null) return null;
-  return nl.priceDerivedPathCost(formatEuro(path.value), path.caveat);
+  // `no_gates` is its OWN variant now, so "there is nothing to buy first" is not a
+  // null-check a maintainer can forget — it is a kind this branch simply does not match.
+  if (path.kind !== "computed") return null;
+  return nl.priceDerivedPathCost(formatEuro(path.value), path.working);
 }
 
 /**
@@ -378,8 +383,11 @@ function priceDerivedPathCostDisplay(provider: Provider, program: Program): stri
  * value) are display copy; those we pass through.
  */
 function pphCaveatFor(provider: Provider, program: Program, state: Quad): string | null {
-  const { value, caveat } = pricePerContactHour(provider, program);
-  if (value != null) return caveat ?? null;
+  const pph = pricePerContactHour(provider, program);
+  // COMPUTED → the note is OUR WORKING, plus the comparability caveat. It used to be the
+  // caveat alone, and on ~40 programmes that meant the one number on this site that NO
+  // provider publishes was printed with nothing whatever to say it was ours.
+  if (pph.kind === "computed") return joinDot([pph.working, pph.caveat]);
   const blocker = pphBlocker(provider, program).field;
   // The v0.5 blocker: they publish a price, and it is not a total. Neither of the two
   // sentences below would be true of them — "geen prijs" is false, "geen contacturen"
@@ -563,31 +571,93 @@ export interface QuadRow {
  * the page would silently drop (it goes in the `note`, which always renders).
  * Neither illegal shape compiles.
  */
-export type KeyValueRow = {
-  label: string;
-  note: string | null;
-  source: SourceRef;
+export type KeyValueRow = { label: string; note: string | null } & (
   /**
-   * OUR ARITHMETIC — the total price we multiplied, the total hours we added (spec §6).
-   * NOT a quad, and that is the point: the value is not a fact we established ABOUT the
-   * provider, it is a sum WE performed over facts they published. The page renders it in
-   * its own visibly non-factual ink instead of handing it to <Quad>, which would print
-   * it in the same colour as the school's own claims — a figure de Blikopener and de
-   * Yogaschool have never stated, wearing their colours.
-   *
-   * The row still carries a `state`, because the row still has to say when there is no
-   * derivable total at all (de Blikopener with no period count: a FINDING about them).
-   * `derived` only ever governs the ink of a value, never whether one exists.
-   *
-   * Absent on every other row — a fact read off a provider's page is theirs, not ours.
+   * THEIRS — a fact read off the provider's page, in fact ink, with the citation that
+   * backs it. `source` is REQUIRED (it may be null, where the schema holds none for that
+   * field), and its requiredness is load-bearing: see below.
    */
-  derived?: boolean;
-} & (
-  | { state: "yes"; value: string }
-  /** No value to show → <Quad> renders the state word. `no` belongs here: on the
-   *  fields these rows read, “nee” IS the whole statement. */
-  | { state: "no" | "not_published" | "unknown"; value?: never }
+  | { state: "yes"; value: string; source: SourceRef; derived?: never }
+  /**
+   * OURS — the price we multiplied, the hours we added, the path we summed, the
+   * €/contactuur we divided (spec §6).
+   *
+   * NOT a quad, and that is the point: the value is not a fact we established ABOUT the
+   * provider, it is arithmetic WE performed over facts they published. The page renders
+   * it in its own visibly non-factual ink instead of handing it to <Quad>, which would
+   * print it in the same colour as the school's own claims — a figure de Blikopener, de
+   * Yogaschool and Adhouna have never stated, wearing their colours.
+   *
+   * THREE THINGS THIS VARIANT MAKES UNREPRESENTABLE, and every one of them compiled
+   * before, and every one of them publishes a falsehood about a named business:
+   *
+   *   1. `note` IS THE WORKING, AND IT IS REQUIRED. A number of ours the reader cannot
+   *      check is a number that may as well be theirs. `{derived: true}` with no working
+   *      used to compile — and the presenter, needing a caveat to print, silently DROPPED
+   *      THE ROW: the figure vanished rather than failing.
+   *
+   *   2. THERE IS NO `source` KEY AT ALL — not `source: null`, no key (§6: our arithmetic
+   *      cites no page of theirs; the PARTS it was computed from carry the citations, in
+   *      the rows above and below). `derived: true` WITH a source used to compile, and it
+   *      credits the school with our sum: pinning de Yogaschool's docentenpagina to
+   *      "± 600 uur" cites a page on which that figure has never appeared.
+   *
+   *   3. AND IT IS WHAT MAKES THE FLAG UNDROPPABLE. `const { derived, ...rest } = row`
+   *      used to spread the flag away silently and leave a perfectly valid `KeyValueRow`
+   *      — our arithmetic, now indistinguishable from a fact. It cannot now: `rest` has
+   *      no `source` key, and every non-derived variant REQUIRES one. The row stops
+   *      compiling instead of quietly changing what it asserts.
+   *
+   * `derived: false` on our own multiplication does not compile either (`derived?: never`
+   * admits `undefined`, not `false`), and the row cannot be hand-built at all: see
+   * derivedRow(), which is the only constructor and which takes the arithmetic ITSELF —
+   * so the ink can never disagree with the computation that produced it.
+   */
+  | { state: "yes"; value: string; note: string; source?: never; derived: true }
+  /**
+   * No value to show → <Quad> renders the state word. `no` belongs here: on the fields
+   * these rows read, “nee” IS the whole statement.
+   *
+   * A DERIVED ROW WITH NO VALUE IS NOT DERIVED (`derived?: never`). de Blikopener with no
+   * period count states a FINDING about them — "zij publiceren een prijs per studiejaar
+   * en niet uit hoeveel studiejaren de opleiding bestaat" — and a finding is exactly what
+   * <Quad> is for. `derived` governs the ink of a VALUE; it never decides whether one
+   * exists. (inkFor() encodes the same rule; this type is why it cannot be handed a
+   * contradiction.)
+   */
+  | { state: "no" | "not_published" | "unknown"; value?: never; source: SourceRef; derived?: never }
 );
+
+/**
+ * THE ONLY WAY TO BUILD A DERIVED ROW — and it takes the ARITHMETIC ITSELF, never a flag
+ * and a string that merely claims to describe it.
+ *
+ * `derived: boolean` was a promise the row made about a computation it did not hold, and
+ * the two were free to disagree. Here they cannot: the `computed` variant is the only
+ * thing this accepts, so the caller must have narrowed the union (`kind === "computed"`)
+ * to call it at all — and the working travels from that same object. A row built from
+ * `totalPrice()` that forgot the flag, a `derived: true` on a figure we did not compute,
+ * a working that describes some other sum: none of them can be written.
+ */
+type OurArithmetic = { kind: "computed"; value: number; working: string };
+
+function derivedRow(
+  label: string,
+  computed: OurArithmetic,
+  value: string,
+  alsoNote?: string | null,
+): KeyValueRow {
+  return {
+    label,
+    state: "yes",
+    value,
+    // The working, and anything else the reader needs beside it (a comparability caveat
+    // on €/contactuur: what the price includes, what it excludes). Never empty — the type
+    // requires a string, and joinDot cannot return null with a non-empty first part.
+    note: joinDot([computed.working, alsoNote]) ?? computed.working,
+    derived: true,
+  };
+}
 
 /**
  * A cohort on the record page. Like NextCohort, it carries `start` + `status` and
@@ -952,17 +1022,12 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   if (program.price.period !== "total") {
     const total = totalPrice(provider, program);
     rows.push(
-      total.value != null
-        ? {
-            label: nl.rowTotalPrice,
-            state: "yes",
-            value: `± ${formatEuro(total.value)}`,
-            note: total.caveat ?? null,
-            source: null,
-            // The ink, not merely the label. `state: "yes"` alone put OUR arithmetic in
-            // the same colour as the provider's own published price, one row above it.
-            derived: true,
-          }
+      total.kind === "computed"
+        // The ink, not merely the label. `state: "yes"` alone put OUR arithmetic in the
+        // same colour as the provider's own published price, one row above it. The
+        // constructor is what ties the two together: it cannot be called with anything but
+        // the computation, and it cannot produce a row that carries a citation.
+        ? derivedRow(nl.rowTotalPrice, total, `± ${formatEuro(total.value)}`)
         : {
             label: nl.rowTotalPrice,
             state: "not_published",
@@ -970,11 +1035,12 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
             // facts about the provider: no published period count ("€ 1.290 per studiejaar,
             // and no count of studiejaren"), or an unpriced part in a per-module composition
             // (spec v0.8 — an incomplete sum is a guess). Naming the wrong one is a false
-            // statement about a named business, in the smallest possible print.
+            // statement about a named business, in the smallest possible print. The union
+            // carries the reason, so this row no longer re-derives which absence it faced.
             note:
-              program.price.amount_eur == null
-                ? nl.totalPriceIncompleteSum
-                : nl.totalPriceNoPeriodCount(nl.pricePeriod[program.price.period]),
+              total.kind === "no_comparable_total"
+                ? total.reason
+                : nl.totalPriceIncompleteSum,
             source: null,
           },
     );
@@ -1000,39 +1066,38 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   const ownTotal = totalPrice(provider, program).value;
   if (path.gates.length > 0 && (path.value != null || ownTotal != null)) {
     rows.push(
-      path.value != null
-        ? {
-            label: nl.rowTotalPathCost,
-            state: "yes",
-            value: nl.pathCostDerivedTotal(formatEuro(path.value)),
-            note: path.caveat ?? null,
-            source: null,
-            derived: true,
-          }
+      path.kind === "computed"
+        ? derivedRow(nl.rowTotalPathCost, path, nl.pathCostDerivedTotal(formatEuro(path.value)))
         : {
             label: nl.rowTotalPathCost,
             // A GAP IN OUR RECORD, never a finding about them: `cost_eur: null` on a gate
             // means we could not read its price off any archived artifact (it is logged as
             // research debt), and "wij weten het nog niet" is not "zij publiceren het niet".
             state: "unknown",
-            note: path.caveat ?? null,
+            note: path.kind === "incomplete" ? path.reason : null,
             source: null,
           },
     );
   }
 
-  // The same epistemic rule as the listing's €/contactuur column, from the same
-  // pair of helpers — the record must never say something the listing does not.
+  // €/CONTACTUUR — OURS, ON EVERY PROGRAMME THAT HAS ONE (spec §6).
   //
-  // No citation: this is a DERIVED value (spec §6), computed by us from the price
-  // and the hours, each of which carries its own source in the row above and the
-  // row below. Pinning one of those two sources to our own arithmetic would credit
+  // It carried no flag, so `state: "yes"` handed it straight to <Quad>, and on ~40
+  // programmes the one figure on this site that NO school publishes was printed in the ink
+  // reserved for the schools' own claims — right under a Prijs row and an Urenuitsplitsing
+  // row that ARE theirs, and that carry the citations to prove it. On a `period: per_year`
+  // provider it is worse still: our arithmetic over our arithmetic, (3 × € 1.530) ÷ 360,
+  // in de Yogaschool's colours. KeyValueRow's own docblock said it — "a fact read off a
+  // provider's page is theirs, not ours" — and €/contactuur is read off nobody's page.
+  //
+  // No citation, and now the type enforces that rather than a convention: the derived
+  // variant has no `source` key. The price and the hours each carry their own source, in
+  // the row above and the row below; pinning either of them to our division would credit
   // the provider with a number they never published.
-  const pphValue = pph.value != null ? formatEuro2(pph.value) : null;
   const pphNote = pphCaveatFor(provider, program, pphState);
   rows.push(
-    pphState === "yes" && pphValue != null
-      ? { label: nl.colPph, state: "yes", value: pphValue, note: pphNote, source: null }
+    pph.kind === "computed" && pphState === "yes"
+      ? derivedRow(nl.colPph, pph, formatEuro2(pph.value), pph.caveat)
       : { label: nl.colPph, state: noValue(pphState), note: pphNote, source: null },
   );
 
@@ -1071,15 +1136,8 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // that appears in none of their archived sources. The label says whose sum it is, the
   // note shows the working, and the ink says it is not a fact about them.
   const hours = totalHours(program);
-  if (hours.derived && hours.value != null) {
-    rows.push({
-      label: nl.rowTotalHours,
-      state: "yes",
-      value: nl.hoursDerivedTotal(hours.value),
-      note: hours.caveat ?? null,
-      source: null,
-      derived: true,
-    });
+  if (hours.kind === "computed") {
+    rows.push(derivedRow(nl.rowTotalHours, hours, nl.hoursDerivedTotal(hours.value)));
   }
 
   // The §5 field. Its emptiness across the market is the finding — so it gets

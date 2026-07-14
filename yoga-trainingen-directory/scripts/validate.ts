@@ -29,13 +29,20 @@ console.log();
 for (const p of providers) {
   console.log(`  ${p.name} [${p.depth}] — completeness ${completeness(p)}%`);
   for (const program of p.programs) {
+    // The derived figures are DISCRIMINATED UNIONS (spec §6): `.value` is on every variant,
+    // but the working — and the fact that the number is OURS — lives only on `computed`.
+    // Even here, in a console line nobody publishes, the two are not interchangeable: this
+    // script is where a researcher reads the numbers back, and a figure of ours printed as
+    // though it were the school's is exactly the habit the model exists to break.
     const pph = pricePerContactHour(p, program);
     const ratio = contactRatio(program);
     const delta = bundleDelta(p, program);
     const parts = [
       `    · ${program.format_label}hr ${program.name}`,
-      pph.value != null ? `€${pph.value}/contactuur${pph.caveat ? ` (let op: ${pph.caveat})` : ""}` : `€/contactuur: ${pph.caveat}`,
-      ratio != null ? `contactratio ${ratio}` : null,
+      pph.value != null
+        ? `€${pph.value}/contactuur (onze berekening)${pph.caveat ? ` (let op: ${pph.caveat})` : ""}`
+        : `€/contactuur: ${pph.caveat}`,
+      ratio.value != null ? `contactratio ${ratio.value} (onze berekening)` : null,
       delta != null ? `bundeldelta €${delta}` : null,
       `lespraktijk: ${program.hours_claimed.supervised_teaching_practice ?? program.hours_claimed.breakdown_published}`,
     ].filter(Boolean);

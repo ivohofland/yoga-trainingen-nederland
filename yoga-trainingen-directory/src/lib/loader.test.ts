@@ -1,7 +1,16 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { integrityErrors, loadDataset } from "./loader";
-import { bundleDelta, contactRatio, pricePerContactHour, totalHours, totalPathCost, totalPrice } from "./derive";
+import {
+  bundleDelta,
+  contactRatio,
+  isMultistyle,
+  ourWorking,
+  pricePerContactHour,
+  totalHours,
+  totalPathCost,
+  totalPrice,
+} from "./derive";
 import { priceBand } from "./rules";
 import { YearMonth, type Program } from "../schema";
 
@@ -123,9 +132,13 @@ test("TOTAL: a whole-course price IS the provider's own figure — derived: fals
   const provider = providerOf("wahe");
   const prog = programOf("wahe", "200-vinyasa-ayurveda");
   assert.equal(prog.price.period, "total", "guard: the default period is a whole-course total");
-  assert.deepEqual(totalPrice(provider, prog), { value: 2495, derived: false },
-    "Wahé PUBLISHES this figure — flagging it `derived: true` would tell every surface and every " +
+  assert.deepEqual(totalPrice(provider, prog), { kind: "published", value: 2495 },
+    "Wahé PUBLISHES this figure — a `kind: \"computed\"` here would tell every surface and every " +
     "API consumer that we made up a price the school states itself");
+  // AND IT CARRIES NO `working`. The key set IS the claim: a working exists only on a figure
+  // of ours, so a consumer that prints one whenever it finds one cannot mislabel this.
+  assert.equal(ourWorking(totalPrice(provider, prog)), null,
+    "their published price arrived with a working — that is our arithmetic's clothing on their fact");
 });
 
 test("TOTAL: a per-year price is MULTIPLIED, flagged as ours, and shows its working", () => {
@@ -141,9 +154,12 @@ test("TOTAL: a per-year price is MULTIPLIED, flagged as ours, and shows its work
 
   const total = totalPrice(provider, prog);
   assert.equal(total.value, 5160, "4 × € 1.290 is € 5.160");
-  assert.equal(total.derived, true,
-    "the total must be flagged as OURS — de Blikopener has never published this figure");
-  assert.match(total.caveat ?? "", /4 × /, "the working must travel with the number, so a reader can check it");
+  assert.equal(total.kind, "computed",
+    "the total must be OURS — de Blikopener has never published this figure");
+  assert.match(ourWorking(total) ?? "", /4 × /,
+    "the working must travel with the number, so a reader can check it — and the type REQUIRES it: " +
+    "`{kind: \"computed\"}` with no working does not compile, where `{derived: true}` with no caveat " +
+    "used to, and the presenter silently dropped the row rather than failing");
 
   // And the three-year variant is its own programme, with its own total.
   const short = programOf("de-blikopener", "hatha-raja-opleiding-3-jarig");
@@ -173,7 +189,12 @@ test("TOTAL: a per-period price with no period count has NO total — and is ban
 
   const total = totalPrice(provider, noCount);
   assert.equal(total.value, null, "no period count, no total — never the bare yearly fee");
-  assert.match(total.caveat ?? "", /totaalprijs/i);
+  assert.equal(total.kind, "no_comparable_total",
+    "a per-period price with no count is not `no_price` — they DO publish a price. What they do not " +
+    "publish is the count that would make it comparable, and naming the wrong absence is a false " +
+    "statement about a named business");
+  assert.match(total.kind === "no_comparable_total" ? total.reason : "", /totaalprijs/i);
+  assert.equal(ourWorking(total), null, "there is no arithmetic to show: we computed nothing");
   assert.equal(priceBand(provider, noCount), "no_comparable_total");
   for (const band of ["under3000", "from3000"] as const) {
     assert.notEqual(priceBand(provider, noCount), band,
@@ -217,13 +238,13 @@ test("TOTAL: unequal composed parts are SUMMED, flagged as ours, and show their 
 
   const total = totalPrice(provider, prog);
   assert.equal(total.value, 2725, "€ 1.420 + € 1.305 is € 2.725");
-  assert.equal(total.derived, true,
-    "a surface told `derived: false` would print € 2.725 as Adhouna's own published price — the exact " +
-    "bug v0.8 removed, restored");
-  assert.match(total.caveat ?? "", /onze optelling/,
-    "the working must travel with the number, so a reader can check it");
-  assert.match(total.caveat ?? "", /1\.420/);
-  assert.match(total.caveat ?? "", /1\.305/);
+  assert.equal(total.kind, "computed",
+    "a surface told `kind: \"published\"` would print € 2.725 as Adhouna's own published price — the " +
+    "exact bug v0.8 removed, restored");
+  const sum = ourWorking(total) ?? "";
+  assert.match(sum, /onze optelling/, "the working must travel with the number, so a reader can check it");
+  assert.match(sum, /1\.420/);
+  assert.match(sum, /1\.305/);
 
   // And it is BANDED on that total, like any other comparable price.
   assert.equal(priceBand(provider, prog), "under3000", "€ 2.725 < € 3.000");
@@ -254,7 +275,10 @@ test("TOTAL: a missing part price yields NULL — an incomplete sum is a guess",
   };
   const total = totalPrice(provider, prog);
   assert.equal(total.value, null, "one part unpriced → no sum, never a partial one");
-  assert.equal(total.derived, false, "we derived nothing, so nothing is flagged as ours");
+  assert.equal(ourWorking(total), null, "we derived nothing, so there is no arithmetic to show as ours");
+  assert.equal(total.kind, "no_comparable_total",
+    "they price per module and print some of those prices — calling them a non-publisher of prices " +
+    "(`no_price`) would be false. What is missing is the comparable TOTAL");
   assert.equal(bundleDelta(provider, prog), null, "and the bundle delta dies with it, from the same rule");
 });
 
@@ -309,10 +333,12 @@ test("HOURS: a published total IS the school's own figure — derived: false", (
 
   const hours = totalHours(prog);
   assert.equal(hours.value, 500);
-  assert.equal(hours.derived, false,
-    "Wahé PUBLISHES its 500 — flagging it `derived: true` would tell every surface and every " +
-    "API consumer that we made up a figure the school states on its own page");
-  assert.equal(hours.caveat, undefined, "their figure needs no working: it is not a sum of ours");
+  assert.equal(hours.kind, "published",
+    "Wahé PUBLISHES its 500 — `kind: \"computed\"` would tell every surface and every API consumer " +
+    "that we made up a figure the school states on its own page");
+  assert.equal(ourWorking(hours), null,
+    "their figure arrived with a working: it is not a sum of ours, and a working is the one thing " +
+    "that says it is");
 });
 
 test("HOURS: parts without a total are ADDED, flagged as ours, and show their working", () => {
@@ -327,13 +353,13 @@ test("HOURS: parts without a total are ADDED, flagged as ours, and show their wo
 
   const hours = totalHours(prog);
   assert.equal(hours.value, 600, "360 + 240 is 600");
-  assert.equal(hours.derived, true,
-    "a surface told `derived: false` would print 600 as de Yogaschool's claimed total — the exact " +
-    "bug v0.6 removed, restored");
-  assert.match(hours.caveat ?? "", /onze optelling/,
-    "the working must travel with the number, so a reader can check it");
-  assert.match(hours.caveat ?? "", /360/);
-  assert.match(hours.caveat ?? "", /240/);
+  assert.equal(hours.kind, "computed",
+    "a surface told `kind: \"published\"` would print 600 as de Yogaschool's claimed total — the " +
+    "exact bug v0.6 removed, restored");
+  const working = ourWorking(hours) ?? "";
+  assert.match(working, /onze optelling/, "the working must travel with the number, so a reader can check it");
+  assert.match(working, /360/);
+  assert.match(working, /240/);
 });
 
 test("HOURS: a total with no parts is still the total; neither total nor parts is null", () => {
@@ -344,7 +370,7 @@ test("HOURS: a total with no parts is still the total; neither total nor parts i
     ...base,
     hours_claimed: { ...base.hours_claimed, total: 200, contact: null, self_study: null },
   };
-  assert.deepEqual(totalHours(totalOnly), { value: 200, derived: false });
+  assert.deepEqual(totalHours(totalOnly), { kind: "published", value: 200 });
 
   // Neither a total nor both parts: there is nothing to add, and a guess would fabricate
   // the very number this field exists to stop.
@@ -362,7 +388,7 @@ test("HOURS: a total with no parts is still the total; neither total nor parts i
   };
   assert.equal(totalHours(contactOnly).value, null,
     "contacturen alone are not a course total — one addend is not a sum");
-  assert.equal(totalHours(contactOnly).derived, false, "we derived nothing, so nothing is flagged as ours");
+  assert.equal(totalHours(contactOnly).kind, "no_total", "we derived nothing, so nothing is ours");
 });
 
 test("HOURS: what consumes an hours total consumes the DERIVED one — contactRatio does", () => {
@@ -372,7 +398,14 @@ test("HOURS: what consumes an hours total consumes the DERIVED one — contactRa
   // they don't print is the sum of the two they do.
   const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
   assert.equal(prog.hours_claimed.total, null, "guard: the raw field is null");
-  assert.equal(contactRatio(prog), 0.6, "360 contact of a 600-hour course is 0,6 — not null");
+  const ratio = contactRatio(prog);
+  assert.equal(ratio.value, 0.6, "360 contact of a 600-hour course is 0,6 — not null");
+  // AND IT IS OURS. It shipped in the API as a bare `0.6` with no flag and no working — a
+  // number no school publishes, over a denominator that is ITSELF our addition (360 + 240).
+  // Our arithmetic over our arithmetic, handed to every consumer as a plain fact.
+  assert.equal(ratio.kind, "computed", "no school publishes a contact ratio — there is no `published` variant");
+  assert.match(ourWorking(ratio) ?? "", /onze berekening/,
+    "the ratio arrived with no working: a number of ours the reader cannot check");
 
   // And €/contactuur is UNAFFECTED, because it divides by `contact` and never by a total.
   // Pinned rather than assumed: routing it through totalHours would quietly turn €12,75
@@ -488,11 +521,12 @@ test("PATH: a training you must BUY first is added — and the sum is ours, with
 
   const path = totalPathCost(provider, prog);
   assert.equal(path.value, 6180, "€ 4.590 + the mandatory € 1.590 Basisopleiding is € 6.180");
-  assert.equal(path.derived, true,
+  assert.equal(path.kind, "computed",
     "the PATH is never the school's figure — € 6.180 appears on no page they publish, even though " +
-    "€ 1.530 and € 1.590 both do");
-  assert.match(path.caveat ?? "", /Basisopleiding/, "the working must name what was added");
-  assert.match(path.caveat ?? "", /1\.590/, "…and for how much, so the reader can check the sum");
+    "€ 1.530 and € 1.590 both do. There is no `published` variant for it, and there must not be");
+  const pathWorking = ourWorking(path) ?? "";
+  assert.match(pathWorking, /Basisopleiding/, "the working must name what was added");
+  assert.match(pathWorking, /1\.590/, "…and for how much, so the reader can check the sum");
 });
 
 test("PATH: the chain is walked RECURSIVELY — Meester → Docenten → Basis", () => {
@@ -507,7 +541,7 @@ test("PATH: the chain is walked RECURSIVELY — Meester → Docenten → Basis",
   assert.equal(path.value, 10770, "€ 4.590 (Meester) + € 4.590 (Docenten) + € 1.590 (Basis)");
   assert.deepEqual(path.gates.map((g) => g.total), [1590, 4590],
     "the gates come out in the order a student must buy them — Basis first");
-  assert.equal(path.derived, true);
+  assert.equal(path.kind, "computed");
 });
 
 test("PATH: with nothing to buy first, the path IS the price — and no second row exists", () => {
@@ -562,7 +596,10 @@ test("PATH: an unpriced purchasable gate yields NULL — an incomplete path is a
   const path = totalPathCost(provider, provider.programs.find((p) => p.id === prog.id)!);
   assert.equal(path.value, null, "one link unpriced → no path cost, never a partial one");
   assert.equal(path.gates.length, 1, "…but the gate is still REPORTED: it exists, we just cannot price it");
-  assert.match(path.caveat ?? "", /gok/, "and the row must say why, in our own words");
+  assert.equal(path.kind, "incomplete");
+  assert.match(path.kind === "incomplete" ? path.reason : "", /gok/,
+    "and the row must say why, in our own words");
+  assert.equal(ourWorking(path), null, "an incomplete path has no arithmetic to show — it has a hole");
 });
 
 test("PATH: the price bands read the PATH COST, never a bare total", () => {
@@ -767,5 +804,129 @@ test("SCHEMA: every month in the committed dataset is in range", () => {
   assert.ok(seen.size > 50, `expected many YYYY-MM values in the data, saw ${seen.size}`);
   for (const ym of seen) {
     assert.equal(YearMonth.safeParse(ym).success, true, `"${ym}" is in the data but fails YearMonth`);
+  }
+});
+
+/* ---------- isMultistyle: a claim about what a named business teaches (spec §4.12) ----------
+ *
+ * ZERO ASSERTIONS, and it ships in the public API as a bare boolean about every programme.
+ * Change `specific.length >= 2` to `>= 1` and the entire suite stayed green — while EVERY
+ * single-style programme in the corpus was published to every consumer as "allround /
+ * multistyle": every Iyengar-only school, every Ashtanga-only school, told to the world as
+ * teaching something they never claimed to teach.
+ *
+ * The two ways to be true are not the same statement, and both are pinned:
+ *   1. THE SCHOOL SELF-TAGS IT — `multistyle` records THEIR word ("multistyle", "allround").
+ *   2. THEY NAME >= 2 CO-EQUAL SPECIFIC STYLES — then "allround" is OUR reading of their list.
+ */
+
+test("STYLE: multistyle is >= 2 co-equal styles, or the school's own word — never a residual default", () => {
+  const base = programOf("wahe", "200-vinyasa-ayurveda");
+  const withStyles = (styles: Program["styles"]): Program => ({ ...base, styles });
+
+  // 1. THE SELF-LABEL. Their word, not our conclusion — one tag is enough, because the tag IS
+  //    the claim they made.
+  assert.equal(isMultistyle(withStyles(["multistyle"])), true, "the school's own 'allround' label");
+
+  // 2. TWO CO-EQUAL SPECIFICS — our reading of what they list.
+  assert.equal(isMultistyle(withStyles(["vinyasa", "yin"])), true);
+  assert.equal(isMultistyle(withStyles(["hatha", "ashtanga", "kundalini"])), true);
+
+  // 3. ONE STYLE IS NOT MULTISTYLE. This is the mutation: `>= 1` publishes every single-style
+  //    programme in the corpus as "allround", to every API consumer, about named businesses
+  //    that named exactly one tradition.
+  assert.equal(isMultistyle(withStyles(["vinyasa"])), false,
+    "a school that names ONE style is published as 'allround/multistyle' — a claim about what they " +
+    "teach that they have never made");
+  assert.equal(isMultistyle(withStyles(["iyengar"])), false);
+
+  // 4. NO STYLE IS NOT MULTISTYLE EITHER. Absence of a statement is not a finding, and never a
+  //    residual "allround" (spec §4.12, in as many words).
+  assert.equal(isMultistyle(withStyles([])), false, "silence became a claim");
+  assert.equal(isMultistyle(withStyles(undefined)), false);
+
+  // 5. `other` AND `own_method` NAME NO TRADITION, so two of them are not two styles. Counting
+  //    them is the same error as `>= 1`, one step further along.
+  assert.equal(isMultistyle(withStyles(["other"])), false);
+  assert.equal(isMultistyle(withStyles(["own_method"])), false);
+  assert.equal(isMultistyle(withStyles(["other", "own_method"])), false,
+    "'other' + 'own_method' is not two co-equal styles — it is two ways of saying 'not one of the tags'");
+  assert.equal(isMultistyle(withStyles(["vinyasa", "other"])), false,
+    "one named style plus 'other' is ONE named style");
+  assert.equal(isMultistyle(withStyles(["vinyasa", "own_method"])), false);
+
+  // 6. And the corpus itself: the boolean the API publishes must be exactly this rule.
+  let multi = 0;
+  let single = 0;
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      const tags = prog.styles ?? [];
+      const specific = tags.filter((t) => t !== "other" && t !== "own_method");
+      const expected = tags.includes("multistyle") || specific.length >= 2;
+      assert.equal(isMultistyle(prog), expected, `${p.id}/${prog.id}`);
+      if (expected) multi++;
+      else single++;
+    }
+  }
+  // Both directions must exist in the data, or one of them is untested.
+  assert.ok(multi > 0, "no programme in the corpus is multistyle — that direction is untested");
+  assert.ok(single > 0,
+    "every programme in the corpus is multistyle — the `>= 1` mutation would be invisible, which is " +
+    "exactly how it stayed invisible");
+});
+
+/* ---------- bundleDelta: a comparison published about a named business ---------- */
+
+test("DERIVED: the bundle delta compares the WHOLE-COURSE total against the modules, not a yearly fee", () => {
+  // It read `price.amount_eur` raw and never consulted `period` — the v0.5 bug, surviving in a
+  // corner nobody had looked at. Nothing in the corpus is this shape today, which is exactly
+  // why it was invisible; so manufacture it, as v0.5's own tests do.
+  //
+  // A modular training priced PER STUDIEJAAR: the bare amount is one year's fee, and comparing
+  // ONE YEAR against the sum of ALL the modules publishes the package as thousands cheaper than
+  // its own parts — a comparison, about a named business, rendered on their record page.
+  const base = providerOf("yogapoint");
+  const prog = programOf("yogapoint", "300-verdieping");
+  assert.equal(prog.price.amount_eur, 3993, "guard: the package price");
+  assert.equal(prog.price.period, "total", "guard: today it IS a whole-course total, hence -363");
+  assert.equal(bundleDelta(base, prog), -363, "guard: the delta as the corpus stands");
+
+  // The same package, the same modules, priced per year over three years. The whole course now
+  // costs 3 x 1.331 = 3.993 — the identical total — so the delta MUST be identical too.
+  const perYear: Program = {
+    ...prog,
+    price: { ...prog.price, amount_eur: 1331, period: "per_year", periods: 3 },
+  };
+  assert.equal(totalPrice(base, perYear).value, 3993, "guard: 3 x 1.331 is the same whole course");
+  assert.equal(bundleDelta(base, perYear), -363,
+    "the delta was computed from ONE YEAR's fee (1.331) against the sum of ALL three modules (4.356), " +
+    "publishing the package as 3.025 cheaper than its parts when it is 363 cheaper. The bundle price is " +
+    "the whole-course TOTAL (spec §6) — never a bare amount_eur");
+
+  // And with no period count there is no comparable total, so there is no comparison to publish.
+  const noCount: Program = { ...perYear, price: { ...perYear.price, periods: null } };
+  assert.equal(totalPrice(base, noCount).value, null, "guard: no count, no total");
+  assert.equal(bundleDelta(base, noCount), null,
+    "a yearly fee was compared against the sum of every module — a package price that does not exist, " +
+    "set against parts that do");
+});
+
+/* ---------- YearMonth: the month was tightened, the DAY was not (spec v0.3) ---------- */
+
+test("SCHEMA: a day outside 01-31 is rejected, exactly as a month outside 01-12 is", () => {
+  // v0.3 fixed the month ("2026-13" was schema-valid) and left the day alone: `2026-07-32`,
+  // `2026-07-00` and `2026-07-99` all PASSED validation. The same class of defect, in the same
+  // field, one component along — a typo'd date that no check would name, sitting in a `captured`
+  // or a `last_verified`, which are the two fields the whole evidentiary posture rests on.
+  //
+  // It is narrower than a calendar check, and deliberately: this rejects what is not a day of any
+  // month. (Feb 30 is a further question, and one no record has ever posed.)
+  for (const good of ["2026-07", "2026-07-01", "2026-07-31", "2026-12-31", "2026-01-01"]) {
+    assert.equal(YearMonth.safeParse(good).success, true, `"${good}" is a real date and was rejected`);
+  }
+  for (const bad of ["2026-07-32", "2026-07-00", "2026-07-99", "2026-13-01", "2026-00-01"]) {
+    assert.equal(YearMonth.safeParse(bad).success, false,
+      `"${bad}" is schema-VALID: a malformed date passes validation and reaches a renderer, or a ` +
+      `citation, as though it were a day someone could look up`);
   }
 });

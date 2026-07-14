@@ -22,3 +22,27 @@ jobs:
       # The gate everything passes through: parses every record, checks
       # referential integrity, and fails the run on invalid data.
       - run: npm run validate
+      # THE INVARIANTS. `npm run build` runs gen-schema → validate → test →
+      # export-json → next build, and it is the same gate a contributor runs
+      # locally — so CI cannot pass a change that `npm run build` would refuse.
+      #
+      # Until this line existed, CI ran `validate` and NOTHING ELSE: every one of
+      # the editorial invariants — a finding never rendered as a gap, our
+      # arithmetic never rendered in a school's own ink, a claim quoted verbatim —
+      # gated nothing whatever on push or on a pull request. They were tests that
+      # only failed on the machine of whoever remembered to run them.
+      #
+      # `npm test` is listed separately, and FIRST, on purpose: it is the check
+      # whose failure must be legible in the run log, not buried inside a Next.js
+      # build. (`build` runs it again; a passing suite makes that a no-op.)
+      - run: npm test
+      - run: npm run build
+      #
+      # `npm run provenance` (the STRICT pass) is deliberately NOT a step here.
+      # Archive bodies are gitignored — the .sha256 beside each one is committed,
+      # the copyrighted page is not (data/archives/README.md) — so in CI the check
+      # can open almost none of the artifacts it exists to read. `validate` above
+      # already runs it in warning mode and prints its coverage ratio with a ⚠
+      # rather than a green tick: the honest result of a check that could not look.
+      # Gating on it here would make a green run mean "the artifacts were absent".
+      # Run it locally, where the archives are.

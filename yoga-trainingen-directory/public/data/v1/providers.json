@@ -1,7 +1,7 @@
 {
   "data_current_as_of": "2026-07-12",
   "count": 47,
-  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare totaalprijs — niet rangschikken. DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe `hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun som). Is `total_hours.derived` waar, dan is het getal ONZE optelling (`caveat` toont de som) en geen totaal dat de aanbieder publiceert; is het onwaar, dan is het hún gepubliceerde claim (Wahé: 500 uur) en mag het als zodanig worden weergegeven. Die twee mogen nooit hetzelfde worden weergegeven. EN VOOR HET RANGSCHIKKEN VAN PRIJZEN (spec v0.9): lees `derived.total_path_cost`, niet `total_price` — sommige opleidingen mag je pas volgen ná een ándere opleiding van dezelfde school, die je eerst moet kopen (de Yogaschool: de Docentenopleiding kost € 4.590, maar je mag niet beginnen zonder de Basisopleiding van € 1.590 — docent worden kost daar € 6.180; de Meesteropleiding € 10.770). Zonder verplichte voorafgaande opleiding is dit veld gelijk aan `total_price`. Het is ALTIJD onze optelling (`derived` is altijd waar): geef het weer als zodanig. Is de waarde null, dan ontbreekt de prijs van een verplichte schakel — niet rangschikken, en niet terugvallen op `total_price`: dát is juist het getal dat te laag is.",
+  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. DE KERNREGEL: een getal dat wij over een met naam genoemd bedrijf publiceren is óf HÚN claim (geef het weer als hun feit, met hun bron) óf ZICHTBAAR ONZE REKENSOM (gedempt, zonder bronvermelding, mét de uitgeschreven som ernaast). Er is geen derde optie, en geen neutrale weergave. ELK AFGELEID GETAL IS DAAROM EEN UNIE MET EEN `kind`, en de varianten hebben VERSCHILLENDE VELDEN: `{kind: \"published\", value}` = hún gepubliceerde cijfer; `{kind: \"computed\", value, working}` = ONZE rekensom, en `working` is de uitgeschreven som (\"onze berekening: 4 × € 1.290\"). `working` bestaat ALLEEN op `computed`. Wie `working` toont zodra het er staat, doet het dus vanzelf goed. De overige `kind`s (`no_price`, `no_comparable_total`, `no_total`, `incomplete`, `no_gates`, `no_ratio`) hebben `value: null` — niet rangschikken, niet in een prijsklasse zetten, en niets verzinnen. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: een programma kan `published: \"yes\"` dragen zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd (vijf programma's waren zo; op dit moment geen enkel, maar dat kan morgen weer). Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding; Adhouna prijst per deel, € 1.420 + € 1.305). DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe `hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun som). `computed` is ONZE optelling; `published` is hún claim (Wahé: 500 uur) en mag als zodanig worden weergegeven. Die twee mogen nooit hetzelfde worden weergegeven. EN VOOR HET RANGSCHIKKEN VAN PRIJZEN (spec v0.9): lees `derived.total_path_cost`, niet `total_price` — sommige opleidingen mag je pas volgen ná een ándere opleiding van dezelfde school, die je eerst moet kopen (de Yogaschool: de Docentenopleiding kost € 4.590, maar je mag niet beginnen zonder de Basisopleiding van € 1.590 — docent worden kost daar € 6.180; de Meesteropleiding € 10.770). Zonder verplichte voorafgaande opleiding is `kind: \"no_gates\"` en is dit veld gelijk aan `total_price`. Is het `incomplete`, dan ontbreekt de prijs van een verplichte schakel — niet rangschikken, en niet terugvallen op `total_price`: dát is juist het getal dat te laag is. `derived.pph` (€/contactuur) en `derived.contact_ratio` HEBBEN GEEN `published`-variant: geen enkele school publiceert die getallen. Ze zijn altijd van ons.",
   "providers": [
     {
       "id": "7-yoga-academy",
@@ -112,23 +112,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2499,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2499
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2499,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2499
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -286,23 +290,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2838.6,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2838.6
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2838.6,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2838.6
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -376,23 +384,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2838.6,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2838.6
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2838.6,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2838.6
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -556,23 +568,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -657,23 +673,28 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
+              "kind": "computed",
               "value": 2725,
-              "derived": true,
-              "caveat": "onze optelling: € 1.420 + € 1.305. De aanbieder publiceert de delen apart en noemt hun som niet."
+              "working": "onze optelling: € 1.420 + € 1.305. De aanbieder publiceert de delen apart en noemt hun som niet."
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2725,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2725
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -888,23 +909,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3250,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3250
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3250,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3250
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -1151,23 +1176,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3115,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3115
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3115,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3115
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -1476,23 +1505,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3150,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3150
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3150,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3150
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -1605,23 +1638,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2990,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2990
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2990,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2990
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -1870,23 +1907,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2600,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2600
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2600,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2600
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -2036,23 +2077,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_total",
+              "value": null
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -2209,23 +2254,28 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
+              "kind": "computed",
               "value": 5160,
-              "derived": true,
-              "caveat": "onze berekening: 4 × € 1.290"
+              "working": "onze berekening: 4 × € 1.290"
             },
             "total_hours": {
-              "value": 500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 500
             },
             "total_path_cost": {
-              "value": 5160,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 5160
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "unknown",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -2315,23 +2365,28 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
+              "kind": "computed",
               "value": 3870,
-              "derived": true,
-              "caveat": "onze berekening: 3 × € 1.290"
+              "working": "onze berekening: 3 × € 1.290"
             },
             "total_hours": {
-              "value": 372,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 372
             },
             "total_path_cost": {
-              "value": 3870,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3870
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "unknown",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -2544,23 +2599,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2964.5,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2964.5
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2964.5,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2964.5
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -2638,23 +2697,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2964.5,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2964.5
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2964.5,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2964.5
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -2732,23 +2795,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2964.5,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2964.5
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2964.5,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2964.5
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -3038,23 +3105,32 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
+              "kind": "computed",
               "value": 4590,
-              "derived": true,
-              "caveat": "onze berekening: 3 × € 1.530"
+              "working": "onze berekening: 3 × € 1.530"
             },
             "total_hours": {
+              "kind": "computed",
               "value": 600,
-              "derived": true,
-              "caveat": "onze optelling: 360 contacturen + 240 zelfstudie-uren. De aanbieder publiceert deze twee getallen apart en noemt hun som niet."
+              "working": "onze optelling: 360 contacturen + 240 zelfstudie-uren. De aanbieder publiceert deze twee getallen apart en noemt hun som niet."
             },
             "total_path_cost": {
+              "kind": "computed",
               "value": 6180,
-              "derived": true,
-              "caveat": "incl. verplichte Basisopleiding Raja Yoga € 1.590. Onze optelling — de aanbieder publiceert dit totaal niet."
+              "working": "incl. verplichte Basisopleiding Raja Yoga € 1.590. Onze optelling — de aanbieder publiceert dit totaal niet."
             },
-            "pph": 12.75,
+            "pph": {
+              "kind": "computed",
+              "value": 12.75,
+              "working": "onze berekening: € 4.590 ÷ 360 contacturen. Dit getal publiceert de aanbieder niet; wij delen hun prijs door hun contacturen. onze berekening: 3 × € 1.530",
+              "caveat": null
+            },
             "pph_state": "yes",
-            "contact_ratio": 0.6,
+            "contact_ratio": {
+              "kind": "computed",
+              "value": 0.6,
+              "working": "onze berekening: 360 contacturen ÷ 600 uur totaal. onze optelling: 360 contacturen + 240 zelfstudie-uren. De aanbieder publiceert deze twee getallen apart en noemt hun som niet."
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -3133,23 +3209,30 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
+              "kind": "computed",
               "value": 4590,
-              "derived": true,
-              "caveat": "onze berekening: 3 × € 1.530"
+              "working": "onze berekening: 3 × € 1.530"
             },
             "total_hours": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_total",
+              "value": null
             },
             "total_path_cost": {
+              "kind": "computed",
               "value": 10770,
-              "derived": true,
-              "caveat": "incl. verplichte Basisopleiding Raja Yoga € 1.590 + Docentenopleiding Raja Yoga € 4.590. Onze optelling — de aanbieder publiceert dit totaal niet."
+              "working": "incl. verplichte Basisopleiding Raja Yoga € 1.590 + Docentenopleiding Raja Yoga € 4.590. Onze optelling — de aanbieder publiceert dit totaal niet."
             },
-            "pph": 12.75,
+            "pph": {
+              "kind": "computed",
+              "value": 12.75,
+              "working": "onze berekening: € 4.590 ÷ 360 contacturen. Dit getal publiceert de aanbieder niet; wij delen hun prijs door hun contacturen. onze berekening: 3 × € 1.530",
+              "caveat": null
+            },
             "pph_state": "yes",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -3441,23 +3524,28 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2961,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2961
             },
             "total_hours": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_total",
+              "value": null
             },
             "total_path_cost": {
-              "value": 2961,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2961
             },
-            "pph": 13.46,
+            "pph": {
+              "kind": "computed",
+              "value": 13.46,
+              "working": "onze berekening: € 2.961 ÷ 220 contacturen. Dit getal publiceert de aanbieder niet; wij delen hun prijs door hun contacturen.",
+              "caveat": "prijs inclusief: alle offline trainingen, video's, studieboeken, lesgeld en het examen; prijs exclusief: 3-daagse retraite in module 5 (€125, verplicht onderdeel) + eigen accommodatie voor de retraite"
+            },
             "pph_state": "yes",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -3687,23 +3775,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -3954,23 +4046,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 4197,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 4197
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 4197,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 4197
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -4213,23 +4309,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3895,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3895
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3895,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3895
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -4307,23 +4407,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 1800,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 1800
             },
             "total_hours": {
-              "value": 75,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 75
             },
             "total_path_cost": {
-              "value": 1800,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 1800
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -4521,23 +4625,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -4750,23 +4858,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2890,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2890
             },
             "total_hours": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_total",
+              "value": null
             },
             "total_path_cost": {
-              "value": 2890,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2890
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -4828,23 +4940,29 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2385,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2385
             },
             "total_hours": {
-              "value": 350,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 350
             },
             "total_path_cost": {
-              "value": 2385,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2385
             },
-            "pph": 11.93,
+            "pph": {
+              "kind": "computed",
+              "value": 11.93,
+              "working": "onze berekening: € 2.385 ÷ 200 contacturen. Dit getal publiceert de aanbieder niet; wij delen hun prijs door hun contacturen.",
+              "caveat": "prijs exclusief: verplichte boeken (€115 incl. btw, via Jai Yoga verkrijgbaar)"
+            },
             "pph_state": "yes",
-            "contact_ratio": 0.57,
+            "contact_ratio": {
+              "kind": "computed",
+              "value": 0.57,
+              "working": "onze berekening: 200 contacturen ÷ 350 uur totaal."
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -5043,23 +5161,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3000,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3000
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3000,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3000
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -5243,23 +5365,29 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2885,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2885
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2885,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2885
             },
-            "pph": 16.03,
+            "pph": {
+              "kind": "computed",
+              "value": 16.03,
+              "working": "onze berekening: € 2.885 ÷ 180 contacturen. Dit getal publiceert de aanbieder niet; wij delen hun prijs door hun contacturen.",
+              "caveat": "prijs inclusief: alle lesdagen; gebruik van de studio buiten lestijden tussen trainingsdagen; toegang tot een digitale database + groepswhatsapp; observeren van ervaren docenten; reader; boekenpakket; certificaat (waarmee je je bij Yoga Alliance kunt inschrijven als RYT 200)\n"
+            },
             "pph_state": "yes",
-            "contact_ratio": 0.9,
+            "contact_ratio": {
+              "kind": "computed",
+              "value": 0.9,
+              "working": "onze berekening: 180 contacturen ÷ 200 uur totaal."
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -5468,23 +5596,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 449,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 449
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 449,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 449
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -5572,23 +5704,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 449,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 449
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 449,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 449
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -5802,23 +5938,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2890,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2890
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2890,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2890
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -5903,23 +6043,28 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
+              "kind": "incomplete",
               "value": null,
-              "derived": true,
-              "caveat": "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou een gok zijn."
+              "reason": "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou een gok zijn."
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -6141,23 +6286,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2700,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2700
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2700,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2700
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -6416,23 +6565,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2897,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2897
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2897,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2897
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -6726,23 +6879,29 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 4235.2,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 4235.2
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 4235.2,
-              "derived": true,
+              "kind": "no_gates",
+              "value": 4235.2
+            },
+            "pph": {
+              "kind": "computed",
+              "value": 21.18,
+              "working": "onze berekening: € 4.235 ÷ 200 contacturen. Dit getal publiceert de aanbieder niet; wij delen hun prijs door hun contacturen.",
               "caveat": null
             },
-            "pph": 21.18,
             "pph_state": "yes",
-            "contact_ratio": 1,
+            "contact_ratio": {
+              "kind": "computed",
+              "value": 1,
+              "working": "onze berekening: 200 contacturen ÷ 200 uur totaal."
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -7031,23 +7190,28 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
+              "kind": "computed",
               "value": 10820,
-              "derived": true,
-              "caveat": "onze berekening: 4 × € 2.705"
+              "working": "onze berekening: 4 × € 2.705"
             },
             "total_hours": {
-              "value": 500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 500
             },
             "total_path_cost": {
-              "value": 10820,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 10820
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -7259,23 +7423,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2999,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2999
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2999,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2999
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -7347,23 +7515,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 1250,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 1250
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 1250,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 1250
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -7436,23 +7608,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2250,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2250
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": 2250,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2250
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -7770,23 +7946,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3450,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3450
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3450,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3450
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -7882,23 +8062,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -8092,23 +8276,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2795,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2795
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2795,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2795
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -8349,23 +8537,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3050,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3050
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3050,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3050
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -8637,23 +8829,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3150,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3150
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3150,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3150
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -8758,23 +8954,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -8884,23 +9084,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -9203,23 +9407,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2990,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2990
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2990,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2990
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -9324,23 +9532,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 1650,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 1650
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 1650,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 1650
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -9598,23 +9810,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2495,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2495
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2495,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2495
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -9692,23 +9908,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 150,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 150
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -9787,23 +10007,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 1495,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 1495
             },
             "total_hours": {
-              "value": 100,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 100
             },
             "total_path_cost": {
-              "value": 1495,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 1495
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -9875,23 +10099,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 500
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -10226,23 +10454,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2500
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2500,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2500
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -10321,23 +10553,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2500
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2500,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2500
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -10551,23 +10787,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 5095,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 5095
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": 5095,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 5095
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": -775,
             "multistyle": false
           }
@@ -10855,23 +11095,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -10969,23 +11213,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -11273,23 +11521,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3597,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3597
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3597,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3597
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -11369,23 +11621,28 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 500
             },
             "total_path_cost": {
+              "kind": "incomplete",
               "value": null,
-              "derived": true,
-              "caveat": "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou een gok zijn."
+              "reason": "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou een gok zijn."
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -11679,23 +11936,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2860,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2860
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2860,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2860
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -11827,23 +12088,29 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3950,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3950
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": 3950,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3950
             },
-            "pph": 16.12,
+            "pph": {
+              "kind": "computed",
+              "value": 16.12,
+              "working": "onze berekening: € 3.950 ÷ 245 contacturen. Dit getal publiceert de aanbieder niet; wij delen hun prijs door hun contacturen.",
+              "caveat": "prijs inclusief: alle foundation-modules + retraite (accommodatie & eten), handleidingen per module, evaluatie per module, 2 jaar gratis online videotheek\n; prijs exclusief: transport, boeken, lunch, incidentals retraite, keuze-uren (electives); €50 admin bij termijn; €55 per uitgestelde module"
+            },
             "pph_state": "yes",
-            "contact_ratio": 0.82,
+            "contact_ratio": {
+              "kind": "computed",
+              "value": 0.82,
+              "working": "onze berekening: 245 contacturen ÷ 300 uur totaal."
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -11942,23 +12209,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2750,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2750
             },
             "total_hours": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_total",
+              "value": null
             },
             "total_path_cost": {
-              "value": 2750,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2750
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -12243,23 +12514,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2700,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2700
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2700,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2700
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -12340,23 +12615,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -12594,23 +12873,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2950,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2950
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2950,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2950
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -12855,23 +13138,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 4600,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 4600
             },
             "total_hours": {
-              "value": 500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 500
             },
             "total_path_cost": {
-              "value": 4600,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 4600
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -13121,23 +13408,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2500,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2500
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2500,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2500
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -13356,23 +13647,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3695,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3695
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3695,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3695
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -13615,23 +13910,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3993,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3993
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": 3993,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3993
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": -363,
             "multistyle": false
           }
@@ -13868,23 +14167,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3497,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3497
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3497,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3497
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -14109,23 +14412,27 @@
             "price_state": "not_published",
             "price_band": "none_published",
             "total_price": {
-              "value": null,
-              "derived": false,
-              "caveat": null
+              "kind": "no_price",
+              "value": null
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": null,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": null
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "prijs niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": false
           }
@@ -14314,23 +14621,27 @@
             "price_state": "yes",
             "price_band": "under3000",
             "total_price": {
-              "value": 2399,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 2399
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 2399,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 2399
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -14402,23 +14713,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3599,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3599
             },
             "total_hours": {
-              "value": 300,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 300
             },
             "total_path_cost": {
-              "value": 3599,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3599
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }
@@ -14677,23 +14992,27 @@
             "price_state": "yes",
             "price_band": "from3000",
             "total_price": {
-              "value": 3450,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 3450
             },
             "total_hours": {
-              "value": 200,
-              "derived": false,
-              "caveat": null
+              "kind": "published",
+              "value": 200
             },
             "total_path_cost": {
-              "value": 3450,
-              "derived": true,
-              "caveat": null
+              "kind": "no_gates",
+              "value": 3450
             },
-            "pph": null,
+            "pph": {
+              "kind": "not_computable",
+              "value": null,
+              "caveat": "contacturen niet gepubliceerd"
+            },
             "pph_state": "not_published",
-            "contact_ratio": null,
+            "contact_ratio": {
+              "kind": "no_ratio",
+              "value": null
+            },
             "bundle_delta": null,
             "multistyle": true
           }

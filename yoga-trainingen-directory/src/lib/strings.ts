@@ -228,6 +228,26 @@ export const nl = {
   /** Het afgeleide totaal zelf. Het "±" en het label zeggen samen wiens getal dit is. */
   hoursDerivedTotal: (hours: number) => `± ${hours} uur`,
 
+  /* ---------- €/contactuur en de contactratio: ALTIJD van ons (spec §6) ---------- */
+
+  /**
+   * GEEN ENKELE SCHOOL PUBLICEERT DIT GETAL. €/contactuur is de prijs gedeeld door de
+   * contacturen — een deling die wij uitvoeren, over twee getallen die zíj publiceren.
+   * Toch stond het jarenlang op ~40 recordpagina's in dezelfde inkt als hun eigen claims,
+   * één rij onder hun echte prijs. Bij een prijs per studiejaar is het bovendien onze
+   * rekensom óver onze rekensom: (3 × € 1.530) ÷ 360.
+   *
+   * De uitgeschreven deling zegt dat hardop, en de pagina zet het getal in de eigen,
+   * zichtbaar niet-feitelijke inkt.
+   */
+  pphWorking: (total: string, contact: number) =>
+    `onze berekening: ${total} ÷ ${contact} contacturen. Dit getal publiceert de aanbieder ` +
+    `niet; wij delen hun prijs door hun contacturen.`,
+  /** Contacturen ÷ totaaluren. Ook van ons — en waar het totaal zélf onze optelling is
+   *  (de Yogaschool: 360 + 240), is dit onze rekensom over onze rekensom. */
+  contactRatioWorking: (contact: number, total: number) =>
+    `onze berekening: ${contact} contacturen ÷ ${total} uur totaal.`,
+
   // Same rule, applied to the price itself: the record says de aanbieder
   // publiceert een prijs, maar het bedrag staat niet in ons record. Dat gat is
   // van ons, en de regel zegt dat — in plaats van een kale “ja” die een bedrag

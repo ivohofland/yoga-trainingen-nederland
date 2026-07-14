@@ -243,6 +243,16 @@
   margin-top: 3px;
 }
 
+/* The SAME ink, on a value that sits INLINE in its own cell rather than as a line
+   beneath a fact: the €/contactuur, which is ours on every row that has one (price ÷
+   contact hours — a figure no school in the corpus publishes). It is `.derived` without
+   the block spacing, and the italic + muted is the whole message: this number is not a
+   claim the provider made. */
+.derivedInline {
+  composes: derived;
+  margin-top: 0;
+}
+
 /* Read by assistive tech, invisible on screen — for text that a sighted reader
    gets some other way (here: the €/contactuur caveat, which was mouse-only in a
    `title`). Never use it to hide something that has no visible equivalent. */

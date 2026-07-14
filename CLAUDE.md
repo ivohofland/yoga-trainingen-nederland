@@ -70,22 +70,46 @@ registrations are frequently held under a different BV/holding/person name.
   must point at real modules, nested cohorts' `program` field must match the
   parent, claim `scope` (`program:<id>` / `module:<id>`) must resolve.
 - `src/lib/derive.ts` — the **derived values** (`totalPrice`, `totalHours`,
-  `pricePerContactHour`, `contactRatio`, `bundleDelta`, `isMultistyle`,
-  `completeness`, `providerQa`). Computed, **never stored** (spec §6) — if you
-  find yourself adding a computed field to a YAML record, it belongs here instead.
-  **`totalPrice` (§6, v0.5) and `totalHours` (§6, v0.6) each return a `derived`
-  flag, and it is the licence to print the number:** `false` → the value IS the
-  provider's own published figure (render it as theirs); `true` → it is OUR
-  arithmetic over the parts they publish (de Blikopener's whole-course price, de
-  Yogaschool's 600 hours — figures neither school has ever stated), and every
-  surface must render it **visibly as ours** — muted/italic, never in fact ink,
-  never with a citation, always showing its working. `null` → no comparable total
-  exists; do not band, sort or invent one. **Anything that consumes a total
-  consumes these, never the raw `price.amount_eur` / `hours_claimed.total`.**
+  `totalPathCost`, `pricePerContactHour`, `contactRatio`, `bundleDelta`,
+  `isMultistyle`, `completeness`, `providerQa`). Computed, **never stored**
+  (spec §6) — if you find yourself adding a computed field to a YAML record, it
+  belongs here instead.
+
+  **THE `kind` IS THE LICENCE TO PRINT THE NUMBER.** Each of these returns a
+  **discriminated union**, never a `{value, derived: boolean}` bag:
+  - `{kind: "published", value}` → the value IS the provider's own published
+    figure. Render it as **theirs**: fact ink, cited.
+  - `{kind: "computed", value, working}` → **OURS** — arithmetic over the parts
+    they publish (de Blikopener's whole-course price, de Yogaschool's 600 hours
+    and € 6.180 path, Adhouna's € 2.725 sum — figures no school has ever stated).
+    Render **visibly as ours**: muted/italic, never fact ink, **never cited**,
+    **always** showing `working`. `working` is REQUIRED here and **exists on no
+    other variant** — so "ours with no working" and "theirs with a working" do
+    not compile, and a consumer that prints `working` when present is right by
+    accident.
+  - a no-value kind (`no_price`, `no_comparable_total`, `no_total`, `incomplete`,
+    `no_gates`, `no_ratio`) → `value` is `null`. Do not band, sort or invent one.
+
+  **`pricePerContactHour` and `contactRatio` have NO `published` variant at all**
+  — no school publishes either figure, so they are ours on every programme.
+  **Anything that consumes a total consumes these, never the raw
+  `price.amount_eur` / `hours_claimed.total`.**
 - `src/lib/rules.ts` — **the finding-vs-gap rule** (`priceQuad`, `pphQuad`,
   `missingBecause`, `publishedQuad`, `priceBand`, `pphBlocker`). What any surface
   is ALLOWED to say about a value our record does not hold. Stated once, here.
+- `src/lib/quad.ts` — **the ink rule**: `quadClass` (fact/finding/gap),
+  `showsValue`, and **`inkFor`**, which adds the fourth ink — `derived`. A figure
+  that is ours must never wear a school's colours, and that decision used to be an
+  untested ternary inside the record page: neutralise it and `± € 6.180`,
+  `± € 5.160`, `± 600 uur` rendered through `<Quad>` in **fact ink**, one row below
+  the schools' real figures, with the whole suite green. It is a pure, truth-tabled
+  function now, and both surfaces call it.
 - `src/lib/presenters.ts` — display only: the strings a component renders.
+  **`KeyValueRow` is a union in which a derived row HAS NO `source` KEY** (§6: our
+  arithmetic cites no page of theirs) and its `note` — the working — is required.
+  Build one only via `derivedRow()`, which takes the `TotalPrice`/`TotalHours`/
+  `TotalPathCost` **object itself**, so the ink cannot disagree with the arithmetic
+  that produced it.
 
 `derive.ts`, `rules.ts`, `quad.ts` and `presenters.ts` **must import nothing
 from `node:*`.** That is not tidiness. When the rule lived behind `node:fs`, the
@@ -102,14 +126,25 @@ designed so a future frontend under a different brand can consume it without
 touching this repo. The `@/*` path alias maps to `src/*`.
 
 **The export ships a `derived` block per programme** (`price_state`,
-`price_band`, `total_price`, `pph`, `pph_state`, `contact_ratio`,
-`bundle_delta`, `multistyle`), built in `src/lib/api.ts` by the same functions
-the site renders from. **Consumers must read `derived.price_state`, never the raw
-`price.published`** — a programme can carry `published: "yes"` with no
-`amount_eur` (they publish a price; we have not captured it — five once did, one
-still does), and rendering the raw field states a bare "ja" as established fact
-about a named business. Likewise **`derived.total_price`, never the raw
-`price.amount_eur`**, for anything that compares or ranks (see below).
+`price_band`, `total_price`, `total_hours`, `total_path_cost`, `pph`,
+`pph_state`, `contact_ratio`, `bundle_delta`, `multistyle`), built in
+`src/lib/api.ts` by the same functions the site renders from. **Consumers must
+read `derived.price_state`, never the raw `price.published`** — a programme can
+carry `published: "yes"` with no `amount_eur` (they publish a price; we have not
+captured it — five once did, **none does today**: all five were researched,
+sourced, archived and extracted, and the rule is pinned against a *constructed*
+case in `price-gap.fixture.ts` so that fixing the data can never retire it), and
+rendering the raw field states a bare "ja" as established fact about a named
+business. Likewise **`derived.total_price`, never the raw `price.amount_eur`**,
+for anything that compares or ranks (see below).
+
+**Every derived figure on the wire is a DISCRIMINATED UNION, and its variants have
+different key sets** (`{kind: "published", value}` | `{kind: "computed", value,
+working}` | a no-value kind). `{value, derived: boolean}` made "our sum called
+theirs" and "a derived value with no working" both compile, and it made the *lazy*
+consumer path — destructure `{value}`, ignore `derived` — the *wrong* one. Now
+`working` exists only where the number is ours and is **required** there, so a
+consumer that prints `working` when present is correct by accident. Read `kind`.
 Derived values are computed **at export** and are still never stored in `data/`:
 spec §6 holds — the export is a *rendering* of the records, not the source of
 truth. A test pins `derived.price_state` to what the listing and the record page
@@ -143,7 +178,9 @@ them silently corrupts the dataset's credibility.
   `total` — 53 of 54 priced programmes — which is exactly why the exception was
   invisible: de Blikopener publishes **€ 1.290 per studiejaar** over a four-year, 500-hour
   opleiding and no total at all, and a bare `amount_eur` ranked them 3rd cheapest of 54
-  trainings when the training costs ≈ € 5.260. `periods` = how many periods make the
+  trainings when the training costs **€ 5.160** (4 × € 1.290 — the figure the site renders,
+  as ours; their € 100 inschrijfgeld sits in `excludes` and is never summed in, see below).
+  `periods` = how many periods make the
   whole training; `null` = they do not publish it, and then **there is no comparable
   total**: the programme is banded nowhere and ranked nowhere (`priceBand →
   `no_comparable_total``). **Price bands, price sorting and €/contactuur all consume

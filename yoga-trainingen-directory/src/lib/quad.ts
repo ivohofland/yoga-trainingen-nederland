@@ -83,6 +83,48 @@ export function showsValue(v: Quad | undefined | null, hasValue: boolean): boole
   return quadClass(v) === "fact" && hasValue;
 }
 
+/**
+ * THE FOURTH INK — and the whole rule of this project, applied to OUR OWN numbers.
+ *
+ * A number published about a named business is either THEIR CLAIM — fact ink, cited — or
+ * VISIBLY OUR ARITHMETIC — muted, uncited, working shown. There is no third option and
+ * there is no neutral rendering: ink IS the assertion. A quad has three inks
+ * (`quadClass`); a figure we computed needs a fourth, because it is not a finding about
+ * them, not a gap in us, and above all NOT A FACT THEY STATED.
+ *
+ * WHY THIS IS A FUNCTION AND NOT A TERNARY IN A COMPONENT.
+ *
+ * It WAS a ternary in a component — `row.derived && row.state === "yes"` — sitting in
+ * app/aanbieder/[id]/page.tsx, and it was the single most consequential expression on the
+ * site. Neutralise it and the entire 181-test suite stayed green while `± € 6.180`
+ * (de Yogaschool's cost to qualify), `± € 5.160` (de Blikopener's four-year total) and
+ * `± 600 uur` (de Yogaschool's hours) rendered through <Quad>, in FACT INK, one row below
+ * those schools' own published figures — our arithmetic wearing their colours, on a page
+ * that names them. Not one of those three numbers appears in any source either school
+ * published.
+ *
+ * This is precisely the reason `showsValue()` was lifted out of <Quad> and truth-tabled:
+ * a decision inside a component, in a project that adds no React renderer, is a decision
+ * nothing can test. So it is lifted out again, and both surfaces call it. What remains in
+ * the components is a wire.
+ *
+ * BOTH HALVES OF THE CONDITION ARE LOAD-BEARING, and they fail in opposite directions:
+ *
+ *   - drop `derived` → our sum is painted as the school's own claim (the bug above);
+ *   - drop `state === "yes"` → a row with NO value (de Blikopener with no period count:
+ *     a FINDING about them) is painted muted-and-uncited, so a finding we researched and
+ *     sourced reads as an aside of ours. `derived` only ever governs the ink of a VALUE;
+ *     it never decides whether one exists.
+ */
+export type Ink = QuadClass | "derived";
+
+export function inkFor(cell: { state: Quad; derived?: boolean }): Ink {
+  // OURS — but only where there is actually a figure to print. A derived row with no
+  // value still states a finding, and a finding is exactly what <Quad> is for.
+  if (cell.derived === true && cell.state === "yes") return "derived";
+  return quadClass(cell.state);
+}
+
 const LABEL: Record<Quad, string> = {
   yes: "ja",
   no: "nee",

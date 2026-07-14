@@ -2,14 +2,23 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { z } from "zod";
 import { loadDataset } from "./loader";
-import { toListingRows, datasetStats, formatEuro, formatMonth, cohortLabel, nextCohortLabel, toProviderView } from "./presenters";
+import {
+  toListingRows,
+  datasetStats,
+  formatEuro,
+  formatMonth,
+  cohortLabel,
+  nextCohortLabel,
+  toProviderView,
+  type KeyValueRow,
+} from "./presenters";
 import { pphQuad, priceAmountIsOurGap, priceQuad } from "./rules";
 // The RECORD-side mirror of the price rules reads the derived total, not `price.amount_eur`
 // (spec v0.8): a programme priced per module holds no amount and still has a comparable
 // total. See blockerOf and rowBacking.
-import { totalPrice } from "./derive";
+import { ourWorking, totalPrice, type TotalHours, type TotalPrice } from "./derive";
 import { priceGapProvider } from "./price-gap.fixture";
-import { quadClass, saysNotPublished } from "./quad";
+import { inkFor, quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 // The SCHEMA, as a value — the contract test walks its shape rather than
 // hard-coding the key list it is supposed to be guarding. See SCHEMA_CONTRACT_KEYS.
@@ -820,7 +829,10 @@ test("SOURCE: every source a fact cites exists in that provider's sources[] — 
     view.registrations.forEach((r, i) => check(r.source, `registrations[${i}]`));
     for (const c of view.claims) check(c.source, `claim ${c.id}`);
     for (const prog of view.programs) {
-      for (const row of prog.rows) check(row.source, `${prog.id} row "${row.label}"`);
+      // `?? null` because a DERIVED row has no `source` key at all (KeyValueRow, §6): our
+      // arithmetic cites no page of theirs. It is skipped by check(), which is exactly right —
+      // there is no citation to resolve, and inventing one is what the type now forbids.
+      for (const row of prog.rows) check(row.source ?? null, `${prog.id} row "${row.label}"`);
       for (const row of [...prog.coherence, ...prog.transparency, ...prog.contract]) {
         check(row.source, `${prog.id} quad "${row.key}"`);
       }
@@ -864,11 +876,13 @@ test("RENDER: de Yogaschool's 600 reaches the page as OUR sum — flagged, uncit
     "the row is not flagged as ours — the record page renders it through <Quad>, in fact ink, and 600 " +
     "becomes de Yogaschool's claimed total: exactly the bug spec v0.6 removed from the data");
 
-  // NO CITATION. Pinning their docentenpagina to "± 600 uur" would credit the school with
-  // a figure that appears in none of their archived sources (§6: derived values carry no
-  // source — the parts they were computed from do).
-  assert.equal(derived.source, null,
-    "our arithmetic is cited to one of THEIR pages — that page never printed this number");
+  // NO CITATION — and the row has no `source` KEY AT ALL, not `source: null` (KeyValueRow).
+  // Pinning their docentenpagina to "± 600 uur" would credit the school with a figure that
+  // appears in none of their archived sources (§6: derived values carry no source — the parts
+  // they were computed from do). `derived: true` WITH a source used to COMPILE; it cannot now,
+  // and this assertion is what that reads like from the outside.
+  assert.equal(derived.source, undefined,
+    "our arithmetic carries a citation to one of THEIR pages — that page never printed this number");
 
   // The working, so the reader can check it.
   assert.match(derived.note ?? "", /onze optelling/);
@@ -914,7 +928,8 @@ test("RENDER: the path cost is a row of ITS OWN, muted, uncited — and only whe
   assert.match(path.value ?? "", /6\.180/, "€ 4.590 + € 1.590");
   assert.equal(path.derived, true,
     "unflagged, the page paints € 6.180 in de Yogaschool's own fact ink — a figure they never published");
-  assert.equal(path.source, null, "our arithmetic cites no page of theirs; the parts carry the citations");
+  assert.equal(path.source, undefined,
+    "our arithmetic carries a citation; it cites no page of theirs — the parts carry the citations");
   assert.match(path.note ?? "", /Basisopleiding/, "the working must say what was added, and for how much");
 
   // The gate itself gets a row WITH a source — the price row above cannot carry it, and the
@@ -951,28 +966,42 @@ test("RENDER: a programme with nothing to buy first shows NO path-cost row", () 
   assert.match(withPath[0].priceDerivedPathCost ?? "", /om te kwalificeren/);
 });
 
-test("RENDER: `derived` is on the three derived totals and on NOTHING else", () => {
+test("RENDER: `derived` is on the FOUR derived figures and on NOTHING else", () => {
   // The flag is a licence to print a number in non-factual ink. Anywhere else it would do
   // the opposite of its job: it would strip a provider's own sourced fact of its fact ink.
   // Conversely, every derived value that HAS a figure must carry it — a new derived row
   // added without the flag is exactly the regression this pins.
   // `Set<string>`, not the literal union TS infers: `row.label` is a string, and a Set
   // narrowed to the three label literals rejects `.has()` on it (a pre-existing tsc error).
-  const DERIVED_LABELS = new Set<string>([nl.rowTotalPrice, nl.rowTotalHours, nl.rowTotalPathCost]);
-  let flagged = 0;
+  //
+  // €/CONTACTUUR IS THE FOURTH, and it was missing from this list for as long as the list
+  // existed. It is price ÷ contact hours — 100% OUR arithmetic, on a figure NO school in the
+  // corpus publishes — and it carried no flag, so it went through <Quad> in FACT INK, one row
+  // under a Prijs row and an Urenuitsplitsing row that really are theirs and that carry the
+  // citations to prove it. On de Yogaschool it is our arithmetic OVER our arithmetic:
+  // (3 × € 1.530) ÷ 360, in the school's own colours.
+  const DERIVED_LABELS = new Set<string>([
+    nl.rowTotalPrice,
+    nl.rowTotalHours,
+    nl.rowTotalPathCost,
+    nl.colPph,
+  ]);
+  const flagged: Record<string, number> = {};
   for (const p of providers) {
     for (const prog of toProviderView(p).programs) {
       for (const row of prog.rows) {
         if (!row.derived) continue;
-        flagged++;
+        flagged[row.label] = (flagged[row.label] ?? 0) + 1;
         assert.ok(DERIVED_LABELS.has(row.label),
           `${p.id}/${prog.id}: row "${row.label}" is flagged as OUR arithmetic. A provider's own fact ` +
           `rendered in the muted “onze berekening” ink tells the reader we made it up.`);
         assert.equal(row.state, "yes", "the flag only ever governs the ink of a VALUE");
-        assert.equal(row.source, null, "a derived value cites no provider page — see §6");
+        assert.equal(row.source, undefined,
+          "a derived row carries a `source` at all — §6: our arithmetic cites no provider page, and " +
+          "KeyValueRow's derived variant now has no key for one");
         assert.ok(row.note, "a derived number without its working is a number the reader cannot check");
       }
-      // Every derived row that shows a figure IS flagged — both units.
+      // Every derived row that shows a figure IS flagged — all four kinds.
       for (const label of DERIVED_LABELS) {
         const row = prog.rows.find((r) => r.label === label);
         if (row?.state === "yes") {
@@ -983,8 +1012,26 @@ test("RENDER: `derived` is on the three derived totals and on NOTHING else", () 
       }
     }
   }
-  // Both units must actually be exercised: de Blikopener ×2 (price) + de Yogaschool (hours).
-  assert.ok(flagged >= 3, `only ${flagged} derived rows in the whole corpus — this test tests nothing`);
+  // ANTI-VACUITY, PER KIND — not one aggregate count. An aggregate `flagged > 0` is satisfied
+  // by any single kind, so dropping the flag from a whole class of figure (which is exactly
+  // what had happened to €/contactuur) leaves it green. Each of the four must be exercised by
+  // the corpus, or this test has stopped guarding the one that went quiet.
+  for (const label of DERIVED_LABELS) {
+    assert.ok((flagged[label] ?? 0) > 0,
+      `no row anywhere is flagged "${label}" — that class of OUR arithmetic is no longer guarded, ` +
+      `and it can go out in the provider's own fact ink with this suite green`);
+  }
+  // And the populations, by name, so a silent change of shape is loud:
+  //   Totaalprijs   6 — adhouna, de-blikopener ×2, de-yogaschool ×2, samsara
+  //   Pad-kosten    2 — de-yogaschool ×2
+  //   Totaaluren    1 — de-yogaschool
+  //   €/contactuur  7 — every programme with both a comparable total and published contact hours
+  assert.equal(flagged[nl.rowTotalPrice], 6);
+  assert.equal(flagged[nl.rowTotalPathCost], 2);
+  assert.equal(flagged[nl.rowTotalHours], 1);
+  assert.equal(flagged[nl.colPph], datasetStats(providers).pphComputable,
+    "a €/contactuur was computed and NOT flagged as ours (or the reverse) — the listing's footnote " +
+    "counts exactly these, and every one of them is a division no school published");
 });
 
 test("SOURCE: the facts the schema sources are the facts the page cites", () => {
@@ -1872,4 +1919,198 @@ test("REGISTER: the YA state the filter uses is the state the row's own column s
     fromChips++;
   }
   assert.ok(fromChips > 0 && noYaChip > 0, "one of the two directions is no longer exercised by the data");
+});
+
+/* ---------- THE LIES THAT USED TO COMPILE (spec §6) ----------
+ *
+ * `derived?: boolean` on KeyValueRow was an optional, forgeable, DROPPABLE flag, and it was
+ * the licence to print a number in someone else's ink. Five falsehoods type-checked, and
+ * every one of them publishes our arithmetic as a named business's own published figure —
+ * or their figure as our invention.
+ *
+ * The assertions below are the `@ts-expect-error` DIRECTIVES, not the runtime bodies. If a
+ * line beneath one starts compiling, `tsc` reports the directive as unused and the build
+ * goes red — which is precisely the event worth failing on: the type stopped forbidding the
+ * lie. (`npm run build` typechecks; `npm test` executes these bodies, so each is inert.)
+ */
+
+test("TYPE: our arithmetic cannot be forged, credited to a school, or silently dropped", () => {
+  const label = nl.rowTotalPrice;
+  const working = "onze berekening: 4 × € 1.290";
+
+  // THE ONE LEGAL DERIVED ROW: a figure, its working, no citation.
+  const ours: KeyValueRow = { label, state: "yes", value: "± € 5.160", note: working, derived: true };
+  assert.equal(ours.derived, true);
+  assert.equal(ours.note, working);
+
+  // LIE 1 — `derived: false` on our own multiplication. It renders € 5.160, which appears on
+  // no page de Blikopener publishes, in de Blikopener's own fact ink.
+  // (One line each, deliberately: `@ts-expect-error` covers only the line beneath it, and a
+  //  directive that silently lands on the wrong line is a test that asserts nothing.)
+  // @ts-expect-error `derived?: never` on the fact variant admits `undefined`, not `false`
+  const theirsButOurs: KeyValueRow = { label, state: "yes", value: "± € 5.160", note: working, source: null, derived: false };
+
+  // LIE 2 — ours, WITH a citation. It credits the school with our sum: it pins their
+  // docentenpagina to a figure that has never appeared on it (§6).
+  // @ts-expect-error the derived variant has NO `source` key — our arithmetic cites no page of theirs
+  const cited: KeyValueRow = { label, state: "yes", value: "± € 5.160", note: working, derived: true, source: "site-2026-07" };
+
+  // LIE 3 — ours, with NO working. This one did not even render wrong: the presenter, needing
+  // a caveat to print, SILENTLY DROPPED THE ROW. The figure vanished rather than failing.
+  // @ts-expect-error `note` is REQUIRED, and a string, on the derived variant
+  const noWorking: KeyValueRow = { label, state: "yes", value: "± € 5.160", note: null, derived: true };
+
+  // LIE 4 — the flag SPREAD AWAY. `rest` used to be a perfectly valid KeyValueRow, and our
+  // arithmetic became indistinguishable from a fact by a destructuring nobody would look at
+  // twice. It cannot now: `rest` has no `source` key, and every non-derived variant REQUIRES
+  // one (present, though it may be null).
+  const { derived: _dropped, ...rest } = ours;
+  // @ts-expect-error a derived row with its flag removed is not a row at all
+  const laundered: KeyValueRow = rest;
+
+  // LIE 5 — a derived row with no VALUE. de Blikopener with no period count states a FINDING
+  // about them; painting it muted-and-uncited disowns research we did and sourced.
+  // @ts-expect-error `derived` never appears on a valueless row — it governs the ink of a VALUE
+  const derivedFinding: KeyValueRow = { label, state: "not_published", note: null, source: null, derived: true };
+  // …and inkFor() says the same thing, at runtime, for a row that got past the type by a cast.
+  assert.equal(inkFor({ state: "not_published", derived: true }), "finding");
+
+  void theirsButOurs; void cited; void noWorking; void laundered; void derivedFinding;
+});
+
+test("TYPE: a total cannot be ours without its working, or theirs with one", () => {
+  // The same disease on the wire, where it matters most: a consumer that destructures
+  // `{ value }` and ignores `derived` prints our multiplication as de Blikopener's price.
+  // `working` now exists ONLY on `kind: "computed"`, and is REQUIRED there.
+
+  const theirs: TotalPrice = { kind: "published", value: 2495 };
+  const ourSum: TotalPrice = { kind: "computed", value: 5160, working: "onze berekening: 4 × € 1.290" };
+  assert.equal(ourWorking(theirs), null, "a school's own figure has no working — that is the whole signal");
+  assert.equal(ourWorking(ourSum), "onze berekening: 4 × € 1.290");
+
+  // A DERIVED VALUE WITH NO WORKING. Under `{value, derived, caveat}` this compiled, and the
+  // presenter dropped the row rather than failing.
+  // @ts-expect-error `working` is required on the computed variant
+  const noWorking: TotalPrice = { kind: "computed", value: 5160 };
+
+  // THEIR PUBLISHED FIGURE, WEARING OUR WORKING. Wahé states € 2.495 on the page we cite;
+  // dressing it as our arithmetic strips them of a statement they made.
+  // @ts-expect-error the published variant has no `working` key
+  const forged: TotalPrice = { kind: "published", value: 2495, working: "onze berekening: …" };
+
+  // AND THE HOURS, THE SAME WAY (v0.6).
+  // @ts-expect-error `working` is required on the computed variant
+  const noHoursWorking: TotalHours = { kind: "computed", value: 600 };
+  // @ts-expect-error Wahé's published 500 cannot carry a working
+  const forgedHours: TotalHours = { kind: "published", value: 500, working: "onze optelling: 360 + 240" };
+
+  void noWorking; void forged; void noHoursWorking; void forgedHours;
+});
+
+/* ---------- The LISTING's derived lines: the other surface, and it had no test at all ----------
+ *
+ * `priceDerivedTotal` and `priceDerivedTotalDisplay` appeared in ZERO assertions. Make the
+ * presenter return null unconditionally and the whole suite stayed green — while every derived
+ * whole-course total silently left the listing. de Blikopener would show "EUR 1.290 /
+ * studiejaar" and NOTHING ELSE: a four-year, EUR 5.160 opleiding, presented by its yearly fee,
+ * in a column readers use to compare it against whole-course prices.
+ *
+ * ListingRow gets the INK right by construction — `priceDisplay` (theirs) and
+ * `priceDerivedTotal` (ours) are two separate string fields, so the ink is chosen by WHICH
+ * FIELD carries the string and there is no flag to drop. What it had no guard against was the
+ * string never being built at all.
+ */
+
+test("LISTING: the derived whole-course total reaches the Prijs cell — as OURS, beside their unit price", () => {
+  const rows = toListingRows(providers, NOW);
+  const row = (providerId: string, programId: string) =>
+    rows.find((r) => r.providerId === providerId && r.programId === programId)!;
+
+  // de Blikopener: a price per studiejaar, over four of them. THEIR line carries their unit;
+  // OUR line carries the total they never state, with the working.
+  const blik = row("de-blikopener", "hatha-raja-opleiding");
+  assert.match(blik.priceDisplay ?? "", /1\.290/, "the provider's own figure must still be shown");
+  assert.match(blik.priceDisplay ?? "", /studiejaar/,
+    "the UNIT is part of the fact: a bare amount under a column headed Prijs states what a four-year " +
+    "training costs; '/ studiejaar' states what they actually publish");
+  assert.ok(blik.priceDerivedTotal,
+    "the derived total never reaches the listing: de Blikopener is shown by its YEARLY FEE alone, in a " +
+    "column readers use to compare whole-course prices");
+  assert.match(blik.priceDerivedTotal!, /5\.160/, "4 x 1.290");
+  assert.match(blik.priceDerivedTotal!, /onze berekening/, "the working must say whose sum it is");
+
+  // TWO STRINGS, NEVER ONE. Folded together, the component gets one string to print in one
+  // ink, and the derived half arrives at the reader wearing the provider's colours.
+  assert.notEqual(blik.priceDerivedTotal, blik.priceDisplay);
+  assert.ok(!blik.priceDisplay!.includes("5.160"),
+    "our total was folded into the provider's own price line — one string, one ink, and the figure " +
+    "de Blikopener never published is now indistinguishable from the one they did");
+
+  // Adhouna: the SUM of unequal parts (v0.8). Their line shows the two prices they print.
+  const adhouna = row("adhouna", "200-yin-xl");
+  assert.match(adhouna.priceDerivedTotal ?? "", /2\.725/, "1.420 + 1.305");
+  assert.match(adhouna.priceDerivedTotal ?? "", /onze optelling/);
+
+  // ...and a school that publishes a whole-course total gets NO second line. Printing their own
+  // number twice, once under "onze berekening", would relabel their published price as our sum.
+  const wahe = row("wahe", "200-vinyasa-ayurveda");
+  assert.match(wahe.priceDisplay ?? "", /2\.495/);
+  assert.equal(wahe.priceDerivedTotal, null,
+    "a school's PUBLISHED total was given a second line labelled as our arithmetic — v0.5's error, backwards");
+});
+
+test("LISTING: exactly the programmes whose total is OURS carry a derived line — and no others", () => {
+  // The property, over the whole corpus, rather than three names: the listing's derived line
+  // exists on a row IF AND ONLY IF totalPrice() says the figure is ours. One rule, two surfaces
+  // — the same shape as the PRICE listing-vs-record test above.
+  const rows = toListingRows(providers, NOW);
+  let ours = 0;
+  let theirs = 0;
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      const r = rows.find((x) => x.providerId === p.id && x.programId === prog.id)!;
+      const total = totalPrice(p, prog);
+      if (total.kind === "computed") {
+        assert.ok(r.priceDerivedTotal,
+          `${p.id}/${prog.id}: we computed this whole-course total (${total.value}) and the listing shows ` +
+          `only the provider's per-period figure — the reader compares a year against whole courses`);
+        assert.ok(r.priceDerivedTotal!.includes(ourWorking(total)!),
+          `${p.id}/${prog.id}: the derived line drops the working — a number of ours the reader cannot check`);
+        ours++;
+      } else {
+        assert.equal(r.priceDerivedTotal, null,
+          `${p.id}/${prog.id}: a derived line on a figure that is not ours (kind "${total.kind}") — either a ` +
+          `school's own published price relabelled as our sum, or a total invented where none exists`);
+        if (total.kind === "published") theirs++;
+      }
+    }
+  }
+  // THE SPLIT, PINNED. Six figures on this site are ours; the rest are the schools' own, and the
+  // whole project turns on the reader being able to tell which is which.
+  assert.equal(ours, 6,
+    "the number of totals rendered as OUR arithmetic changed: adhouna/200-yin-xl, de-blikopener x2, " +
+    "de-yogaschool-enschede x2, samsara/4jarige-allround-500");
+  assert.equal(theirs, 53, "the number of totals rendered as the schools' own published figures changed");
+});
+
+test("LISTING: the €/contactuur is rendered as OURS, with its working, on every row that has one", () => {
+  // It is price / contact hours — a division WE perform, over a figure no school in the corpus
+  // publishes. On the record page it went through <Quad> in FACT INK; on the listing it was
+  // plain default ink with a caveat that said nothing whatever about whose number it is.
+  const rows = toListingRows(providers, NOW);
+  let computed = 0;
+  for (const r of rows) {
+    if (r.pph == null) {
+      assert.equal(r.pphDisplay, null);
+      continue;
+    }
+    assert.ok(r.pphDisplay, `${r.providerId}/${r.programId}: a €/contactuur with nothing to render`);
+    assert.match(r.pphCaveat ?? "", /onze berekening/,
+      `${r.providerId}/${r.programId}: the €/contactuur is presented with no sign that WE computed it — ` +
+      `no school publishes this figure, so an unmarked one is a number attributed to nobody`);
+    assert.match(r.pphCaveat ?? "", /contacturen/, "the working must show the denominator");
+    computed++;
+  }
+  assert.equal(computed, datasetStats(providers).pphComputable);
+  assert.ok(computed > 0, "no programme has a €/contactuur — this test tests nothing");
 });

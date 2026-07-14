@@ -135,11 +135,17 @@ export function pphQuad(provider: Provider, program: Program): Quad {
 /**
  * The record says the provider publishes a price, and we do not hold the amount.
  *
- * Five programmes were this shape; four have been paid off (their price source was
- * the page that LINKED to the price rather than the one that stated it — see
- * provenance.ts, which now catches exactly that). One remains: sanayou/200-online.
- * Do not re-hardcode a roster here or in a test: `provenance.ts` finds them, and the
- * tests derive the set from THIS predicate, so paying one off cannot break a build.
+ * FIVE programmes were this shape, and ZERO are today — all five have been researched,
+ * sourced, archived and their amounts extracted from the captured artifact. (Their price
+ * source was the page that LINKED to the price rather than the one that STATED it; see
+ * provenance.ts, which now catches exactly that.)
+ *
+ * The rule outlives the defect, and must: the next record to land in this state — and one
+ * will, because finding a school's price page is not the same day's work as reading it —
+ * has to reach every surface as OUR gap, never as a finding about them. So do not
+ * re-hardcode a roster here or in a test. `provenance.ts` finds them; the tests pin the
+ * rule against a CONSTRUCTED case (price-gap.fixture.ts), so paying a record off can
+ * never fail a build and can never silently retire the rule with it.
  */
 export function priceAmountIsOurGap(provider: Provider, program: Program): boolean {
   return (
@@ -169,7 +175,10 @@ export function priceAmountIsOurGap(provider: Provider, program: Program): boole
  *    but our record holds no number. A "ja" with no number promises a fact we do
  *    not hold; and the finding-vs-gap rule (see missingBecause) says a value
  *    missing from a field the provider does publish is a gap in OUR research,
- *    never an omission by them. Five programmes were this shape; one still is
+ *    never an omission by them. Five programmes were this shape; NONE is today —
+ *    all five have been researched, sourced, archived and their amounts extracted.
+ *    The rule is pinned against a constructed case (price-gap.fixture.ts), because a
+ *    rule that finds its case by sweeping the data dies the day the data is fixed
  *    (see priceAmountIsOurGap).
  *
  * 2. `no` → `not_published`. `price.published` is a *_published field, and on such
@@ -221,7 +230,8 @@ export function priceQuad(provider: Provider, program: Program): Quad {
  * studiejaar", and nowhere how many studiejaren — CANNOT BE BANDED. Banding it on the
  * bare `amount_eur` is precisely the inversion v0.5 was written to kill: de Blikopener
  * would sit under "onder €3.000" beside whole-course totals, third-cheapest of 54
- * trainings, while the training actually costs ≈ € 5.260. A yearly fee is not a price;
+ * trainings, while the training costs € 5.160 (4 × € 1.290 — the figure the site renders,
+ * as ours). A yearly fee is not a price;
  * it is a price per year, and the reader's band is a statement about the whole course.
  * So such a programme belongs to NO band, exactly as our own gaps do — and, like them,
  * it is offered by no chip: we can honestly say neither "it costs this much" nor "they
