@@ -6,16 +6,19 @@ body:
   - type: markdown
     attributes:
       value: |
-        **Dit verzoek is openbaar.** Het blijft zichtbaar en gedateerd staan — ook als het wordt
-        afgewezen. Dat is het punt: stilzwijgende correcties bestaan hier niet.
+        **Dit verzoek is openbaar.** Iedereen kan het lezen, het krijgt een datum, en het blijft
+        staan. Ook als ik het afwijs. Dat is de bedoeling: stilzwijgende correcties bestaan hier
+        niet.
 
-        Wilt u dit niet in het openbaar doen — bijvoorbeeld omdat u een school vertegenwoordigt
-        en een bevinding wilt aanvechten zonder publiek debat — mail dan naar **ivo@ivohofland.nl**.
-        Dat verzoek blijft privé; de correctie die eruit volgt niet.
+        **Liever niet in het openbaar?** Vertegenwoordigt u een school, en wilt u een bevinding
+        aanvechten zonder publiek debat, mail dan naar **ivo@ivohofland.nl**. Uw verzoek blijft
+        dan privé. De correctie die eruit volgt niet: die komt gewoon in de vermelding te staan,
+        en in de openbare wijzigingsgeschiedenis.
 
-        **Binnen scope:** feitelijke fouten (prijzen, btw, uren, registerstatussen, cohortdata,
-        citaten). **Buiten scope:** toon, de volledigheid van positieve informatie, en verzoeken om
-        letterlijke citaten te verwijderen — een citaat met bron is geen fout.
+        **Wat wel:** feitelijke fouten. Prijzen, btw, uren, registerstatussen, cohortdata, citaten.
+
+        **Wat niet:** toon, de volledigheid van positieve informatie, en verzoeken om letterlijke
+        citaten te verwijderen. Een citaat met bronvermelding is geen fout.
 
   - type: input
     id: record

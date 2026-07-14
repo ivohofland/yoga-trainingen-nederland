@@ -14,10 +14,10 @@
 # does render) and in the form's own intro. Do not "fix" this back into a mailto.
 blank_issues_enabled: true
 contact_links:
-  - name: Vertrouwelijk melden — e-mail naar ivo@ivohofland.nl
+  - name: "Vertrouwelijk melden: e-mail naar ivo@ivohofland.nl"
     url: https://github.com/ivohofland/yoga-trainingen-nederland/blob/main/yoga-trainingen-directory/content/correcties.md
     about: >
-      Geen GitHub-account, of wilt u een bevinding niet in het openbaar aanvechten? Mail dan
-      naar ivo@ivohofland.nl — het verzoek blijft privé, de correctie die eruit volgt niet.
+      Geen GitHub-account? Of wilt u een bevinding niet in het openbaar aanvechten? Mail dan
+      naar ivo@ivohofland.nl. Uw verzoek blijft privé. De correctie die eruit volgt niet.
       Deze pagina beschrijft de volledige correctie- en klachtenprocedure: wat binnen en
       buiten scope valt, en hoe een afwijzing wordt vastgelegd.
