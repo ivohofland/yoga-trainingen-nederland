@@ -127,6 +127,30 @@ test("CORRECTION: the public route is a FORM that submits — and it cannot be s
   assert.match(yml, /ivo@ivohofland\.nl/);
 });
 
+test("CORRECTION: the chooser offers the private route — and never as a mailto, which GitHub eats", () => {
+  // FOUND BY OPENING THE PAGE, not by reading the docs. The chooser's contact link was
+  // `url: mailto:ivo@ivohofland.nl`, and GitHub SILENTLY DROPPED THE ROW: it renders contact
+  // links only for http(s) URLs, and documents this nowhere. The chooser then showed the
+  // public form and NO private route at all — exactly the state the two-channel design exists
+  // to prevent, because a school unwilling to complain in public would have found no other
+  // door, and its silence would then have read as having nothing to say.
+  const cfg = fs.readFileSync(
+    path.join(process.cwd(), "..", ".github", "ISSUE_TEMPLATE", "config.yml"),
+    "utf8",
+  );
+  const urls = [...cfg.matchAll(/^\s*url:\s*(\S+)/gm)].map((m) => m[1]);
+  assert.ok(urls.length > 0, "the chooser offers no contact link at all");
+  for (const u of urls) {
+    assert.ok(
+      u.startsWith("https://"),
+      `contact_links url "${u}" is not http(s) — GitHub will drop the row without a word, and the ` +
+        `private route will vanish from the chooser. Put the address in the link's \`about\` text.`,
+    );
+  }
+  // The address must still be REACHABLE from the chooser — in the text, since it cannot be the href.
+  assert.match(cfg, /ivo@ivohofland\.nl/, "the confidential route must be discoverable in the chooser");
+});
+
 test("CORRECTION: the procedure refuses what a correction channel must refuse", () => {
   const md = fs.readFileSync(path.join(process.cwd(), "content", "correcties.md"), "utf8");
   // A channel that entertains "please delete that verbatim quote" is not a correction

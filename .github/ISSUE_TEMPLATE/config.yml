@@ -1,11 +1,23 @@
+# The issue-template chooser.
+#
+# `blank_issues_enabled: true` on purpose — a correction is not the only reason someone
+# might open an issue here, and forcing every visitor through the correctie form would
+# turn a research repo into a complaints desk.
+#
+# NO `mailto:` IN A CONTACT LINK. The first version of this file offered "Vertrouwelijk
+# melden (e-mail)" as `url: mailto:ivo@ivohofland.nl`, and GITHUB SILENTLY DROPPED THE
+# ROW — it renders contact links only for http(s) URLs, and says so nowhere. The result
+# was a chooser that showed the public form and no private route at all: precisely the
+# state we designed against, because a school unwilling to complain in public would have
+# found no other door and its silence would then have read as having nothing to say.
+# Caught by opening the page. The address now lives in the link's `about` text (which
+# does render) and in the form's own intro. Do not "fix" this back into a mailto.
 blank_issues_enabled: true
 contact_links:
-  - name: Vertrouwelijk melden (e-mail)
-    url: mailto:ivo@ivohofland.nl
-    about: >
-      Wilt u een bevinding aanvechten zonder dat het verzoek openbaar is — bijvoorbeeld als
-      vertegenwoordiger van een school — mail dan. Het verzoek blijft privé; de correctie die
-      eruit volgt niet.
-  - name: Correctie- en klachtenprocedure
+  - name: Vertrouwelijk melden — e-mail naar ivo@ivohofland.nl
     url: https://github.com/ivohofland/yoga-trainingen-nederland/blob/main/yoga-trainingen-directory/content/correcties.md
-    about: Wat er met een melding gebeurt, wat binnen en buiten scope valt, en hoe een afwijzing wordt vastgelegd.
+    about: >
+      Geen GitHub-account, of wilt u een bevinding niet in het openbaar aanvechten? Mail dan
+      naar ivo@ivohofland.nl — het verzoek blijft privé, de correctie die eruit volgt niet.
+      Deze pagina beschrijft de volledige correctie- en klachtenprocedure: wat binnen en
+      buiten scope valt, en hoe een afwijzing wordt vastgelegd.
