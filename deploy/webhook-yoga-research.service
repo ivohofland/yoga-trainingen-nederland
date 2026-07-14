@@ -1,0 +1,33 @@
+# systemd unit for THIS SITE'S webhook deploy listener (adnanh/webhook).
+#
+# The BINARY is shared with ivohofland.dev; the INSTANCE is not. A listener runs as one
+# Linux user and must not be able to touch another site's repo or service — so each site
+# runs its own, on its own port, as its own user.
+#
+# THE FILENAME IS NOT GENERIC, ON PURPOSE. ivohofland.dev already installs
+# /etc/systemd/system/webhook.service, and its DEPLOY.md Part 5 says "copy
+# deploy/webhook.service" — one forgotten rename and this site's unit silently overwrites
+# that one, taking the other site's auto-deploy down without a word. Naming the repo file
+# for the site removes the step you could forget:
+#
+#   sudo cp deploy/webhook-yoga-research.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now webhook-yoga-research
+
+[Unit]
+Description=webhook — deploy listener for research.ivohofland.nl
+After=network.target
+
+[Service]
+Type=simple
+User=ivohofland-research
+EnvironmentFile=/home/ivohofland-research/webhook.env
+ExecStart=/usr/local/bin/webhook -template -hooks /home/ivohofland-research/src/yoga-trainingen/deploy/hooks.json -ip 127.0.0.1 -port 9001 -hotreload
+Restart=on-failure
+RestartSec=5
+# ivohofland.dev's listener cannot set this: its deploy.sh must `sudo systemctl restart` the
+# app service. This site is static and restarts nothing, so the privilege that unit had to
+# keep, this one drops.
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
