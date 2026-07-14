@@ -21,9 +21,27 @@ After=network.target
 Type=simple
 User=ivohofland-research
 EnvironmentFile=/home/ivohofland-research/webhook.env
-ExecStart=/usr/local/bin/webhook -template -hooks /home/ivohofland-research/src/yoga-trainingen/deploy/hooks.json -ip 127.0.0.1 -port 9001 -hotreload
+# NO -hotreload. hooks.json lives inside the repo that THIS UNIT'S OWN DEPLOY resets
+# (deploy.sh runs `git reset --hard origin/main`), and a reset replaces the file's inode
+# rather than editing it in place. An inotify watch follows the old inode, so hotreload can
+# end up watching a file that no longer exists — silently: the listener keeps running, every
+# POST just stops matching a hook and 404s, and the Deploy workflow goes red with nothing in
+# `~/deploy.log` to explain why, because the failure is in the listener, not the deploy. A
+# real edit to hooks.json needs `sudo systemctl restart webhook-yoga-research` (see
+# DEPLOY.md) — one step to remember beats a watch that can go stale without symptoms until
+# the day it's needed.
+ExecStart=/usr/local/bin/webhook -template -hooks /home/ivohofland-research/src/yoga-trainingen/deploy/hooks.json -ip 127.0.0.1 -port 9001
 Restart=on-failure
 RestartSec=5
+# KillMode=process, not the default `control-group`. This unit's process IS the listener;
+# it is not the deploy.sh it spawns. deploy-webhook.sh runs deploy.sh via `nohup … &`, which
+# detaches it from the terminal but NOT from this unit's cgroup — so under the default
+# KillMode, `systemctl restart webhook-yoga-research` (DEPLOY.md tells the operator to do
+# exactly this to rotate the webhook secret) SIGTERMs the whole cgroup, deploy.sh included.
+# rsync's default is delete-during, so landing mid-`rsync --delete` can leave the docroot
+# half-deleted. `process` kills only the listener; a deploy already running finishes on its
+# own regardless of what happens to the unit that spawned it.
+KillMode=process
 # ivohofland.dev's listener cannot set this: its deploy.sh must `sudo systemctl restart` the
 # app service. This site is static and restarts nothing, so the privilege that unit had to
 # keep, this one drops.

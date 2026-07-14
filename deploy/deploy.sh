@@ -18,6 +18,13 @@ set -euo pipefail
 
 REPO_DIR="${REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 APP_DIR="$REPO_DIR/yoga-trainingen-directory"
+
+# Config that must survive `git reset --hard` cannot live in this repo (see GATE 2 below for
+# why DOCROOT is the example that taught us this). This file is OPTIONAL and lives outside
+# the repo entirely, so both deploy paths — a manual `bash deploy.sh` and the webhook — read
+# it the same way; a value in `~/webhook.env` would only ever reach the systemd unit.
+[ -f "$HOME/deploy.env" ] && . "$HOME/deploy.env"
+
 DOCROOT="${DOCROOT:-/home/ivohofland-research/htdocs/research.ivohofland.nl}"
 DEPLOY_USER="ivohofland-research"
 
@@ -44,6 +51,29 @@ if [ "$(id -un)" != "$DEPLOY_USER" ]; then
   exit 1
 fi
 
+# SERIALISE DEPLOYS — right after identity, before anything below that touches disk.
+# `next build` (under `output: "export"`) does `rm -rf out/` at the START of its export
+# phase, and nothing before this point stops two `deploy.sh` runs from overlapping: deploy A
+# can pass GATE 3 below, then deploy B's build wipe `out/` out from under it between that
+# check and the rsync, and A's `rsync --delete` then scans an EMPTY source — which empties
+# the live docroot, copies nothing back, and still exits 0. Both runs print "✓ deployed" and
+# CI stays green on both. This is not exotic: two pushes minutes apart, GitHub's "Re-run all
+# jobs", or a manual run of this script while a webhook deploy is already in flight all start
+# a second `deploy.sh` — and `deploy-webhook.sh` backgrounds the build and answers the HTTP
+# request before the build even starts, so GitHub's `concurrency: group: deploy-main` only
+# ever queues the PING, never the deploy it triggers.
+#
+# BLOCKING, not `flock -n` (skip-if-busy), ON PURPOSE. A skipped deploy would silently drop
+# the commit that woke it: the deploy already holding the lock has already done its own
+# `git reset --hard`, so by the time it finishes that commit is behind HEAD and nothing will
+# ever come back for it — the site goes quietly stale under a green tick. Waiting instead
+# means the queued run wakes up, resets to whatever `origin/main` is by then (at least as new
+# as the commit that woke it), and ships that. The 1-hour cap is not "forever" for the same
+# reason a skip is wrong: a deploy still holding the lock after an hour is stuck, not slow,
+# and queuing runs behind a stuck one forever is worse than one loud, visible failure.
+exec 9>"$HOME/.deploy.lock"
+flock -w 3600 9 || { echo "✗ another deploy held the lock for over an hour; refusing" >&2; exit 1; }
+
 # GATE 2: REFUSE TO RUN ANYWHERE BUT THE SERVER, and refuse before touching anything.
 # Below this line are a `git reset --hard`, which destroys uncommitted work, and an
 # `rsync --delete`, which empties whatever directory it is aimed at. The docroot exists
@@ -52,7 +82,9 @@ fi
 if [ ! -d "$DOCROOT" ]; then
   echo "✗ docroot does not exist: $DOCROOT" >&2
   echo "  This script deploys on the VPS, and will not run against a docroot it cannot find." >&2
-  echo "  (Set DOCROOT if CloudPanel reports a different path for the site.)" >&2
+  echo "  (If CloudPanel reports a different path for the site, set DOCROOT=... in" >&2
+  echo "  ~/deploy.env — never in this script: git reset --hard overwrites deploy.sh itself" >&2
+  echo "  on every run, so an edit here survives exactly one deploy.)" >&2
   exit 1
 fi
 
@@ -71,6 +103,16 @@ npm run build   # the gates. A failure exits here, before the swap.
 # error, it just deletes everything already in the docroot and copies nothing back. This
 # checks for the one file that can only exist if the static export actually ran to
 # completion, immediately before the rsync that would otherwise trust it blindly.
+#
+# THIS IS NOT THE DEFENSE AGAINST A CONCURRENT DEPLOY WIPING out/ FROM UNDER THIS ONE — it
+# used to have to be, and a file check cannot do that job: `next build` deletes `out/` at
+# the START of its own export phase, so a second build finishing between this check and the
+# rsync below would make this check bless a directory that is gone a moment later. That is a
+# check-then-act race, not a missing-file case, and no `[ -f ... ]` closes it. The LOCK taken
+# near the top of this script is what closes it, by guaranteeing no second `npm run build` is
+# running at all while this process holds it. What this check still catches on its own: a
+# build that reports success (exit 0) while producing no export — a failure `set -e` cannot
+# see, because nothing here failed.
 if [ ! -f "$APP_DIR/out/index.html" ]; then
   echo "✗ refusing: $APP_DIR/out/index.html is missing" >&2
   echo "  The build reported success but produced no export. Deploying this would wipe" >&2
