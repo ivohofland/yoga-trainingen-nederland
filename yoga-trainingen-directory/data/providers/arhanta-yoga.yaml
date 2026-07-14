@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../provider.schema.json
 id: arhanta-yoga
 name: Arhanta Yoga
-aka: ["Arhanta Yoga Ashram Nederland", "Arhanta Yoga Ashram Europe"]
+aka: [ "Arhanta Yoga Ashram Nederland", "Arhanta Yoga Ashram Europe" ]
 website: https://www.arhantayoga.nl
 status: active
 locations:
@@ -28,7 +28,7 @@ sources:
     type: website
     url: https://www.arhantayoga.nl/yoga-opleiding-nederland/
     archived_url: https://archive.ph/newest/https://www.arhantayoga.nl/yoga-opleiding-nederland/
-    local_snapshot: data/archives/arhanta-yoga/site-2026-06-12.md
+    local_snapshot: data/archives/arhanta-yoga/site-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
     note: >
       WAYBACK-EXCLUSIE: "This URL has been excluded from the Wayback Machine"
@@ -43,11 +43,13 @@ sources:
     archived_url: null
     captured: "2026-06-12"
     note: "YA-directory, country=Netherlands; JS-gerenderd, browser nodig"
+    local_snapshot: data/archives/arhanta-yoga/ya-register-2026-06-2026-07-14.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
     archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
     captured: "2026-06-12"
+    local_snapshot: data/archives/arhanta-yoga/crkbo-register-2026-06-2026-07-14.pdf
 
 programs:
   - id: 200-hatha-residentieel
@@ -71,8 +73,9 @@ programs:
         note: >
           CRKBO in de erkenning-lijst gepresenteerd naast YA/IYA — §10
           authority-laundering-specimen, verbatim: "deze opleiding is een Yoga
-          Alliance erkend opleiding, en wordt daarnaast erkend door IYA en CRKBO."
-          Registratie zelf klopt (fiscaal feit, geen kwaliteitskeurmerk).
+          Alliance erkend opleiding, en wordt daarnaast erkend door IYA en
+          CRKBO." Registratie zelf klopt (fiscaal feit, geen
+          kwaliteitskeurmerk).
     delivery:
       mode: in_person
       structure: intensive
@@ -104,8 +107,8 @@ programs:
       source: ya-register-2026-06
       note: >
         YA first registered 2010-03. Site claimt "sinds 2008", ashram NL
-        "gebouwd 2013"; afgestudeerden ">21.000" én ">24.000" op dezelfde
-        pagina — inconsistent aantal.
+        "gebouwd 2013"; afgestudeerden ">21.000" én ">24.000" op dezelfde pagina
+        — inconsistent aantal.
     cohorts:
       - id: c-2026-07
         start: "2026-07"

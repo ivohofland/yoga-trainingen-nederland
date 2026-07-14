@@ -32,27 +32,30 @@ sources:
     type: website
     url: https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
     archived_url: https://web.archive.org/web/20260612/https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
-    local_snapshot: data/archives/yoga-academie-nederland/site-2026-06-12.md
+    local_snapshot: data/archives/yoga-academie-nederland/site-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
     archived_url: null
     captured: "2026-06-12"
+    local_snapshot: data/archives/yoga-academie-nederland/ya-register-2026-06-2026-07-14.pdf
   - id: vyn-register-2026-06
     type: register
     url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
-    archived_url: https://web.archive.org/web/20260612/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    archived_url: https://web.archive.org/web/20260714093905/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
     captured: "2026-06-12"
+    local_snapshot: data/archives/yoga-academie-nederland/vyn-register-2026-06-2026-07-14.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
     archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
     captured: "2026-06-12"
+    local_snapshot: data/archives/yoga-academie-nederland/crkbo-register-2026-06-2026-07-14.pdf
   - id: datakosten-pdf-2026-07
     type: brochure
     url: https://yoga-academie.nl/.cm4all/uproc.php/0/YAN_datakosten.pdf
-    archived_url: null
+    archived_url: https://web.archive.org/web/20260714093940/https://yoga-academie.nl/.cm4all/mediadb/YAN_datakosten.pdf
     captured: "2026-07-12"
     note: "'data-overzicht (pdf)' — de PDF die vanaf de opleidingspagina gelinkt
       wordt en die de prijzen draagt (opleidingsprijs, prijs per module,
@@ -60,11 +63,12 @@ sources:
       gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan
       vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs.
       archived_url: null — Wayback weigerde de capture op 2026-07-12 ('already
-      captured 1 times today, which is a daily limit we have set for that Resource
-      type') en de availability-API kent nog geen snapshot. Opnieuw indienen
-      (`npm run archive -- yoga-academie-nederland`); tot die tijd is dit bewust
-      niet publiek gearchiveerd en haalt dit record de publicatielat niet."
-    local_snapshot: data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-12.pdf
+      captured 1 times today, which is a daily limit we have set for that
+      Resource type') en de availability-API kent nog geen snapshot. Opnieuw
+      indienen (`npm run archive -- yoga-academie-nederland`); tot die tijd is
+      dit bewust niet publiek gearchiveerd en haalt dit record de publicatielat
+      niet."
+    local_snapshot: data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-14.pdf
 
 # Moduleprijzen: alle acht staan in de datakosten-PDF, onder "KOSTEN MODULES 300
 # UUR". Geen BTW-vermelding op het hele document — vat blijft dus `unknown`, óók

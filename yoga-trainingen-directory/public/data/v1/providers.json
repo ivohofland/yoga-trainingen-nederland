@@ -945,7 +945,7 @@
           "type": "website",
           "url": "https://www.arhantayoga.nl/yoga-opleiding-nederland/",
           "archived_url": "https://archive.ph/newest/https://www.arhantayoga.nl/yoga-opleiding-nederland/",
-          "local_snapshot": "data/archives/arhanta-yoga/site-2026-06-12.md",
+          "local_snapshot": "data/archives/arhanta-yoga/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12",
           "note": "WAYBACK-EXCLUSIE: \"This URL has been excluded from the Wayback Machine\" (vastgesteld 2026-06-12). Domeinbrede uitsluiting — ook historische snapshots ontoegankelijk; §8-cohortreconstructie via Wayback is voor deze provider onmogelijk. Oorzaak van buiten niet vast te stellen (eigenaar-verzoek, robots-beleid of juridisch verzoek). Alternatief: archive.today + lokale PDF.\n"
         },
@@ -954,6 +954,7 @@
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
           "archived_url": null,
+          "local_snapshot": "data/archives/arhanta-yoga/ya-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12",
           "note": "YA-directory, country=Netherlands; JS-gerenderd, browser nodig"
         },
@@ -962,6 +963,7 @@
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
           "archived_url": "https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen",
+          "local_snapshot": "data/archives/arhanta-yoga/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         }
       ],
@@ -5196,8 +5198,8 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://namastestudios.nl/yogadocentopleiding",
-          "archived_url": "https://web.archive.org/web/20260612/https://namastestudios.nl/yogadocentopleiding",
-          "local_snapshot": "data/archives/namaste-studios/site-2026-06-12.md",
+          "archived_url": "https://web.archive.org/web/20260714093616/https://namastestudios.nl/yogadocentopleiding",
+          "local_snapshot": "data/archives/namaste-studios/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
         {
@@ -5205,7 +5207,7 @@
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&sid=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga",
           "archived_url": "https://web.archive.org/web/20260612/https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV",
-          "local_snapshot": "data/archives/namaste-studios/ya-profile-2026-06-12.md",
+          "local_snapshot": "data/archives/namaste-studios/ya-school-profile-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12",
           "note": "Salesforce-gerenderd. Wayback-snapshot (2026-06-12) bevat alleen de lege shell (header/footer, géén profieldata) — bewijswaarde nul, bevestigt enkel dat de URL bestond. Primaire evidence = tekstuitlezing in local_snapshot + handmatige pixel-PDF (nog toe te voegen). Dit geldt generiek voor YA-registerpagina's: archiveer ze nooit alleen via Wayback.\n"
         },
@@ -5214,6 +5216,7 @@
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
           "archived_url": "https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen",
+          "local_snapshot": "data/archives/namaste-studios/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         }
       ],
@@ -10936,7 +10939,7 @@
           "type": "website",
           "url": "https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/",
           "archived_url": "https://web.archive.org/web/20260612/https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/",
-          "local_snapshot": "data/archives/yoga-academie-nederland/site-2026-06-12.md",
+          "local_snapshot": "data/archives/yoga-academie-nederland/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
         {
@@ -10944,13 +10947,15 @@
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
           "archived_url": null,
+          "local_snapshot": "data/archives/yoga-academie-nederland/ya-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
         {
           "id": "vyn-register-2026-06",
           "type": "register",
           "url": "https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
-          "archived_url": "https://web.archive.org/web/20260612/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "archived_url": "https://web.archive.org/web/20260714093905/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "local_snapshot": "data/archives/yoga-academie-nederland/vyn-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
         {
@@ -10958,14 +10963,15 @@
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
           "archived_url": "https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen",
+          "local_snapshot": "data/archives/yoga-academie-nederland/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
         {
           "id": "datakosten-pdf-2026-07",
           "type": "brochure",
           "url": "https://yoga-academie.nl/.cm4all/uproc.php/0/YAN_datakosten.pdf",
-          "archived_url": null,
-          "local_snapshot": "data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-12.pdf",
+          "archived_url": "https://web.archive.org/web/20260714093940/https://yoga-academie.nl/.cm4all/mediadb/YAN_datakosten.pdf",
+          "local_snapshot": "data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-14.pdf",
           "captured": "2026-07-12",
           "note": "'data-overzicht (pdf)' — de PDF die vanaf de opleidingspagina gelinkt wordt en die de prijzen draagt (opleidingsprijs, prijs per module, niet-inbegrepen kosten). De opleidingspagina zelf noemt geen bedrag. Een gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs. archived_url: null — Wayback weigerde de capture op 2026-07-12 ('already captured 1 times today, which is a daily limit we have set for that Resource type') en de availability-API kent nog geen snapshot. Opnieuw indienen (`npm run archive -- yoga-academie-nederland`); tot die tijd is dit bewust niet publiek gearchiveerd en haalt dit record de publicatielat niet."
         }
@@ -14019,8 +14025,8 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/",
-          "archived_url": "https://web.archive.org/web/20260612/https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/",
-          "local_snapshot": "data/archives/yogapoint/site-2026-06-12.md",
+          "archived_url": "https://web.archive.org/web/20260714094007/https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/",
+          "local_snapshot": "data/archives/yogapoint/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
         {
@@ -14028,6 +14034,7 @@
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
           "archived_url": null,
+          "local_snapshot": "data/archives/yogapoint/ya-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
         {
@@ -14035,6 +14042,7 @@
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
           "archived_url": "https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen",
+          "local_snapshot": "data/archives/yogapoint/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         }
       ],

@@ -407,10 +407,31 @@ export interface ProvenanceFinding {
   message: string;
 }
 
-/** Artifact extensions we can read. `.md` is the hand-written text extraction some
- *  early records carry instead of a capture (yoga-academie-nederland); it is still
- *  the artifact that source was cited from, so it is still what we search. */
-const READABLE = [".pdf", ".html", ".md", ".txt"] as const;
+/**
+ * Artifact extensions we can read — A CAPTURE OF THEIR PAGE, AND NOTHING WE WROTE.
+ *
+ * `.md` and `.txt` were in this list, and they must never be again. Five sources
+ * (arhanta-yoga, namaste-studios ×2, yogapoint, yoga-academie-nederland) carried a
+ * hand-made `.md` "Evidence snapshot — tekstextractie" as their `local_snapshot`: a
+ * file WE composed from a web fetch, holding the quotes WE selected. The check opened
+ * it, searched it for the price we had recorded, found the price we had put there, and
+ * passed. Seven claims were "verified" against our own summary — the check reading its
+ * own homework back to itself, and reporting `✓ elk gedekt` over it.
+ *
+ * It is the exact prohibition this project states in every other place — "extract the
+ * value FROM THE CAPTURED FILE. Never from a search summary, never from memory" —
+ * silently violated by the one function whose whole job is to enforce it. And it was
+ * the WORST possible seven, because they were the only bodies committed to the public
+ * repo: in CI, the nine claims the check could open were precisely the self-certifying
+ * ones. The gate's only reachable evidence was evidence it had authored.
+ *
+ * All five sources now carry a real browser capture, and every recorded figure survived
+ * being held to it (yogapoint's "1.452 euro per module", namaste's € 3.000, arhanta's
+ * € 3250 — the records were right, they were simply unarchived). An artifact is a
+ * capture of a page a reader saw. If we wrote it, it is a note, and notes evidence
+ * nothing.
+ */
+const READABLE = [".pdf", ".html"] as const;
 
 let pdftotextChecked = false;
 let pdftotextPresent = false;

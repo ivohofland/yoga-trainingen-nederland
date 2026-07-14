@@ -930,3 +930,41 @@ test("SCHEMA: a day outside 01-31 is rejected, exactly as a month outside 01-12 
       `citation, as though it were a day someone could look up`);
   }
 });
+
+test("INTEGRITY: a snapshot is a capture of THEIR page, never text we wrote", () => {
+  // Five sources once pointed `local_snapshot` at a hand-made `.md` — an "Evidence
+  // snapshot — tekstextractie" composed from a web fetch, holding the quotes we had
+  // picked out. The provenance check opened them, searched for the price the record
+  // claimed, found the price we ourselves had typed into the note, and passed. Seven
+  // claims across four named businesses were certified against our own homework.
+  //
+  // Worse, those were the only artifact bodies committed to the public repo (the real
+  // ones are gitignored) — so in CI they were the ONLY evidence the check could open.
+  // Every claim it could actually verify was one it had authored.
+  //
+  // The records turned out to be right; the point is that nothing here could have told
+  // us. Now it is a load error, so it cannot come back as a convention nobody remembers.
+  const base = providerOf("yogapoint");
+  const withNote = {
+    ...base,
+    sources: base.sources.map((s, i) =>
+      i === 0 ? { ...s, local_snapshot: "data/archives/yogapoint/site-2026-06-12.md" } : s,
+    ),
+  };
+  const errors = integrityErrors(withNote, "yogapoint.yaml");
+  assert.equal(errors.length, 1, "a .md snapshot must be a load error, not a passing citation");
+  assert.match(errors[0], /text WE wrote/);
+  assert.match(errors[0], /npm run archive/, "the error must say how to fix it");
+
+  // And the corpus is clean of them: every snapshot in the dataset is a capture.
+  for (const p of providers) {
+    for (const s of p.sources) {
+      if (!s.local_snapshot) continue;
+      assert.doesNotMatch(
+        s.local_snapshot,
+        /\.(md|txt)$/i,
+        `${p.id}/${s.id}: cites text we wrote as its evidence`,
+      );
+    }
+  }
+});

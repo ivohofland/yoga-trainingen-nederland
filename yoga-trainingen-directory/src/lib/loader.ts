@@ -50,6 +50,27 @@ export function integrityErrors(p: Provider, file: string): string[] {
     if (!sourceIds.has(ref)) errors.push(`${file}: source ref '${ref}' not found in sources[]`);
   }
 
+  // 1b. A SNAPSHOT IS A CAPTURE OF THEIR PAGE — NEVER A FILE WE WROTE.
+  //
+  // Five sources once pointed `local_snapshot` at a hand-made `.md` "Evidence snapshot —
+  // tekstextractie": our own web-fetch notes, holding the quotes we had selected. The
+  // provenance check duly opened them, found the figures we had put there, and certified
+  // seven claims against our own summary. A note cannot evidence the claim it was written
+  // from — that is circular, and it is the one thing this project says in every README.
+  //
+  // The rule is structural, not a convention, because the convention held for a month and
+  // then didn't: a snapshot is a capture (`.pdf`/`.html` from the archiver, or a directly
+  // downloaded artefact) and text we authored is a note. Notes belong in `note:`.
+  for (const s of p.sources) {
+    if (s.local_snapshot && /\.(md|txt)$/i.test(s.local_snapshot)) {
+      errors.push(
+        `${file}: source '${s.id}' cites '${s.local_snapshot}' as its snapshot — that is text WE wrote, ` +
+          `not a capture of their page, and it cannot evidence a claim extracted from it. Archive the page ` +
+          `(npm run archive -- ${p.id}) and cite the capture; put our reading of it in note:.`,
+      );
+    }
+  }
+
   // 2. composition.modules must reference existing modules
   for (const program of p.programs) {
     for (const m of program.composition?.modules ?? []) {

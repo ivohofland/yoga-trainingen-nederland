@@ -270,7 +270,7 @@ test("an artifact that extracts to NOTHING is `unreadable`, never `no_evidence`"
   // toolbox. An image-only capture or a shell PDF used to produce the first sentence.
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-"));
   fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
-  fs.writeFileSync(path.join(dir, "data/archives/testco/site-2026-01.md"), "   \n  \n");
+  fs.writeFileSync(path.join(dir, "data/archives/testco/site-2026-01.html"), "   \n  \n");
 
   const p = {
     id: "testco",
@@ -303,7 +303,7 @@ test("PREREQUISITE: a gate's price is held to the page cited for it — like any
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-gate-"));
   fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
   fs.writeFileSync(
-    path.join(dir, "data/archives/testco/basis-2026-01.md"),
+    path.join(dir, "data/archives/testco/basis-2026-01.html"),
     "De kosten voor de Basisopleiding zijn € 1590,00 per lesjaar.\n",
   );
 
@@ -315,7 +315,7 @@ test("PREREQUISITE: a gate's price is held to the page cited for it — like any
       { kind: "program", label: "Basisopleiding", cost_eur: 1590, source: "basis" },
     ],
   };
-  const sources = [{ id: "basis", local_snapshot: "data/archives/testco/basis-2026-01.md" }];
+  const sources = [{ id: "basis", local_snapshot: "data/archives/testco/basis-2026-01.html" }];
   const provider = { id: "testco", name: "Test Co", programs: [program], sources } as unknown as Provider;
 
   assert.deepEqual(providerProvenance(provider, dir).findings, [],
@@ -342,7 +342,7 @@ test("PREREQUISITE: an UNPRICED gate asserts no amount, and is not asked for one
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-gate2-"));
   fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
   fs.writeFileSync(
-    path.join(dir, "data/archives/testco/site-2026-01.md"),
+    path.join(dir, "data/archives/testco/site-2026-01.html"),
     "Toelatingseis: minimaal twee jaar ervaring met yoga. Geen prijs op deze pagina.\n",
   );
   const provider = {
@@ -359,7 +359,7 @@ test("PREREQUISITE: an UNPRICED gate asserts no amount, and is not asked for one
         ],
       },
     ],
-    sources: [{ id: "site", local_snapshot: "data/archives/testco/site-2026-01.md" }],
+    sources: [{ id: "site", local_snapshot: "data/archives/testco/site-2026-01.html" }],
   } as unknown as Provider;
 
   const report = providerProvenance(provider, dir);
