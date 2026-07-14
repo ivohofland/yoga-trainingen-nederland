@@ -5,19 +5,23 @@
 # turn a research repo into a complaints desk.
 #
 # NO `mailto:` IN A CONTACT LINK. The first version of this file offered "Vertrouwelijk
-# melden (e-mail)" as `url: mailto:ivo@ivohofland.nl`, and GITHUB SILENTLY DROPPED THE
-# ROW — it renders contact links only for http(s) URLs, and says so nowhere. The result
-# was a chooser that showed the public form and no private route at all: precisely the
-# state we designed against, because a school unwilling to complain in public would have
-# found no other door and its silence would then have read as having nothing to say.
-# Caught by opening the page. The address now lives in the link's `about` text (which
-# does render) and in the form's own intro. Do not "fix" this back into a mailto.
+# melden (e-mail)" as `url: mailto:…`, and GITHUB SILENTLY DROPPED THE ROW — it renders
+# contact links only for http(s) URLs, and says so nowhere. The result was a chooser that
+# showed the public form and no private route at all: precisely the state we designed
+# against, because a school unwilling to complain in public would have found no other door
+# and its silence would then have read as having nothing to say. Caught by opening the page.
+# The address now lives in the link's `about` text (which does render) and in the form's own
+# intro. Do not "fix" this back into a mailto.
+#
+# The address here must match CORRECTION_EMAIL in yoga-trainingen-directory/src/lib/corrections.ts.
+# A test asserts it, because this file is in a directory the app never imports and would
+# otherwise drift in silence.
 blank_issues_enabled: true
 contact_links:
-  - name: "Vertrouwelijk melden: e-mail naar ivo@ivohofland.nl"
+  - name: "Vertrouwelijk melden: e-mail naar research@ivohofland.nl"
     url: https://github.com/ivohofland/yoga-trainingen-nederland/blob/main/yoga-trainingen-directory/content/correcties.md
     about: >
       Geen GitHub-account? Of wilt u een bevinding niet in het openbaar aanvechten? Mail dan
-      naar ivo@ivohofland.nl. Uw verzoek blijft privé. De correctie die eruit volgt niet.
+      naar research@ivohofland.nl. Uw verzoek blijft privé. De correctie die eruit volgt niet.
       Deze pagina beschrijft de volledige correctie- en klachtenprocedure: wat binnen en
       buiten scope valt, en hoe een afwijzing wordt vastgelegd.

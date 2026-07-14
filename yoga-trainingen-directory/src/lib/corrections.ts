@@ -35,8 +35,18 @@ import { nl } from "./strings";
 
 /** Public, dated, permanent. The audit trail the methodology promises readers. */
 const REPO = "https://github.com/ivohofland/yoga-trainingen-nederland";
-/** Not public. For anyone who will not dispute a finding in the open — usually the school. */
-export const CORRECTION_EMAIL = "ivo@ivohofland.nl";
+/**
+ * Not public. For anyone who will not dispute a finding in the open — usually the school.
+ *
+ * A ROLE ADDRESS, not a person's. It is published on a public page as a `mailto:`, which is
+ * a harvester's dinner; a role address can be filtered, forwarded or retired without touching
+ * anyone's inbox. It is NOT obfuscated, and that is deliberate: a channel that is awkward for
+ * a school to use is a channel that manufactures the silence this one exists to prevent.
+ *
+ * It is also the ONLY definition. A test holds that the retired personal address appears in
+ * no tracked file, and that this one appears in both issue templates.
+ */
+export const CORRECTION_EMAIL = "research@ivohofland.nl";
 
 /**
  * The template both channels carry. It is the design's field list, and the fields are the

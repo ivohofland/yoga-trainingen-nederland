@@ -142,10 +142,12 @@ Nothing in `CLAUDE.md` or CI invokes it; leaving it would leave a script that li
 
 ### 6.3 The correction address
 
-`ivo@ivohofland.nl` → **`research@ivohofland.nl`**, on every tracked line (8 lines,
-4 files). The site is unpublished, so the personal address is retired before it is
-ever exposed to a harvester; the role address that replaces it can be filtered,
-forwarded or retired without touching a person's inbox.
+The personal address is retired in favour of **`research@ivohofland.nl`**, on every tracked
+line (8 lines, 4 files). The site is unpublished, so it goes before it is ever exposed to a
+harvester; the role address that replaces it can be filtered, forwarded or retired without
+touching a person's inbox. The old address is not written out here either — a guard test
+(Task 1) holds that it appears in no tracked file, and a spec that printed it would fail the
+project it specifies.
 
 | File | Change |
 | --- | --- |

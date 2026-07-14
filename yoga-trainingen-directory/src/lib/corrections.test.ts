@@ -15,6 +15,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -123,17 +124,21 @@ test("CORRECTION: the public route is a FORM that submits — and it cannot be s
   // A public issue is permanent. The reporter is told so before they send it, not after.
   assert.match(yml, /openbaar en gedateerd is, en blijft staan/);
   // And the no-GitHub route is offered right there in the form, for the school that has no
-  // account and will not make one to complain.
-  assert.match(yml, /ivo@ivohofland\.nl/);
+  // account and will not make one to complain. Asserted against CORRECTION_EMAIL, not a
+  // literal: what must hold is that the code and the template name the SAME address.
+  assert.ok(
+    yml.includes(CORRECTION_EMAIL),
+    `the issue form does not offer ${CORRECTION_EMAIL} — the no-GitHub route vanishes`,
+  );
 });
 
 test("CORRECTION: the chooser offers the private route — and never as a mailto, which GitHub eats", () => {
-  // FOUND BY OPENING THE PAGE, not by reading the docs. The chooser's contact link was
-  // `url: mailto:ivo@ivohofland.nl`, and GitHub SILENTLY DROPPED THE ROW: it renders contact
-  // links only for http(s) URLs, and documents this nowhere. The chooser then showed the
-  // public form and NO private route at all — exactly the state the two-channel design exists
-  // to prevent, because a school unwilling to complain in public would have found no other
-  // door, and its silence would then have read as having nothing to say.
+  // FOUND BY OPENING THE PAGE, not by reading the docs. The chooser's contact link was a
+  // `url: mailto:` to the correction address, and GitHub SILENTLY DROPPED THE ROW: it renders
+  // contact links only for http(s) URLs, and documents this nowhere. The chooser then showed
+  // the public form and NO private route at all — exactly the state the two-channel design
+  // exists to prevent, because a school unwilling to complain in public would have found no
+  // other door, and its silence would then have read as having nothing to say.
   const cfg = fs.readFileSync(
     path.join(process.cwd(), "..", ".github", "ISSUE_TEMPLATE", "config.yml"),
     "utf8",
@@ -148,7 +153,10 @@ test("CORRECTION: the chooser offers the private route — and never as a mailto
     );
   }
   // The address must still be REACHABLE from the chooser — in the text, since it cannot be the href.
-  assert.match(cfg, /ivo@ivohofland\.nl/, "the confidential route must be discoverable in the chooser");
+  assert.ok(
+    cfg.includes(CORRECTION_EMAIL),
+    "the confidential route must be discoverable in the chooser",
+  );
 });
 
 test("CORRECTION: the procedure refuses what a correction channel must refuse", () => {
@@ -178,4 +186,36 @@ test("CORRECTION: the methodology's promised channel actually exists and is link
   assert.match(method, /vier weken/);
   // And the silence rule from v0.11 is stated to readers, not just enforced in code.
   assert.match(method, /nooit vóórdat die termijn is verstreken/i);
+});
+
+test("CORRECTION: the retired personal address survives in no tracked file", () => {
+  // The confidential route is a ROLE address now, and this test is why it stays one.
+  // The old address was a person's inbox, and it lived in five places — the constant,
+  // three lines of the issue chooser, one line of the issue form — of which only one
+  // is in this app's source tree at all. Any one of them left behind would have put a
+  // personal inbox back on a public page, harvestable, the day the site went live.
+  // Remembering is not a mechanism.
+  //
+  // Built with join() and never written out: a test that spells the string it forbids
+  // is a test that fails itself.
+  const RETIRED = ["ivo", "ivohofland.nl"].join("@");
+  const root = path.join(process.cwd(), "..");
+
+  // TRACKED files, not every file on disk: what is committed is what is published.
+  // (It also keeps a scratch note in the working tree from failing a suite about the
+  // published surface.)
+  const tracked = execFileSync("git", ["-C", root, "ls-files", "-z"], { encoding: "utf8" })
+    .split("\0")
+    .filter(Boolean);
+
+  const offenders = tracked.filter((f) => {
+    const abs = path.join(root, f);
+    return fs.existsSync(abs) && fs.readFileSync(abs, "utf8").includes(RETIRED);
+  });
+
+  assert.deepEqual(
+    offenders,
+    [],
+    `the retired address is still in: ${offenders.join(", ")} — the address is defined ONCE, in CORRECTION_EMAIL`,
+  );
 });
