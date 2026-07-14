@@ -379,16 +379,16 @@ export const nl = {
       "om letterlijke citaten te verwijderen — een citaat met bron is geen fout.",
     publicHeading: "Openbaar melden",
     publicBody:
-      "Een openbaar correctieverzoek op GitHub. Zichtbaar voor iedereen, gedateerd, en het " +
-      "blijft staan — ook als ik het afwijs. Dat is het punt: stilzwijgende correcties " +
-      "bestaan hier niet.",
-    publicCta: "Correctieverzoek openen",
+      "Een formulier op GitHub. Verzenden maakt een openbaar, gedateerd correctieverzoek aan " +
+      "en ik krijg er bericht van. Het blijft staan — ook als ik het afwijs. Dat is het punt: " +
+      "stilzwijgende correcties bestaan hier niet. (U heeft er wel een GitHub-account voor nodig.)",
+    publicCta: "Formulier openen",
     privateHeading: "Vertrouwelijk melden",
     privateBody:
-      "Niet iedereen wil een bevinding in het openbaar aanvechten, en een school die dat " +
-      "niet wil hoort daar niet toe gedwongen te worden — haar zwijgen zou dan gaan lijken " +
-      "op instemming. Mailen kan dus ook. Het verzoek zelf blijft privé; de correctie die " +
-      "eruit volgt niet.",
+      "Geen GitHub-account, of geen zin om een bevinding in het openbaar aan te vechten? Een " +
+      "school hoort daar niet toe gedwongen te worden — haar zwijgen zou dan gaan lijken op " +
+      "instemming. Mailen kan dus ook, met dezelfde velden. Het verzoek zelf blijft privé; de " +
+      "correctie die eruit volgt niet.",
     privateCta: "Stuur een e-mail",
     /** What actually happens. No auto-logging, no automatic reply — say so. */
     processHeading: "Wat er daarna gebeurt",

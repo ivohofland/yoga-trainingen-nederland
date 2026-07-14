@@ -39,10 +39,12 @@ controleerbaar.
 
 ## Wat er daarna gebeurt
 
-Er is **geen formulier dat iets automatisch registreert**, en er wordt **geen automatisch
-antwoord verstuurd**. Deze site is een statische publicatie: uw melding komt bij een mens
-terecht, en die leest hem. Dat is de hele machinerie, en het leek eerlijker dat op te
-schrijven dan een knop te tonen die iets anders suggereert.
+Het openbare formulier staat op GitHub, en het verstuurt echt: u vult het in, er wordt een
+openbaar en gedateerd correctieverzoek aangemaakt, en ik krijg daar bericht van. Deze site
+zelf verwerkt niets — ze is een statische publicatie en heeft geen invoer. **Er wordt geen
+automatisch antwoord verstuurd en er wordt niets automatisch beoordeeld:** uw melding komt
+bij een mens terecht, en die leest hem. Dat is de hele machinerie, en het leek eerlijker dat
+op te schrijven dan een knop te tonen die meer suggereert.
 
 1. **Ontvangst.** Openbare meldingen (GitHub) zijn vanaf dat moment zichtbaar en gedateerd.
    Vertrouwelijke meldingen (e-mail) blijven privé.

@@ -6,20 +6,27 @@
  * niet"* — and until now the site offered no way to do it. A publication that invites
  * correction and provides no channel is not inviting correction.
  *
- * WHY LINKS AND NOT A FORM. The imported design drew a real form, with a submit button and
- * a confirmation reading *"Het verzoek is gelogd bij dit record … U hoort terug op het
- * opgegeven adres."* This site is a static export. It has no endpoint, nothing is logged
- * automatically, and no reply is dispatched by anything. Shipping that form would have been
- * a promise made by a button that does nothing — the exact species of false statement the
- * whole project exists to prevent, aimed for once at the reader instead of at a school. So
- * the fields survive, the promise does not: they are pre-filled into a real GitHub issue or
- * a real e-mail, and the page says plainly that a person reads it.
+ * THERE IS A REAL FORM, AND IT IS NOT ON THIS SITE — which is the whole trick.
+ * `.github/ISSUE_TEMPLATE/correctie.yml` is a GitHub **issue form**: typed fields, dropdowns,
+ * required answers, a Bewijs-URL that cannot be left blank. Submitting it CREATES the issue —
+ * public, dated, permanent — and GitHub mails the owner. A form, a submission, and a
+ * notification, with **no endpoint, no server and no secret** anywhere near a static site.
+ *
+ * The first cut of this shipped a pre-filled free-text issue instead, and that was under-built:
+ * a text box is not a form, it validates nothing, and it lets a report arrive with no evidence
+ * at all — the one thing that cannot change a record. The fields are the point.
+ *
+ * WHAT WE STILL DO NOT DO is post to the GitHub API from our own form. That needs a token with
+ * issue-write scope, and a token in a static site is a token anyone can lift. GitHub hosts the
+ * form; we hand it the record.
  *
  * TWO CHANNELS, AND THE SECOND ONE IS NOT A CONVENIENCE. A public issue is dated, permanent
- * and visible to everyone — which is exactly right for "no silent corrections", and exactly
- * wrong for a school that wants to dispute a finding without doing it in public. If the only
- * route were public, some schools would simply not use it, and their silence would then read
- * as having nothing to say. That would be a finding we manufactured with our own UI.
+ * and visible to everyone — exactly right for "no silent corrections", and exactly wrong for a
+ * school that wants to dispute a finding without doing it in public. It also requires a GitHub
+ * account, which most yoga-school owners do not have and will not create in order to complain.
+ * If the only route were public, those schools simply would not use it — and their silence
+ * would then read as having nothing to say. That is a finding we would have manufactured with
+ * our own UI.
  *
  * PURE — no node:*, no fetch. The record page and the corrections page both build these, and
  * a test holds the URLs to what they claim to contain.
@@ -64,12 +71,29 @@ export function correctionTemplate(providerName: string, providerId: string): st
   ].join("\n");
 }
 
-/** A pre-filled PUBLIC correction request. Dated and permanent the moment it is opened. */
+/**
+ * A pre-filled PUBLIC correction request — and A REAL FORM, not a text box.
+ *
+ * `.github/ISSUE_TEMPLATE/correctie.yml` is a GitHub **issue form**: typed fields, dropdowns,
+ * required answers, and a Bewijs-URL that cannot be left blank. Submitting it creates the
+ * issue — dated, public, permanent — and GitHub mails the repo owner, who is the person who
+ * has to act on it. A form, an issue, and a notification, with **no endpoint, no server and
+ * no token** anywhere near a static site. That last part is why it is this and not a form of
+ * our own posting to the GitHub API: a browser-side token with issue-write scope is a token
+ * anyone can lift and abuse.
+ *
+ * WHAT IT CANNOT DO is serve someone without a GitHub account — which is most yoga-school
+ * owners, and precisely the people most likely to want to dispute a finding. That is not a
+ * gap in the form; it is the reason the confidential e-mail route exists and is not optional.
+ *
+ * We pre-fill only `record`, keyed by the field's `id` in the template. Everything the
+ * reporter asserts, they type.
+ */
 export function githubCorrectionUrl(providerName: string, providerId: string): string {
   const params = new URLSearchParams({
+    template: "correctie.yml",
     title: nl.corr.issueTitle(providerName),
-    body: correctionTemplate(providerName, providerId),
-    labels: "correctie",
+    record: `${providerName} (${providerId})`,
   });
   return `${REPO}/issues/new?${params.toString()}`;
 }
@@ -90,5 +114,5 @@ export function emailCorrectionUrl(providerName: string, providerId: string): st
 }
 
 /** The general routes, for a reader who is not looking at one particular record. */
-export const generalGithubUrl = `${REPO}/issues/new?labels=correctie`;
+export const generalGithubUrl = `${REPO}/issues/new?template=correctie.yml`;
 export const generalEmailUrl = `mailto:${CORRECTION_EMAIL}`;

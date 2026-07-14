@@ -1,13 +1,17 @@
 /**
  * The correction route — and the promise it must never make again.
  *
- * The imported design drew a real form with a real submit button and a confirmation that
- * read "Het verzoek is gelogd bij dit record … U hoort terug op het opgegeven adres." This
- * site is a static export: nothing logs, nothing replies, and no endpoint exists to receive
- * it. Shipping that button would have made a promise no mechanism could keep — the exact
- * false statement this project hunts in every record, aimed for once at the reader.
+ * There IS a form, and it is not on this site: GitHub's issue form hosts it
+ * (.github/ISSUE_TEMPLATE/correctie.yml). Submitting it creates a public, dated issue and
+ * mails the owner — a form, a submission and a notification, with no endpoint, no server and
+ * no secret anywhere near a static site.
  *
- * So the fields survived and the promise did not, and these tests hold the line.
+ * What the imported design drew was a form on OUR page, whose confirmation read "Het verzoek
+ * is gelogd bij dit record … U hoort terug op het opgegeven adres." Nothing here logs and
+ * nothing replies; that button would have promised a machine that does not exist — the exact
+ * false statement this project hunts in every record, aimed for once at the reader. So the
+ * form is real and the promise is not made: nothing is auto-assessed, no reply is dispatched,
+ * a person reads it. These tests hold both halves of that line.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -25,16 +29,14 @@ import { nl } from "./strings";
 test("CORRECTION: a report arrives pre-filled with the record it is about", () => {
   // A reader who has found a mistake is looking at the mistake, not at a form. Both routes
   // carry the record's identity so the report costs them the FIELDS and nothing else.
-  const url = githubCorrectionUrl("Yoga Den Amsterdam", "yoga-den");
-  assert.ok(url.startsWith("https://github.com/ivohofland/yoga-trainingen-nederland/issues/new?"));
-
-  const body = decodeURIComponent(new URL(url).searchParams.get("body") ?? "");
-  assert.match(body, /Yoga Den Amsterdam \(yoga-den\)/, "the record must identify itself");
-  assert.match(body, /data\/providers\/yoga-den\.yaml/, "and point at the data the claim lives in");
-  assert.match(body, /Bewijs-URL/, "a report we cannot check cannot change a record — so it is asked for");
-
-  const title = new URL(url).searchParams.get("title") ?? "";
-  assert.match(title, /Yoga Den Amsterdam/);
+  const url = new URL(githubCorrectionUrl("Yoga Den Amsterdam", "yoga-den"));
+  assert.equal(url.pathname, "/ivohofland/yoga-trainingen-nederland/issues/new");
+  // It opens THE FORM, not a blank text box. A text box validates nothing and lets a report
+  // arrive with no evidence at all — the one thing that cannot change a record.
+  assert.equal(url.searchParams.get("template"), "correctie.yml");
+  // …with the record already filled in, keyed by the field's `id` in the template.
+  assert.equal(url.searchParams.get("record"), "Yoga Den Amsterdam (yoga-den)");
+  assert.match(url.searchParams.get("title") ?? "", /Yoga Den Amsterdam/);
 });
 
 test("CORRECTION: the template asks for evidence and leaves the reporter's words to them", () => {
@@ -56,7 +58,7 @@ test("CORRECTION: both routes exist, and the confidential one is not optional", 
   const mail = emailCorrectionUrl("Yoga Den Amsterdam", "yoga-den");
   assert.ok(mail.startsWith(`mailto:${CORRECTION_EMAIL}?`));
   assert.match(decodeURIComponent(mail), /Yoga Den Amsterdam \(yoga-den\)/);
-  assert.ok(generalGithubUrl.includes("/issues/new"));
+  assert.ok(generalGithubUrl.includes("template=correctie.yml"), "the general route opens the form too");
 });
 
 test("CORRECTION: the page never promises a mechanism that does not exist", () => {
@@ -87,9 +89,42 @@ test("CORRECTION: the page never promises a mechanism that does not exist", () =
         `has no endpoint: a person reads these. Say that instead.`,
     );
   }
-  // And it must SAY so, positively — not merely avoid lying by omission.
-  assert.match(md, /geen formulier dat iets automatisch registreert/i);
-  assert.match(md, /geen automatisch\s*\n?antwoord/i);
+  // And it must SAY so, positively — not merely avoid lying by omission. There IS a form now
+  // (GitHub hosts it, and submitting really does create the issue and notify the owner), so
+  // the honest sentence is no longer "there is no form" — it is what the form does NOT do:
+  // nothing is auto-assessed and no reply is dispatched. A person reads it.
+  // Newline-tolerant: the prose is hard-wrapped, so a literal phrase can straddle a line break.
+  const flat = md.replace(/\s+/g, " ");
+  assert.match(flat, /geen automatisch antwoord verstuurd/i);
+  assert.match(flat, /niets automatisch beoordeeld/i);
+  assert.match(flat, /komt bij een mens terecht/i);
+});
+
+test("CORRECTION: the public route is a FORM that submits — and it cannot be sent without evidence", () => {
+  // The first cut of this shipped a pre-filled free-text issue, which was under-built: a text
+  // box validates nothing, and it lets a correction request arrive with no evidence at all —
+  // the one thing that cannot change a record. GitHub's issue form is a real form (typed
+  // fields, dropdowns, required answers), submitting it creates the issue, and GitHub mails
+  // the owner. A form, a submission and a notification, with no endpoint and no secret.
+  const yml = fs.readFileSync(
+    path.join(process.cwd(), "..", ".github", "ISSUE_TEMPLATE", "correctie.yml"),
+    "utf8",
+  );
+
+  // The evidence field exists AND is required. This is the load-bearing one: every fact on the
+  // site has a source a reader can check, and a correction without one would be the only thing
+  // that doesn't.
+  const bewijs = yml.slice(yml.indexOf("id: bewijs"));
+  assert.match(bewijs.slice(0, 600), /required:\s*true/, "the Bewijs-URL must be required, not merely asked for");
+
+  for (const id of ["id: record", "id: veld", "id: onjuist", "id: bewijs", "id: relatie"]) {
+    assert.ok(yml.includes(id), `the issue form is missing ${id} — the design's fields are what make a report checkable`);
+  }
+  // A public issue is permanent. The reporter is told so before they send it, not after.
+  assert.match(yml, /openbaar en gedateerd is, en blijft staan/);
+  // And the no-GitHub route is offered right there in the form, for the school that has no
+  // account and will not make one to complain.
+  assert.match(yml, /ivo@ivohofland\.nl/);
 });
 
 test("CORRECTION: the procedure refuses what a correction channel must refuse", () => {
