@@ -142,6 +142,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: yes
+      contact_published: yes
       source: site-2026-06
       note: >
         "De opleiding zelf bestaat uit 220 contacturen" — expliciet vermeld.

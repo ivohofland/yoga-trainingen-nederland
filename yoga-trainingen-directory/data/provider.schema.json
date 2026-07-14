@@ -79,7 +79,7 @@
               "anyOf": [
                 {
                   "type": "string",
-                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])(-\\d{2})?$"
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?$"
                 },
                 {
                   "type": "null"
@@ -314,6 +314,71 @@
               "prerequisites_claimed": {
                 "type": "string"
               },
+              "prerequisite": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "program",
+                        "experience",
+                        "other"
+                      ]
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "program": {
+                      "$ref": "#/definitions/Provider/properties/id"
+                    },
+                    "cost_eur": {
+                      "anyOf": [
+                        {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "period": {
+                      "type": "string",
+                      "enum": [
+                        "total",
+                        "per_year",
+                        "per_module",
+                        "per_day"
+                      ]
+                    },
+                    "periods": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "label",
+                    "source"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "price": {
                 "type": "object",
                 "properties": {
@@ -321,6 +386,21 @@
                     "anyOf": [
                       {
                         "type": "number",
+                        "exclusiveMinimum": 0
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "period": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/prerequisite/items/properties/period",
+                    "default": "total"
+                  },
+                  "periods": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
                         "exclusiveMinimum": 0
                       },
                       {
@@ -429,6 +509,9 @@
                   "breakdown_published": {
                     "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
                   },
+                  "contact_published": {
+                    "$ref": "#/definitions/Provider/properties/crkbo/properties/registered"
+                  },
                   "source": {
                     "type": "string"
                   },
@@ -437,7 +520,8 @@
                   }
                 },
                 "required": [
-                  "breakdown_published"
+                  "breakdown_published",
+                  "contact_published"
                 ],
                 "additionalProperties": false
               },
@@ -945,6 +1029,12 @@
                 "properties": {
                   "amount_eur": {
                     "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/amount_eur"
+                  },
+                  "period": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/period"
+                  },
+                  "periods": {
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/periods"
                   },
                   "variants": {
                     "$ref": "#/definitions/Provider/properties/programs/items/properties/price/properties/variants"

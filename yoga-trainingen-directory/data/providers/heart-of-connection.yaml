@@ -170,6 +170,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-hatha-2026-06
       note: >
         4 residentiële blokken (2 weekenden + 2 weken) op Hof van Kairos;
@@ -237,6 +238,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yin-2026-06
       note: "Residentiële week (ma-zo) op Hof van Kairos. Geen geïsoleerd
         contact-urental."

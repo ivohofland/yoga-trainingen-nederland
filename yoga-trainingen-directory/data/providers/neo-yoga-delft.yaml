@@ -123,6 +123,7 @@ programs:
       self_study: 20
       supervised_teaching_practice: null
       breakdown_published: yes
+      contact_published: yes
       source: site-2026-06
       note: >
         EXPLICIET gepubliceerd: 200u = 180u gezamenlijk (contact) op de

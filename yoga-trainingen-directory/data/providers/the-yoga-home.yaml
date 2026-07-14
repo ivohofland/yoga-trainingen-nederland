@@ -145,6 +145,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-tt-2026-06
       note: >
         6 weekenden (za-zo 9:00-17:00) + een 6-daagse residentiële immersion

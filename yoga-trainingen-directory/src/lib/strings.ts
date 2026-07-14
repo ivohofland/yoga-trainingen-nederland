@@ -106,11 +106,147 @@ export const nl = {
   // dataset.ts returns alongside a null value: that one is worded identically
   // for a finding and for a gap, so it can never be shown to a reader as-is.
   pphPriceNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen prijs.",
-  pphHoursNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen urenuitsplitsing.",
+  // "geen CONTACTUREN", not "geen urenuitsplitsing" (spec v0.4). The blocking field
+  // is `hours_claimed.contact_published`, and three aanbieders publish a rich
+  // urenuitsplitsing — per onderdeel, per werkvorm, in bandbreedtes — waar geen
+  // contactuur-getal in staat. Zeggen dat zij "geen urenuitsplitsing publiceren" is
+  // een onware bewering over een met naam genoemd bedrijf; de zin moet het veld
+  // noemen dat de berekening werkelijk blokkeert.
+  pphHoursNotPublished: "Niet te berekenen: wij keken — de aanbieder publiceert geen contacturen.",
   pphPriceNotInRecord:
     "Niet te berekenen: de prijs ontbreekt in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
   pphHoursNotInRecord:
     "Niet te berekenen: de contacturen ontbreken in ons record — een gat in ons onderzoek, geen bevinding over de aanbieder.",
+  // De derde blokkade (spec v0.5): wél een bedrag, maar per periode — en geen
+  // gepubliceerd aantal perioden. Dan is er geen totaalprijs om door de contacturen
+  // te delen, en er een verzinnen is precies wat v0.5 verbiedt. Dit is een BEVINDING
+  // over de aanbieder (zij publiceren het aantal niet), en de zin moet het veld
+  // noemen dat werkelijk blokkeert: niet de prijs — die publiceren zij wél.
+  pphNoTotalPrice: (period: string) =>
+    `Niet te berekenen: de aanbieder publiceert een prijs per ${period} en niet uit hoeveel ` +
+    `perioden de opleiding bestaat — er is geen vergelijkbare totaalprijs.`,
+
+  /* ---------- Prijs per periode en de afgeleide totaalprijs (spec v0.5) ---------- */
+
+  /** De eenheid die het bedrag koopt. `total` krijgt geen achtervoegsel: dát bedrag
+   *  IS de prijs, en "€ 2.450 / totaal" is ruis. */
+  pricePeriod: {
+    total: "totaal",
+    per_year: "studiejaar",
+    per_module: "module",
+    per_day: "dag",
+  } as const,
+  /** Het bedrag dat de aanbieder ZELF noemt, met de eenheid die zij eraan hangen. */
+  pricePerPeriod: (amount: string, period: string) => `${amount} / ${period}`,
+  /**
+   * ONZE REKENSOM, en de zin zegt dat zelf. Een lezer mag dit getal nooit aanzien
+   * voor een bedrag dat de aanbieder publiceert — zij publiceren geen totaalprijs.
+   * Het "±" en de uitgeschreven vermenigvuldiging staan er om die reden in, en de
+   * pagina zet het bovendien in een eigen, zichtbaar niet-feitelijke stijl.
+   */
+  priceDerivedTotal: (total: string, working: string) => `± ${total} totaal — ${working}`,
+  /** De uitgeschreven som, zodat de lezer haar kan narekenen. */
+  totalPriceWorking: (periods: number, amount: string) => `onze berekening: ${periods} × ${amount}`,
+  /** Geen aantal perioden gepubliceerd → geen totaal. Een bevinding over hen, geen
+   *  gat bij ons: `periods: null` betekent "wij keken; zij noemen het niet". */
+  totalPriceNoPeriodCount: (period: string) =>
+    `Geen vergelijkbare totaalprijs: de aanbieder publiceert een prijs per ${period} en niet ` +
+    `uit hoeveel perioden de opleiding bestaat.`,
+
+  /* ---------- De DERDE afleiding: de som van ONGELIJKE delen (spec v0.8, §6) ---------- */
+
+  /**
+   * DE PRIJZEN DIE ZIJ WEL NOEMEN, zoals zij ze noemen: per deel. Adhouna's Yin XL kost
+   * "€ 1.420,00 incl. BTW" (Deel I) + "€ 1.305,00 incl. BTW" (Deel II) en géén totaal —
+   * dus toont de rij Prijs precies die twee bedragen, in hún inkt, met hún bron. Het
+   * totaal staat een rij lager, in de onze.
+   */
+  pricePerModuleParts: (parts: string[]) => parts.join(" + "),
+  /**
+   * De uitgeschreven OPTELLING, zodat de lezer haar kan narekenen — en zodat niemand
+   * € 2.725 kan aanzien voor een bedrag dat op de pagina staat. Het staat er niet: de
+   * pagina drukt alleen de delen af. Vermenigvuldigen kan dit niet uitdrukken (2 × 1.420
+   * is geen 2.725), en precies daarom stond de som eerst in `amount_eur` — in de inkt van
+   * de school, geciteerd aan een pagina die haar nooit noemt.
+   */
+  totalPriceSum: (parts: string[]) =>
+    `onze optelling: ${parts.join(" + ")}. De aanbieder publiceert de delen apart en ` +
+    `noemt hun som niet.`,
+  /** Een deel zonder gepubliceerde prijs → geen som. Een onvolledige optelling is een
+   *  gok, en een gegokt totaal is een gepubliceerde vergelijking met een gat erin
+   *  (dezelfde regel die `bundleDelta` al hanteert). */
+  totalPriceIncompleteSum:
+    "Geen vergelijkbare totaalprijs: de aanbieder prijst per module en niet elke module " +
+    "heeft een gepubliceerde prijs — een onvolledige optelling zou een gok zijn.",
+
+  /* ---------- Wat het kost om HIER te kwalificeren (spec v0.9, §6) ---------- */
+
+  /**
+   * HET GETAL WAAR DE LEZER VOOR KWAM. `total_price` beantwoordt "wat kost deze
+   * opleiding"; een opleiding waaraan je niet mag beginnen zonder eerst een ándere
+   * opleiding te kopen, beantwoordt die vraag niet. de Yogaschool: € 4.590 voor de
+   * Docentenopleiding, en je mag pas beginnen "na het volbrengen van de Basisopleiding"
+   * (€ 1.590 per lesjaar). Docent worden kost daar € 6.180.
+   *
+   * ALTIJD ONZE OPTELLING — ook waar de opleiding zélf een gepubliceerde totaalprijs
+   * heeft: het PAD is nooit hun getal. € 6.180 staat op geen enkele pagina van deze
+   * school. Het label, de "±" en de uitgeschreven optelling zeggen dat, en de pagina zet
+   * het bovendien in de eigen, zichtbaar niet-feitelijke inkt.
+   */
+  rowTotalPathCost: "Totaal om te kwalificeren (onze optelling)",
+  /** De rij op de lijst, in één regel: "± € 6.180 om te kwalificeren — incl. verplichte …". */
+  priceDerivedPathCost: (total: string, working: string) => `± ${total} om te kwalificeren — ${working}`,
+  /** Het afgeleide pad-totaal op de recordpagina. */
+  pathCostDerivedTotal: (total: string) => `± ${total} om te kwalificeren`,
+  /** De uitgeschreven optelling: welke verplichte opleiding(en) erbij zitten, en voor
+   *  hoeveel — zodat de lezer haar kan narekenen en niemand € 6.180 kan aanzien voor een
+   *  bedrag dat de school publiceert. */
+  totalPathCostWorking: (gates: string[]) =>
+    `incl. verplichte ${gates.join(" + ")}. Onze optelling — de aanbieder publiceert dit ` +
+    `totaal niet.`,
+  /** Eén schakel zonder gepubliceerde prijs → geen pad-totaal. Een onvolledig pad-totaal
+   *  is een gok, en een gegokte vergelijking is erger dan geen (dezelfde regel als
+   *  `bundleDelta` en de optelling van ongelijke delen). */
+  totalPathCostIncomplete:
+    "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte " +
+    "voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou " +
+    "een gok zijn.",
+
+  /* ---------- De afgeleide totaaluren (spec v0.6, §6) ---------- */
+
+  /**
+   * DEZELFDE REGEL, ANDERE EENHEID. De school publiceert contacturen en zelfstudie-uren
+   * apart en noemt hun som nergens; wij tellen op, en het label zegt dat hardop. Waar de
+   * school het totaal WÉL publiceert (Wahé: 500) staat dat gewoon in de rij
+   * "Urenuitsplitsing" hierboven, als hún claim — deze rij verschijnt dan niet.
+   */
+  rowTotalHours: "Totaaluren (onze optelling)",
+  /** De uitgeschreven som, zodat de lezer haar kan narekenen. */
+  totalHoursWorking: (contact: number, selfStudy: number) =>
+    `onze optelling: ${contact} contacturen + ${selfStudy} zelfstudie-uren. De aanbieder ` +
+    `publiceert deze twee getallen apart en noemt hun som niet.`,
+  /** Het afgeleide totaal zelf. Het "±" en het label zeggen samen wiens getal dit is. */
+  hoursDerivedTotal: (hours: number) => `± ${hours} uur`,
+
+  /* ---------- €/contactuur en de contactratio: ALTIJD van ons (spec §6) ---------- */
+
+  /**
+   * GEEN ENKELE SCHOOL PUBLICEERT DIT GETAL. €/contactuur is de prijs gedeeld door de
+   * contacturen — een deling die wij uitvoeren, over twee getallen die zíj publiceren.
+   * Toch stond het jarenlang op ~40 recordpagina's in dezelfde inkt als hun eigen claims,
+   * één rij onder hun echte prijs. Bij een prijs per studiejaar is het bovendien onze
+   * rekensom óver onze rekensom: (3 × € 1.530) ÷ 360.
+   *
+   * De uitgeschreven deling zegt dat hardop, en de pagina zet het getal in de eigen,
+   * zichtbaar niet-feitelijke inkt.
+   */
+  pphWorking: (total: string, contact: number) =>
+    `onze berekening: ${total} ÷ ${contact} contacturen. Dit getal publiceert de aanbieder ` +
+    `niet; wij delen hun prijs door hun contacturen.`,
+  /** Contacturen ÷ totaaluren. Ook van ons — en waar het totaal zélf onze optelling is
+   *  (de Yogaschool: 360 + 240), is dit onze rekensom over onze rekensom. */
+  contactRatioWorking: (contact: number, total: number) =>
+    `onze berekening: ${contact} contacturen ÷ ${total} uur totaal.`,
 
   // Same rule, applied to the price itself: the record says de aanbieder
   // publiceert een prijs, maar het bedrag staat niet in ons record. Dat gat is
@@ -187,7 +323,13 @@ export const nl = {
   archivePublic: "publiek",
   archiveLocal: "lokaal",
   archivePresent: "✓",
+  /** WE HAVE NOT DONE IT — a gap in our work, and it must not be spelled like the next one. */
   archiveAbsent: "—",
+  /** IT CANNOT BE DONE — Wayback cannot capture a Salesforce register or a search page with
+   *  no per-row permalink, so the local capture is the only evidence that can exist. Printing
+   *  this as "—" reported a correct decision of ours as a hole in our research, on twelve
+   *  sources. Same rule as the quad: a finding is not a gap. See archiveSlots(). */
+  archiveNotApplicable: "n.v.t. (niet vast te leggen)",
   // Never one number: a count of public archives alone reads as archive coverage,
   // and the bar is BOTH halves. Both counts, side by side, over the total.
   sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>
@@ -196,11 +338,33 @@ export const nl = {
   // Record row labels. Reuses colFormat / colDelivery / colPrice / colPph where
   // the listing already names the same field — one field, one word.
   rowStyle: "Stijl (geclaimd)",
+  /** Het label zegt wiens getal het is. De aanbieder publiceert geen totaalprijs —
+   *  wij vermenigvuldigen, en de rij draagt daarom géén bron (spec §6). */
+  rowTotalPrice: "Totaalprijs (onze berekening)",
   rowHours: "Urenuitsplitsing",
   rowSupervised: "Begeleide lespraktijk",
   rowAssessment: "Toetsing",
   rowGroupSize: "Groepsgrootte",
   rowPrerequisites: "Vooropleiding",
+  /** De gestructureerde toegangseis (spec v0.9) — één rij per eis, mét bron. De rij
+   *  hierboven is hún proza en draagt geen bron; deze eis is een OPTELPOST in een prijs
+   *  die wij publiceren, en dan is de pagina die haar stelt niet optioneel. */
+  rowPrerequisiteGate: "Toegangseis",
+  /**
+   * Wat voor soort hindernis dit is — en het verschil is geld.
+   *
+   * `program` = een opleiding die je eerst moet KOPEN (de Yogaschool: de Basisopleiding,
+   * € 1.590). Die telt mee in "Totaal om te kwalificeren". `experience` = een echte
+   * hindernis zonder prijskaartje ("min. 2 jaar praktijk"). `other` = een kwalificatie die
+   * de markt verkoopt maar DEZE aanbieder niet ("afgeronde RYT200") — een gate die geld
+   * kost, alleen niet aan hen: haar prijzen met hún eigen 200u-opleiding zou een route
+   * beweren die zij nergens eisen.
+   */
+  prerequisiteKind: {
+    program: "verplichte voorafgaande opleiding — telt mee in het totaal",
+    experience: "ervaringseis (geen aankoop)",
+    other: "kwalificatie die deze aanbieder zelf niet verkoopt — geen bedrag opgeteld",
+  } as const,
   rowComposition: "Samenstelling",
   rowTrackRecord: "Track record",
   rowAccreditation: "Accreditatie (geclaimd)",
@@ -221,6 +385,18 @@ export const nl = {
   cohortLabel: (month: string, status: string) => `${month} — ${status}`,
   /** The same line on the listing, where it is the NEXT start rather than a log entry. */
   nextCohortLabel: (month: string, status: string) => `start ${month} — ${status}`,
+  /**
+   * DE PRIJS ZOALS DIE TOEN GOLD (spec v0.7, §4.5 `price_at_time`).
+   *
+   * Een prijs die tussen twee cohorten veranderde is een BEVINDING over de school, geen
+   * correctie om weg te werken. Bluebirds' cohort van 2025 werd verkocht voor "€3150,-
+   * Excl BTW" op de eigen site van de docent; het cohort van 2026 voor "0% VAT as we are
+   * CRKBO registered" onder Bluebirds BV. Twee runs, twee btw-behandelingen — en zonder
+   * deze rij had die verandering nergens te wonen (het veld stond in 0 records en werd
+   * nergens getoond). De rij draagt de bron van het cohort zelf: wat er stond, stond
+   * daar toen.
+   */
+  cohortPriceAtTime: (amount: string, vat: string) => `prijs toen: ${amount} · ${vat}`,
   hoursTotal: "totaal",
   hoursContact: "contact",
   hoursSelfStudy: "zelfstudie",

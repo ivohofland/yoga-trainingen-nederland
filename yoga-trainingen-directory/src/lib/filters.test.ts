@@ -2,9 +2,11 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { loadDataset } from "./loader";
 import { toListingRows, formatChipLabel } from "./presenters";
+import { totalPrice } from "./derive";
 import { saysNotPublished } from "./quad";
 import { cityCentroid } from "./geo";
 import { nl } from "./strings";
+import { priceGapProvider } from "./price-gap.fixture";
 import {
   EMPTY_FILTERS,
   chipGroups,
@@ -24,8 +26,9 @@ const UTRECHT = cityCentroid("Utrecht")!;
 
 /** The record behind a row — a filter's claim is checked against the RECORD, never
  *  against the predicate the filter itself is built from. */
+const providerOf = (providerId: string) => providers.find((p) => p.id === providerId)!;
 const programOf = (providerId: string, programId: string) =>
-  providers.find((p) => p.id === providerId)!.programs.find((p) => p.id === programId)!;
+  providerOf(providerId).programs.find((p) => p.id === programId)!;
 
 /** Both "we cannot place this" groups. They are two groups because they are two
  *  different statements (see Placement in geo.ts); for the "nothing is dropped"
@@ -66,16 +69,23 @@ test("PRICE: the two amount bands match only programmes whose RECORD says they p
   // whether the implementation is right is not a test.
   //
   // The band is a STATEMENT about a named business — "this training costs less than
-  // €3.000" — so the record must license it: an amount, and a `published` that says
-  // the amount is theirs to state.
+  // €3.000" — so the record must license it: a COMPARABLE TOTAL, and a `published` that
+  // says the figures behind it are theirs to state.
+  //
+  // A TOTAL, not an `amount_eur` (spec v0.8). Adhouna prices its Yin XL per DEEL and
+  // publishes no whole-course figure at all; its total is our sum of the two prices they
+  // DO publish (€ 1.420 + € 1.305), and it bands on that — correctly, because the band
+  // claims what the training costs, and € 2.725 is what it costs. Demanding a bare
+  // `amount_eur` here would have forced the sum back into that field, which is the
+  // fabrication v0.8 exists to undo.
   for (const band of ["under3000", "from3000"] as const) {
     const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
     assert.ok(got.length > 0, `price band '${band}' matches nothing at all`);
     for (const r of got) {
       const price = programOf(r.providerId, r.programId).price;
-      assert.notEqual(price.amount_eur ?? null, null,
+      assert.notEqual(totalPrice(providerOf(r.providerId), programOf(r.providerId, r.programId)).value, null,
         `${r.providerId}/${r.programId}: banded '${band}' — a claim about what this training costs — ` +
-        `while our record holds no amount for it at all`);
+        `while our record yields no comparable total for it at all`);
       assert.equal(price.published, "yes",
         `${r.providerId}/${r.programId}: banded '${band}' while the record says price.published is ` +
         `"${price.published}" — we would be quoting a price the provider is not recorded as publishing`);
@@ -159,38 +169,77 @@ test("PRICE: the bands honour the €3.000 boundary, and OUR gaps belong to no b
   const from = filterRows(ROWS, { ...EMPTY_FILTERS, price: "from3000" });
   const notPub = filterRows(ROWS, { ...EMPTY_FILTERS, price: "none_published" });
   assert.ok(under.length > 0 && from.length > 0, "a price band matches nothing at all");
-  // The boundary is checked against the RECORD's amount — the row does not carry it.
-  const amountOf = (r: Row) => programOf(r.providerId, r.programId).price.amount_eur as number;
-  assert.ok(under.every((r) => amountOf(r) < 3000),
+  // The boundary is checked against the RECORD — the row does not carry the number.
+  //
+  // Against `totalPrice`, NOT `price.amount_eur` (spec v0.5). What a band claims is what
+  // the WHOLE TRAINING costs, and on de Blikopener the record's amount is € 1.290 PER
+  // STUDIEJAAR of a four-year opleiding: read the raw field here and this test happily
+  // certifies a ≈ € 5.160 training as "onder €3.000", which is what the site did.
+  const totalOf = (r: Row) =>
+    totalPrice(providerOf(r.providerId), programOf(r.providerId, r.programId)).value as number;
+  assert.ok(under.every((r) => totalOf(r) < 3000),
     "'onder €3.000' matched a programme costing €3.000 or more");
-  assert.ok(from.every((r) => amountOf(r) >= 3000),
+  assert.ok(from.every((r) => totalOf(r) >= 3000),
     "'€3.000 en hoger' matched a programme costing less than €3.000");
+  // And the per-period rows are IN a band — banded on our arithmetic, not on their
+  // yearly fee. Without this, the two lines above would pass on a corpus that simply
+  // dropped them.
+  const perPeriod = ROWS.filter((r) => programOf(r.providerId, r.programId).price.period !== "total");
+  assert.ok(perPeriod.length > 0, "no per-period price in the corpus — the v0.5 case is untested here");
+  for (const r of perPeriod) {
+    assert.ok([...under, ...from].some((x) => x.href === r.href),
+      `${r.providerId}/${r.programId}: a per-period price with a derivable total belongs in an amount band`);
+    assert.ok(totalOf(r) > (programOf(r.providerId, r.programId).price.amount_eur as number),
+      `${r.providerId}/${r.programId}: banded on the bare period price, not on the whole-course total`);
+  }
 
   // The bands used to be asserted as a partition of all 77 rows. They are not one,
   // and forcing them to be is precisely how the five gap rows ended up inside an
   // accusation: every row had to land in SOME band, so the leftover bucket took
   // them. A price band is a statement — "it costs this much", "they publish no
-  // price" — and about these five we can honestly make neither. They are OUR gap;
-  // they belong in no band, and they are visible in the unfiltered list, where a
-  // reader meets them as "nog niet onderzocht".
+  // price" — and about such a row we can honestly make neither. It is OUR gap;
+  // it belongs in no band, and it stays visible in the unfiltered list, where a
+  // reader meets it as "nog niet onderzocht".
   //
-  // They now have a band NAME of their own — `amount_not_in_record` — which says
-  // out loud that "we hold no amount" is its own category rather than a cheap
-  // synonym for "they publish no price". It is offered by no chip: see ProgrammeTable.
-  const ourGaps = ROWS.filter((r) => r.priceState === "unknown");
+  // It has a band NAME of its own — `amount_not_in_record` — which says out loud that
+  // "we hold no amount" is its own category rather than a cheap synonym for "they
+  // publish no price". It is offered by no chip: see ProgrammeTable.
+  //
+  // THE GAP ROW IS MANUFACTURED, exactly like the unplaceable "Nergenshuizen" row below
+  // and for exactly the same reason: today's corpus contains no programme in this state
+  // (all five have been researched and their amounts extracted), so every assertion
+  // about the gap band would be vacuously true — delete the `amount_not_in_record`
+  // branch from priceBand() and this test would still have passed. A rule that holds
+  // only because its trigger is absent from the data is not a rule.
+  //
+  // Built through toListingRows() from a synthetic RECORD (price-gap.fixture.ts), never
+  // by hand-setting `priceBand` on a Row: the band under test is the one the presenter
+  // derives, so a row whose band we assigned ourselves would test only our own typing.
+  const { provider: gapProvider } = priceGapProvider(providers);
+  const gapRow = toListingRows([gapProvider], NOW)[0];
+  assert.equal(gapRow.priceState, "unknown",
+    "the fixture is not a price gap — this test would pin nothing");
+  const ALL = [...ROWS, gapRow];
+
+  const ourGaps = ALL.filter((r) => r.priceState === "unknown");
   assert.ok(ourGaps.length > 0, "no programme is a price gap any more — this test tests nothing");
   for (const g of ourGaps) {
     assert.equal(g.priceBand, "amount_not_in_record",
       `${g.providerId}/${g.programId}: our own gap, banded as something we could state about them`);
     for (const band of ["under3000", "from3000", "none_published"] as const) {
-      const got = filterRows(ROWS, { ...EMPTY_FILTERS, price: band });
+      const got = filterRows(ALL, { ...EMPTY_FILTERS, price: band });
       assert.ok(!got.some((r) => r.href === g.href),
         `${g.providerId}/${g.programId} is a gap in OUR record, yet the '${band}' band claims it`);
     }
   }
 
-  // Nothing else is lost: the three bands plus our gaps account for every row.
-  assert.equal(under.length + from.length + notPub.length + ourGaps.length, ROWS.length,
+  // Nothing else is lost: the three bands plus our gaps account for every row — and the
+  // gap row is accounted for by being in NO band, which is the whole claim.
+  const bandedAll = (b: Filters["price"]) => filterRows(ALL, { ...EMPTY_FILTERS, price: b });
+  assert.equal(
+    bandedAll("under3000").length + bandedAll("from3000").length + bandedAll("none_published").length +
+      ourGaps.length,
+    ALL.length,
     "the price bands and the gaps do not account for every programme");
   // The bands are disjoint — no row is counted in two.
   const hrefs = [...under, ...from, ...notPub].map((r) => r.href);

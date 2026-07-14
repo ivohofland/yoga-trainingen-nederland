@@ -154,6 +154,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-product-2026-06
       note: >
         200u training & coaching over ~7 maanden (hybride). 3 lesweekenden

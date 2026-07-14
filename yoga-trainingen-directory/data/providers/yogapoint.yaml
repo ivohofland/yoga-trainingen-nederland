@@ -6,7 +6,8 @@ status: active
 locations:
   - city: "'s-Hertogenbosch"
     address: "Bordeslaan 475, 5223 MP"
-    note: "opleiding in Den Bosch; studio's ook in Dordrecht, Nijmegen, Utrecht (3x), Woerden"
+    note: "opleiding in Den Bosch; studio's ook in Dordrecht, Nijmegen, Utrecht
+      (3x), Woerden"
 crkbo:
   registered: unknown
   checked: "2026-06-12"
@@ -17,29 +18,31 @@ registrations:
     verified_in_register: unknown
     source: ya-register-2026-06
     note: >
-      Site claimt 'erkend door Yoga Alliance' maar Yogapoint niet gevonden in
-      YA NL-lijst (56 scholen) — registratie onder andere holder-naam, lapsed,
-      of zoekradius-artefact. Naamzoektocht in YA-directory nodig; tot dan
-      unknown, niet no.
+      Site claimt 'erkend door Yoga Alliance' maar Yogapoint niet gevonden in YA
+      NL-lijst (56 scholen) — registratie onder andere holder-naam, lapsed, of
+      zoekradius-artefact. Naamzoektocht in YA-directory nodig; tot dan unknown,
+      niet no.
 depth: listed
 last_verified: "2026-06-12"
 sources:
   - id: site-2026-06
     type: website
     url: https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
-    archived_url: https://web.archive.org/web/20260612/https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
-    local_snapshot: data/archives/yogapoint/site-2026-06-12.md
+    archived_url: https://web.archive.org/web/20260714094007/https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
+    local_snapshot: data/archives/yogapoint/site-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
     archived_url: null
     captured: "2026-06-12"
+    local_snapshot: data/archives/yogapoint/ya-register-2026-06-2026-07-14.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-12"
+    local_snapshot: data/archives/yogapoint/crkbo-register-2026-06-2026-07-14.pdf
 
 modules:
   - id: m1-filosofie-levensstijl
@@ -66,10 +69,12 @@ programs:
     name: "300-uur Verdiepende Yoga Teacher Training"
     url: https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/
     format_label: "300"
-    style_claimed: "achtvoudige pad van Patanjali; Ashtanga beoefening; chakra-gebaseerde asana's"
+    style_claimed: "achtvoudige pad van Patanjali; Ashtanga beoefening;
+      chakra-gebaseerde asana's"
     accreditation:
       - body: yoga_alliance
-        label_claimed: "erkend door Yoga Alliance, het internationale keurmerk voor yogadocenten; RYT 300 certificaat → upgrade naar RYT 500"
+        label_claimed: "erkend door Yoga Alliance, het internationale keurmerk voor
+          yogadocenten; RYT 300 certificaat → upgrade naar RYT 500"
         verified: unknown
         source: site-2026-06
     delivery:
@@ -77,7 +82,21 @@ programs:
       structure: modular
       duration_months_min: 12
       language: nl
-    prerequisites_claimed: "RYT 200 vereist voor volledige Yoga Alliance-registratie; modules los toegankelijk"
+    prerequisites_claimed: "RYT 200 vereist voor volledige Yoga
+      Alliance-registratie; modules los toegankelijk"
+    prerequisite:
+      - kind: other
+        label: "RYT 200 — nodig voor de Yoga Alliance-upgrade, niet voor deelname"
+        source: site-2026-06
+        note: >
+          GEEN TOEGANGSPOORT, en het onderscheid is de hele bevinding: de RYT
+          200 is nodig voor het REGISTER, niet voor de opleiding. Yogapoint:
+          "Bij het voltooien van alle drie de modules ontvang je het RYS 300
+          certificaat, waarmee je je Yoga Alliance registratie kunt upgraden van
+          RYT 200 naar RYT 500." De modules zijn los toegankelijk. Wie de
+          opleiding volgt zónder RYT 200 kan haar dus wél volgen — maar niet
+          verzilveren als RYT 500. Geen bedrag opgeteld: dit is geen aankoop die
+          deze school eist.
     price:
       amount_eur: 3993
       vat: incl
@@ -92,11 +111,12 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     group_size_claimed: { max: 15, source: site-2026-06 }
     composition:
       type: fixed_modular
-      modules: [m1-filosofie-levensstijl, m2-asana-chakra, m3-pranayama-nidra-meditatie]
+      modules: [ m1-filosofie-levensstijl, m2-asana-chakra, m3-pranayama-nidra-meditatie ]
     coherence_signals:
       required_sequence: "no"
       required_sequence_note: "'zelf jouw startmoment kiezen … ongeacht waar je begint'"

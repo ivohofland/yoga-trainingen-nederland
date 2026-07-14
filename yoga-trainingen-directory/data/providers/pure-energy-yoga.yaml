@@ -161,6 +161,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-200-2026-06
       note: >
         4 modules van 50u (Anatomie/basis, Energie, Energiewerk/Qi Gong,

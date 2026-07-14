@@ -23,15 +23,17 @@ registrations:
     verified_in_register: unknown
     source: site-2026-06
 depth: listed
-last_verified: "2026-06-13"
+last_verified: "2026-07-12"
 sources:
   - id: site-2026-06
     type: website
     url: https://www.blikopener.info/
     archived_url: https://web.archive.org/web/20260613080628/https://www.blikopener.info/
     captured: "2026-06-13"
-    note: "homepage; prijzen/uren achter 'Agenda's en Tarieven'-menu, nog niet
-      uitgelezen"
+    note: "homepage; bevat zélf geen bedrag, geen urental en geen structuur — linkt
+      alleen door naar de pagina's die dat wél stellen (tarieven-2026-07 en
+      opleiding-2026-07). Draagt hier nog uitsluitend de cohortdatum (start 31 aug
+      2026), die de homepage zelf noemt."
     local_snapshot: data/archives/de-blikopener/site-2026-06-2026-06-13.pdf
   - id: vyn-register-2026-06
     type: register
@@ -42,15 +44,41 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-13"
     local_snapshot: data/archives/de-blikopener/crkbo-register-2026-06-2026-06-13.pdf
+  - id: tarieven-2026-07
+    type: website
+    url: https://www.blikopener.info/agendas-en-tarieven/tarieven/
+    captured: "2026-07-12"
+    note: "tarievenpagina — de pagina die de prijs STELT (de homepage linkt er
+      alleen naar). Noemt géén btw: geen 'incl.', geen 'excl.', geen
+      'vrijgesteld', geen CRKBO."
+    local_snapshot: data/archives/de-blikopener/tarieven-2026-07-2026-07-12.pdf
+    archived_url: https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/
+  - id: opleiding-2026-07
+    type: website
+    url: https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/
+    captured: "2026-07-12"
+    note: "de opleidingspagina zelf — de pagina die de OMVANG en de STRUCTUUR stelt
+      (urental, aantal jaren, beide varianten). De homepage doet dat nergens."
+    local_snapshot: data/archives/de-blikopener/opleiding-2026-07-2026-07-12.pdf
+    archived_url: https://web.archive.org/web/20260712131118/https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/
 
+# TWEE OPLEIDINGEN, GEEN ÉÉN. De opleidingspagina (opleiding-2026-07) beschrijft twee
+# trajecten met een eigen omvang, een eigen duur en een eigen afsluiting: "De
+# Hatha-Raja Yoga opleiding bestaat uit 500 u … verspreid over vier jaar" en "Het is
+# ook mogelijk om de 3-jarige opleiding te volgen van 372 u." Eén record voor beide
+# zou de lezer dwingen te kiezen welk van die twee wij bedoelen — en zou, wat de prijs
+# betreft, twee verschillende totalen (4 × € 1.290 en 3 × € 1.290) achter één bedrag
+# verstoppen.
 programs:
+  # ---- 4-jarig, 500 u ----
   - id: hatha-raja-opleiding
-    name: "Hatha Raja Yoga docentenopleiding"
-    url: https://www.blikopener.info/
-    format_label: other # eigen meerjarig traject; VYN-erkend, geen RYT-label gepubliceerd
+    name: "Hatha-Raja Yoga docentenopleiding (500 u, vierjarig)"
+    # De pagina die de opleiding STELT — niet de homepage, die geen van deze feiten noemt.
+    url: https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/
+    format_label: "500" # "De Hatha-Raja Yoga opleiding bestaat uit 500 u" (opleiding-2026-07)
     style_claimed: "Hatha en Raja yoga; 'Houding + Adem = Energie'; klassieke traditie"
     accreditation:
       - body: vyn
@@ -61,39 +89,188 @@ programs:
     delivery:
       mode: in_person
       structure: mixed
+      # "verspreid over vier jaar" (opleiding-2026-07) → 48 maanden.
+      duration_months_min: 48
+      duration_months_max: 48
       language: nl
+    prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan
+      23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een
+      persoonlijk instapgesprek vooraf"
+    prerequisite:
+      - kind: experience
+        label: "ten minste twee jaar yoga-ervaring"
+        source: opleiding-2026-07
+        note: >
+          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee
+          jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
+          instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen:
+          geen bedrag opgeteld.
     price:
-      amount_eur: null
-      vat: exempt_crkbo
+      # PER STUDIEJAAR (spec v0.5). De tarievenpagina zegt: "€ 1290,- (vanaf 1 juni
+      # 2026) per studiejaar"; de opleidingspagina zegt dat het traject vier jaar
+      # duurt. Het bedrag dat zij noemen is dus een JAARBEDRAG, en een totaalprijs
+      # publiceren zij nergens. Daarom `period: per_year` + `periods: 4`: het totaal
+      # (± € 5.160) wordt AFGELEID en als ONZE rekensom getoond — nooit opgeslagen en
+      # nooit als hun bedrag gepresenteerd (spec §6). Vóór v0.5 stond hier een kaal
+      # `amount_eur: 1290`, waarmee deze vierjarige opleiding in het overzicht bij de
+      # goedkoopste van het corpus belandde.
+      amount_eur: 1290
+      period: per_year
+      periods: 4
+      variants:
+        - { label: "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli
+            2026", amount_eur: 1220 }
+      # GECORRIGEERD naar `unknown` (was `exempt_crkbo`). De gearchiveerde
+      # tarievenpagina — de enige bron die de prijs stelt — noemt géén btw: geen
+      # 'incl.', geen 'excl.', geen 'vrijgesteld', geen CRKBO. Spec §4.11 verbiedt het
+      # afleiden van een btw-vrijstelling uit een CRKBO-registratie; `exempt_crkbo`
+      # was op geen enkele bron te gronden en is daarom teruggezet naar de eerlijke
+      # waarde: wij weten het niet.
+      vat: unknown
       published: "yes"
-      note: "prijs op aparte tarievenpagina, nog niet uitgelezen"
-      source: site-2026-06
+      excludes: "eenmalig € 100,- inschrijf- en boekengeld in het 1e jaar; de
+        verblijfskosten van het jaarlijkse yogaweekend ('vanaf 1 juli 2026 €
+        335,-')."
+      note: "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12), niet per
+        opleiding: het traject loopt vier jaar en een totaalprijs publiceren zij
+        nergens. Het totaal in het overzicht is ONZE vermenigvuldiging (4 × € 1.290),
+        als zodanig gemarkeerd. BTW: de tarievenpagina noemt geen btw — `vat` is
+        daarom `unknown` (spec §4.11: een vrijstelling mag niet uit de
+        CRKBO-registratie worden afgeleid). Correctie t.o.v. de eerdere waarde
+        `exempt_crkbo`, die op geen bron rustte."
+      source: tarieven-2026-07
     hours_claimed:
-      total: null
+      # "De Hatha-Raja Yoga opleiding bestaat uit 500 u (zie ook: Uren opleiding),
+      # verspreid over vier jaar." (opleiding-2026-07)
+      total: 500
       contact: null
       self_study: null
       supervised_teaching_practice: null
-      breakdown_published: not_published
-      source: site-2026-06
-      note: "geen urentelling op homepage; meerjarig traject"
+      # `unknown`, NIET `not_published`: de opleidingspagina linkt naar een pagina
+      # "Uren opleiding" die wij nog niet hebben vastgelegd. Zeggen dat zij geen
+      # urenuitsplitsing publiceren zou een bevinding zijn over een met naam genoemd
+      # bedrijf die het bewijs juist tegenspreekt. Dit is een gat bij ONS.
+      breakdown_published: unknown
+      contact_published: unknown
+      source: opleiding-2026-07
+      note: "500 u over vier jaar (opleidingspagina). De pagina verwijst voor de
+        uitsplitsing naar een aparte pagina 'Uren opleiding'; die is nog niet
+        vastgelegd, dus over de contact-/zelfstudie-uren doen wij geen uitspraak."
     assessment_described:
-      exists: unknown
+      exists: "yes"
+      final: "yes"
+      quote: "Als je voor het 500 u-traject wilt gaan, kun je aansluitend een 4e jaar
+        volgen met verdiepende modules, dat je afsluit met een praktijkexamen en een
+        afstudeerscriptie."
     coherence_signals:
       single_cohort_intake: "yes"
-      single_cohort_intake_note: "jaarlijkse start; 1e jaar start 31 aug 2026"
+      single_cohort_intake_note: "jaarlijkse start; 1e jaar start eind augustus /
+        begin september, instromen mogelijk t/m eind november"
       continuous_lead_teacher: "yes"
       continuous_lead_teacher_note: "Hans 't Hart (sinds 1968) en Natasja de Senerpont
         Domis (sinds 2006), met ondersteunende docenten"
-      source: site-2026-06
+      source: opleiding-2026-07
     track_record:
-      note: "claimt 'bestaat nu ruim 55 jaar'; site-motto 'sinds 1982';
-        oudste-generatie NL-opleiding"
+      note: "claimt 'bestaat nu ruim 55 jaar'; de opleidingspagina zegt: 'De opleiding
+        tot Hatha –en Rajayogadocent(e) ontstond in 1982'"
+      source: opleiding-2026-07
     cohorts:
       - id: c-2026-08
         start: "2026-08"
         status: announced
         source: site-2026-06
         note: "1e jaar start 31 aug 2026; proeflessen mei/juni, open dag 23 aug"
+
+  # ---- 3-jarig, 372 u ----
+  - id: hatha-raja-opleiding-3-jarig
+    name: "Hatha-Raja Yoga docentenopleiding (372 u, driejarig)"
+    url: https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/
+    # `other`, niet "500": 372 u is geen 200/300/500-label. Het label is beschrijvend,
+    # geen kwaliteitssignaal (spec §5) — en een opleiding in een 500-hokje duwen die
+    # zelf 372 u zegt te zijn, is een bewering die zij niet doen.
+    format_label: other
+    style_claimed: "Hatha en Raja yoga; 'Houding + Adem = Energie'; klassieke traditie"
+    accreditation:
+      - body: vyn
+        label_claimed: "landelijk officieel erkend door de Vereniging Yogadocenten
+          Nederland (V.Y.N.) en de Europese Yogafederatie (U.E.Y.)"
+        verified: "yes"
+        source: vyn-register-2026-06
+    delivery:
+      mode: in_person
+      structure: mixed
+      duration_months_min: 36
+      duration_months_max: 36
+      language: nl
+    prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan
+      23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een
+      persoonlijk instapgesprek vooraf"
+    prerequisite:
+      - kind: experience
+        label: "ten minste twee jaar yoga-ervaring"
+        source: opleiding-2026-07
+        note: >
+          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee
+          jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
+          instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen:
+          geen bedrag opgeteld.
+    price:
+      # Zelfde jaarbedrag, drie jaar: hetzelfde tarief geldt per studiejaar en de
+      # tarievenpagina onderscheidt de twee trajecten niet. `periods: 3` → ons
+      # afgeleide totaal is ± € 3.870.
+      amount_eur: 1290
+      period: per_year
+      periods: 3
+      variants:
+        - { label: "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli
+            2026", amount_eur: 1220 }
+      # Zie het 500 u-record: de tarievenpagina noemt geen btw (spec §4.11).
+      vat: unknown
+      published: "yes"
+      excludes: "eenmalig € 100,- inschrijf- en boekengeld in het 1e jaar; de
+        verblijfskosten van het jaarlijkse yogaweekend ('vanaf 1 juli 2026 €
+        335,-')."
+      note: "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12). De
+        tarievenpagina noemt één tarief voor de Hatha-Raja yogadocentenopleiding en
+        onderscheidt de driejarige variant niet apart; het totaal in het overzicht is
+        ONZE vermenigvuldiging (3 × € 1.290), als zodanig gemarkeerd. BTW: de
+        tarievenpagina noemt geen btw — `vat` is daarom `unknown` (spec §4.11)."
+      source: tarieven-2026-07
+    hours_claimed:
+      # "Het is ook mogelijk om de 3-jarige opleiding te volgen van 372 u."
+      # (opleiding-2026-07)
+      total: 372
+      contact: null
+      self_study: null
+      supervised_teaching_practice: null
+      breakdown_published: unknown
+      contact_published: unknown
+      source: opleiding-2026-07
+      note: "372 u over drie jaar (opleidingspagina). Voor de uitsplitsing verwijst de
+        pagina naar een aparte pagina 'Uren opleiding'; die is nog niet vastgelegd."
+    assessment_described:
+      exists: "yes"
+      final: "yes"
+      quote: "Deze wordt afgesloten met een examen (theorie en praktijk) en een
+        diploma."
+    coherence_signals:
+      single_cohort_intake: "yes"
+      single_cohort_intake_note: "gedeeld eerste jaar met het 500 u-traject; start
+        eind augustus / begin september"
+      continuous_lead_teacher: "yes"
+      continuous_lead_teacher_note: "Hans 't Hart (sinds 1968) en Natasja de Senerpont
+        Domis (sinds 2006), met ondersteunende docenten"
+      source: opleiding-2026-07
+    track_record:
+      note: "claimt 'bestaat nu ruim 55 jaar'; de opleidingspagina zegt: 'De opleiding
+        tot Hatha –en Rajayogadocent(e) ontstond in 1982'"
+      source: opleiding-2026-07
+    cohorts:
+      - id: c-2026-08-3j
+        start: "2026-08"
+        status: announced
+        source: site-2026-06
+        note: "gedeelde start van het 1e jaar: 31 aug 2026"
 
 people:
   - id: hans-t-hart

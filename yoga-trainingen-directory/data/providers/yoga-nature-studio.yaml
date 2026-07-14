@@ -44,7 +44,7 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-13"
     local_snapshot: data/archives/yoga-nature-studio/crkbo-register-2026-06-2026-06-13.pdf
 
@@ -69,6 +69,17 @@ programs:
       language: mixed # NL + enkele workshops/boeken Engels
     prerequisites_claimed: "1-2 jaar regelmatige yoga-ervaring; goede basis
       practice; begrip NL en Engels"
+    prerequisite:
+      - kind: experience
+        label: "min. 1–2 jaar regelmatige yoga-ervaring"
+        source: site-200-2026-06
+        note: >
+          FAQ, letterlijk: "Do I need any yoga experience to participate in this
+          yoga training? Yes, we require at least one to two years of regular
+          yoga experience." (Staat in de HTML-kopie; in de PDF-render is de
+          FAQ ingeklapt — vgl. de HTML/PDF-splitsing in provenance.ts.) Plus:
+          "We expect you to have spent a significant amount of time on the mat
+          and have a good foundation of practice." Ervaringseis, geen aankoop.
     price:
       amount_eur: 2700 # comparable base: super early bird
       variants:
@@ -86,6 +97,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-200-2026-06
       note: >
         Geen uren-uitsplitsing. Wel concreet praktijk-/lespraktijkkader:
@@ -155,6 +167,16 @@ programs:
       language: nl
     prerequisites_claimed: "200-uur Yoga Teacher Training of vergelijkbare ervaring;
       sommige modules ook voor ervaren beoefenaars"
+    prerequisite:
+      - kind: other
+        label: "200-uur Yoga Teacher Training (of vergelijkbare ervaring)"
+        source: site-300-2026-06
+        note: >
+          "Yoga teachers with a 200-hour Yoga Teacher Training" — en "of
+          vergelijkbare ervaring": de eis is niet aan deze school gebonden, en de
+          studio verkoopt zelf een 200u (€ 2.700) zonder die te verplichten. Geen
+          bedrag opgeteld; bovendien publiceert de studio voor de 300u zelf geen
+          prijs, dus er is ook geen pad om bij op te tellen.
     price:
       amount_eur: null
       vat: unknown
@@ -167,6 +189,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-300-2026-06
     composition:
       type: free_assembly

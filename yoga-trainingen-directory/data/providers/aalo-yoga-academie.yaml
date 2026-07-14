@@ -30,8 +30,10 @@ sources:
     url: https://www.aalo.nl/yoga-academie/
     archived_url: https://web.archive.org/web/20260613081543/https://www.aalo.nl/yoga-academie/
     captured: "2026-06-13"
-    note: "overzichtspagina; prijzen per module/pakket op aparte inschrijfpagina's,
-      nog niet uitgelezen"
+    note: "overzichtspagina; bevat zélf geen enkel bedrag — de prijzen staan op de
+      opleidingspagina's per training (site-yin-yang-2026-07, site-yin-2026-07),
+      die hieronder als aparte bronnen staan en waaruit de prijzen zijn
+      overgenomen."
     local_snapshot: data/archives/aalo-yoga-academie/site-2026-06-2026-06-13.pdf
   - id: ya-register-2026-06
     type: register
@@ -42,9 +44,25 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-13"
     local_snapshot: data/archives/aalo-yoga-academie/crkbo-register-2026-06-2026-06-13.pdf
+  - id: site-yin-yang-2026-07
+    type: website
+    url: https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/
+    captured: "2026-07-12"
+    note: "opleidingspagina Yin/Yang RYT-200 — draagt zelf de prijs; de
+      overzichtspagina (site-2026-06) linkt er alleen naar."
+    local_snapshot: data/archives/aalo-yoga-academie/site-yin-yang-2026-07-2026-07-12.pdf
+    archived_url: https://web.archive.org/web/20260712065457/https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/
+  - id: site-yin-2026-07
+    type: website
+    url: https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/
+    captured: "2026-07-12"
+    note: "opleidingspagina Yin RYT-200 — draagt zelf de prijs; de overzichtspagina
+      (site-2026-06) linkt er alleen naar."
+    local_snapshot: data/archives/aalo-yoga-academie/site-yin-2026-07-2026-07-12.pdf
+    archived_url: https://web.archive.org/web/20260712070739/https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/
 
 programs:
   - id: yin-yang-ryt200
@@ -64,21 +82,50 @@ programs:
       structure: modular
       language: nl
     price:
-      amount_eur: null
-      vat: unknown
+      # Vergelijkbare basis = goedkoopste ALGEMEEN BESCHIKBARE variant (spec §4). De
+      # 5%-korting geldt voor iedereen die het lesgeld ineens betaalt — geen
+      # ledenprijs, geen early bird met een datum erop — dus dát is de basis; net als
+      # bij dru-yoga, waar 'ineens' de basis is en de termijnregeling de variant.
+      # De pagina zet er zelf "VANAF €2988" boven; die € 2.988,- is het lesgeld zonder
+      # korting én het totaal van de termijnregeling, en staat daarom als variant.
+      amount_eur: 2838.6
+      variants:
+        - { label: "eenmalig, 5% korting", amount_eur: 2838.6 }
+        - {
+            label: "12 maandtermijnen à € 249,- (lesgeld zonder korting)",
+            amount_eur: 2988
+          }
+      vat: unknown # de pagina noemt nergens BTW (§4.11: niet afleiden)
       published: "yes"
-      note: "prijs per pakket/module op inschrijfpagina's, niet als één totaal op
-        overzicht; nog uit te lezen"
-      source: site-2026-06
+      includes: "studiemateriaal ('Het lesgeld voor de Yin/Yang Yoga Teacher Training
+        is inclusief studiemateriaal')"
+      # EXAMENGELD IS NIET INBEGREPEN, en het verschilt per opleiding (€ 553,- hier,
+      # € 435,- bij yin-ryt200). Precies het geval waarvoor `excludes` bestaat: wie de
+      # twee AALO-trainingen op lesgeld vergelijkt ziet tweemaal € 2.988,- en mist dat
+      # de ene € 118,- meer verplicht examengeld kent dan de andere.
+      excludes: "examengeld € 553,- ('Het examengeld is inclusief het theorie- en
+        praktijkexamen en het erkend diploma')"
+      note: "Lesgeld van de opleidingspagina zelf (geharvest 2026-07-12): eenmalig €
+        2.988,- → € 2.838,60 met 5% korting, of 12 maandtermijnen à € 249,- (= €
+        2.988,-). Examengeld € 553,- komt daar bovenop. De overzichtspagina
+        (site-2026-06) noemt geen enkel bedrag; die citeren wij hier dus niet
+        meer."
+      source: site-yin-yang-2026-07
     hours_claimed:
       total: 200
       contact: null
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     composition:
       type: free_assembly # RYT200 samengesteld uit losse pakketten/modules
+    contract:
+      installments_published: "yes"
+      source: site-yin-yang-2026-07
+      note: "12 maandtermijnen à € 249,- (= € 2.988,-, gelijk aan het lesgeld zonder
+        korting; de korting van 5% geldt alleen bij eenmalige betaling)"
     coherence_signals:
       required_sequence: not_published
       single_cohort_intake: "no"
@@ -115,20 +162,42 @@ programs:
       structure: modular
       language: nl
     price:
-      amount_eur: null
-      vat: unknown
+      # Zelfde lesgeld en zelfde kortingsstructuur als yin-yang-ryt200 (zie daar voor
+      # waarom de 5%-variant de vergelijkbare basis is) — maar een ANDER examengeld.
+      amount_eur: 2838.6
+      variants:
+        - { label: "eenmalig, 5% korting", amount_eur: 2838.6 }
+        - {
+            label: "12 maandtermijnen à € 249,- (lesgeld zonder korting)",
+            amount_eur: 2988
+          }
+      vat: unknown # de pagina noemt nergens BTW (§4.11: niet afleiden)
       published: "yes"
-      note: "per module/pakket; nog uit te lezen"
-      source: site-2026-06
+      includes: "studiemateriaal ('Het lesgeld voor de Yin Yoga Teacher Training is
+        inclusief studiemateriaal')"
+      excludes: "examengeld € 435,- ('Het examengeld is inclusief de beoordeling van
+        de casus, het theorie examen en het erkend diploma')"
+      note: "Lesgeld van de opleidingspagina zelf (geharvest 2026-07-12): eenmalig €
+        2.988,- → € 2.838,60 met 5% korting, of 12 maandtermijnen à € 249,-. Het
+        examengeld is hier € 435,-, tegen € 553,- bij de Yin/Yang-training:
+        hetzelfde lesgeld, verschillende verplichte meerkosten. De
+        overzichtspagina (site-2026-06) noemt geen enkel bedrag."
+      source: site-yin-2026-07
     hours_claimed:
       total: 200
       contact: null
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     composition:
       type: free_assembly
+    contract:
+      installments_published: "yes"
+      source: site-yin-2026-07
+      note: "12 maandtermijnen à € 249,- (= € 2.988,-, gelijk aan het lesgeld zonder
+        korting; de korting van 5% geldt alleen bij eenmalige betaling)"
     coherence_signals:
       modules_sold_separately: "yes"
       modules_sold_separately_note: "Yin Yoga 1-4 ook los/als PE verkrijgbaar"

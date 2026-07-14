@@ -18,6 +18,7 @@ import Link from "next/link";
 import { loadDataset } from "@/lib/loader";
 import { toProviderView, formatMonth, cohortLabel, type ClaimView } from "@/lib/presenters";
 import { Quad } from "@/components/Quad";
+import { inkFor } from "@/lib/quad";
 import { nl } from "@/lib/strings";
 import styles from "./page.module.css";
 
@@ -169,13 +170,41 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 : prog.name}
             </h3>
 
+            {/* TWO INKS, AND THE COMPONENT CHOOSES NEITHER (spec §6, v0.5/v0.6/v0.8/v0.9).
+                A quad is a finding or a gap ABOUT the provider, and <Quad> is the only
+                thing allowed to colour one. A DERIVED figure — the price we multiplied,
+                the hours we added, the path we summed, the €/contactuur we divided — is
+                neither: it is our arithmetic over what they published, and printing it
+                through <Quad> put it on the page in the same fact ink as the school's own
+                claims, one row below them. Those figures (de Blikopener's ± € 5.160, de
+                Yogaschool's ± 600 uur and ± € 6.180, Adhouna's ± € 2.725) appear in NO
+                source any of those schools published.
+
+                The decision is inkFor() — pure, exhaustive, truth-tabled in quad.test.ts,
+                and called by BOTH surfaces. It used to be a ternary right here, and it was
+                the most consequential expression on the site: neutralise it and all 181
+                tests passed while our arithmetic went out in the schools' colours. A
+                component in a project with no React renderer is the one place a decision
+                cannot be tested; so this one holds none. It is a wire.
+
+                A derived row with NO value (de Blikopener with no period count) still goes
+                through <Quad>: there the row states a FINDING about them, and a finding is
+                exactly what <Quad> is for. inkFor() knows that too — see its truth table. */}
             {prog.rows.map((row, i) => (
               <div key={i} className={styles.kv}>
                 <div className={styles.k}>{row.label}</div>
                 <div className={styles.v}>
-                  <Quad state={row.state}>{row.value}</Quad>
+                  {inkFor(row) === "derived" ? (
+                    <span className={styles.derived}>{row.value}</span>
+                  ) : (
+                    <Quad state={row.state}>{row.value}</Quad>
+                  )}
                   {row.note && <div className={styles.note}>{row.note}</div>}
-                  <Cite source={row.source} />
+                  {/* A derived row has NO `source` KEY (KeyValueRow) — §6: our arithmetic
+                      cites no page of theirs. `?? null` is that fact reaching the DOM, not
+                      a defensive default: <Cite> renders nothing for it, and the parts the
+                      figure was computed from carry their citations in their own rows. */}
+                  <Cite source={row.source ?? null} />
                 </div>
               </div>
             ))}
@@ -205,6 +234,13 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                   {prog.cohorts.map((c) => (
                     <div key={c.id}>
                       {cohortLabel(c)}
+                      {/* THE PRICE AS IT STOOD WHEN THIS RUN WAS SOLD (spec v0.7, §4.5).
+                          A price that moved between cohorts is a FINDING about the school
+                          — Bluebirds' 2025 run was sold "€3150,- Excl BTW", its 2026 run at
+                          "0% VAT as we are CRKBO registered" — and the field that holds it
+                          was populated nowhere and rendered nowhere until now. It stands
+                          beside the cohort's own source, which is what makes it evidence. */}
+                      {c.priceAtTime && <div className={styles.note}>{c.priceAtTime}</div>}
                       {c.note && <div className={styles.note}>{c.note}</div>}
                       <Cite source={c.source} />
                     </div>

@@ -172,6 +172,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-ytt-2026-06
       note: >
         200u over 4 residentiële blokken (20 lesdagen: 2×4 + 1×5 + 1×7 dagen)

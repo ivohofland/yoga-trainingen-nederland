@@ -22,25 +22,27 @@ registrations:
     verified_in_register: "yes"
     source: ya-school-profile-2026-06
     note: >
-      Registratie op naam van de lead teacher, NIET op Namasté Studio's; YA-profiel
-      koppelt de RYS aan het adres Voorhout. Teaching staff: Maayke Vidts, E-RYT 500
-      + YACEP (ERYT-claim op site daarmee geverifieerd). Profiel toont 0 upcoming
-      training dates. 3 school reviews (4,83): reviewers Anyolina Altena en Benedetta
-      La Rosa zijn dezelfde personen als de testimonials op de eigen site.
+      Registratie op naam van de lead teacher, NIET op Namasté Studio's;
+      YA-profiel koppelt de RYS aan het adres Voorhout. Teaching staff: Maayke
+      Vidts, E-RYT 500 + YACEP (ERYT-claim op site daarmee geverifieerd).
+      Profiel toont 0 upcoming training dates. 3 school reviews (4,83):
+      reviewers Anyolina Altena en Benedetta La Rosa zijn dezelfde personen als
+      de testimonials op de eigen site.
 depth: listed
 last_verified: "2026-06-12"
 sources:
   - id: site-2026-06
     type: website
     url: https://namastestudios.nl/yogadocentopleiding
-    archived_url: https://web.archive.org/web/20260612/https://namastestudios.nl/yogadocentopleiding
-    local_snapshot: data/archives/namaste-studios/site-2026-06-12.md
+    archived_url: https://web.archive.org/web/20260714093616/https://namastestudios.nl/yogadocentopleiding
+    local_snapshot: data/archives/namaste-studios/site-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
   - id: ya-school-profile-2026-06
     type: register
-    url: "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&sid=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga"
-    archived_url: https://web.archive.org/web/20260612/https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV
-    local_snapshot: data/archives/namaste-studios/ya-profile-2026-06-12.md
+    url: "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&si\
+      d=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga"
+    archived_url: null
+    local_snapshot: data/archives/namaste-studios/ya-school-profile-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
     note: >
       Salesforce-gerenderd. Wayback-snapshot (2026-06-12) bevat alleen de lege
@@ -51,8 +53,9 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-12"
+    local_snapshot: data/archives/namaste-studios/crkbo-register-2026-06-2026-07-14.pdf
 
 programs:
   - id: 200-vinyasa
@@ -62,10 +65,12 @@ programs:
     style_claimed: "Vinyasa; 'post-lineage yoga' — traditie en wetenschap in dialoog"
     accreditation:
       - body: yoga_alliance
-        label_claimed: "200 RYT; bij 200 opleidingsuren gerechtigd tot registratie bij Yoga Alliance"
+        label_claimed: "200 RYT; bij 200 opleidingsuren gerechtigd tot registratie bij
+          Yoga Alliance"
         verified: "yes"
         source: ya-school-profile-2026-06
-        note: "RYS 200 bestaat en is gekoppeld aan dit adres — maar op naam van de lead teacher (zie registrations)"
+        note: "RYS 200 bestaat en is gekoppeld aan dit adres — maar op naam van de lead
+          teacher (zie registrations)"
     delivery:
       mode: in_person
       structure: weekends
@@ -78,8 +83,10 @@ programs:
         - { label: "leden", amount_eur: 2800 }
       vat: incl
       published: "yes"
-      excludes: "verplichte literatuur én deelname aan studiolessen (terwijl lessen volgen wordt verwacht)"
-      note: "basis = niet-ledenprijs (algemeen beschikbaar); aanbetaling €500; termijnen mogelijk; ledenkorting is tevens upsell-signaal"
+      excludes: "verplichte literatuur én deelname aan studiolessen (terwijl lessen
+        volgen wordt verwacht)"
+      note: "basis = niet-ledenprijs (algemeen beschikbaar); aanbetaling €500;
+        termijnen mogelijk; ledenkorting is tevens upsell-signaal"
       source: site-2026-06
     hours_claimed:
       total: 200
@@ -87,12 +94,14 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     assessment_described:
       exists: "yes"
       continuous: not_published
       final: "yes"
-      quote: "Na succesvolle afronding van het theorie- en praktijkexamen ontvang je een officieel certificaat."
+      quote: "Na succesvolle afronding van het theorie- en praktijkexamen ontvang je
+        een officieel certificaat."
     coherence_signals:
       single_cohort_intake: "yes"
       single_cohort_intake_note: "één jaarlijkse start met vaste datumlijst"

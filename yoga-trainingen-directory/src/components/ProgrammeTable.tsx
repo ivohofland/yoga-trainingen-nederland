@@ -174,8 +174,25 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
           here rendered a bare "ja" in fact ink on the five programmes that
           publish a price we do not hold, while their record pages rendered the
           gap correctly: two pages of one site, opposite claims, same programme. */}
+      {/* TWO LINES, TWO INKS, and never one number (spec v0.5). The <Quad> holds what
+          the PROVIDER publishes — "€ 1.290 / studiejaar", in fact ink, with the unit
+          that makes it true. Beneath it, and only where the two differ, OUR arithmetic:
+          "± € 5.160 totaal — onze berekening: 4 × € 1.290", in the muted, non-factual
+          style. A yearly fee printed as a price is what put de Blikopener among the
+          cheapest trainings in the corpus while their opleiding costs € 5.160; a
+          derived total printed in the provider's ink would be the same lie, corrected. */}
+      {/* And a THIRD line where the school makes you buy another course first (spec v0.9):
+          "± € 6.180 om te kwalificeren — incl. verplichte Basisopleiding € 1.590". Same
+          muted ink, because it is the same kind of number: ours. de Yogaschool's
+          Docentenopleiding is € 4.590 and you may not start it without the Basisopleiding
+          — a gate that sat in the record as prose, where the price comparison could not
+          see it, while the listing ranked the training against courses you can simply
+          enrol in. Rendered only where something must actually be bought first; elsewhere
+          the path cost IS the total and a second line would invent a second figure. */}
       <div className={styles.cell}>
         <Quad state={r.priceState}>{r.priceDisplay}</Quad>
+        {r.priceDerivedTotal && <div className={styles.derived}>{r.priceDerivedTotal}</div>}
+        {r.priceDerivedPathCost && <div className={styles.derived}>{r.priceDerivedPathCost}</div>}
       </div>
       {/* Both the string and the quad come from the presenter. The quad comes from
           the RECORD, never from the mere absence of a value: see pphQuad() in
@@ -188,8 +205,19 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
           accessible name of the row, visually hidden: same words, no pointer
           required, visual design untouched. (On a link, `title` is only a
           fallback name, so the two never double up.) */}
+      {/* AND THE €/CONTACTUUR IS OURS TOO (spec §6) — on every row that has one. It is
+          price ÷ contact hours, a division WE perform; not one school in the corpus
+          publishes the figure, so there is no provider's source that could contradict it
+          and none that could support it either. It therefore renders in the SAME muted,
+          non-factual ink as the derived totals above — never in the default ink of the
+          columns beside it, which carry what the schools themselves say. Where there is no
+          figure, the cell is a quad again: a finding about them, or a gap in us. */}
       <div className={styles.cellSmall} title={r.pphCaveat ?? undefined}>
-        {r.pphDisplay ?? <Quad state={r.pphState} />}
+        {r.pphDisplay ? (
+          <span className={styles.derivedInline}>{r.pphDisplay}</span>
+        ) : (
+          <Quad state={r.pphState} />
+        )}
         {r.pphCaveat && <span className={styles.srOnly}> — {r.pphCaveat}</span>}
       </div>
       <div className={styles.cellSmall}>

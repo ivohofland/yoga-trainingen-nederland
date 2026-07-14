@@ -166,6 +166,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-200-2026-06
       note: >
         Geen urenuitsplitsing op de pagina; "observing in YM classes" inbegrepen
@@ -225,6 +226,15 @@ programs:
       language: en
     prerequisites_claimed: "200-hour certificate from a recognised school;
       practising a form of Vinyasa yoga"
+    prerequisite:
+      - kind: other
+        label: "200-hour certificate from a recognised school"
+        source: site-300-2026-06
+        note: >
+          "... as long as you already hold a 200-hour certificate from a
+          recognised school." Uitdrukkelijk ELKE erkende school — geen verplichte
+          aankoop bij Yoga Moves (die zelf een 200u van € 2.860 verkoopt), dus
+          geen bedrag opgeteld.
     price:
       amount_eur: 3950
       variants:
@@ -247,6 +257,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: yes
+      contact_published: yes
       source: site-300-2026-06
       note: >
         "245+ contact hours in 8 required modules" + 45 keuze-uren (electives) +
@@ -343,6 +354,16 @@ programs:
     prerequisites_claimed: "solid foundation in Ashtanga yoga practice (Led classes
       and/or Mysore) of preferably at least 1 year; min. 3 maanden regelmatige
       praktijk bij instroom uit andere stijl"
+    prerequisite:
+      - kind: experience
+        label: "eigen Ashtanga-praktijk (Led/Mysore), bij voorkeur ≥ 1 jaar; ≥ 3
+          maanden bij instroom uit een andere stijl"
+        source: site-ashtanga-2026-06
+        note: >
+          Een ervaringseis, geen aankoop: de pagina vraagt een eigen praktijk
+          ("Mysore ... at least 1 year", "months regular"), geen certificaat en
+          geen voorafgaande opleiding. Een echte drempel — met een prijs die
+          niemand publiceert, dus zonder bedrag.
     price:
       amount_eur: 2750
       variants:
@@ -360,6 +381,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-ashtanga-2026-06
       note: >
         Geen uren-totaal op de pagina (format via RYS 200). Wel: "Observing and

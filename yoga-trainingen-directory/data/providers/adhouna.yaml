@@ -64,10 +64,12 @@ sources:
       Yin yoga (geschiedenis/principes/filosofie, anatomie, meridianen &
       chakra's, pranayama, meditatie, Yin & Yang, lesopbouw/lespraktijk) +
       mindfulness + "Anatomie van de Mind" + Yoga Nidra theorie & praktijk; RYT
-      200. Tarieven: Deel I €1420 incl. btw (€1173,55 excl.) + Deel II €1305
-      incl. btw (€1078,50 excl.) = €2725 incl. btw; incl. syllabus + examen;
-      herexamen €50; inschrijven per deel (Deel II bij voldoende
-      belangstelling). Brunssum, 10:00-18:00.
+      200. Tarieven, zoals de pagina ze afdrukt: "Deel I ... kost € 1.420,00
+      incl. BTW (€ 1.173,55 excl. BTW)" en "Deel II ... kost € 1.305,00 incl.
+      BTW (€ 1.078,50 excl. BTW)", beide "inclusief syllabus en examen";
+      herexamen € 50,00. GEEN TOTAALPRIJS op de pagina — de som van de twee
+      delen zou de onze zijn, niet die van hen. Inschrijven per deel (Deel II
+      bij voldoende belangstelling). Brunssum, 10:00-18:00.
     local_snapshot: data/archives/adhouna/site-yinxl-2026-06-2026-06-29.pdf
   - id: overview-image-2026-06
     type: brochure
@@ -102,6 +104,41 @@ sources:
       overgeslagen voor crkbo.nl/Register/*.
     local_snapshot: data/archives/adhouna/crkbo-register-2026-06-2026-06-29.pdf
 
+# De twee DELEN van de Yin Yoga XL-opleiding, elk met de prijs die de pagina noemt.
+# Dit zijn PARTS, geen tiers: eerst stonden ze als `price.variants` in het programma
+# (alsof je koos tussen €1420 en €1305) en stond hun SOM — €2725 — in `amount_eur`,
+# in de inkt van de school, geciteerd aan een pagina die alleen de twee delen afdrukt.
+# Het bedrag 2725 komt in geen enkel gearchiveerd artefact van Adhouna voor. Nu:
+# de delen zijn hún claim (met bron), het totaal is ONZE optelling (spec v0.8, §6).
+modules:
+  - id: deel-1
+    name: "Yin Yoga XL Docent Opleiding — Deel I"
+    url: https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
+    type: core_pedagogy
+    sold_separately: yes
+    price:
+      amount_eur: 1420
+      vat: incl
+      source: site-yinxl-2026-06
+    note: >
+      "Deel I van deze Yin Yoga Opleiding kost € 1.420,00 incl. BTW (€ 1.173,55
+      excl. BTW). Dit is inclusief syllabus en examen." (site-yinxl-2026-06).
+      Inschrijven gebeurt per deel; je schrijft je eerst in voor deel I.
+  - id: deel-2
+    name: "Yin Yoga XL Docent Opleiding — Deel II"
+    url: https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
+    type: core_pedagogy
+    sold_separately: yes
+    price:
+      amount_eur: 1305
+      vat: incl
+      source: site-yinxl-2026-06
+    note: >
+      "Deel II van deze Yin Yoga Opleiding kost € 1.305,00 incl. BTW (€ 1.078,50
+      excl. BTW). Dit is inclusief syllabus en examen." (site-yinxl-2026-06). "De
+      inschrijving voor deel II wordt ná de start van deel I opengesteld. Deel II
+      vindt doorgang bij voldoende belangstelling!"
+
 programs:
   - id: 200-multistyle
     name: "Multi Style Yoga Docent Opleiding 200 uur"
@@ -130,10 +167,16 @@ programs:
       een 100u-Hatha → +100u → 200u-route."
     price:
       amount_eur: null
-      vat: incl
+      vat: unknown
       published: not_published
-      note: "Geen prijs op de Multi Style-pagina; de Yin XL-opleiding wordt incl. btw
-        geprijsd (btw-belast)."
+      note: >
+        Geen prijs op de Multi Style-pagina (site-multistyle-2026-06). vat =
+        unknown (§4.11): die pagina rept met geen woord over btw — niet in de
+        HTML, niet in de browser-render. De eerdere 'incl' was overgenomen van de
+        pagina van een ANDERE opleiding (site-yinxl-2026-06: "Deel I van deze Yin
+        Yoga Opleiding kost € 1.420,00 incl. BTW"). Een btw-behandeling die van
+        het productblad van een ander product is afgelezen, is geen feit over
+        deze opleiding; btw wordt waargenomen of is niet bekend.
       source: site-multistyle-2026-06
     hours_claimed:
       total: 200
@@ -141,6 +184,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-multistyle-2026-06
       note: "Lesdagen 9:00-18:30 te Brunssum. 100u-Hatha-houders kunnen met +100u de
         200u voltooien. Geen geïsoleerd contact-urental."
@@ -186,17 +230,22 @@ programs:
     prerequisites_claimed: "toegankelijk voor alle niveaus, ook beginners. Ook een
       100u-Yin → +100u → 200u-route."
     price:
-      amount_eur: 2725
-      variants:
-        - { label: "Deel I (incl. syllabus + examen)", amount_eur: 1420 }
-        - { label: "Deel II (incl. syllabus + examen)", amount_eur: 1305 }
+      amount_eur: null
+      period: per_module
       vat: incl
       published: yes
       includes: "syllabus en examen (per deel)"
       note: >
-        €2725 incl. btw totaal (Deel I €1420 / Deel II €1305, beide incl. btw);
-        herexamen €50. Inschrijven per deel; Deel II start na Deel I en gaat
-        door bij voldoende belangstelling.
+        ADHOUNA PUBLICEERT GEEN TOTAALPRIJS. De pagina noemt twee bedragen, apart:
+        "Deel I van deze Yin Yoga Opleiding kost € 1.420,00 incl. BTW (€ 1.173,55
+        excl. BTW)" en "Deel II ... kost € 1.305,00 incl. BTW (€ 1.078,50 excl.
+        BTW)", beide "inclusief syllabus en examen"; een herexamen kost € 50,00.
+        € 1.420 + € 1.305 = € 2.725 is ONZE optelling — het getal 2725 staat op
+        geen enkele gearchiveerde pagina van deze school, en `amount_eur` blijft
+        daarom leeg (spec §6/v0.8: afgeleide waarden worden niet opgeslagen; het
+        totaal wordt bij het renderen als het onze getoond). Inschrijven per deel;
+        Deel II wordt ná de start van Deel I opengesteld en gaat door bij
+        voldoende belangstelling. btw = incl (directe waarneming, §4.11).
       source: site-yinxl-2026-06
     hours_claimed:
       total: 200
@@ -204,11 +253,13 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yinxl-2026-06
       note: "2 delen, lesdagen 10:00-18:00 te Brunssum. 100u-Yin-houders kunnen met
         +100u de 200u voltooien."
     composition:
       type: fixed_modular
+      modules: [ deel-1, deel-2 ]
     coherence_signals:
       modules_sold_separately: yes
       modules_sold_separately_note: "Inschrijven per deel (Deel I, daarna Deel II);

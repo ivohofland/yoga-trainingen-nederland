@@ -14,11 +14,30 @@ crkbo:
   source: crkbo-register-2026-06
   note: >
     Geen treffer: naam "Yoga Den" én website "yogaden" → 0 in het
-    Instellingenregister (2026-06-27). De 200u-opleiding is btw-belast (de
-    200u-pagina vermeldde "Pricing incl. VAT"), consistent met NIET CRKBO-
-    geregistreerd. KvK/juridische naam ("Yoga Den B.V.") + docentnamen niet in
-    het register doorzocht → registered unknown (niet no; §2.2/§4.11). price.vat
-    = incl.
+    Instellingenregister (2026-06-27). KvK/juridische naam ("Yoga Den B.V.") +
+    docentnamen niet in het register doorzocht → registered unknown (niet no;
+    §2.2/§4.11).
+
+    CORRECTIE 2026-07-12: deze notitie voerde eerder een tweede argument aan —
+    "de 200u-opleiding is btw-belast (de 200u-pagina vermeldde 'Pricing incl.
+    VAT'), consistent met NIET CRKBO-geregistreerd". Die formulering staat op de
+    100u-pagina ("Pricing (incl VAT)", site-ytt-100h-2026-07), niet op de
+    200u-pagina: onze archieven daarvan (site-ytt-200-2026-06 en de hercapture
+    site-ytt-200-2026-07) noemen geen btw, en de Mindbody-inschrijfpagina evenmin.
+    Btw van de ene opleiding is geen feit over de andere (§4.11), dus het argument
+    is verwijderd. De registerbevinding hierboven (0 treffers) staat op eigen
+    benen en verandert niet. Zie price.vat = unknown bij 200-vinyasa.
+
+    NB 2026-07-14: die zin over de 100u-pagina had hier tot vandaag GEEN bron —
+    hij kwam uit een zoeksamenvatting, van een pagina die in geen enkel archief
+    zat. Een notitie die een ander verwijt dat hij zijn bron niet vastlegde, mag
+    dat zelf niet doen. De pagina is nu vastgelegd (site-ytt-100h-2026-07) en de
+    bewering blijkt te kloppen — maar dat was geluk, geen methode.
+
+    En het blijft een bewering OVER de btw, niet over het register: uit "de school
+    rekent btw over de 100u" volgt niet dat zij niet CRKBO-geregistreerd is. Dat
+    is dezelfde afleiding als §4.11 verbiedt, alleen andersom gelezen. registered
+    blijft unknown tot iemand het register op de KvK-naam doorzoekt.
 registrations:
   - body: yoga_alliance
     identifier: "RYS 200"
@@ -64,7 +83,7 @@ founded_year:
   note: "YA-RYS (200 + 500) sinds nov 2023. Internationaal docententeam
     (NZ/VS/China/ Frankrijk/NL)."
 depth: listed
-last_verified: "2026-06-27"
+last_verified: "2026-07-14"
 sources:
   - id: site-ytt-200-2026-06
     type: website
@@ -82,6 +101,57 @@ sources:
       2025-editie met Nino + Marokko-week — die is hier vervangen door de
       2026-teamversie.
     local_snapshot: data/archives/yoga-den/site-ytt-200-2026-06-2026-06-28.pdf
+  - id: site-ytt-200-2026-07
+    type: website
+    url: https://www.yogaden.nl/ytt/training/
+    archived_url: https://web.archive.org/web/20260714085126/https://www.yogaden.nl/ytt/training/
+    captured: "2026-07"
+    note: >
+      HERCAPTURE (2026-07-14) van dezelfde 200u-pagina als site-ytt-200-2026-06,
+      gemaakt om de prijs te hertoetsen. Het prijsblok is WOORD VOOR WOORD
+      ongewijzigd t.o.v. juni, in HTML én browser-render: "Pricing / Super Early
+      Bird Special – Sign Up Before March 15 and save up to €1500! / Investment:
+      €3597 (200 euro discount before March 31st)". Geen btw-vermelding; geen
+      lidmaatschapstarief. De inschrijfknop leidt naar Mindbody — zie
+      mindbody-enrolment-200-2026-07, dat ANDERE bedragen noemt.
+    local_snapshot: data/archives/yoga-den/site-ytt-200-2026-07-2026-07-14.pdf
+  - id: site-ytt-100h-2026-07
+    type: website
+    url: https://www.yogaden.nl/ytt/100h-ytt/
+    archived_url: https://web.archive.org/web/20260714085326/https://www.yogaden.nl/ytt/100h-ytt/
+    captured: "2026-07"
+    note: >
+      100u Advanced Vinyasa & Detroit Flow YTT (module van de 500u-route), met
+      Sarah & Lize. Prijsblok, identiek in HTML én browser-render: "Pricing (incl
+      VAT) / € 1697 YD Member / € 1797 Regular / € 100 off Early Bird Discount
+      with Bonus Lecture until Nov 30, 2025" (die early-bird-datum is verstreken).
+      DIT is de pagina waar Yoga Den de btw-behandeling wél noemt — en de enige.
+      Vastgelegd omdat het record die zin eerder aanhaalde zonder bron: de
+      bewering stond in een notitie, de pagina stond in geen enkel archief.
+    local_snapshot: data/archives/yoga-den/site-ytt-100h-2026-07-2026-07-14.pdf
+  - id: mindbody-enrolment-200-2026-07
+    type: website
+    url: "https://clients.mindbodyonline.com/classic/ws?studioid=5724290&stype=-103\
+      &sTG=23&sVT=12&sView=day&sLoc=0&sTrn=100000060&date=09/14/26"
+    archived_url: https://web.archive.org/web/20260714085634/https://clients.mindbodyonline.com/ASP/main_enroll.asp?studioid=5724290&tg=23&vt=12&lvl=&stype=-103&view=day&trn=100000060&page=&catid=&prodid=&date=09%2f14%2f26&classid=0&prodGroupId=&sSU=&optForwardingLink=&qParam=&justloggedin=&nLgIn=&pMode=0&loc=1
+    captured: "2026-07"
+    note: >
+      De INSCHRIJFPAGINA waar de knop "Sign Up Now" op de 200u-pagina naartoe
+      wijst (Mindbody, studio-id 5724290, cursus 14-20 sep 2026). Prijsblok
+      letterlijk: "Investment / Member price €3297 until March 31 / Non member
+      price €3397 until March 31 / Super Early Bird Special. Sign up before March
+      31 and save up to €1500." Geen btw-vermelding. Publiek zichtbaar (niet
+      ingelogd) — het zijn dus geen persoonlijke tarieven.
+
+      GEEN LOKALE KOPIE, en dat is bewust: Mindbody blokkeert onze
+      Playwright-capture met een Cloudflare-botcheck ("Verifying you are human"),
+      dus het lokale artefact bevatte een captcha in plaats van de pagina — een
+      snapshot die niets bewijst is erger dan geen snapshot, want hij ziet eruit
+      als bewijs. Het WAYBACK-snapshot hierboven bevat de gerenderde pagina wél
+      (gecontroleerd: de vier prijsregels staan er letterlijk in). Dit is het
+      spiegelbeeld van de YA-registers, waar Wayback juist een lege schil opslaat
+      en de lokale kopie het bewijs is. De publieke kopie is hier het bewijs; de
+      lokale helft ontbreekt en het record zegt dat.
   - id: site-ytt-overview-2026-06
     type: website
     url: https://www.yogaden.nl/ytt/
@@ -207,21 +277,63 @@ programs:
       verdiepen ('not just for aspiring teachers')."
     price:
       amount_eur: 3597
-      vat: incl
+      vat: unknown
       published: yes
-      includes: "training + certificering + studiomembership tijdens de opleiding"
       note: >
-        Investering €3597. Super early bird tot €1500 korting (vóór 15 mrt) en
-        €200 korting (vóór 31 mrt) — beide deadlines inmiddels verstreken. Btw:
-        de 200u-pagina vermeldde "Pricing incl. VAT"; studio is btw-belast
-        (niet-CRKBO) → vat = incl.
-      source: site-ytt-200-2026-06
+        Investering €3597, letterlijk op de opleidingspagina: "Pricing / Super
+        Early Bird Special – Sign Up Before March 15 and save up to €1500! /
+        Investment: €3597 (200 euro discount before March 31st)". Beide kortingen
+        zijn verlopen; €3597 is het staande, algemeen beschikbare bedrag en
+        daarmee de vergelijkbare basis (§4 price).
+
+        TWEE KANALEN, TWEE BEDRAGEN — BEVINDING (2026-07-14). De inschrijfknop op
+        diezelfde pagina leidt naar het Mindbody-boekingssysteem van de school, en
+        daar staat voor dezelfde cursus (14-20 sep 2026) een ánder prijsblok:
+        "Investment / Member price €3297 until March 31 / Non member price €3397
+        until March 31 / Super Early Bird Special. Sign up before March 31 and
+        save up to €1500." (mindbody-enrolment-200-2026-07; publiek zichtbaar,
+        niet ingelogd). Drie verschillen: een ander bedrag (€3597 vs €3397 voor
+        niet-leden), een lidmaatschapstarief dat de website nergens noemt, en een
+        andere early-bird-datum (15 vs 31 maart). Alle genoemde deadlines liggen
+        inmiddels in het verleden. Een lezer kan uit de eigen kanalen van de school
+        dus niet opmaken wat deze opleiding vandaag kost.
+
+        BEWUST NIET als price.variants vastgelegd: dat veld modelleert tarieven
+        waaruit een cursist kan kiezen, en de listing maakt er "3 prijsvarianten"
+        van. Twee kanalen die elkaar tegenspreken zijn geen keuzemenu, en ze als
+        menu tonen zou de tegenspraak juist gladstrijken. Voor te leggen aan de
+        school als correctieverzoek (§4.9) — zie technical-todo.md.
+
+        BTW: unknown (§4.11). CORRECTIE 2026-07-12, vat was "incl". De toenmalige
+        notitie beriep zich op "Pricing incl. VAT" op de 200u-pagina. Die zin
+        bestaat wél, maar op een ANDERE pagina: de 100u Advanced YTT kopt "Pricing
+        (incl VAT)" boven € 1697/€ 1797 (site-ytt-100h-2026-07). NB: die bewering
+        stond hier tot 2026-07-14 ZONDER bron — overgenomen uit een zoeksamenvatting
+        van een pagina die in geen enkel archief zat. Dat is exact de fout die dit
+        record elders aanwijst; de pagina is nu vastgelegd en de bewering klopt.
+        Geen enkel gearchiveerd artefact van de 200u-pagina noemt btw, en de
+        Mindbody-inschrijfpagina evenmin. De btw van de ene opleiding is geen feit
+        over de andere (§4.11; zelfde fout als adhouna/200-multistyle) → niet
+        waargenomen, dus unknown.
+
+        Observatie, geen oordeel: dezelfde school noemt de btw-behandeling wél bij
+        haar 100u-opleiding en niet bij haar 200u-opleiding.
+
+        VERWIJDERD 2026-07-14: includes = "training + certificering +
+        studiomembership tijdens de opleiding". Géén Yoga Den-artefact dat wij
+        hebben zegt dit — niet de opleidingspagina, niet het overzicht, niet de
+        prijspagina, niet de inschrijfpagina (alle doorzocht op
+        membership/included/certificate). Het was een onbewezen bewering over wat
+        € 3597 kóópt. Als de school het ergens stelt: die pagina zoeken,
+        archiveren, dan pas terugzetten.
+      source: site-ytt-200-2026-07
     hours_claimed:
       total: 200
       contact: null
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-ytt-200-2026-06
       note: >
         1-weekse intensive (14-20 sep) + 3 Amsterdam-weekenden (2-4 okt, 6-8
@@ -280,15 +392,49 @@ programs:
       language: en
     prerequisites_claimed: "200H Vinyasa als foundational module; daarop bouw je de
       modules tot 300/500 uur."
+    prerequisite:
+      - kind: program
+        label: "200H Vinyasa Yoga Teacher Training"
+        program: 200-vinyasa
+        source: site-ytt-overview-2026-06
+        note: >
+          De routepagina zet de eigen 200u-opleiding vóór alles: "Start with our
+          foundational 200H Vinyasa Yoga Teacher Training, then build your own
+          path through a curated selection of optional 50H or 100H advanced
+          trainings", en de 500H-route is "For certified 200H teachers seeking
+          their 500H RYT". LET OP voor wie hier later een prijs invult: Yoga Den
+          publiceert géén prijs voor de 500u-route zelf — de route WORDT gekocht
+          als 200H + losse modules. Zou er ooit één routeprijs komen die de 200H
+          al bevat, dan is deze poort een dubbeltelling en hoort ze in
+          `composition`, niet hier.
     price:
       amount_eur: null
-      vat: incl
+      vat: unknown
       published: not_published
       note: >
-        Geen totaal- of per-module-bedrag op /ytt of /pricing (die pagina
-        betreft studiolidmaatschappen). vat = incl: zelfde btw-belaste entiteit
-        (Yoga Den B.V., niet-CRKBO). Exacte module-prijzen op de afzonderlijke
-        modulepagina's.
+        Yoga Den publiceert geen prijs vóór de 500u-route als geheel: niet op /ytt
+        en niet op /pricing (die pagina betreft studiolidmaatschappen). De route
+        wordt gekocht als 200u + zelfgekozen modules, en de bedragen staan op de
+        afzonderlijke modulepagina's.
+
+        GEEN AFGELEID TOTAAL, en dat is geen tekortkoming maar de enige juiste
+        uitkomst: dit is een `free_assembly`-route (zie composition). Er bestaat
+        geen vaste set modules om bij elkaar op te tellen — de school zegt zelf
+        "build your own path through a curated selection of OPTIONAL 50H or 100H
+        advanced trainings". Een som over een menu is een prijs voor een opleiding
+        die niemand koopt. Vergelijk derive.ts: een free_assembly-pad wordt nooit
+        gesommeerd.
+
+        CORRECTIE 2026-07-14: deze notitie stelde "geen enkel gearchiveerd Yoga
+        Den-artefact van een pagina noemt btw". Dat is sinds vandaag ONWAAR: de
+        100u-modulepagina is nu vastgelegd (site-ytt-100h-2026-07) en kopt "Pricing
+        (incl VAT)" boven € 1697 (YD Member) / € 1797 (Regular). Dat is een feit
+        over die ene module — niet over de 500u-route, en niet over de 200u (§4.11).
+        Voor de route zelf blijft de btw onwaargenomen → unknown. De eerdere 'incl'
+        hier was bovendien AFGELEID uit de factuur-entiteit ("zelfde btw-belaste
+        entiteit, Yoga Den B.V., niet-CRKBO") — precies de gevolgtrekking die §4.11
+        verbiedt, en dezelfde denkfout als btw-vrijstelling afleiden uit een
+        CRKBO-registratie.
       source: site-ytt-overview-2026-06
     hours_claimed:
       total: 500
@@ -296,6 +442,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-ytt-overview-2026-06
       note: >
         200u (foundational) + modules (100H Advanced YTT, 50H Yin, 50H Advanced
@@ -303,7 +450,7 @@ programs:
         50/100H Mentorship, 50H Pranayama & Meditation, Restorative YTT, 50H
         Rocket). Geen geïsoleerd contact-/lespraktijk-urental.
     composition:
-      type: fixed_modular
+      type: free_assembly
     coherence_signals:
       modules_sold_separately: yes
       modules_sold_separately_note: "Elke module is een losse trainingspagina; samen

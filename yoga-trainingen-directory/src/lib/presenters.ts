@@ -7,7 +7,7 @@
  * It is PURE — it reaches `derive.ts` and `rules.ts`, never `loader.ts` — so a
  * client component may import values from it, not merely types.
  */
-import { bundleDelta, pricePerContactHour } from "./derive";
+import { bundleDelta, pricePerContactHour, totalHours, totalPathCost, totalPrice } from "./derive";
 import {
   missingBecause,
   pphBlocker,
@@ -18,6 +18,7 @@ import {
   type PriceBand,
 } from "./rules";
 import { nl } from "./strings";
+import { waybackIsPointless } from "./wayback";
 import type { Claim, Cohort, Program, Provider, Quad, Source } from "../schema";
 
 /**
@@ -94,7 +95,38 @@ export interface ListingRow {
    * verdict — so filterRows collapses to one equality and can re-derive nothing.
    */
   priceBand: PriceBand;
+  /** WHAT THE PROVIDER PUBLISHES, with the unit they attached to it — "€ 1.290 /
+   *  studiejaar". Never our total: that is the field below, and the two must never
+   *  be rendered as one number. */
   priceDisplay: string | null;
+  /**
+   * OUR ARITHMETIC over a per-period price — "± € 5.160 totaal — onze berekening: 4 ×
+   * € 1.290" — or null when the price already IS a total (53 of 54 programmes) or no
+   * total is derivable at all.
+   *
+   * A SEPARATE FIELD, and it is separate on purpose: folding it into `priceDisplay`
+   * would hand the component one string to print in one ink, and the derived half
+   * would arrive at the reader wearing the provider's colours — a figure de Blikopener
+   * has never published, presented as theirs. The component renders this in its own,
+   * visibly non-factual style (see ProgrammeTable). Spec §6: rendered as OUR
+   * arithmetic, with the working shown, never as the school's claim.
+   */
+  priceDerivedTotal: string | null;
+  /**
+   * WHAT IT COSTS TO QUALIFY HERE — "± € 6.180 om te kwalificeren — incl. verplichte
+   * Basisopleiding € 1.590" — or null when nothing must be bought first (spec §6, v0.9).
+   *
+   * A THIRD field, beside `priceDisplay` (theirs) and `priceDerivedTotal` (our sum over
+   * their unit), and separate for the same reason the second one is: the path cost is
+   * ours, it is a different question from either, and folding it into one string would
+   * print a figure that appears on no page of the school in the school's own colours.
+   *
+   * NULL WHERE THERE IS NO PURCHASABLE GATE — on 76 of 78 programmes the path cost simply
+   * IS the total, and a second row repeating it would invent a second claim out of one
+   * number. The row exists only where the two differ, which is exactly where the reader
+   * is being misled without it.
+   */
+  priceDerivedPathCost: string | null;
   pph: number | null;
   /**
    * The formatted €/contactuur, or null when there is none. Formatted HERE, like
@@ -277,11 +309,66 @@ function deliveryDisplay(d: Program["delivery"]): string {
  * error that violates the invariant must fail the build loudly, because
  * hiding it here would be worse than the build failing.
  */
-function priceDisplay(p: Program["price"]): string | null {
-  if (p.amount_eur == null) return null;
-  const base = `${formatEuro(p.amount_eur)} · ${nl.vat[p.vat]}`;
+function priceDisplay(provider: Provider, program: Program): string | null {
+  const p = program.price;
+  // PRICED PER MODULE, AND SO SHOWN PER MODULE (spec v0.8). The provider publishes no
+  // whole-course amount and two part-prices — "€ 1.420,00 incl. BTW" and "€ 1.305,00
+  // incl. BTW" — so THEIR row shows THOSE, in fact ink, cited to the page that prints
+  // them. Our sum of the two lives one row down, in ours. Storing the sum here is what
+  // v0.8 exists to undo; showing nothing here would call a provider who prints two prices
+  // a non-publisher.
+  if (p.amount_eur == null) {
+    if (p.period !== "per_module") return null;
+    const parts = (program.composition?.modules ?? [])
+      .map((id) => provider.modules.find((m) => m.id === id)?.price?.amount_eur)
+      .filter((a): a is number => a != null);
+    if (!parts.length || parts.length !== (program.composition?.modules?.length ?? 0)) return null;
+    return `${nl.pricePerModuleParts(parts.map(formatEuro))} · ${nl.vat[p.vat]}`;
+  }
+  const money = formatEuro(p.amount_eur);
+  // The unit is part of the fact (spec v0.5). "€ 1.290" under a column headed "Prijs"
+  // states what a four-year training costs; "€ 1.290 / studiejaar" states what they
+  // actually publish. The suffix is the whole difference between the two.
+  const amount = p.period === "total" ? money : nl.pricePerPeriod(money, nl.pricePeriod[p.period]);
+  const base = `${amount} · ${nl.vat[p.vat]}`;
   const extra = p.variants?.length ? ` · ${nl.priceVariants(p.variants.length + 1)}` : "";
   return base + extra;
+}
+
+/**
+ * The whole-course figure WE computed, or null when there is nothing of ours to show
+ * — the price is already a total, or no total is derivable.
+ *
+ * `derived: false` returns null deliberately: on 53 of 54 programmes our "total" IS
+ * their published amount, and printing it twice would be a second, redundant claim.
+ * This field exists only where the numbers differ, which is exactly where the reader
+ * needs to be told whose number it is.
+ */
+function priceDerivedTotalDisplay(provider: Provider, program: Program): string | null {
+  const total = totalPrice(provider, program);
+  // `kind === "computed"` is the WHOLE question, and the union answers it once: it is the
+  // only variant that carries a `working`, so there is no way to reach this line holding a
+  // figure of theirs, and no way to print one of ours without the arithmetic beside it.
+  if (total.kind !== "computed") return null;
+  return nl.priceDerivedTotal(formatEuro(total.value), total.working);
+}
+
+/**
+ * The cost of the whole PATH — the course plus every training you must buy before you may
+ * start it (spec §6, v0.9) — or null when there is nothing to add.
+ *
+ * `gates.length === 0` returns null, and that is the rule the spec states in as many
+ * words: where nothing must be bought first, `totalPathCost === totalPrice`, and a second
+ * row printing the same number under a different label would tell the reader there are two
+ * figures where the school published one. The row appears on exactly the programmes whose
+ * price the gate makes wrong — today: de Yogaschool's two.
+ */
+function priceDerivedPathCostDisplay(provider: Provider, program: Program): string | null {
+  const path = totalPathCost(provider, program);
+  // `no_gates` is its OWN variant now, so "there is nothing to buy first" is not a
+  // null-check a maintainer can forget — it is a kind this branch simply does not match.
+  if (path.kind !== "computed") return null;
+  return nl.priceDerivedPathCost(formatEuro(path.value), path.working);
 }
 
 /**
@@ -296,10 +383,18 @@ function priceDisplay(p: Program["price"]): string | null {
  * caveats (what the price includes/excludes, which exist only when there IS a
  * value) are display copy; those we pass through.
  */
-function pphCaveatFor(program: Program, state: Quad): string | null {
-  const { value, caveat } = pricePerContactHour(program);
-  if (value != null) return caveat ?? null;
-  const priceIsBlocker = pphBlocker(program).field === "price";
+function pphCaveatFor(provider: Provider, program: Program, state: Quad): string | null {
+  const pph = pricePerContactHour(provider, program);
+  // COMPUTED → the note is OUR WORKING, plus the comparability caveat. It used to be the
+  // caveat alone, and on ~40 programmes that meant the one number on this site that NO
+  // provider publishes was printed with nothing whatever to say it was ours.
+  if (pph.kind === "computed") return joinDot([pph.working, pph.caveat]);
+  const blocker = pphBlocker(provider, program).field;
+  // The v0.5 blocker: they publish a price, and it is not a total. Neither of the two
+  // sentences below would be true of them — "geen prijs" is false, "geen contacturen"
+  // names the wrong field — so it has a sentence of its own, naming the period count.
+  if (blocker === "price_total") return nl.pphNoTotalPrice(nl.pricePeriod[program.price.period]);
+  const priceIsBlocker = blocker === "price";
   if (state === "not_published") {
     return priceIsBlocker ? nl.pphPriceNotPublished : nl.pphHoursNotPublished;
   }
@@ -359,8 +454,8 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
   for (const provider of providers) {
     const cities = [...new Set(provider.locations.map((l) => l.city).filter((c): c is string => c != null))];
     for (const program of provider.programs) {
-      const pph = pricePerContactHour(program);
-      const pphState = pphQuad(program);
+      const pph = pricePerContactHour(provider, program);
+      const pphState = pphQuad(provider, program);
       const chips = registers(program);
       rows.push({
         providerId: provider.id,
@@ -376,13 +471,15 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
         mode: program.delivery.mode,
         language: program.delivery.language ?? null,
         deliveryDisplay: deliveryDisplay(program.delivery),
-        priceState: priceQuad(program),
-        priceBand: priceBand(program),
-        priceDisplay: priceDisplay(program.price),
+        priceState: priceQuad(provider, program),
+        priceBand: priceBand(provider, program),
+        priceDisplay: priceDisplay(provider, program),
+        priceDerivedTotal: priceDerivedTotalDisplay(provider, program),
+        priceDerivedPathCost: priceDerivedPathCostDisplay(provider, program),
         pph: pph.value,
         pphDisplay: pph.value != null ? formatEuro2(pph.value) : null,
         pphState,
-        pphCaveat: pphCaveatFor(program, pphState),
+        pphCaveat: pphCaveatFor(provider, program, pphState),
         registers: chips,
         crkboRegistered: provider.crkbo.registered,
         yaVerified: yaVerified(chips),
@@ -396,14 +493,17 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
 }
 
 export function datasetStats(providers: Provider[]): DatasetStats {
-  const programs = providers.flatMap((p) => p.programs);
+  // The pairs, not the bare programmes: a derived price is a function of the PROVIDER and
+  // the programme (spec v0.8 — a per-module total is composed from the provider's modules),
+  // and a programme divorced from its provider can no longer be asked what it costs.
+  const pairs = providers.flatMap((p) => p.programs.map((program) => [p, program] as const));
   const dates = providers.map((p) => p.last_verified).sort();
   const oldest = dates[0];
   const newest = dates.at(-1);
   return {
     providers: providers.length,
-    programs: programs.length,
-    pphComputable: programs.filter((p) => pricePerContactHour(p).value != null).length,
+    programs: pairs.length,
+    pphComputable: pairs.filter(([p, program]) => pricePerContactHour(p, program).value != null).length,
     // Both ends, or neither — see VerificationWindow. A sorted non-empty array has
     // both, so the window is null exactly when the corpus is empty.
     verified: oldest != null && newest != null ? { oldest, newest } : null,
@@ -472,12 +572,93 @@ export interface QuadRow {
  * the page would silently drop (it goes in the `note`, which always renders).
  * Neither illegal shape compiles.
  */
-export type KeyValueRow = { label: string; note: string | null; source: SourceRef } & (
-  | { state: "yes"; value: string }
-  /** No value to show → <Quad> renders the state word. `no` belongs here: on the
-   *  fields these rows read, “nee” IS the whole statement. */
-  | { state: "no" | "not_published" | "unknown"; value?: never }
+export type KeyValueRow = { label: string; note: string | null } & (
+  /**
+   * THEIRS — a fact read off the provider's page, in fact ink, with the citation that
+   * backs it. `source` is REQUIRED (it may be null, where the schema holds none for that
+   * field), and its requiredness is load-bearing: see below.
+   */
+  | { state: "yes"; value: string; source: SourceRef; derived?: never }
+  /**
+   * OURS — the price we multiplied, the hours we added, the path we summed, the
+   * €/contactuur we divided (spec §6).
+   *
+   * NOT a quad, and that is the point: the value is not a fact we established ABOUT the
+   * provider, it is arithmetic WE performed over facts they published. The page renders
+   * it in its own visibly non-factual ink instead of handing it to <Quad>, which would
+   * print it in the same colour as the school's own claims — a figure de Blikopener, de
+   * Yogaschool and Adhouna have never stated, wearing their colours.
+   *
+   * THREE THINGS THIS VARIANT MAKES UNREPRESENTABLE, and every one of them compiled
+   * before, and every one of them publishes a falsehood about a named business:
+   *
+   *   1. `note` IS THE WORKING, AND IT IS REQUIRED. A number of ours the reader cannot
+   *      check is a number that may as well be theirs. `{derived: true}` with no working
+   *      used to compile — and the presenter, needing a caveat to print, silently DROPPED
+   *      THE ROW: the figure vanished rather than failing.
+   *
+   *   2. THERE IS NO `source` KEY AT ALL — not `source: null`, no key (§6: our arithmetic
+   *      cites no page of theirs; the PARTS it was computed from carry the citations, in
+   *      the rows above and below). `derived: true` WITH a source used to compile, and it
+   *      credits the school with our sum: pinning de Yogaschool's docentenpagina to
+   *      "± 600 uur" cites a page on which that figure has never appeared.
+   *
+   *   3. AND IT IS WHAT MAKES THE FLAG UNDROPPABLE. `const { derived, ...rest } = row`
+   *      used to spread the flag away silently and leave a perfectly valid `KeyValueRow`
+   *      — our arithmetic, now indistinguishable from a fact. It cannot now: `rest` has
+   *      no `source` key, and every non-derived variant REQUIRES one. The row stops
+   *      compiling instead of quietly changing what it asserts.
+   *
+   * `derived: false` on our own multiplication does not compile either (`derived?: never`
+   * admits `undefined`, not `false`), and the row cannot be hand-built at all: see
+   * derivedRow(), which is the only constructor and which takes the arithmetic ITSELF —
+   * so the ink can never disagree with the computation that produced it.
+   */
+  | { state: "yes"; value: string; note: string; source?: never; derived: true }
+  /**
+   * No value to show → <Quad> renders the state word. `no` belongs here: on the fields
+   * these rows read, “nee” IS the whole statement.
+   *
+   * A DERIVED ROW WITH NO VALUE IS NOT DERIVED (`derived?: never`). de Blikopener with no
+   * period count states a FINDING about them — "zij publiceren een prijs per studiejaar
+   * en niet uit hoeveel studiejaren de opleiding bestaat" — and a finding is exactly what
+   * <Quad> is for. `derived` governs the ink of a VALUE; it never decides whether one
+   * exists. (inkFor() encodes the same rule; this type is why it cannot be handed a
+   * contradiction.)
+   */
+  | { state: "no" | "not_published" | "unknown"; value?: never; source: SourceRef; derived?: never }
 );
+
+/**
+ * THE ONLY WAY TO BUILD A DERIVED ROW — and it takes the ARITHMETIC ITSELF, never a flag
+ * and a string that merely claims to describe it.
+ *
+ * `derived: boolean` was a promise the row made about a computation it did not hold, and
+ * the two were free to disagree. Here they cannot: the `computed` variant is the only
+ * thing this accepts, so the caller must have narrowed the union (`kind === "computed"`)
+ * to call it at all — and the working travels from that same object. A row built from
+ * `totalPrice()` that forgot the flag, a `derived: true` on a figure we did not compute,
+ * a working that describes some other sum: none of them can be written.
+ */
+type OurArithmetic = { kind: "computed"; value: number; working: string };
+
+function derivedRow(
+  label: string,
+  computed: OurArithmetic,
+  value: string,
+  alsoNote?: string | null,
+): KeyValueRow {
+  return {
+    label,
+    state: "yes",
+    value,
+    // The working, and anything else the reader needs beside it (a comparability caveat
+    // on €/contactuur: what the price includes, what it excludes). Never empty — the type
+    // requires a string, and joinDot cannot return null with a non-empty first part.
+    note: joinDot([computed.working, alsoNote]) ?? computed.working,
+    derived: true,
+  };
+}
 
 /**
  * A cohort on the record page. Like NextCohort, it carries `start` + `status` and
@@ -490,6 +671,22 @@ export interface CohortView {
   start: string;
   status: Cohort["status"];
   note: string | null;
+  /**
+   * THE PRICE AND VAT TREATMENT AS THEY STOOD WHEN THIS RUN WAS SOLD (spec v0.7, §4.5).
+   *
+   * A DEAD FIELD MADE VISIBLE. `Cohort.price_at_time` existed in the schema, was populated
+   * in ZERO records, and was rendered NOWHERE — and that absence had a cost: when a
+   * training's price or VAT treatment changed between runs, the change had nowhere to
+   * live. Bluebirds' 2025 cohort was sold at *"€3150,- Excl BTW"* on the teacher's own
+   * Wix site; its 2026 cohort at *"0% VAT as we are CRKBO registered"* under Bluebirds BV.
+   * Two runs, two treatments, and the record silently carried the 2026 sentence on the
+   * 2025 programme — a treatment its OWN cited page contradicts (§4.11).
+   *
+   * It rides on the cohort row and it carries the cohort's own `source`, because that is
+   * what makes it a fact rather than a memory. A price that moved is a FINDING about the
+   * school, not a correction to bury.
+   */
+  priceAtTime: string | null;
   /** REQUIRED by the schema (spec §8): an announced cohort is not one that ran,
    *  and only the source can tell a reader which this is. Never null. */
   source: string;
@@ -779,8 +976,8 @@ function contractRows(program: Program): QuadRow[] {
 
 function programRows(provider: Provider, program: Program): KeyValueRow[] {
   const h = program.hours_claimed;
-  const pphState = pphQuad(program);
-  const pph = pricePerContactHour(program);
+  const pphState = pphQuad(provider, program);
+  const pph = pricePerContactHour(provider, program);
   const delta = bundleDelta(provider, program);
   const rows: KeyValueRow[] = [];
 
@@ -797,10 +994,10 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // does not hold; the note says whose gap that is, rather than leaving the reader
   // to infer an omission by the provider. The type now makes that promise
   // unbreakable: a "yes" that has no amount to show cannot be constructed at all.
-  const priceState = priceQuad(program);
-  const priceValue = priceDisplay(program.price);
+  const priceState = priceQuad(provider, program);
+  const priceValue = priceDisplay(provider, program);
   const priceNote = joinDot([
-    priceAmountIsOurGap(program) && nl.priceAmountNotInRecord,
+    priceAmountIsOurGap(provider, program) && nl.priceAmountNotInRecord,
     program.price.includes && `${nl.priceIncludes}: ${program.price.includes}`,
     program.price.excludes && `${nl.priceExcludes}: ${program.price.excludes}`,
     program.price.note,
@@ -812,18 +1009,96 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
       : { label: nl.colPrice, state: noValue(priceState), note: priceNote, source: priceSource },
   );
 
-  // The same epistemic rule as the listing's €/contactuur column, from the same
-  // pair of helpers — the record must never say something the listing does not.
+  // THE WHOLE-COURSE FIGURE, on the programmes that publish no such figure (spec v0.5).
   //
-  // No citation: this is a DERIVED value (spec §6), computed by us from the price
-  // and the hours, each of which carries its own source in the row above and the
-  // row below. Pinning one of those two sources to our own arithmetic would credit
+  // Only where `period` is not `total` — elsewhere the derived total IS the amount in
+  // the row above, and a second row printing the same number would be a second claim.
+  //
+  // NO CITATION, exactly like €/contactuur below: this is OUR arithmetic (spec §6).
+  // Pinning de Blikopener's tarievenpagina to "± € 5.160" would credit them with a
+  // figure they have never published — the precise fabrication the field exists to
+  // prevent. The label says whose sum it is; the note shows the working, so a reader
+  // can check it. With no period count there is no total, and the row states that as
+  // the finding it is: they publish a price per studiejaar and no count of them.
+  if (program.price.period !== "total") {
+    const total = totalPrice(provider, program);
+    rows.push(
+      total.kind === "computed"
+        // The ink, not merely the label. `state: "yes"` alone put OUR arithmetic in the
+        // same colour as the provider's own published price, one row above it. The
+        // constructor is what ties the two together: it cannot be called with anything but
+        // the computation, and it cannot produce a row that carries a citation.
+        ? derivedRow(nl.rowTotalPrice, total, `± ${formatEuro(total.value)}`)
+        : {
+            label: nl.rowTotalPrice,
+            state: "not_published",
+            // WHICH arithmetic we could not do, because the two absences are different
+            // facts about the provider: no published period count ("€ 1.290 per studiejaar,
+            // and no count of studiejaren"), or an unpriced part in a per-module composition
+            // (spec v0.8 — an incomplete sum is a guess). Naming the wrong one is a false
+            // statement about a named business, in the smallest possible print. The union
+            // carries the reason, so this row no longer re-derives which absence it faced.
+            note:
+              total.kind === "no_comparable_total"
+                ? total.reason
+                : nl.totalPriceIncompleteSum,
+            source: null,
+          },
+    );
+  }
+
+  // WHAT IT COSTS TO QUALIFY HERE (spec v0.9) — the course plus every training the school
+  // makes you buy before you may start it.
+  //
+  // ONLY WHERE SOMETHING MUST BE BOUGHT FIRST. With no purchasable gate the path cost IS
+  // the total price (derive.ts returns exactly that), and a second row repeating it under
+  // "onze optelling" would manufacture a second figure out of one number — the same
+  // relabelling error the Totaaluren row above avoids in the other direction.
+  //
+  // AND ONLY WHERE THERE IS A TOTAL TO ADD TO. Where the school publishes no price for the
+  // course itself (open-yoga's 300, yoga-den's 500-route), the path has no first term; the
+  // Prijs row above already says so, and a row here saying "one of the required trainings
+  // has no recorded price" would name the wrong absence — a false statement about a named
+  // business, in the smallest possible print.
+  //
+  // NO CITATION, like every derived row: € 6.180 appears on no page de Yogaschool
+  // published. The label says whose sum it is, the note shows the working.
+  const path = totalPathCost(provider, program);
+  const ownTotal = totalPrice(provider, program).value;
+  if (path.gates.length > 0 && (path.value != null || ownTotal != null)) {
+    rows.push(
+      path.kind === "computed"
+        ? derivedRow(nl.rowTotalPathCost, path, nl.pathCostDerivedTotal(formatEuro(path.value)))
+        : {
+            label: nl.rowTotalPathCost,
+            // A GAP IN OUR RECORD, never a finding about them: `cost_eur: null` on a gate
+            // means we could not read its price off any archived artifact (it is logged as
+            // research debt), and "wij weten het nog niet" is not "zij publiceren het niet".
+            state: "unknown",
+            note: path.kind === "incomplete" ? path.reason : null,
+            source: null,
+          },
+    );
+  }
+
+  // €/CONTACTUUR — OURS, ON EVERY PROGRAMME THAT HAS ONE (spec §6).
+  //
+  // It carried no flag, so `state: "yes"` handed it straight to <Quad>, and on ~40
+  // programmes the one figure on this site that NO school publishes was printed in the ink
+  // reserved for the schools' own claims — right under a Prijs row and an Urenuitsplitsing
+  // row that ARE theirs, and that carry the citations to prove it. On a `period: per_year`
+  // provider it is worse still: our arithmetic over our arithmetic, (3 × € 1.530) ÷ 360,
+  // in de Yogaschool's colours. KeyValueRow's own docblock said it — "a fact read off a
+  // provider's page is theirs, not ours" — and €/contactuur is read off nobody's page.
+  //
+  // No citation, and now the type enforces that rather than a convention: the derived
+  // variant has no `source` key. The price and the hours each carry their own source, in
+  // the row above and the row below; pinning either of them to our division would credit
   // the provider with a number they never published.
-  const pphValue = pph.value != null ? formatEuro2(pph.value) : null;
-  const pphNote = pphCaveatFor(program, pphState);
+  const pphNote = pphCaveatFor(provider, program, pphState);
   rows.push(
-    pphState === "yes" && pphValue != null
-      ? { label: nl.colPph, state: "yes", value: pphValue, note: pphNote, source: null }
+    pph.kind === "computed" && pphState === "yes"
+      ? derivedRow(nl.colPph, pph, formatEuro2(pph.value), pph.caveat)
       : { label: nl.colPph, state: noValue(pphState), note: pphNote, source: null },
   );
 
@@ -847,6 +1122,24 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
           source: h.source ?? null,
         },
   );
+
+  // THE WHOLE-COURSE HOURS FIGURE, on the programmes that publish no such figure
+  // (spec v0.6) — the exact twin of the Totaalprijs row above, in the other unit.
+  //
+  // ONLY where we added it up. Where the school publishes its own total (Wahé's 500, 72
+  // of 78 programmes), that number is already in the Urenuitsplitsing row above as THEIR
+  // claim, cited to the page that states it — and a second row repeating it under a label
+  // that says "onze optelling" would relabel a school's published figure as our
+  // arithmetic. That is v0.6's error running backwards, and it is no smaller.
+  //
+  // NO CITATION, like the Totaalprijs and €/contactuur rows: this is ours (spec §6).
+  // Pinning de Yogaschool's docentenpagina to "± 600 uur" would credit them with a figure
+  // that appears in none of their archived sources. The label says whose sum it is, the
+  // note shows the working, and the ink says it is not a fact about them.
+  const hours = totalHours(program);
+  if (hours.kind === "computed") {
+    rows.push(derivedRow(nl.rowTotalHours, hours, nl.hoursDerivedTotal(hours.value)));
+  }
 
   // The §5 field. Its emptiness across the market is the finding — so it gets
   // its own row on every programme, always. With no number, the row says what
@@ -908,6 +1201,28 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   ));
 
   rows.push(fact(nl.rowPrerequisites, program.prerequisites_claimed));
+
+  // THE GATE, ONE ROW EACH, AND EACH WITH ITS SOURCE (spec §4.3, v0.9).
+  //
+  // The row above is the school's prose, and prose carries no citation — the schema holds
+  // no `source` for `prerequisites_claimed`, so the page shows none. That was survivable
+  // while the gate was only a description. It is not survivable now: the gate is an ADDEND
+  // in a price we publish, and a number we add to a named business's price needs the page
+  // that states it. Hence `prerequisite.source` is required by the schema, and it is
+  // rendered here, beside the gate it evidences.
+  for (const pre of program.prerequisite ?? []) {
+    const cost = pre.cost_eur != null
+      ? pre.period == null || pre.period === "total"
+        ? formatEuro(pre.cost_eur)
+        : nl.pricePerPeriod(formatEuro(pre.cost_eur), nl.pricePeriod[pre.period])
+      : null;
+    rows.push(fact(
+      nl.rowPrerequisiteGate,
+      pre.label,
+      joinDot([nl.prerequisiteKind[pre.kind], cost, pre.note]),
+      pre.source,
+    ));
+  }
 
   if (program.composition) {
     const moduleCount = program.composition.modules?.length ?? 0;
@@ -976,14 +1291,28 @@ function domainOf(url: string): string {
  * The two halves of the publication bar, spelled out — a present half and an
  * absent half are equally visible. Null when there is neither: the page then
  * prints the below-the-bar stamp instead of two empty slots.
+ *
+ * AND AN IMPOSSIBLE HALF IS NOT AN ABSENT ONE. This is the project's own cardinal
+ * distinction — a finding is not a gap — turned on our own archive: "publiek —"
+ * says *we have not done it*, and for the Yoga Alliance and CRKBO registers that
+ * is simply false. Wayback CANNOT capture them (a Salesforce shell; a search
+ * interface with no per-row permalink), the browser-rendered local copy is the
+ * only evidence that can exist, and the record was reporting our deliberate,
+ * correct decision as a hole in our research. Twelve sources read that way.
+ *
+ * So it says "n.v.t." with the reason, and the two are never spelled the same.
+ * The predicate is `waybackIsPointless` — the SAME one the archiver skips on and
+ * `integrityErrors` rejects a Wayback URL on, so the page cannot claim a thing is
+ * impossible while the script cheerfully archives it.
  */
 function archiveSlots(s: Source): string | null {
   if (s.archived_url == null && s.local_snapshot == null) return null;
   const mark = (present: boolean) => (present ? nl.archivePresent : nl.archiveAbsent);
-  return [
-    `${nl.archivePublic} ${mark(s.archived_url != null)}`,
-    `${nl.archiveLocal} ${mark(s.local_snapshot != null)}`,
-  ].join(" · ");
+  const publicHalf =
+    s.archived_url == null && s.url != null && waybackIsPointless(s.url)
+      ? `${nl.archivePublic} ${nl.archiveNotApplicable}`
+      : `${nl.archivePublic} ${mark(s.archived_url != null)}`;
+  return [publicHalf, `${nl.archiveLocal} ${mark(s.local_snapshot != null)}`].join(" · ");
 }
 
 export function toProviderView(p: Provider): ProviderView {
@@ -1043,6 +1372,10 @@ export function toProviderView(p: Provider): ProviderView {
         start: c.start,
         status: c.status,
         note: c.note ?? null,
+        // The price as it stood WHEN THIS RUN WAS SOLD (spec v0.7) — see CohortView.
+        priceAtTime: c.price_at_time
+          ? nl.cohortPriceAtTime(formatEuro(c.price_at_time.amount_eur), nl.vat[c.price_at_time.vat])
+          : null,
         source: c.source, // required by the schema (spec §8)
       })),
       // The claims made about THIS programme, anchored by the scope the record

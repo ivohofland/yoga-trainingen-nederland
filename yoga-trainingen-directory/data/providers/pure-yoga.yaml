@@ -238,6 +238,24 @@ programs:
       yogalessen bij een yogadocent te blijven volgen; vrij van zware blessures;
       schriftelijk intake-assessment + intake-gesprek mogelijk.
       Fysiek/emotioneel veeleisend programma.
+    prerequisite:
+      - kind: experience
+        label: "min. 2 jaar eigen yogabeoefening"
+        source: site-deelname-2026-06
+        note: >
+          De deelnamevoorwaarden, letterlijk: "Je hebt 2 jaar zelf yoga
+          beoefend." Ervaringseis, geen aankoop.
+      - kind: experience
+        label: "tijdens de opleiding yogalessen bij een yogadocent blijven volgen
+          (een VEREISTE volgens de school)"
+        source: site-deelname-2026-06
+        note: >
+          Een doorlopende verplichting NAAST de opleiding, geen voorafgaande
+          opleiding — en de school hangt er geen prijs aan (die hangt af van waar
+          je die lessen volgt). Een echte kostenpost voor de student, met een
+          bedrag dat op geen enkele pagina staat: dus wél vastgelegd als poort,
+          niet als bedrag (spec §4.3 — een gat dat je niet kunt prijzen is geen
+          gat dat je mag verzwijgen).
     price:
       amount_eur: 4235.20
       vat: incl
@@ -255,6 +273,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: yes
       source: site-pureteacher-2026-06
       note: >
         De site noemt "200 contacturen" over ca. 2 jaar, verdeeld over 39

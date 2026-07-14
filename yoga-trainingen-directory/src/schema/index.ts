@@ -30,17 +30,31 @@ const strictObject = <T extends z.ZodRawShape>(shape: T) => z.object(shape).stri
 export const Quad = z.enum(["yes", "no", "not_published", "unknown"]);
 export type Quad = z.infer<typeof Quad>;
 
-/** YYYY-MM or YYYY-MM-DD, month 01-12 (spec §4 preamble, v0.3).
- *  The month range is validated HERE, not in the renderer. The old regex accepted
+/** YYYY-MM or YYYY-MM-DD, month 01-12 AND day 01-31 (spec §4 preamble, v0.3).
+ *  The range is validated HERE, not in the renderer. The old regex accepted
  *  `2026-13`, so a typo'd month was schema-valid data that only blew up when a
  *  formatter tried to name the month — a validation job landing in a formatter,
  *  reported as a stack trace inside `next build` instead of by record and field.
  *  With this, `npm run validate` names the offender; presenters may then assume a
  *  real month and treat anything else as a bug in our code, never a fact about a
- *  provider. */
+ *  provider.
+ *
+ *  v0.3 TIGHTENED THE MONTH AND LEFT THE DAY: `(-\d{2})?` accepted `2026-07-32`,
+ *  `2026-07-00` and `2026-07-99`. The identical defect, in the identical field, one
+ *  component along — and this field carries `captured` and `last_verified`, the two
+ *  dates the whole evidentiary posture of this project rests on ("bij elk gegeven
+ *  staat een bron én een datum"). A capture date that is not a date is a citation a
+ *  reader cannot check.
+ *
+ *  `0[1-9]|[12]\d|3[01]` — a day of some month. Deliberately NOT a calendar check:
+ *  Feb 30 is a further question, and no record has ever posed it. What this rejects
+ *  is what is not a day at all. */
 export const YearMonth = z
   .string()
-  .regex(/^\d{4}-(0[1-9]|1[0-2])(-\d{2})?$/, "expected YYYY-MM or YYYY-MM-DD, with month 01-12");
+  .regex(
+    /^\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?$/,
+    "expected YYYY-MM or YYYY-MM-DD, with month 01-12 and day 01-31",
+  );
 
 export const Year = z.number().int().min(1900).max(2100);
 
@@ -77,9 +91,40 @@ export type Source = z.infer<typeof Source>;
 
 /* ---------- shared sub-objects ---------- */
 
+/** WHAT ONE AMOUNT BUYS (spec v0.5). Shared, because a PREREQUISITE's price buys a
+ *  unit too: de Yogaschool's mandatory Basisopleiding is € 1.590 *per lesjaar*, and a
+ *  gate priced per year is not a gate priced per training. One vocabulary, so the two
+ *  cannot drift into meaning different things by the same word. */
+export const PricePeriod = z.enum(["total", "per_year", "per_module", "per_day"]);
+export type PricePeriod = z.infer<typeof PricePeriod>;
+
 export const Price = strictObject({
   /** Comparable base: cheapest generally-available variant (methodology convention). */
   amount_eur: z.number().positive().nullable().optional(),
+  /**
+   * WHAT THE NUMBER ACTUALLY BUYS (spec v0.5, §4 `price`).
+   *
+   * `amount_eur` alone SILENTLY ASSUMED A WHOLE-COURSE TOTAL, and that inversion is
+   * what this field fixes. de Blikopener publishes € 1.290 **per studiejaar** over a
+   * four-year, 500-hour opleiding — and publishes no total at all. Recorded as a bare
+   * amount, it ranked them among the cheapest trainings in the corpus when the real
+   * cost is € 5.160 (4 × € 1.290): a false statement about a named business, produced by a default
+   * nobody ever wrote down.
+   *
+   * `total` is the DEFAULT because it is the common case (53 of 54 priced programmes),
+   * which is exactly why the exception was invisible — and why only the exception has
+   * to carry the field. Every record that already omitted it keeps meaning what it
+   * said.
+   *
+   * THE TOTAL IS DERIVED, NEVER STORED (spec §6, principle 9 — see totalPrice() in
+   * derive.ts). Storing `4 × 1290` would publish a figure the provider never stated,
+   * resting on an assumption their own price line denies ("(vanaf 1 juni 2026)").
+   */
+  period: PricePeriod.default("total"),
+  /** How many periods make up the WHOLE training. `null`/absent = the provider does
+   *  not publish it — and then no total is derivable: a per-period price with no
+   *  period count is not comparable and must never be ranked as though it were. */
+  periods: z.number().int().positive().nullable().optional(),
   variants: z
     .array(strictObject({ label: z.string(), amount_eur: z.number().positive() }))
     .optional(),
@@ -318,6 +363,64 @@ export const Program = strictObject({
     language: z.enum(["nl", "en", "mixed"]).optional(),
   }),
   prerequisites_claimed: z.string().optional(),
+  /**
+   * THE GATE, STRUCTURED — because a gate you must BUY changes the price (spec §4.3, v0.9).
+   *
+   * `prerequisites_claimed` above stays: it is their prose, verbatim-ish, and it is
+   * where the gate has always lived. THAT IS THE PROBLEM. de Yogaschool's
+   * Docentenopleiding is € 1.530/jaar × 3 = € 4.590, and you may not start it without
+   * first completing the Basisopleiding at € 1.590 — a sentence the record ALREADY
+   * carried ("Afgeronde Basisopleiding Raja Yoga (1 jaar, €1510) is voorwaarde"), in a
+   * string, where no comparison could reach it. The site published € 4.590. Qualifying
+   * there costs € 6.180. The Meesteropleiding sits behind the Docentenopleiding, so that
+   * path is € 10.770 — also shown as € 4.590.
+   *
+   * Structure the gate; `totalPathCost` (derive.ts) walks it and derives the path.
+   *
+   *   `kind: program`    — a purchasable training you must complete FIRST. Either
+   *                        `program:` (another Program on THIS record — the school's own
+   *                        prior training) or `cost_eur` + `period`/`periods` read off the
+   *                        page that prices it.
+   *   `kind: experience` — an unpriced gate ("min. 2 jaar praktijk"). A REAL barrier, and
+   *                        it must be recordable without euros: it is not free, it is
+   *                        unpriceable, and a gate we cannot price is not a gate we may
+   *                        silently drop.
+   *   `kind: other`      — a qualification obtainable in the market, which THIS SCHOOL DOES
+   *                        NOT SELL YOU ("afgeronde RYT200", "200-hour certificate from a
+   *                        recognised school"). It is a purchasable gate in the market —
+   *                        but not this school's product, and pricing it with THEIR own 200
+   *                        would assert a path they never require. `note` says so; no cost.
+   *
+   * `source` IS REQUIRED, and it is the only required field besides kind/label: what you
+   * are FORCED TO BUY is a fact about the price, and a fact about a named business's price
+   * needs a page that states it. `price.source` is required by nothing in Zod either — but
+   * this one is, because the gate is the half of the price the school does not print in the
+   * price box.
+   */
+  prerequisite: z
+    .array(
+      strictObject({
+        kind: z.enum(["program", "experience", "other"]),
+        /** What the school says you must have — short, and theirs, not ours. */
+        label: z.string(),
+        /** Another Program on THIS record, when the gate is the school's own prior
+         *  training. Its own (possibly derived) total is what the path sums — so a
+         *  price change on the gate cannot leave a stale copy behind here. */
+        program: slug.optional(),
+        /** The gate's price where the school prints it and the gate is NOT a Program on
+         *  this record (de Yogaschool's Basisopleiding: € 1.590 per lesjaar). `null` =
+         *  we could not read it off any artifact — and then the path cost is null, never
+         *  guessed. */
+        cost_eur: z.number().positive().nullable().optional(),
+        /** Same unit vocabulary as `price.period`, and the same default (`total`): a gate
+         *  priced per lesjaar is not a gate priced per training. */
+        period: PricePeriod.optional(),
+        periods: z.number().int().positive().nullable().optional(),
+        source: z.string(),
+        note: z.string().optional(),
+      }),
+    )
+    .optional(),
   price: Price,
   /** The §5 decomposition. supervised_teaching_practice = the only number
    *  about teaching ability; its emptiness across the market is the finding. */
@@ -326,7 +429,35 @@ export const Program = strictObject({
     contact: z.number().positive().nullable().optional(),
     self_study: z.number().positive().nullable().optional(),
     supervised_teaching_practice: z.number().nonnegative().nullable().optional(),
+    /** Do they break the total down AT ALL? (§4.3) */
     breakdown_published: Quad,
+    /**
+     * Do they publish the CONTACT-HOUR FIGURE SPECIFICALLY — the number
+     * `pricePerContactHour` needs (§4.3, §6)?
+     *
+     * REQUIRED, like `breakdown_published`, because every programme must answer
+     * it: a quad we may leave out is a quad that silently defaults, and the
+     * default would be a statement about a named business.
+     *
+     * The two questions come apart in BOTH directions, and the corpus holds both:
+     *   - `breakdown_published: yes` + `contact_published: not_published` — three
+     *     providers publish a rich breakdown that is not this one: by delivery mode
+     *     (yogaeasy: 110u pre-recorded / 30u live / 10u lespraktijk), by subject
+     *     (yogic-life ryt200: Asana 100, Anatomie 20, Filosofie 30 …), or as ranges
+     *     (yogic-life ryt300: 100–150, 25–40 …). Subject hours are not contact
+     *     hours; a range cannot be isolated. We looked; the number is not there.
+     *   - `breakdown_published: not_published` + `contact_published: yes` — two
+     *     providers publish the contact figure and nothing else to break down
+     *     (de-yogaschool-enschede: "120 lesblokken × 3u = 360 contacturen";
+     *     pure-yoga: "200 contacturen").
+     *
+     * One quad for two questions forced the directory to call its most transparent
+     * schools either un-investigated (a gap that is OURS, and false) or
+     * non-publishers (a finding that is THEIRS, and also false). So the model asks
+     * twice — and `pphBlocker` (rules.ts) blocks on THIS field, because the field
+     * that stops the derivation is the field we must cite when we say why.
+     */
+    contact_published: Quad,
     source: z.string().optional(),
     /** What the provider says about practice/hours when not given as an isolated
      *  number — keeps the §5 nuance the bare numbers would otherwise drop. */

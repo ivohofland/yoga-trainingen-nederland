@@ -129,6 +129,13 @@ programs:
     prerequisites_claimed: "min. 2 jaar consistente praktijk + leergierigheid;
       geschikt voor aankomend docenten, bestaande docenten, verdiepende
       practitioners en wellness-professionals. Deelnemers worden geselecteerd."
+    prerequisite:
+      - kind: experience
+        label: "min. 2 jaar consistente eigen praktijk"
+        source: site-academy-tt-2026-06
+        note: >
+          Letterlijk: "a passion for learning and a minimum of two years'
+          consistent practice is required." Ervaringseis, geen aankoop.
     price:
       amount_eur: 2500
       vat: unknown
@@ -146,6 +153,7 @@ programs:
       self_study: null
       supervised_teaching_practice: 10
       breakdown_published: yes
+      contact_published: not_published
       source: site-academy-tt-2026-06
       note: >
         GEPUBLICEERDE breakdown (transparantie-uitschieter): 110u pre-recorded

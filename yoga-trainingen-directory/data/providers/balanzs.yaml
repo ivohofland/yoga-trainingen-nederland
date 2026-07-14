@@ -147,6 +147,17 @@ programs:
       language: nl
     prerequisites_claimed: "HBO/BSc denkniveau + min. 1 jaar persoonlijke
       lichaam-&-geest-beoefening; Module 2 vereist afgeronde Module 1"
+    prerequisite:
+      - kind: experience
+        label: "min. 1 jaar persoonlijke lichaam-&-geest-beoefening"
+        source: brochure-2026-06
+        note: >
+          De toelatingslijst in de brochure, in de eerste persoon: "I have at
+          least 1 year of personal body & ..." Ervaringseis, geen aankoop. De
+          tweede eis in het proza hierboven — Module 2 pas ná Module 1 — is een
+          VOLGORDE BINNEN deze opleiding (beide modules zitten in de prijs van
+          € 3.115), geen voorafgaande opleiding die je apart moet kopen: zie
+          `coherence_signals.required_sequence`.
     price:
       amount_eur: 3115
       variants:
@@ -178,6 +189,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: brochure-2026-06
       note: >
         200u in 2 modules over 10 weekenden: Module 1 = 85u (4 weekenden;

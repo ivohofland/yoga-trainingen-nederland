@@ -146,6 +146,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-vinyasa-2026-06
       note: >
         12 weekenden (za/zo 10:00-18:00) = 200u geclaimd; daarnaast 20u online
@@ -234,6 +235,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-yin-2026-06
       note: >
         Geclaimd als 200u over 3 modules, maar de gepubliceerde deelgetallen

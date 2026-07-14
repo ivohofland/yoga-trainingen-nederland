@@ -116,6 +116,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-basis-2026-06
       note: >
         200u over 8 trainingsweekenden (vr/za/zo 09:00-17:00, jun-sep 2026).
@@ -161,6 +162,23 @@ programs:
       duration_months_max: 30
       language: en
     prerequisites_claimed: "afgeronde 200u (Fundamental/Basis) Teacher Training"
+    prerequisite:
+      # DE POORT IS HUN EIGEN OPLEIDING, en die staat in dit record — dus geen
+      # tweede, verouderbare kopie van de prijs hier: `program:` verwijst, en het
+      # padtotaal leest de (afgeleide) totaalprijs van die opleiding zelf.
+      - kind: program
+        label: "Basis Yoga Opleiding (200u) / Fundamental Teacher Training"
+        program: 200-basis
+        source: site-advanced-2026-06
+        note: >
+          De pagina noemt de eigen 200u-opleiding als de opleiding die eraan
+          voorafgaat: "After finishing your Fundamental Teacher Training
+          (200-hour) you can deepen your teaching skills and expand your
+          knowledge with our Continuing Education program." Een extern behaalde
+          200u wordt op deze pagina niet genoemd. Het padtotaal blijft niettemin
+          leeg: Open Yoga publiceert voor de Advanced (300u) zélf geen prijs
+          (`published: not_published`), en een pad zonder eerste term is geen
+          som maar een gok.
     price:
       amount_eur: null
       vat: unknown
@@ -176,6 +194,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-advanced-2026-06
       note: >
         300u zelf samen te stellen uit keuzemodules binnen 2,5 jaar; YA-eis:

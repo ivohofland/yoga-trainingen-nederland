@@ -62,6 +62,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
       note: >
         Geen RYT-urentelling (eigen methode). Wel concreet: in jaar 2 geef je 5

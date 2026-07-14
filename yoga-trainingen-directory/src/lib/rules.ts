@@ -21,9 +21,9 @@
  * so the server pages, the client filter island and the JSON export all call the
  * SAME functions. One rule, three surfaces, no re-derivation possible.
  */
-import { pricePerContactHour } from "./derive";
+import { pricePerContactHour, totalPathCost, totalPrice } from "./derive";
 import { saysNotPublished } from "./quad";
-import type { Program, Quad } from "../schema";
+import type { Program, Provider, Quad } from "../schema";
 
 /**
  * A value is missing from our record. Some *_published quad governs whether it
@@ -41,11 +41,18 @@ import type { Program, Quad } from "../schema";
  * gepubliceerd op de 300u-pagina"). Both therefore license the amber finding.
  *
  * `yes` is the genuinely contradictory case: the record says the provider DOES
- * publish it, yet the value is missing from our record anyway — three programmes
- * are exactly this shape (yogaeasy/200-hatha-vinyasa, yogic-life/ryt200-multistyle,
- * yogic-life/ryt300-multistyle: an amount, a published breakdown, and no
- * `hours_claimed.contact`). The missing value is OURS. That is a gap, and so is
- * `unknown` — nobody looked yet.
+ * publish it, yet the value is missing from our record anyway — five programmes are
+ * exactly this shape on the price (`price.published: yes`, no `amount_eur`; see
+ * priceAmountIsOurGap) and six on the supervised-practice figure
+ * (`breakdown_published: yes`, no `supervised_teaching_practice`). The missing value
+ * is OURS. That is a gap, and so is `unknown` — nobody looked yet.
+ *
+ * Note what this rule does NOT license: reading a governing field that does not
+ * govern the value in question. Until v0.4, €/contactuur read `breakdown_published`
+ * — a field about the breakdown, not about the contact hours — and so three
+ * providers who publish a breakdown WITHOUT a contact-hour figure landed on this
+ * `yes` branch and were rendered as our gap. The rule was right; the field was the
+ * wrong one. Hence `hours_claimed.contact_published` (spec v0.4) and pphBlocker.
  *
  * Every caller — €/contactuur, the hours breakdown, supervised practice, the price
  * amount — routes through here. The rule is stated ONCE.
@@ -70,31 +77,88 @@ export function publishedQuad(published: Quad): Quad {
 
 /**
  * Which field stops `pricePerContactHour` from computing, and what the record says
- * about that field. There are exactly two blockers, and they are findings about
- * two different fields:
- *   - no price amount  → the blocker is the price → `price.published`;
- *   - no contact hours → the blocker is the hours → `hours_claimed.breakdown_published`.
+ * about that field. There are exactly three blockers, and they are findings about
+ * three different fields:
+ *   - no price amount   → the blocker is the price → `price.published`;
+ *   - no comparable TOTAL → the blocker is `price.periods` (spec v0.5). We hold an
+ *     amount, but it buys a year/a module/a day, and the provider publishes no count
+ *     of them. There is no whole-course figure to divide, and inventing a period
+ *     count to manufacture one is the exact fabrication v0.5 exists to prevent. It is
+ *     a FINDING (`periods: null` means "we looked; they do not publish it"), and the
+ *     cell must name the field that actually blocks it — not the price, which they
+ *     DO publish, and not the hours, which are not what is missing;
+ *   - no contact hours  → the blocker is the hours → `hours_claimed.contact_published`.
+ *
+ * THE HOURS BLOCKER IS `contact_published`, NOT `breakdown_published` (spec v0.4).
+ * The derivation needs ONE number — the contact hours — so the field that must be
+ * cited when we say why we cannot compute it is the field about THAT number.
+ * `breakdown_published` answers a different question ("do they break the total down
+ * at all?"), and the two come apart in both directions:
+ *
+ *   - yogaeasy/200-hatha-vinyasa, yogic-life/ryt200-multistyle, ryt300-multistyle
+ *     publish a breakdown (`breakdown_published: yes`) that is by delivery mode, by
+ *     subject, or in ranges — no contact-hour figure anywhere in it. Blocking on
+ *     `breakdown_published` sent them down the `yes` branch of missingBecause and
+ *     printed "nog niet onderzocht": the three most transparent hour-publishers in
+ *     the corpus, told to readers as research we never did. We did do it.
+ *   - de-yogaschool-enschede/meesteropleiding-raja and pure-yoga/200-pureteacher run
+ *     the other way (`breakdown_published: not_published`, contact hours published):
+ *     they compute, so no blocker is read — but they are why the field is its own
+ *     quad rather than a refinement of the other.
  */
-export function pphBlocker(program: Program): { field: "price" | "hours"; published: Quad } {
-  return program.price.amount_eur == null
-    ? { field: "price", published: program.price.published }
-    : { field: "hours", published: program.hours_claimed.breakdown_published };
+export function pphBlocker(
+  provider: Provider,
+  program: Program,
+): { field: "price" | "price_total" | "hours"; published: Quad } {
+  // THE TOTAL IS ASKED FIRST, not `amount_eur` (spec v0.8) — a programme priced per module
+  // holds no amount of its own and still has a comparable total (Adhouna: € 1.420 + € 1.305).
+  // Reading the bare field first would name the PRICE as the blocker on a page that prints
+  // two of them, when what is actually missing is the contact hours.
+  if (totalPrice(provider, program).value == null) {
+    if (program.price.amount_eur == null)
+      return { field: "price", published: program.price.published };
+    // An amount we cannot make comparable is not an amount we can divide. `periods:
+    // null` on a per-period price is the provider's omission, so the quad is the
+    // finding — never `unknown`, which would blame our own research for a gap on
+    // their page.
+    return { field: "price_total", published: "not_published" };
+  }
+  return { field: "hours", published: program.hours_claimed.contact_published };
 }
 
 /** The quad the €/contactuur cell may render when there is no computable value. */
-export function pphQuad(program: Program): Quad {
-  if (pricePerContactHour(program).value != null) return "yes";
-  return missingBecause(pphBlocker(program).published);
+export function pphQuad(provider: Provider, program: Program): Quad {
+  if (pricePerContactHour(provider, program).value != null) return "yes";
+  return missingBecause(pphBlocker(provider, program).published);
 }
 
 /**
  * The record says the provider publishes a price, and we do not hold the amount.
- * Five programmes are exactly this shape (aalo-yoga-academie/yin-yang-ryt200,
- * aalo-yoga-academie/yin-ryt200, de-blikopener/hatha-raja-opleiding,
- * sanayou/200-online, yoga-academie-nederland/300-hatha-verdieping).
+ *
+ * FIVE programmes were this shape, and ZERO are today — all five have been researched,
+ * sourced, archived and their amounts extracted from the captured artifact. (Their price
+ * source was the page that LINKED to the price rather than the one that STATED it; see
+ * provenance.ts, which now catches exactly that.)
+ *
+ * The rule outlives the defect, and must: the next record to land in this state — and one
+ * will, because finding a school's price page is not the same day's work as reading it —
+ * has to reach every surface as OUR gap, never as a finding about them. So do not
+ * re-hardcode a roster here or in a test. `provenance.ts` finds them; the tests pin the
+ * rule against a CONSTRUCTED case (price-gap.fixture.ts), so paying a record off can
+ * never fail a build and can never silently retire the rule with it.
  */
-export function priceAmountIsOurGap(program: Program): boolean {
-  return program.price.published === "yes" && program.price.amount_eur == null;
+export function priceAmountIsOurGap(provider: Provider, program: Program): boolean {
+  return (
+    program.price.published === "yes" &&
+    program.price.amount_eur == null &&
+    // AND we cannot derive one. A programme priced PER MODULE (spec v0.8) legitimately
+    // holds no `amount_eur` — the provider states no whole-course figure, they state the
+    // parts, and we add them up. That is not a hole in our research; it is the record
+    // saying precisely what the page says. Without this clause, Adhouna's Yin XL — whose
+    // two part-prices we hold, cited and archived — would be published to readers as a
+    // price we simply failed to capture.
+    totalPrice(provider, program).value == null
+  );
 }
 
 /**
@@ -111,7 +175,11 @@ export function priceAmountIsOurGap(program: Program): boolean {
  *    but our record holds no number. A "ja" with no number promises a fact we do
  *    not hold; and the finding-vs-gap rule (see missingBecause) says a value
  *    missing from a field the provider does publish is a gap in OUR research,
- *    never an omission by them. Five programmes are this shape.
+ *    never an omission by them. Five programmes were this shape; NONE is today —
+ *    all five have been researched, sourced, archived and their amounts extracted.
+ *    The rule is pinned against a constructed case (price-gap.fixture.ts), because a
+ *    rule that finds its case by sweeping the data dies the day the data is fixed
+ *    (see priceAmountIsOurGap).
  *
  * 2. `no` → `not_published`. `price.published` is a *_published field, and on such
  *    a field `no` and `not_published` say the identical thing about the provider —
@@ -131,8 +199,8 @@ export function priceAmountIsOurGap(program: Program): boolean {
  * `contract.min_participants.clause: "no"` likewise means "there is no such
  * clause". Only the *_published family collapses `no` into the finding.
  */
-export function priceQuad(program: Program): Quad {
-  if (priceAmountIsOurGap(program)) return "unknown";
+export function priceQuad(provider: Provider, program: Program): Quad {
+  if (priceAmountIsOurGap(provider, program)) return "unknown";
   return publishedQuad(program.price.published);
 }
 
@@ -150,27 +218,74 @@ export function priceQuad(program: Program): Quad {
  *
  * `amount_not_in_record` is the fourth band, and it exists to say out loud that
  * "we hold no amount" is its OWN category — not a cheap synonym for "they publish
- * no price". Those are the five programmes whose record says they DO publish a
- * price we simply have not captured. Sweeping them into the finding band told
- * readers that four named businesses publish no price while our own record said
- * they do. They belong to no chip: a price band is a statement ("it costs this
- * much", "they publish no price") and about these five we can honestly make
- * neither.
+ * no price". Those are the programmes whose record says they DO publish a price we
+ * simply have not captured (five when the band was written, one today). Sweeping
+ * them into the finding band told readers that four named businesses publish no
+ * price while our own record said they do. They belong to no chip: a price band is a
+ * statement ("it costs this much", "they publish no price") and about these we can
+ * honestly make neither.
  *
- * The bands are exhaustive and disjoint over every programme, and they agree with
- * priceQuad() by construction:
- *   under3000 / from3000  ⟺ price_state "yes"
+ * `no_comparable_total` is the FIFTH band, and it is spec v0.5's (§4 `price`, §6
+ * `total_price`). A per-period price with no published period count — "€ 1.290 per
+ * studiejaar", and nowhere how many studiejaren — CANNOT BE BANDED. Banding it on the
+ * bare `amount_eur` is precisely the inversion v0.5 was written to kill: de Blikopener
+ * would sit under "onder €3.000" beside whole-course totals, third-cheapest of 54
+ * trainings, while the training costs € 5.160 (4 × € 1.290 — the figure the site renders,
+ * as ours). A yearly fee is not a price;
+ * it is a price per year, and the reader's band is a statement about the whole course.
+ * So such a programme belongs to NO band, exactly as our own gaps do — and, like them,
+ * it is offered by no chip: we can honestly say neither "it costs this much" nor "they
+ * publish no price". (Empty in the corpus today: both de Blikopener programmes publish
+ * their year count on the opleidingspagina, so both derive a total.)
+ *
+ * The bands are exhaustive and disjoint over every programme:
+ *   under3000 / from3000  ⟺ a comparable TOTAL exists (derived or published)
  *   none_published        ⟺ price_state "not_published"
  *   amount_not_in_record  ⟺ price_state "unknown"
+ *   no_comparable_total   ⟺ an amount, per period, with no period count
  */
-export type PriceBand = "under3000" | "from3000" | "none_published" | "amount_not_in_record";
+export type PriceBand =
+  | "under3000"
+  | "from3000"
+  | "none_published"
+  | "amount_not_in_record"
+  | "no_comparable_total";
 
 const AFFORDABLE_BELOW_EUR = 3000;
 
-export function priceBand(program: Program): PriceBand {
-  const amount = program.price.amount_eur;
-  // An amount only exists on a programme that publishes one (pinned by a test on
-  // the RECORD), so the two amount bands are exactly the `yes` rows.
-  if (amount != null) return amount < AFFORDABLE_BELOW_EUR ? "under3000" : "from3000";
+/**
+ * THE BAND CONSUMES `totalPathCost`, NEVER `amount_eur` AND NEVER A BARE `totalPrice`
+ * (spec §6, v0.9).
+ *
+ * The three figures coincide on almost every programme — which is exactly why each
+ * omission looked right until it didn't. `amount_eur` put de Blikopener's € 1.290 *per
+ * studiejaar* third-cheapest of 54 trainings (v0.5). `totalPrice` puts de Yogaschool's
+ * Docentenopleiding at € 4.590 beside trainings you can simply enrol in — while you may
+ * not start it without first buying their Basisopleiding at € 1.590. A band is the
+ * reader's answer to "what will this cost me", and for a gated training the answer is
+ * € 6.180. Ranking it as € 4.590 against an ungated course is not a smaller error than
+ * ranking a yearly fee as a whole-course price; it is the same error, one level up.
+ *
+ * `totalPathCost` IS `totalPrice` wherever there is no purchasable gate (see derive.ts),
+ * so this is a strictly better read, never a different one.
+ *
+ * NOT €/CONTACTUUR, deliberately. That ratio divides by THIS programme's contact hours,
+ * and the path cost buys another course's hours too — € 6.180 ÷ 360 would put a numerator
+ * that includes the Basisopleiding over a denominator that does not. That is a fabricated
+ * ratio, and the only honest one there is price ÷ hours of the same course.
+ */
+export function priceBand(provider: Provider, program: Program): PriceBand {
+  const path = totalPathCost(provider, program).value;
+  // A comparable figure exists only where the provider publishes amounts we can compare —
+  // their own whole-course figure, a per-period one with a count, the parts of a per-module
+  // one (v0.8), plus the price of every training they force you to buy first (v0.9). Those
+  // are exactly the bandable rows.
+  if (path != null) return path < AFFORDABLE_BELOW_EUR ? "under3000" : "from3000";
+  // No comparable PATH figure. A programme can reach here holding a perfectly good price
+  // (a gate whose cost the school does not publish nulls the path, not the price), so the
+  // test for "do they publish a price at all" must ask BOTH — `amount_eur` alone would call
+  // a provider who prices per module, in two published parts, a non-publisher of prices.
+  if (totalPrice(provider, program).value != null || program.price.amount_eur != null)
+    return "no_comparable_total";
   return saysNotPublished(program.price.published) ? "none_published" : "amount_not_in_record";
 }

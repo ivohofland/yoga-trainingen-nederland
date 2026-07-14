@@ -1,7 +1,18 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { loadDataset } from "./loader";
-import { bundleDelta, pricePerContactHour } from "./derive";
+import { integrityErrors, loadDataset } from "./loader";
+import {
+  bundleDelta,
+  contactRatio,
+  isMultistyle,
+  ourWorking,
+  pricePerContactHour,
+  totalHours,
+  totalPathCost,
+  totalPrice,
+} from "./derive";
+import { priceBand } from "./rules";
+import { waybackIsPointless } from "./wayback";
 import { YearMonth, type Program } from "../schema";
 
 const { providers } = loadDataset();
@@ -38,24 +49,32 @@ test("every provider id matches its filename slug", () => {
  * one figure no provider's own source can contradict. It gets golden values.
  */
 
-test("DERIVED: €/contactuur is the published price over the published CONTACT hours", () => {
-  // The golden case, by name and by hand: De Yogaschool (Enschede) publishes
-  // €4.590 for the three-year Docentenopleiding Raja Yoga and a breakdown of 600
-  // hours — 360 contact + 240 self-study. €4590 / 360 = €12,75 per contactuur.
+test("DERIVED: €/contactuur is the whole-course price over the published CONTACT hours", () => {
+  // The golden case, by name and by hand. De Yogaschool (Enschede) publishes NEITHER of
+  // the two numbers this line divides — and publishes both of their parts:
+  //   price  "per 1 januari 2026: €1530,00 per jaar" × "drie jaar"  → € 4.590 is OURS (v0.8)
+  //   hours  "360 uren" + "minimale zelfstudie van 240 uur"         → 600 u   is OURS (v0.6)
+  // € 4.590 / 360 contacturen = € 12,75. The numerator is `totalPrice`, the denominator
+  // is `contact` — never an hours total, derived or stored, as asserted below.
+  const provider = providerOf("de-yogaschool-enschede");
   const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
   // guards: if the record changes, this test must not quietly pass on other numbers
-  assert.equal(prog.price.amount_eur, 4590);
+  assert.equal(prog.price.amount_eur, 1530, "the record stores the JAARPRIJS they print");
+  assert.equal(prog.price.period, "per_year");
+  assert.equal(prog.price.periods, 3);
   assert.equal(prog.hours_claimed.contact, 360);
   assert.equal(prog.hours_claimed.self_study, 240);
 
-  const pph = pricePerContactHour(prog);
+  const pph = pricePerContactHour(provider, prog);
   assert.equal(pph.value, 12.75,
     "€4.590 over 360 contacturen is €12,75 — any other figure is a number we invented about a named business");
 
-  // The two mutations this pins, spelled out:
+  // The three mutations this pins, spelled out:
   assert.notEqual(pph.value, Math.round(12.75 * 1.21 * 100) / 100, "the price is not marked up with VAT here");
   assert.notEqual(pph.value, Math.round((4590 / 600) * 100) / 100,
     "self-study hours are not contact hours — dividing by the total flatters every provider that pads it");
+  assert.notEqual(pph.value, Math.round((1530 / 360) * 100) / 100,
+    "dividing the YEARLY fee by the hours of a three-year training understates the rate threefold (v0.5)");
 });
 
 test("DERIVED: self-study hours are NEVER counted as contact hours", () => {
@@ -70,32 +89,367 @@ test("DERIVED: self-study hours are NEVER counted as contact hours", () => {
     ...base,
     hours_claimed: { ...base.hours_claimed, total: 200, contact: null, self_study: 200 },
   };
-  const pph = pricePerContactHour(selfStudyOnly);
+  const pph = pricePerContactHour(providerOf("de-yogaschool-enschede"), selfStudyOnly);
   assert.equal(pph.value, null,
     "a programme that publishes no CONTACT hours has no €/contactuur — self-study is not contact time");
   assert.match(pph.caveat ?? "", /contacturen/);
 });
 
-test("DERIVED: every computable €/contactuur equals price ÷ contact hours, to the cent", () => {
+test("DERIVED: every computable €/contactuur equals the WHOLE-COURSE price ÷ contact hours", () => {
   // The golden case above proves one row. This proves all of them, from the record
   // itself — so a scale factor, a swapped denominator or a rounding change cannot
   // hide in the rows the golden case does not name.
+  //
+  // The numerator is `totalPrice`, NOT `amount_eur` (spec v0.5, §6). On 53 of 54 priced
+  // programmes they are the same number, which is exactly why the 54th went unnoticed:
+  // divide de Blikopener's € 1.290 PER STUDIEJAAR by the hours of a four-year training
+  // and the rate comes out four times too low — published, in a comparison column, next
+  // to a named business.
   let checked = 0;
   for (const p of providers) {
     for (const prog of p.programs) {
-      const { value } = pricePerContactHour(prog);
-      const amount = prog.price.amount_eur;
+      const { value } = pricePerContactHour(p, prog);
+      const total = totalPrice(p, prog).value;
       const contact = prog.hours_claimed.contact;
-      if (amount == null || contact == null) {
+      if (total == null || contact == null) {
         assert.equal(value, null, `${p.id}/${prog.id}: a €/contactuur computed from a number we do not hold`);
         continue;
       }
-      assert.equal(value, Math.round((amount / contact) * 100) / 100,
-        `${p.id}/${prog.id}: €${amount} over ${contact} contacturen is not what the page shows (${value})`);
+      assert.equal(value, Math.round((total / contact) * 100) / 100,
+        `${p.id}/${prog.id}: €${total} over ${contact} contacturen is not what the page shows (${value})`);
       checked++;
     }
   }
   assert.ok(checked > 0, "no programme has a computable €/contactuur — this test tests nothing");
+});
+
+/* ---------- total_price: the figure the provider does not publish (spec v0.5, §6) ---------- */
+
+test("TOTAL: a whole-course price IS the provider's own figure — derived: false", () => {
+  // The common case, and the schema's default. `derived: false` is the licence to print
+  // the number in the provider's own ink — and printing THEIR figure as OURS is the same
+  // falsehood pointing the other way, no smaller. Wahé publishes € 2.495 for its 200-hour
+  // opleiding, in as many words, on the page we cite.
+  const provider = providerOf("wahe");
+  const prog = programOf("wahe", "200-vinyasa-ayurveda");
+  assert.equal(prog.price.period, "total", "guard: the default period is a whole-course total");
+  assert.deepEqual(totalPrice(provider, prog), { kind: "published", value: 2495 },
+    "Wahé PUBLISHES this figure — a `kind: \"computed\"` here would tell every surface and every " +
+    "API consumer that we made up a price the school states itself");
+  // AND IT CARRIES NO `working`. The key set IS the claim: a working exists only on a figure
+  // of ours, so a consumer that prints one whenever it finds one cannot mislabel this.
+  assert.equal(ourWorking(totalPrice(provider, prog)), null,
+    "their published price arrived with a working — that is our arithmetic's clothing on their fact");
+});
+
+test("TOTAL: a per-year price is MULTIPLIED, flagged as ours, and shows its working", () => {
+  // The record that motivated v0.5. de Blikopener publishes € 1.290 per studiejaar over
+  // four years and NO total; the bare amount ranked them among the cheapest trainings in
+  // the corpus while the opleiding costs ≈ € 5.260 (our € 5.160 + the € 100 inschrijfgeld
+  // their page lists separately, which we never add in — see below).
+  const provider = providerOf("de-blikopener");
+  const prog = programOf("de-blikopener", "hatha-raja-opleiding");
+  assert.equal(prog.price.amount_eur, 1290);
+  assert.equal(prog.price.period, "per_year");
+  assert.equal(prog.price.periods, 4);
+
+  const total = totalPrice(provider, prog);
+  assert.equal(total.value, 5160, "4 × € 1.290 is € 5.160");
+  assert.equal(total.kind, "computed",
+    "the total must be OURS — de Blikopener has never published this figure");
+  assert.match(ourWorking(total) ?? "", /4 × /,
+    "the working must travel with the number, so a reader can check it — and the type REQUIRES it: " +
+    "`{kind: \"computed\"}` with no working does not compile, where `{derived: true}` with no caveat " +
+    "used to, and the presenter silently dropped the row rather than failing");
+
+  // And the three-year variant is its own programme, with its own total.
+  const short = programOf("de-blikopener", "hatha-raja-opleiding-3-jarig");
+  assert.equal(totalPrice(provider, short).value, 3870, "3 × € 1.290 is € 3.870");
+});
+
+test("TOTAL: `excludes` is NEVER added in — it is free text, not an addend", () => {
+  // The tarievenpagina lists a one-off € 100 inschrijf-/boekengeld and € 335 for the
+  // yogaweekend. Summing either into the total would produce a number that is neither
+  // theirs nor reproducibly ours, out of a prose sentence. It renders ALONGSIDE.
+  const prog = programOf("de-blikopener", "hatha-raja-opleiding");
+  assert.match(prog.price.excludes ?? "", /100/, "guard: the excluded costs are in the record");
+  assert.equal(totalPrice(providerOf("de-blikopener"), prog).value, 5160,
+    "the derived total is 4 × 1290 and nothing else");
+});
+
+test("TOTAL: a per-period price with no period count has NO total — and is banded nowhere", () => {
+  // No record is in this state today (both de Blikopener programmes publish their year
+  // count), so the rule holds only because its counter-example is absent. Manufacture
+  // it: a school that prices per year and never says how many years. Guessing a count
+  // to produce a comparable figure is the exact fabrication v0.5 exists to prevent —
+  // and ranking the yearly fee AS a total is the bug it exists to correct. Neither is
+  // allowed, so the programme belongs in no band at all.
+  const provider = providerOf("de-blikopener");
+  const base = programOf("de-blikopener", "hatha-raja-opleiding");
+  const noCount: Program = { ...base, price: { ...base.price, periods: null } };
+
+  const total = totalPrice(provider, noCount);
+  assert.equal(total.value, null, "no period count, no total — never the bare yearly fee");
+  assert.equal(total.kind, "no_comparable_total",
+    "a per-period price with no count is not `no_price` — they DO publish a price. What they do not " +
+    "publish is the count that would make it comparable, and naming the wrong absence is a false " +
+    "statement about a named business");
+  assert.match(total.kind === "no_comparable_total" ? total.reason : "", /totaalprijs/i);
+  assert.equal(ourWorking(total), null, "there is no arithmetic to show: we computed nothing");
+  assert.equal(priceBand(provider, noCount), "no_comparable_total");
+  for (const band of ["under3000", "from3000"] as const) {
+    assert.notEqual(priceBand(provider, noCount), band,
+      "a yearly fee banded against whole-course totals is the v0.5 inversion, restored");
+  }
+});
+
+test("TOTAL: the price bands read the TOTAL, never the bare amount", () => {
+  // € 1.290 < € 3.000 and ≈ € 5.160 is not: the same record, banded on the raw field,
+  // lands under "onder €3.000" beside whole-course totals. This is the published
+  // symptom of the whole spec change.
+  const provider = providerOf("de-blikopener");
+  const prog = programOf("de-blikopener", "hatha-raja-opleiding");
+  assert.ok(prog.price.amount_eur! < 3000, "guard: the bare amount would have banded as cheap");
+  assert.equal(priceBand(provider, prog), "from3000",
+    "a four-year opleiding costing ≈ € 5.160 must never sit in the under-€3.000 band");
+  assert.equal(priceBand(provider, programOf("de-blikopener", "hatha-raja-opleiding-3-jarig")), "from3000");
+});
+
+/* ---------- total_price derivation 3: the SUM of UNEQUAL parts (spec v0.8, §6) ----------
+ *
+ * `periods` can only MULTIPLY. A training sold as Deel I € 1.420 + Deel II € 1.305 has no
+ * equal repeating unit — 2 × 1.420 is not 2.725 — so the sum had no honest home, and so it
+ * ended up STORED in `amount_eur`: € 2.725 rendered in Adhouna's own ink, cited to a page
+ * that prints only the two parts. "2725" appears in none of their artifacts. Third costume,
+ * same disease as v0.5 and v0.6.
+ */
+
+test("TOTAL: unequal composed parts are SUMMED, flagged as ours, and show their working", () => {
+  // The record that motivated v0.8. The page states, verbatim: "Deel I van deze Yin Yoga
+  // Opleiding kost € 1.420,00 incl. BTW" and "Deel II ... kost € 1.305,00 incl. BTW". It
+  // states no total, anywhere.
+  const provider = providerOf("adhouna");
+  const prog = programOf("adhouna", "200-yin-xl");
+  assert.equal(prog.price.amount_eur, null,
+    "guard: the stored 2725 is GONE from the record — a derived value is never stored (§6)");
+  assert.equal(prog.price.period, "per_module");
+  assert.deepEqual(prog.composition?.modules, ["deel-1", "deel-2"]);
+  assert.equal(provider.modules.find((m) => m.id === "deel-1")?.price?.amount_eur, 1420);
+  assert.equal(provider.modules.find((m) => m.id === "deel-2")?.price?.amount_eur, 1305);
+
+  const total = totalPrice(provider, prog);
+  assert.equal(total.value, 2725, "€ 1.420 + € 1.305 is € 2.725");
+  assert.equal(total.kind, "computed",
+    "a surface told `kind: \"published\"` would print € 2.725 as Adhouna's own published price — the " +
+    "exact bug v0.8 removed, restored");
+  const sum = ourWorking(total) ?? "";
+  assert.match(sum, /onze optelling/, "the working must travel with the number, so a reader can check it");
+  assert.match(sum, /1\.420/);
+  assert.match(sum, /1\.305/);
+
+  // And it is BANDED on that total, like any other comparable price.
+  assert.equal(priceBand(provider, prog), "under3000", "€ 2.725 < € 3.000");
+});
+
+test("TOTAL: multiplication CANNOT express it — the parts are unequal, and that is the point", () => {
+  // Stated as an assertion rather than a comment, because "just use periods: 2" is the
+  // shortcut that would quietly re-fabricate the number: 2 × € 1.420 = € 2.840, which is
+  // € 115 more than the training costs, published about a named business.
+  const provider = providerOf("adhouna");
+  const prog = programOf("adhouna", "200-yin-xl");
+  const parts = (prog.composition?.modules ?? [])
+    .map((id) => provider.modules.find((m) => m.id === id)!.price!.amount_eur!);
+  assert.notEqual(parts[0], parts[1], "the parts are UNEQUAL — no `periods` count can reach their sum");
+  assert.notEqual(totalPrice(provider, prog).value, parts[0] * parts.length);
+});
+
+test("TOTAL: a missing part price yields NULL — an incomplete sum is a guess", () => {
+  // The same rule bundleDelta has always applied, and now the same code path. Drop one
+  // part's price and the total must VANISH, not shrink: a total of € 1.420 for a training
+  // that costs € 2.725 is not a smaller claim, it is a false one — and a guessed total is
+  // a published comparison with a hole in it.
+  const base = providerOf("adhouna");
+  const prog = programOf("adhouna", "200-yin-xl");
+  const provider = {
+    ...base,
+    modules: base.modules.map((m) => (m.id === "deel-2" ? { ...m, price: undefined } : m)),
+  };
+  const total = totalPrice(provider, prog);
+  assert.equal(total.value, null, "one part unpriced → no sum, never a partial one");
+  assert.equal(ourWorking(total), null, "we derived nothing, so there is no arithmetic to show as ours");
+  assert.equal(total.kind, "no_comparable_total",
+    "they price per module and print some of those prices — calling them a non-publisher of prices " +
+    "(`no_price`) would be false. What is missing is the comparable TOTAL");
+  assert.equal(bundleDelta(provider, prog), null, "and the bundle delta dies with it, from the same rule");
+});
+
+test("TOTAL: a free-assembly MENU is not summed — its modules are choices, not parts", () => {
+  // The guard on the gate. QUENO's CYT trajects are `free_assembly` compositions with a
+  // module list, and adding those modules up would invent a whole-course price for a
+  // training nobody buys that way. Only `period: per_module` licenses the sum. (The
+  // predicate is corpus-derived rather than hard-coded to QUENO: a record parked outside
+  // the repo must not fail the build.)
+  let checked = 0;
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      // A programme with NO amount of its own and a composition it does not price per
+      // module: there is nothing to sum, and summing anyway is the fabrication.
+      if (prog.price.amount_eur != null) continue;
+      if (prog.price.period === "per_module") continue;
+      if (!prog.composition?.modules?.length) continue;
+      assert.equal(totalPrice(p, prog).value, null,
+        `${p.id}/${prog.id}: a composition that is not priced per module was summed into a total ` +
+        `the provider never publishes`);
+      checked++;
+    }
+  }
+  // Not asserted > 0: the corpus's free-assembly cases (QUENO) may be parked outside the
+  // repo, and a WIP record must never be able to fail the build. The rule stands either way.
+  assert.ok(checked >= 0);
+});
+
+/* ---------- total_hours: the same rule, the other unit (spec v0.6, §6) ----------
+ *
+ * The disease v0.5 caught in the price field had a twin in the hours field, and the
+ * twin had already shipped: `hours_claimed.total: 600` on de Yogaschool Enschede, in a
+ * field the site renders as the school's own claimed total, on a number the school has
+ * never printed. The `total` is now null in the record and the sum is computed here.
+ *
+ * The two directions are NOT symmetric, and both are pinned below, because getting
+ * either one wrong publishes a falsehood about a named business:
+ *
+ *   - de Yogaschool: publishing OUR sum as THEIR total → invents a claim.
+ *   - Wahé:          publishing THEIR total as OUR sum → strips a school of a figure it
+ *                    does publish, and quietly implies we made it up.
+ */
+
+test("HOURS: a published total IS the school's own figure — derived: false", () => {
+  // Wahé publishes the 500 in as many words, on a page we captured and cite:
+  // "Samen vormen de 200-uurs basisopleiding en de 300 uur aan verdiepingsmodules een
+  // totaal van 500 uur opleiding". It is THEIR claim. Relabelling it "onze optelling"
+  // would be v0.6's error running backwards — no smaller, just pointing the other way.
+  const prog = programOf("wahe", "500-pathway");
+  assert.equal(prog.hours_claimed.total, 500, "guard: the record holds their published total");
+  assert.equal(prog.hours_claimed.contact, null, "guard: they publish no contact-hour figure");
+
+  const hours = totalHours(prog);
+  assert.equal(hours.value, 500);
+  assert.equal(hours.kind, "published",
+    "Wahé PUBLISHES its 500 — `kind: \"computed\"` would tell every surface and every API consumer " +
+    "that we made up a figure the school states on its own page");
+  assert.equal(ourWorking(hours), null,
+    "their figure arrived with a working: it is not a sum of ours, and a working is the one thing " +
+    "that says it is");
+});
+
+test("HOURS: parts without a total are ADDED, flagged as ours, and show their working", () => {
+  // The record that motivated v0.6. The page states "De opleiding neemt drie jaar of 360
+  // uren in beslag. Daarnaast is er minimale zelfstudie van 240 uur." — two numbers,
+  // published separately, and never their sum.
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  assert.equal(prog.hours_claimed.total, null,
+    "guard: the stored 600 is GONE from the record — a derived value is never stored (§6)");
+  assert.equal(prog.hours_claimed.contact, 360);
+  assert.equal(prog.hours_claimed.self_study, 240);
+
+  const hours = totalHours(prog);
+  assert.equal(hours.value, 600, "360 + 240 is 600");
+  assert.equal(hours.kind, "computed",
+    "a surface told `kind: \"published\"` would print 600 as de Yogaschool's claimed total — the " +
+    "exact bug v0.6 removed, restored");
+  const working = ourWorking(hours) ?? "";
+  assert.match(working, /onze optelling/, "the working must travel with the number, so a reader can check it");
+  assert.match(working, /360/);
+  assert.match(working, /240/);
+});
+
+test("HOURS: a total with no parts is still the total; neither total nor parts is null", () => {
+  const base = programOf("wahe", "500-pathway");
+  // A total and no breakdown at all — the majority shape in the corpus, and it must not
+  // be nulled by the absence of the addends.
+  const totalOnly: Program = {
+    ...base,
+    hours_claimed: { ...base.hours_claimed, total: 200, contact: null, self_study: null },
+  };
+  assert.deepEqual(totalHours(totalOnly), { kind: "published", value: 200 });
+
+  // Neither a total nor both parts: there is nothing to add, and a guess would fabricate
+  // the very number this field exists to stop.
+  const nothing: Program = {
+    ...base,
+    hours_claimed: { ...base.hours_claimed, total: null, contact: null, self_study: null },
+  };
+  assert.equal(totalHours(nothing).value, null, "no total and no parts — no figure, not a zero");
+
+  // HALF the parts is not a total either. Publishing contact hours alone and calling them
+  // the whole training would understate it by every hour of homework they set.
+  const contactOnly: Program = {
+    ...base,
+    hours_claimed: { ...base.hours_claimed, total: null, contact: 360, self_study: null },
+  };
+  assert.equal(totalHours(contactOnly).value, null,
+    "contacturen alone are not a course total — one addend is not a sum");
+  assert.equal(totalHours(contactOnly).kind, "no_total", "we derived nothing, so nothing is ours");
+});
+
+test("HOURS: what consumes an hours total consumes the DERIVED one — contactRatio does", () => {
+  // The point of the field, and the thing a `total`-reading consumer gets wrong: de
+  // Yogaschool publishes the most complete hours breakdown in the corpus, and reading the
+  // raw `hours_claimed.total` gives them NO contact ratio at all — because the one number
+  // they don't print is the sum of the two they do.
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  assert.equal(prog.hours_claimed.total, null, "guard: the raw field is null");
+  const ratio = contactRatio(prog);
+  assert.equal(ratio.value, 0.6, "360 contact of a 600-hour course is 0,6 — not null");
+  // AND IT IS OURS. It shipped in the API as a bare `0.6` with no flag and no working — a
+  // number no school publishes, over a denominator that is ITSELF our addition (360 + 240).
+  // Our arithmetic over our arithmetic, handed to every consumer as a plain fact.
+  assert.equal(ratio.kind, "computed", "no school publishes a contact ratio — there is no `published` variant");
+  assert.match(ourWorking(ratio) ?? "", /onze berekening/,
+    "the ratio arrived with no working: a number of ours the reader cannot check");
+
+  // And €/contactuur is UNAFFECTED, because it divides by `contact` and never by a total.
+  // Pinned rather than assumed: routing it through totalHours would quietly turn €12,75
+  // (4590/360) into €7,65 (4590/600) — a third off the published rate of a named business.
+  const pph = pricePerContactHour(providerOf("de-yogaschool-enschede"), prog);
+  assert.equal(pph.value, 12.75, "€/contactuur divides by CONTACT hours, never by the total");
+  assert.notEqual(pph.value, Math.round((4590 / 600) * 100) / 100);
+});
+
+test("HOURS: a stored total that equals contact + zelfstudie must be one the SCHOOL prints", () => {
+  // §6, principle 9, guarded where it can actually be broken. A `total` that is
+  // arithmetically the sum of the parts beside it is EXACTLY what a stored sum looks like
+  // — de Yogaschool's 600 was 360 + 240 — and nothing in the YAML tells the two apart:
+  // the record looks complete and perfectly sourced either way. Only the archive can say
+  // whether the school prints that number, and the check that opens the archive is
+  // `provenance.ts` (hoursFigureRe), whose findings are pinned in provenance.test.ts.
+  //
+  // Two records are in this shape today, and BOTH are legitimate — each school prints its
+  // own total, in as many words:
+  //
+  //   jai-yoga/pranayama-tt      "So number of hours amounts to 350."   (200 + 150)
+  //   neo-yoga-delft/200-hatha   "200 uur"                              (180 + 20)
+  //
+  // They are NAMED here so that a third cannot quietly join them. This test guards the
+  // list, not the arithmetic: a new record whose total is the sum of its parts has to be
+  // held against the archive — and either it is their published figure (add it here, with
+  // the sentence that proves it) or it is our addition (drop `total` to null and let
+  // totalHours() do it, visibly as ours).
+  const PUBLISHED_SUMS = ["jai-yoga/pranayama-tt", "neo-yoga-delft/200-hatha"];
+  const sumShaped = providers.flatMap((p) =>
+    p.programs
+      .filter((prog) => {
+        const { total, contact, self_study: selfStudy } = prog.hours_claimed;
+        return total != null && contact != null && selfStudy != null && total === contact + selfStudy;
+      })
+      .map((prog) => `${p.id}/${prog.id}`),
+  );
+  assert.deepEqual(sumShaped.sort(), PUBLISHED_SUMS,
+    "a programme's stored hours total is exactly contact + zelfstudie. That is the shape of a STORED " +
+    "SUM (spec v0.6): our own arithmetic sitting in a field the site renders as the school's claimed " +
+    "total. Open the archive: if the school prints the figure it is theirs — add it to PUBLISHED_SUMS " +
+    "with the sentence that proves it. If it does not appear, set `total: null` and let totalHours() " +
+    "add the parts up, labelled as ours.");
 });
 
 test("DERIVED: the bundle delta is negative when the package is CHEAPER than its parts", () => {
@@ -141,6 +495,287 @@ test("DERIVED: no bundle delta is invented from a module price we do not hold", 
   }
 });
 
+/* ---------- total_path_cost: what it costs to QUALIFY here (spec v0.9, §6) ----------
+ *
+ * The fourth costume of the same disease. de Yogaschool's Docentenopleiding is € 1.530 ×
+ * 3 = € 4.590 and you may not start it without first completing their Basisopleiding
+ * (€ 1.590) — a gate the record ALREADY carried, in `prerequisites_claimed`, as PROSE,
+ * where no comparison could reach it. The site published € 4.590. Qualifying costs € 6.180.
+ * The Meesteropleiding sits behind the Docentenopleiding: € 10.770, also shown as € 4.590.
+ */
+
+test("PATH: a training you must BUY first is added — and the sum is ours, with its working", () => {
+  const provider = providerOf("de-yogaschool-enschede");
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+
+  // Guards: the gate is STRUCTURED, priced from the page that prints it, and its cost is
+  // read off the Basisopleiding page (€ 1.590 per lesjaar, one lesjaar) — not off the older
+  // general page, whose € 1.510 is what the record's prose used to carry.
+  const gate = prog.prerequisite?.[0];
+  assert.equal(gate?.kind, "program", "the Basisopleiding is a training you must BUY, not an experience");
+  assert.equal(gate?.cost_eur, 1590);
+  assert.equal(gate?.period, "per_year");
+  assert.equal(gate?.periods, 1);
+  assert.ok(gate?.source, "what you are forced to buy is a fact about the price — it needs a page that states it");
+
+  assert.equal(totalPrice(provider, prog).value, 4590, "guard: the course itself is 3 × € 1.530");
+
+  const path = totalPathCost(provider, prog);
+  assert.equal(path.value, 6180, "€ 4.590 + the mandatory € 1.590 Basisopleiding is € 6.180");
+  assert.equal(path.kind, "computed",
+    "the PATH is never the school's figure — € 6.180 appears on no page they publish, even though " +
+    "€ 1.530 and € 1.590 both do. There is no `published` variant for it, and there must not be");
+  const pathWorking = ourWorking(path) ?? "";
+  assert.match(pathWorking, /Basisopleiding/, "the working must name what was added");
+  assert.match(pathWorking, /1\.590/, "…and for how much, so the reader can check the sum");
+});
+
+test("PATH: the chain is walked RECURSIVELY — Meester → Docenten → Basis", () => {
+  // Three links, and the middle one is itself gated. Summing only the direct prerequisite
+  // would publish € 9.180 — closer than € 4.590, and just as false.
+  const provider = providerOf("de-yogaschool-enschede");
+  const prog = programOf("de-yogaschool-enschede", "meesteropleiding-raja");
+  assert.equal(prog.prerequisite?.[0]?.program, "docentenopleiding-raja",
+    "guard: the gate is the OTHER programme on this record, so its own gate must come with it");
+
+  const path = totalPathCost(provider, prog);
+  assert.equal(path.value, 10770, "€ 4.590 (Meester) + € 4.590 (Docenten) + € 1.590 (Basis)");
+  assert.deepEqual(path.gates.map((g) => g.total), [1590, 4590],
+    "the gates come out in the order a student must buy them — Basis first");
+  assert.equal(path.kind, "computed");
+});
+
+test("PATH: with nothing to buy first, the path IS the price — and no second row exists", () => {
+  // The standing controls. A path cost equal to the total price is not a second figure, and
+  // rendering it as one would tell a reader there are two numbers where the school published
+  // one. `gates` empty is what every surface keys the row off (see presenters).
+  for (const [pid, progId] of [
+    ["bluebirds", "200-vinyasa-hybrid-2026"],
+    ["wahe", "500-pathway"],
+  ] as const) {
+    const provider = providerOf(pid);
+    const prog = programOf(pid, progId);
+    const path = totalPathCost(provider, prog);
+    assert.deepEqual(path.gates, [], `${pid}/${progId}: a gate was invented for a programme that has none`);
+    assert.equal(path.value, totalPrice(provider, prog).value,
+      `${pid}/${progId}: the path cost must equal the total price when nothing must be bought first`);
+  }
+});
+
+test("PATH: an experience gate and a market qualification add NOTHING — they are not purchases here", () => {
+  // "min. 2 jaar praktijk" is a real barrier with no euros. "afgeronde RYT200" is a gate the
+  // MARKET sells — but not this school, and pricing it with THEIR own 200 would assert a
+  // route they never require (SanaYou sells two, at € 2.999 and € 1.250: which one would we
+  // have added?). Both are recorded; neither is summed.
+  const sanayou = providerOf("sanayou");
+  const three = programOf("sanayou", "300-hybride");
+  assert.equal(three.prerequisite?.[0]?.kind, "other", "guard: an RYT200 from any school");
+  const path = totalPathCost(sanayou, three);
+  assert.deepEqual(path.gates, [], "an unpriced market qualification is not a purchasable gate here");
+  assert.equal(path.value, totalPrice(sanayou, three).value, "…so the path cost is the price, untouched");
+
+  const yogaeasy = providerOf("yogaeasy");
+  const twoHundred = programOf("yogaeasy", "200-hatha-vinyasa");
+  assert.equal(twoHundred.prerequisite?.[0]?.kind, "experience");
+  assert.deepEqual(totalPathCost(yogaeasy, twoHundred).gates, []);
+});
+
+test("PATH: an unpriced purchasable gate yields NULL — an incomplete path is a guess", () => {
+  // The same rule as bundleDelta and v0.8's sum, and for the same reason: a path cost that
+  // silently drops an unknown link is not a smaller number, it is a false one — and it would
+  // be published in a band, in a sort order, beside real ones.
+  const base = providerOf("de-yogaschool-enschede");
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  const provider = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== prog.id
+        ? p
+        : { ...p, prerequisite: p.prerequisite?.map((pre) => ({ ...pre, cost_eur: null })) },
+    ),
+  };
+  const path = totalPathCost(provider, provider.programs.find((p) => p.id === prog.id)!);
+  assert.equal(path.value, null, "one link unpriced → no path cost, never a partial one");
+  assert.equal(path.gates.length, 1, "…but the gate is still REPORTED: it exists, we just cannot price it");
+  assert.equal(path.kind, "incomplete");
+  assert.match(path.kind === "incomplete" ? path.reason : "", /gok/,
+    "and the row must say why, in our own words");
+  assert.equal(ourWorking(path), null, "an incomplete path has no arithmetic to show — it has a hole");
+});
+
+test("PATH: the price bands read the PATH COST, never a bare total", () => {
+  // The published symptom, one level up from v0.5's. A € 2.500 training with a mandatory
+  // € 1.000 gate costs € 3.500 to qualify at — and banded on its own total it sits under
+  // "onder €3.000", beside trainings you can simply enrol in.
+  const base = providerOf("yogaeasy");
+  const prog = programOf("yogaeasy", "200-hatha-vinyasa");
+  assert.equal(totalPrice(base, prog).value, 2500, "guard: on its own total this programme is 'cheap'");
+  assert.equal(priceBand(base, prog), "under3000", "guard: and it bands that way today, correctly — it has no gate");
+
+  const gated = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== prog.id
+        ? p
+        : {
+            ...p,
+            prerequisite: [
+              {
+                kind: "program" as const,
+                label: "verplichte voorafgaande opleiding",
+                cost_eur: 1000,
+                source: p.price.source!,
+              },
+            ],
+          },
+    ),
+  };
+  const gatedProg = gated.programs.find((p) => p.id === prog.id)!;
+  assert.equal(totalPathCost(gated, gatedProg).value, 3500);
+  assert.equal(priceBand(gated, gatedProg), "from3000",
+    "a training that costs € 3.500 to qualify at was banded as if it cost € 2.500 — the gate is part of " +
+    "the price, and the band is the reader's answer to 'what will this cost me'");
+});
+
+test("INTEGRITY: a prerequisite CYCLE fails the load — a path over a cycle is a route nobody walks", () => {
+  // Not a silent stop in the arithmetic: the record must not load. Two programmes that gate
+  // each other describe no path a student can take, and quietly returning some number for it
+  // would publish a total for a route that does not exist.
+  const base = providerOf("de-yogaschool-enschede");
+  const cyclic = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== "docentenopleiding-raja"
+        ? p
+        : {
+            ...p,
+            prerequisite: [
+              {
+                kind: "program" as const,
+                label: "Meesteropleiding Raja Yoga",
+                program: "meesteropleiding-raja",
+                source: p.price.source!,
+              },
+            ],
+          },
+    ),
+  };
+  const errors = integrityErrors(cyclic, "cyclic.yaml");
+  // Reported from BOTH ends of the ring — the walk starts at every programme, and a reader
+  // of the error should not have to guess which end we happened to enter from. Every error
+  // is the cycle; none is anything else.
+  assert.ok(errors.length > 0, "a record whose prerequisites form a ring loaded without complaint");
+  for (const e of errors) assert.match(e, /prerequisite cycle/, `unexpected error: ${e}`);
+  assert.ok(errors.some((e) => /docentenopleiding-raja → meesteropleiding-raja → docentenopleiding-raja/.test(e)),
+    `the error must name the route, not merely the record: ${errors.join(" | ")}`);
+  // And the derivation TERMINATES rather than overflowing the stack, even on data the
+  // loader would refuse — the guard is for termination, the loader is for truth.
+  assert.doesNotThrow(() =>
+    totalPathCost(cyclic, cyclic.programs.find((p) => p.id === "meesteropleiding-raja")!));
+});
+
+test("INTEGRITY: a prerequisite pointing at a programme that does not exist fails the load", () => {
+  const base = providerOf("de-yogaschool-enschede");
+  const dangling = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== "meesteropleiding-raja"
+        ? p
+        : {
+            ...p,
+            prerequisite: [
+              { kind: "program" as const, label: "spookopleiding", program: "bestaat-niet", source: p.price.source! },
+            ],
+          },
+    ),
+  };
+  const errors = integrityErrors(dangling, "dangling.yaml");
+  assert.ok(errors.some((e) => /unknown program 'bestaat-niet'/.test(e)), errors.join(" | "));
+});
+
+test("PATH: every priced gate in the corpus cites a source, and every gate is one of the three kinds", () => {
+  // The schema requires `source` — this asserts the corpus actually honours what the gate is
+  // FOR: a cost we add to a named business's price, standing on a page that prints it. (The
+  // provenance check opens that page; this one guarantees there is one to open.)
+  let gates = 0;
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      for (const pre of prog.prerequisite ?? []) {
+        gates++;
+        assert.ok(pre.source, `${p.id}/${prog.id}: gate '${pre.label}' cites no source`);
+        assert.ok(p.sources.some((s) => s.id === pre.source),
+          `${p.id}/${prog.id}: gate '${pre.label}' cites a source that is not in sources[]`);
+        assert.ok(["program", "experience", "other"].includes(pre.kind));
+        if (pre.kind !== "program")
+          assert.equal(pre.cost_eur ?? null, null,
+            `${p.id}/${prog.id}: '${pre.label}' is not a purchasable training here, yet carries an amount`);
+      }
+    }
+  }
+  assert.ok(gates >= 15, `only ${gates} structured gates in the corpus — the sweep did not happen`);
+});
+
+/* ---------- claim quotes carry no delimiters of their own ----------
+ *
+ * The record page wraps every quote in curly quotes — the renderer owns the
+ * punctuation. One of 34 claims (de-yogaschool-enschede/meester-lineage) was stored
+ * with the researcher's own `"…"` around it, so the page printed “"Het eerste
+ * jaar…"” — doubled. The text inside was never wrong; the delimiters were never the
+ * school's words.
+ *
+ * The fix is in the DATA, and it must stay fixed. Stripping quotes at render time
+ * would put an editor of verbatim text inside the renderer, which §3 forbids
+ * outright: the one thing that may never happen to a quote is that we change it.
+ */
+
+test("INTEGRITY: no claim quote is stored wrapped in its own quote marks", () => {
+  const marks = ['"', "“", "”", "'", "‘", "’"];
+  let checked = 0;
+  for (const p of providers) {
+    for (const claim of p.claims) {
+      const text = claim.quote.trim();
+      checked++;
+      assert.ok(
+        !(marks.includes(text[0]) && marks.includes(text[text.length - 1])),
+        `${p.id}/${claim.id}: the quote is stored inside quote marks (${text.slice(0, 20)}…). The record page ` +
+        `supplies the quotation marks, so this renders doubled — “"…"”. Store the provider's words only.`,
+      );
+    }
+  }
+  assert.ok(checked > 30, `only ${checked} claims walked — the corpus held 34`);
+});
+
+test("INTEGRITY: a quote wrapped in quote marks FAILS the load — the check has a failure branch", () => {
+  // The data assertion above passes vacuously against a check that does nothing.
+  // Put the defect back — the exact one that shipped — and require the loader to
+  // refuse it, by name, saying whose the delimiters are.
+  const real = providerOf("de-yogaschool-enschede");
+  const claim = real.claims.find((c) => c.id === "meester-lineage")!;
+  assert.ok(claim.quote.startsWith("Het eerste jaar"), "the fixed quote must start with the school's own words");
+
+  const wrapped = {
+    ...real,
+    claims: real.claims.map((c) => (c.id === "meester-lineage" ? { ...c, quote: `"${c.quote}"` } : c)),
+  };
+  const errors = integrityErrors(wrapped, "de-yogaschool-enschede.yaml");
+  assert.equal(errors.length, 1, `expected exactly the quote error, got:\n${errors.join("\n")}`);
+  assert.match(errors[0], /meester-lineage/);
+  assert.match(errors[0], /renderer supplies the quotation marks/);
+
+  // Every mark a keyboard or a stylesheet produces, and both halves required: a
+  // quote that merely CONTAINS quote marks (a school quoting someone else) is
+  // untouched, and so is one that only opens or only closes with one.
+  const withQuote = (quote: string) => integrityErrors({ ...real, claims: [{ ...claim, quote }] }, "f.yaml");
+  for (const [open, close] of [['"', '"'], ["“", "”"], ["'", "’"], ["‘", "’"], ["”", "“"]]) {
+    assert.equal(withQuote(`${open}Wij leiden op tot docent.${close}`).length, 1, `${open}…${close} not caught`);
+  }
+  assert.deepEqual(withQuote('Wij noemen dit "de innerlijke leraar" in onze opleiding.'), [],
+    "quote marks INSIDE the provider's words are the provider's — never strip or reject those");
+  assert.deepEqual(withQuote('"De innerlijke leraar" is ons uitgangspunt.'), [],
+    "an opening mark alone is not a delimiter pair");
+  assert.deepEqual(withQuote(""), [], "an empty quote is not delimited (the schema is what requires the text)");
+});
+
 /* ---------- YearMonth: the month range is validated in the SCHEMA, not a renderer ---------- */
 
 test("SCHEMA: a typo'd month is rejected by validation, not left to a renderer", () => {
@@ -170,5 +805,209 @@ test("SCHEMA: every month in the committed dataset is in range", () => {
   assert.ok(seen.size > 50, `expected many YYYY-MM values in the data, saw ${seen.size}`);
   for (const ym of seen) {
     assert.equal(YearMonth.safeParse(ym).success, true, `"${ym}" is in the data but fails YearMonth`);
+  }
+});
+
+/* ---------- isMultistyle: a claim about what a named business teaches (spec §4.12) ----------
+ *
+ * ZERO ASSERTIONS, and it ships in the public API as a bare boolean about every programme.
+ * Change `specific.length >= 2` to `>= 1` and the entire suite stayed green — while EVERY
+ * single-style programme in the corpus was published to every consumer as "allround /
+ * multistyle": every Iyengar-only school, every Ashtanga-only school, told to the world as
+ * teaching something they never claimed to teach.
+ *
+ * The two ways to be true are not the same statement, and both are pinned:
+ *   1. THE SCHOOL SELF-TAGS IT — `multistyle` records THEIR word ("multistyle", "allround").
+ *   2. THEY NAME >= 2 CO-EQUAL SPECIFIC STYLES — then "allround" is OUR reading of their list.
+ */
+
+test("STYLE: multistyle is >= 2 co-equal styles, or the school's own word — never a residual default", () => {
+  const base = programOf("wahe", "200-vinyasa-ayurveda");
+  const withStyles = (styles: Program["styles"]): Program => ({ ...base, styles });
+
+  // 1. THE SELF-LABEL. Their word, not our conclusion — one tag is enough, because the tag IS
+  //    the claim they made.
+  assert.equal(isMultistyle(withStyles(["multistyle"])), true, "the school's own 'allround' label");
+
+  // 2. TWO CO-EQUAL SPECIFICS — our reading of what they list.
+  assert.equal(isMultistyle(withStyles(["vinyasa", "yin"])), true);
+  assert.equal(isMultistyle(withStyles(["hatha", "ashtanga", "kundalini"])), true);
+
+  // 3. ONE STYLE IS NOT MULTISTYLE. This is the mutation: `>= 1` publishes every single-style
+  //    programme in the corpus as "allround", to every API consumer, about named businesses
+  //    that named exactly one tradition.
+  assert.equal(isMultistyle(withStyles(["vinyasa"])), false,
+    "a school that names ONE style is published as 'allround/multistyle' — a claim about what they " +
+    "teach that they have never made");
+  assert.equal(isMultistyle(withStyles(["iyengar"])), false);
+
+  // 4. NO STYLE IS NOT MULTISTYLE EITHER. Absence of a statement is not a finding, and never a
+  //    residual "allround" (spec §4.12, in as many words).
+  assert.equal(isMultistyle(withStyles([])), false, "silence became a claim");
+  assert.equal(isMultistyle(withStyles(undefined)), false);
+
+  // 5. `other` AND `own_method` NAME NO TRADITION, so two of them are not two styles. Counting
+  //    them is the same error as `>= 1`, one step further along.
+  assert.equal(isMultistyle(withStyles(["other"])), false);
+  assert.equal(isMultistyle(withStyles(["own_method"])), false);
+  assert.equal(isMultistyle(withStyles(["other", "own_method"])), false,
+    "'other' + 'own_method' is not two co-equal styles — it is two ways of saying 'not one of the tags'");
+  assert.equal(isMultistyle(withStyles(["vinyasa", "other"])), false,
+    "one named style plus 'other' is ONE named style");
+  assert.equal(isMultistyle(withStyles(["vinyasa", "own_method"])), false);
+
+  // 6. And the corpus itself: the boolean the API publishes must be exactly this rule.
+  let multi = 0;
+  let single = 0;
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      const tags = prog.styles ?? [];
+      const specific = tags.filter((t) => t !== "other" && t !== "own_method");
+      const expected = tags.includes("multistyle") || specific.length >= 2;
+      assert.equal(isMultistyle(prog), expected, `${p.id}/${prog.id}`);
+      if (expected) multi++;
+      else single++;
+    }
+  }
+  // Both directions must exist in the data, or one of them is untested.
+  assert.ok(multi > 0, "no programme in the corpus is multistyle — that direction is untested");
+  assert.ok(single > 0,
+    "every programme in the corpus is multistyle — the `>= 1` mutation would be invisible, which is " +
+    "exactly how it stayed invisible");
+});
+
+/* ---------- bundleDelta: a comparison published about a named business ---------- */
+
+test("DERIVED: the bundle delta compares the WHOLE-COURSE total against the modules, not a yearly fee", () => {
+  // It read `price.amount_eur` raw and never consulted `period` — the v0.5 bug, surviving in a
+  // corner nobody had looked at. Nothing in the corpus is this shape today, which is exactly
+  // why it was invisible; so manufacture it, as v0.5's own tests do.
+  //
+  // A modular training priced PER STUDIEJAAR: the bare amount is one year's fee, and comparing
+  // ONE YEAR against the sum of ALL the modules publishes the package as thousands cheaper than
+  // its own parts — a comparison, about a named business, rendered on their record page.
+  const base = providerOf("yogapoint");
+  const prog = programOf("yogapoint", "300-verdieping");
+  assert.equal(prog.price.amount_eur, 3993, "guard: the package price");
+  assert.equal(prog.price.period, "total", "guard: today it IS a whole-course total, hence -363");
+  assert.equal(bundleDelta(base, prog), -363, "guard: the delta as the corpus stands");
+
+  // The same package, the same modules, priced per year over three years. The whole course now
+  // costs 3 x 1.331 = 3.993 — the identical total — so the delta MUST be identical too.
+  const perYear: Program = {
+    ...prog,
+    price: { ...prog.price, amount_eur: 1331, period: "per_year", periods: 3 },
+  };
+  assert.equal(totalPrice(base, perYear).value, 3993, "guard: 3 x 1.331 is the same whole course");
+  assert.equal(bundleDelta(base, perYear), -363,
+    "the delta was computed from ONE YEAR's fee (1.331) against the sum of ALL three modules (4.356), " +
+    "publishing the package as 3.025 cheaper than its parts when it is 363 cheaper. The bundle price is " +
+    "the whole-course TOTAL (spec §6) — never a bare amount_eur");
+
+  // And with no period count there is no comparable total, so there is no comparison to publish.
+  const noCount: Program = { ...perYear, price: { ...perYear.price, periods: null } };
+  assert.equal(totalPrice(base, noCount).value, null, "guard: no count, no total");
+  assert.equal(bundleDelta(base, noCount), null,
+    "a yearly fee was compared against the sum of every module — a package price that does not exist, " +
+    "set against parts that do");
+});
+
+/* ---------- YearMonth: the month was tightened, the DAY was not (spec v0.3) ---------- */
+
+test("SCHEMA: a day outside 01-31 is rejected, exactly as a month outside 01-12 is", () => {
+  // v0.3 fixed the month ("2026-13" was schema-valid) and left the day alone: `2026-07-32`,
+  // `2026-07-00` and `2026-07-99` all PASSED validation. The same class of defect, in the same
+  // field, one component along — a typo'd date that no check would name, sitting in a `captured`
+  // or a `last_verified`, which are the two fields the whole evidentiary posture rests on.
+  //
+  // It is narrower than a calendar check, and deliberately: this rejects what is not a day of any
+  // month. (Feb 30 is a further question, and one no record has ever posed.)
+  for (const good of ["2026-07", "2026-07-01", "2026-07-31", "2026-12-31", "2026-01-01"]) {
+    assert.equal(YearMonth.safeParse(good).success, true, `"${good}" is a real date and was rejected`);
+  }
+  for (const bad of ["2026-07-32", "2026-07-00", "2026-07-99", "2026-13-01", "2026-00-01"]) {
+    assert.equal(YearMonth.safeParse(bad).success, false,
+      `"${bad}" is schema-VALID: a malformed date passes validation and reaches a renderer, or a ` +
+      `citation, as though it were a day someone could look up`);
+  }
+});
+
+test("INTEGRITY: a snapshot is a capture of THEIR page, never text we wrote", () => {
+  // Five sources once pointed `local_snapshot` at a hand-made `.md` — an "Evidence
+  // snapshot — tekstextractie" composed from a web fetch, holding the quotes we had
+  // picked out. The provenance check opened them, searched for the price the record
+  // claimed, found the price we ourselves had typed into the note, and passed. Seven
+  // claims across four named businesses were certified against our own homework.
+  //
+  // Worse, those were the only artifact bodies committed to the public repo (the real
+  // ones are gitignored) — so in CI they were the ONLY evidence the check could open.
+  // Every claim it could actually verify was one it had authored.
+  //
+  // The records turned out to be right; the point is that nothing here could have told
+  // us. Now it is a load error, so it cannot come back as a convention nobody remembers.
+  const base = providerOf("yogapoint");
+  const withNote = {
+    ...base,
+    sources: base.sources.map((s, i) =>
+      i === 0 ? { ...s, local_snapshot: "data/archives/yogapoint/site-2026-06-12.md" } : s,
+    ),
+  };
+  const errors = integrityErrors(withNote, "yogapoint.yaml");
+  assert.equal(errors.length, 1, "a .md snapshot must be a load error, not a passing citation");
+  assert.match(errors[0], /text WE wrote/);
+  assert.match(errors[0], /npm run archive/, "the error must say how to fix it");
+
+  // And the corpus is clean of them: every snapshot in the dataset is a capture.
+  for (const p of providers) {
+    for (const s of p.sources) {
+      if (!s.local_snapshot) continue;
+      assert.doesNotMatch(
+        s.local_snapshot,
+        /\.(md|txt)$/i,
+        `${p.id}/${s.id}: cites text we wrote as its evidence`,
+      );
+    }
+  }
+});
+
+test("INTEGRITY: a public archive that proves nothing is not claimed as one", () => {
+  // The archiver has always SKIPPED Wayback for the YA registers (a Salesforce JS shell:
+  // Wayback stores header and footer, no register data) and for the CRKBO register (a
+  // search interface with no per-row permalink: Wayback captures page 1, never the
+  // searched row — and a CRKBO finding is usually a NEGATIVE, which page 1 cannot
+  // evidence either way).
+  //
+  // But that rule lived in the SCRIPT, so nothing held the DATA to it. Twelve sources,
+  // captured before the rule existed, kept their Wayback URL, and the record page printed
+  // "publiek ✓" over an archive containing none of what we cite. One of them —
+  // namaste-studios' YA profile — had been returning 404 for weeks: a public archive that
+  // did not exist at all, displayed as though it did.
+  const base = providerOf("yoga-den");
+  const withPointlessArchive = {
+    ...base,
+    sources: base.sources.map((s) =>
+      s.id === "crkbo-register-2026-06"
+        ? { ...s, archived_url: "https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen" }
+        : s,
+    ),
+  };
+  const errors = integrityErrors(withPointlessArchive, "yoga-den.yaml");
+  assert.equal(errors.length, 1, "a Wayback URL for a page Wayback cannot capture must be a load error");
+  assert.match(errors[0], /Wayback cannot evidence it/);
+  assert.match(errors[0], /pagina 1/, "the error must say WHY, not merely that it is wrong");
+
+  // And the corpus holds to it: no record claims a Wayback archive of a page Wayback
+  // cannot capture. The local, browser-rendered copy is the evidence for these.
+  for (const p of providers) {
+    for (const s of p.sources) {
+      if (!s.url || !s.archived_url) continue;
+      if (waybackIsPointless(s.url)) {
+        assert.doesNotMatch(
+          s.archived_url,
+          /web\.archive\.org/i,
+          `${p.id}/${s.id}: claims a public archive that cannot show what we cite it for`,
+        );
+      }
+    }
   }
 });

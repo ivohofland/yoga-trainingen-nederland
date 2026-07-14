@@ -143,6 +143,13 @@ programs:
     prerequisites_claimed: "minimaal 1 jaar eigen yogapraktijk; min. 85%
       aanwezigheid; ruimte voor huiswerk/zelfstudie. Geschikt voor (aankomend)
       docenten, coaches en zorgprofessionals."
+    prerequisite:
+      - kind: experience
+        label: "minimaal 1 jaar eigen yogapraktijk"
+        source: site-2026-06
+        note: >
+          "Wel verwachten we minimaal 1 jaar eigen yoga-praktijk." Ervaringseis,
+          geen voorafgaande opleiding en geen bedrag.
     price:
       amount_eur: 3450
       variants:
@@ -167,6 +174,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
       note: >
         200u over 33 lesdagen (vrijdag 11:00-17:30) in 5 modules + Engelstalig

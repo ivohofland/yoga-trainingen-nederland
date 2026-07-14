@@ -14,6 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
 import { Provider } from "../schema";
+import { waybackIsPointless, waybackPointlessReason } from "./wayback";
 
 const DATA_DIR = path.join(process.cwd(), "data", "providers");
 
@@ -34,7 +35,10 @@ function collectSourceRefs(node: unknown, refs: Set<string>): void {
   }
 }
 
-function integrityErrors(p: Provider, file: string): string[] {
+/** The checks Zod cannot express. Exported so the tests can put a record THROUGH
+ *  them — a check that only ever runs over data that already passes it is a check
+ *  whose failure branch nothing has proven. */
+export function integrityErrors(p: Provider, file: string): string[] {
   const errors: string[] = [];
   const sourceIds = new Set(p.sources.map((s) => s.id));
   const moduleIds = new Set(p.modules.map((m) => m.id));
@@ -45,6 +49,48 @@ function integrityErrors(p: Provider, file: string): string[] {
   collectSourceRefs(p, refs);
   for (const ref of refs) {
     if (!sourceIds.has(ref)) errors.push(`${file}: source ref '${ref}' not found in sources[]`);
+  }
+
+  // 1b. A SNAPSHOT IS A CAPTURE OF THEIR PAGE — NEVER A FILE WE WROTE.
+  //
+  // Five sources once pointed `local_snapshot` at a hand-made `.md` "Evidence snapshot —
+  // tekstextractie": our own web-fetch notes, holding the quotes we had selected. The
+  // provenance check duly opened them, found the figures we had put there, and certified
+  // seven claims against our own summary. A note cannot evidence the claim it was written
+  // from — that is circular, and it is the one thing this project says in every README.
+  //
+  // The rule is structural, not a convention, because the convention held for a month and
+  // then didn't: a snapshot is a capture (`.pdf`/`.html` from the archiver, or a directly
+  // downloaded artefact) and text we authored is a note. Notes belong in `note:`.
+  for (const s of p.sources) {
+    if (s.local_snapshot && /\.(md|txt)$/i.test(s.local_snapshot)) {
+      errors.push(
+        `${file}: source '${s.id}' cites '${s.local_snapshot}' as its snapshot — that is text WE wrote, ` +
+          `not a capture of their page, and it cannot evidence a claim extracted from it. Archive the page ` +
+          `(npm run archive -- ${p.id}) and cite the capture; put our reading of it in note:.`,
+      );
+    }
+
+    // 1c. A PUBLIC ARCHIVE THAT PROVES NOTHING MUST NOT BE CLAIMED AS ONE.
+    //
+    // The archiver skips Wayback for the YA registers (a Salesforce JS shell — Wayback
+    // stores header and footer, no register data) and for the CRKBO register (a search
+    // interface with no per-row permalink — Wayback captures page 1, never the searched
+    // row, and the finding is usually a NEGATIVE that page 1 cannot evidence either way).
+    //
+    // But that rule lived only in the SCRIPT. Twelve records, captured before it existed,
+    // carried the Wayback URL anyway — and the site rendered "publiek ✓" over an archive
+    // that shows none of what we cite. One of them (namaste-studios' YA profile) had been
+    // returning 404 for weeks: a public archive that did not exist at all. The local,
+    // browser-rendered (and where needed, filtered) copy IS the evidence for these; the
+    // public half is honestly absent, and the record must say so with `archived_url: null`.
+    if (s.url && s.archived_url && waybackIsPointless(s.url) && /web\.archive\.org/i.test(s.archived_url)) {
+      errors.push(
+        `${file}: source '${s.id}' claims a Wayback archive of ${s.url} — but Wayback cannot evidence it ` +
+          `(${waybackPointlessReason(s.url)}). The local capture is the evidence; set archived_url: null so ` +
+          `the record says "publiek —", which is true, instead of "publiek ✓", which is not.`,
+      );
+    }
   }
 
   // 2. composition.modules must reference existing modules
@@ -60,16 +106,96 @@ function integrityErrors(p: Provider, file: string): string[] {
     }
   }
 
-  // 4. claim scopes must resolve
+  // 4. prerequisite.program must resolve, and the chain must not CYCLE (spec v0.9).
+  //
+  //    A cycle is a VALIDATION ERROR, never a silent stop in the arithmetic. Two
+  //    programmes that each gate the other describe no path a student can walk, and
+  //    `totalPathCost` returning *some* number for it would publish a total for a route
+  //    that does not exist — about a named business, in a price band, in a sort order,
+  //    indistinguishable from a real one. The derivation guards itself against infinite
+  //    recursion (see purchasableGates), but the guard is for termination; the record must
+  //    not load at all.
+  for (const program of p.programs) {
+    for (const pre of program.prerequisite ?? []) {
+      if (pre.program == null) continue;
+      if (pre.kind !== "program")
+        errors.push(
+          `${file}: program '${program.id}' prerequisite '${pre.label}' points at program '${pre.program}' but has kind '${pre.kind}' — only kind 'program' is a training you must buy`,
+        );
+      if (!programIds.has(pre.program))
+        errors.push(
+          `${file}: program '${program.id}' has a prerequisite on unknown program '${pre.program}'`,
+        );
+    }
+  }
+  for (const program of p.programs) {
+    const cycle = prerequisiteCycle(p, program.id, []);
+    if (cycle)
+      errors.push(
+        `${file}: prerequisite cycle ${cycle.join(" → ")} — a programme cannot be its own gate, and a path cost over a cycle is a total for a route no student can walk`,
+      );
+  }
+
+  // 5. claim scopes must resolve
   for (const claim of p.claims) {
     const [kind, id] = claim.scope.split(":");
     if (kind === "program" && id && !programIds.has(id))
       errors.push(`${file}: claim '${claim.id}' scoped to unknown program '${id}'`);
     if (kind === "module" && id && !moduleIds.has(id))
       errors.push(`${file}: claim '${claim.id}' scoped to unknown module '${id}'`);
+
+    // 6. A claim's quote is the provider's WORDS. The delimiters are the
+    //    RENDERER's: the record page wraps every quote in curly quotes, so a value
+    //    stored with its own outer quote marks renders as “"Het eerste jaar…"” —
+    //    doubled. One of 34 claims was stored that way (de-yogaschool-enschede,
+    //    meester-lineage), and the researcher's typing habit is the obvious way for
+    //    the next one to arrive: a composed quotation, pasted with the quote marks
+    //    that framed it while it was being assembled.
+    //
+    //    Stripping them at render time would be worse than this check: a renderer
+    //    that edits a verbatim quote is a renderer that can edit a verbatim quote,
+    //    and §3 says nothing may. So the DATA must be clean, and the load must
+    //    refuse data that is not. Quotes INSIDE the text are untouched — only a
+    //    value that both opens and closes with one is delimited rather than quoting.
+    if (isDelimited(claim.quote))
+      errors.push(
+        `${file}: claim '${claim.id}' has a quote wrapped in quote marks (${claim.quote.slice(0, 1)}…${claim.quote.slice(-1)}). ` +
+        `Store the provider's words only — the renderer supplies the quotation marks, so stored ones render doubled.`,
+      );
   }
 
   return errors;
+}
+
+/**
+ * The prerequisite chain from `programId`, or the cycle it runs into.
+ *
+ * Depth-first over `prerequisite[].program` — the only link that can cycle, because it is
+ * the only one that points BACK INTO this record. Returns the offending path
+ * (`a → b → a`) so the error names the route, not merely the record.
+ */
+function prerequisiteCycle(p: Provider, programId: string, path: string[]): string[] | null {
+  if (path.includes(programId)) return [...path, programId];
+  const program = p.programs.find((pr) => pr.id === programId);
+  if (!program) return null; // unresolvable ref — reported by its own check above
+  for (const pre of program.prerequisite ?? []) {
+    if (pre.program == null) continue;
+    const cycle = prerequisiteCycle(p, pre.program, [...path, programId]);
+    if (cycle) return cycle;
+  }
+  return null;
+}
+
+/** Straight and curly, opening and closing, single and double: every mark a
+ *  researcher's keyboard or a website's stylesheet can produce. */
+const QUOTE_MARKS = ['"', "“", "”", "'", "‘", "’"];
+
+function isDelimited(quote: string): boolean {
+  const text = quote.trim();
+  // A one-character value cannot be both delimiters; requiring 2 also stops a bare
+  // `"` from reporting itself as its own opening and closing mark.
+  if (text.length < 2) return false;
+  return QUOTE_MARKS.includes(text[0]) && QUOTE_MARKS.includes(text[text.length - 1]);
 }
 
 export function loadDataset(): LoadResult {

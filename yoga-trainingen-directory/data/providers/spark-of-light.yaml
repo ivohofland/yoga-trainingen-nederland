@@ -167,6 +167,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-200-2026-06
       note: >
         10 lesweekenden/jaar (9 modules van 2 dagen + 2 examendagen), elke
@@ -249,12 +250,33 @@ programs:
       language: nl
     prerequisites_claimed: "afgeronde 200u-yogaopleiding (elders mag, na overleg
       over ontbrekende onderdelen); modules ook los te volgen als bijscholing"
+    prerequisite:
+      - kind: other
+        label: "afgeronde 200-uursopleiding (ook elders behaald)"
+        source: site-300-2026-06
+        note: >
+          "Deze verdiepende yoga docent opleiding is bedoeld voor mensen die al
+          een 200 uur ... hebt afgerond", en met zoveel woorden ook elders: "Heb
+          je wel een 200 uur opleiding gedaan, maar niet bij Spark of Light
+          Yoga?" De school verkoopt zelf een 200u (€ 3.450), maar eist die niet
+          — dus geen bedrag opgeteld: dat zou een verplichte aankoop bij hén
+          beweren die de pagina uitdrukkelijk niet stelt.
     price:
-      vat: exempt_crkbo
+      vat: unknown
       published: no
-      note: "Geen prijs gepubliceerd op de 300u-pagina ('neem contact op'); modules
-        los te volgen. BTW-behandeling als de 200u (CRKBO) aangenomen, maar geen
-        expliciete 300u-prijsvermelding."
+      note: >
+        Geen prijs gepubliceerd op de 300u-pagina ("neem contact op"); modules
+        los te volgen. BTW: NIET WAARGENOMEN → unknown (§4.11). Dit record droeg
+        `exempt_crkbo`, en de note zei er zelf bij dat de behandeling "als de 200u
+        (CRKBO) aangenomen" was — een afleiding van de pagina van een ANDERE
+        opleiding, precies wat §4.11 verbiedt. De enige twee treffers op deze
+        pagina die op een vrijstelling lijken, gaan over VRIJSTELLING VAN MODULES,
+        niet over belasting: "er is geen vrijstelling mogelijk" (voor
+        YA-erkenning) en "staat de Vereniging Yogadocenten Nederland wel
+        vrijstellingen toe" (bij eerder gevolgde trainingen). Over btw zegt deze
+        pagina niets. (De 200u-pagina zegt het wél, in zoveel woorden — "De
+        opleiding is BTW-vrijgesteld, omdat het een CRKBO-erkende..." — en dáár
+        staat `exempt_crkbo` dan ook, terecht.)
       source: site-300-2026-06
     hours_claimed:
       total: 300
@@ -262,6 +284,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-300-2026-06
       note: >
         YA-pad: 6 modules van 50u (geen vrijstelling). VYN-pad: 7 modules +

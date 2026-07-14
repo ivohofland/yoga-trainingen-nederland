@@ -10,5 +10,16 @@ next-env.d.ts
 # The .sha256 next to each one IS published, and proves the snapshot exists
 # and has not been altered, without republishing a provider's copyrighted page.
 # Bodies live on disk and in the private, git-dated archive repo.
-data/archives/**/*.pdf
-data/archives/**/*.html
+#
+# DENY BY DEFAULT. This used to name the two extensions we happened to write
+# (*.pdf, *.html) — an allowlist by omission, which publishes any capture format
+# nobody thought of. The archiver already writes others: a directly-downloaded
+# brochure keeps the URL's own extension, and the page.pdf() fallback is a
+# full-page .png. Both would have been committed to a public repo, which is the
+# one thing this file exists to prevent. So: ignore EVERYTHING under
+# data/archives, then re-admit only what we mean to publish.
+data/archives/**
+!data/archives/**/
+!data/archives/**/*.sha256
+!data/archives/README.md
+!data/archives/wayback-todo.md

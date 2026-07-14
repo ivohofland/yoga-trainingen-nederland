@@ -39,7 +39,7 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-12"
     local_snapshot: data/archives/centre-body-mind/crkbo-register-2026-06-2026-06-12.pdf
 
@@ -61,6 +61,13 @@ programs:
       duration_months_min: 10
       language: nl
     prerequisites_claimed: "minimaal twee jaar ervaring met yoga"
+    prerequisite:
+      - kind: experience
+        label: "minimaal twee jaar ervaring met yoga"
+        source: site-2026-06
+        note: >
+          "twee jaar ervaring" met yoga — een ervaringsdrempel, geen opleiding die
+          je eerst moet kopen. Een echte hindernis, zonder bedrag.
     price:
       amount_eur: 2600
       vat: excl
@@ -78,6 +85,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-2026-06
     assessment_described:
       exists: "yes"

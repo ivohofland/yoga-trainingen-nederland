@@ -181,6 +181,7 @@ programs:
       self_study: null
       supervised_teaching_practice: null
       breakdown_published: not_published
+      contact_published: not_published
       source: site-vinyasa-2026-06
       note: >
         200u over 8 weekenden / 24 lesdagen (vr 17-21, za 11:30-18:30, zo
