@@ -54,19 +54,6 @@ content goes live. The site itself now exists; these are the parts of the
   `npm run archive`, not a crisis. Fix those 18 and the corpus meets its own bar.
 *(The provenance build gate is done — see Closed.)*
 
-- [ ] **32 archive bodies exist ONLY on the author's laptop.** The split works as
-  designed — the public repo carries the `.sha256` hashes and no bodies, and the
-  private `yoga-trainingen-archief` repo carries the bodies — but that private repo
-  was last pushed **2026-07-11**, and every capture since (07-12 and 07-14) lives on
-  one disk. That includes `site-ytt-200-2026-07` and `site-ytt-100h-2026-07`, the
-  two artifacts the published Yoga Den price finding rests on. The hashes for them
-  are already public.
-  **A hash proves a file is unaltered; it cannot reproduce the file.** If the disk
-  dies, 32 published hashes point at nothing, and the evidence behind a live finding
-  about a named business is gone. Sync the private archive repo — and then decide
-  whether the sync should be a step in `npm run archive` rather than a thing someone
-  has to remember.
-
 ## Open — research debt
 
 *Named, actionable extraction work the records already admit to.*
@@ -176,6 +163,15 @@ understate the project.*
   Yoga Academie Nederland); de Blikopener split into two properly-sourced
   programmes; Wahé's 500-hour route re-cited to the page that actually states it;
   four VAT treatments corrected to `unknown` per §4.11.
+- [x] **`npm run archive` pushes the bodies to the private archive repo** (2026-07-14).
+  It didn't, and nobody had decided not to: it was a step you had to *remember*, so
+  32 captures never left one laptop while their `.sha256` hashes sat published —
+  including the two the Yoga Den price finding rests on. A hash proves a file is
+  unaltered; it cannot reproduce the file. The sync is now part of archiving
+  (`--no-sync` to skip, `--sync-only` to push without capturing), it is append-only,
+  and it verifies every body against the hash the public repo already published for
+  it — a mismatch refuses the entire push. All 454 bodies are now in the private repo;
+  nothing is left on one disk.
 - [x] **The provenance check is a BUILD GATE** (2026-07-14). It ran as a warning
   until it had held at zero findings across 163 claims — the condition it set for
   itself — and `npm run provenance` now runs inside `npm run build` and fails it.

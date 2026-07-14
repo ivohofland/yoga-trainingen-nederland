@@ -30,7 +30,7 @@ npm run validate          # parse + integrity-check every record; run after EVER
 npm run dev               # local site on :3000
 npm run build             # gen-schema → validate → provenance → test → test:ci → export-json → next build
 npm run export-json       # writes the validated dataset to public/data/v1/providers.json (this is the API)
-npm run archive -- --all  # local snapshots + Wayback for sources missing them (run locally; needs network + chromium)
+npm run archive -- --all  # local snapshots + Wayback + push the bodies to the private archive repo
 npm test                  # unit tests (node:test); locks the quad/editorial invariants
 npm run test:ci           # the SAME suite as CI sees it: no archive bodies (see below)
 npm run provenance        # the provenance gate, strict; run after touching a price, an hour count or a source
@@ -60,9 +60,25 @@ is the only place a quad value becomes pixels — keep it that way.
 
 Archive script flags: `npm run archive -- <provider-id> [...ids]`,
 `--all`, `--force` (re-archive sources that already have a copy),
-`--skip-wayback`. Wayback API keys (`WAYBACK_ACCESS_KEY`/`WAYBACK_SECRET_KEY`,
-or via `.env`) make submissions reliable; without them it falls back to the
-rate-limited public save URL.
+`--skip-wayback`, `--sync-only` (push bodies, capture nothing), `--no-sync`.
+Wayback API keys (`WAYBACK_ACCESS_KEY`/`WAYBACK_SECRET_KEY`, or via `.env`) make
+submissions reliable; without them it falls back to the rate-limited public save URL.
+
+**Archiving PUSHES THE BODIES to the private archive repo, by default**
+(`scripts/sync-archive.ts` → `yoga-trainingen-archief`, cloned as a sibling of this
+repo; override with `ARCHIVE_REPO_URL`/`ARCHIVE_REPO_PATH`). This is not a
+convenience. The public repo publishes each snapshot's `.sha256` and none of the
+bodies — and **a hash proves a file is unaltered; it cannot reproduce the file.** So
+a published hash is worth exactly as much as the surviving body, and for a while
+"the surviving body" meant one laptop: 32 captures had never left it, including the
+two the published Yoga Den price finding rests on. Nobody decided to skip the
+backup — it was a step you had to *remember*, at the end of the one task whose
+interesting part is already over. Remembering is not a mechanism.
+
+It is **append-only** and it **verifies every body against the hash the public repo
+already published for it**: a mismatch refuses the whole push, loudly. Never "fix" a
+mismatch by re-hashing the file — find out why the file changed. It never deletes and
+never overwrites dated evidence.
 
 ## Architecture
 

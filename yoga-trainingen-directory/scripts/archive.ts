@@ -15,6 +15,8 @@
  *   npm run archive -- --all              # alle providers
  *   npm run archive -- --all --force      # ook bronnen die al een kopie hebben
  *   npm run archive -- --all --skip-wayback
+ *   npm run archive -- --sync-only       # alleen de bodies naar de private archiefrepo
+ *   npm run archive -- --all --no-sync    # archiveren zonder te pushen (zelden gewenst)
  *
  * Wayback met API-sleutels (sneller, betrouwbaarder; gratis account op archive.org):
  *   export WAYBACK_ACCESS_KEY=... WAYBACK_SECRET_KEY=...
@@ -27,6 +29,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { parseDocument } from "yaml";
 import { WAYBACK_POINTLESS as WAYBACK_POINTLESS_DOMAINS } from "../src/lib/wayback";
+import { syncArchive } from "./sync-archive";
 
 // Minimale .env-loader (geen dependency): KEY=VALUE per regel, # = commentaar.
 const envFile = path.join(process.cwd(), ".env");
@@ -45,6 +48,12 @@ const args = process.argv.slice(2);
 const ALL = args.includes("--all");
 const FORCE = args.includes("--force");
 const SKIP_WAYBACK = args.includes("--skip-wayback");
+/** The bodies go to the private archive repo unless you say otherwise. It used to be a
+ *  step you had to remember, and 32 captures never left one laptop while their hashes sat
+ *  published — see scripts/sync-archive.ts. Remembering is not a mechanism. */
+const NO_SYNC = args.includes("--no-sync");
+/** Only push what is already captured — no browser, no network beyond git. */
+const SYNC_ONLY = args.includes("--sync-only");
 const ids = args.filter((a) => !a.startsWith("--"));
 
 const today = new Date().toISOString().slice(0, 10);
@@ -320,10 +329,20 @@ async function main() {
   }
 
   await browser.close();
-  console.log("\nKlaar. Draai `npm run validate` en commit data/ in git (dateert de kopieën).");
+
+  // DE BODIES NAAR DE PRIVATE ARCHIEFREPO. Standaard, niet op verzoek: de hash die we
+  // publiceren is pas iets waard zolang de body ergens bestaat, en "ergens" was tot nu
+  // toe één laptop. Zie scripts/sync-archive.ts.
+  if (!NO_SYNC) syncArchive();
+
+  console.log("\nKlaar. Draai `npm run validate` en commit data/ in git (dateert de hashes).");
 }
 
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+if (SYNC_ONLY) {
+  syncArchive();
+} else {
+  main().catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });
+}
