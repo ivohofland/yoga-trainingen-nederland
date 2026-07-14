@@ -14,6 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
 import { Provider } from "../schema";
+import { waybackIsPointless, waybackPointlessReason } from "./wayback";
 
 const DATA_DIR = path.join(process.cwd(), "data", "providers");
 
@@ -67,6 +68,27 @@ export function integrityErrors(p: Provider, file: string): string[] {
         `${file}: source '${s.id}' cites '${s.local_snapshot}' as its snapshot — that is text WE wrote, ` +
           `not a capture of their page, and it cannot evidence a claim extracted from it. Archive the page ` +
           `(npm run archive -- ${p.id}) and cite the capture; put our reading of it in note:.`,
+      );
+    }
+
+    // 1c. A PUBLIC ARCHIVE THAT PROVES NOTHING MUST NOT BE CLAIMED AS ONE.
+    //
+    // The archiver skips Wayback for the YA registers (a Salesforce JS shell — Wayback
+    // stores header and footer, no register data) and for the CRKBO register (a search
+    // interface with no per-row permalink — Wayback captures page 1, never the searched
+    // row, and the finding is usually a NEGATIVE that page 1 cannot evidence either way).
+    //
+    // But that rule lived only in the SCRIPT. Twelve records, captured before it existed,
+    // carried the Wayback URL anyway — and the site rendered "publiek ✓" over an archive
+    // that shows none of what we cite. One of them (namaste-studios' YA profile) had been
+    // returning 404 for weeks: a public archive that did not exist at all. The local,
+    // browser-rendered (and where needed, filtered) copy IS the evidence for these; the
+    // public half is honestly absent, and the record must say so with `archived_url: null`.
+    if (s.url && s.archived_url && waybackIsPointless(s.url) && /web\.archive\.org/i.test(s.archived_url)) {
+      errors.push(
+        `${file}: source '${s.id}' claims a Wayback archive of ${s.url} — but Wayback cannot evidence it ` +
+          `(${waybackPointlessReason(s.url)}). The local capture is the evidence; set archived_url: null so ` +
+          `the record says "publiek —", which is true, instead of "publiek ✓", which is not.`,
       );
     }
   }

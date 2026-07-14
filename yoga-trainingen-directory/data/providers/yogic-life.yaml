@@ -47,7 +47,7 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260612191114/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-12"
     local_snapshot: data/archives/yogic-life/crkbo-register-2026-06-2026-06-12.pdf
 

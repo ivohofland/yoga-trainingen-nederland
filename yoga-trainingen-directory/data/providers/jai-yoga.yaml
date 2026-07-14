@@ -42,13 +42,13 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
-    archived_url: https://web.archive.org/web/20260612190956/https://app.yogaalliance.org/directoryregistrants?type=School
+    archived_url: null
     captured: "2026-06-12"
     local_snapshot: data/archives/jai-yoga/ya-register-2026-06-2026-06-12.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260612191114/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-12"
     local_snapshot: data/archives/jai-yoga/crkbo-register-2026-06-2026-06-12.pdf
 

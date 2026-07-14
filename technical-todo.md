@@ -37,17 +37,35 @@ content goes live. The site itself now exists; these are the parts of the
 
 ## Open — the publication bar
 
-- [ ] **110 of 220 sources have no public archive.** The methodology states the
-  bar: *"elke geciteerde pagina wordt dubbel bewaard: in een publiek webarchief
-  … én als eigen kopie."* Today 104 sources meet it, 103 are local-only, 5 are
-  public-only, 8 have neither. The record pages now show **both halves
-  honestly** (`publiek — · lokaal ✓`), so the site no longer implies a bar it
-  doesn't meet — but the gap is real and it is the largest one left.
-  Many local-only sources are legitimate (Wayback-excluded domains,
-  JS-rendered registers), but that distinction is not currently recorded, so a
-  reader cannot tell a deliberate skip from a missing submission. Consider a
-  reason field, or a retry pass with `npm run archive`.
+- [ ] **The public-archive debt is 18 sources, not 110 — we were counting our own
+  correct decisions as failures.** This item used to read *"110 of 220 sources have
+  no public archive … the largest gap left"*. It was wrong, and wrong in the one
+  direction this project is supposed to be immune to: it called a **decision** a
+  **gap**. Of 230 sources today, **107 meet the bar**, and **105 are local-only
+  because a public archive is IMPOSSIBLE** — Yoga Alliance registers are a
+  Salesforce shell and the CRKBO register is a search page with no per-row
+  permalink, so Wayback captures nothing we cite and the browser-rendered local
+  copy is the only evidence that can exist. `waybackIsPointless()` now names them,
+  `integrityErrors` rejects a Wayback URL on them, and the record page prints
+  `publiek n.v.t. (niet vast te leggen)` instead of `publiek —`, which said *we
+  haven't got round to it* about a thing that cannot be done.
+  **The real debt: 14 sources local-only with a public archive genuinely missing,
+  1 public-only (no local copy), 3 with neither.** That is a retry pass with
+  `npm run archive`, not a crisis. Fix those 18 and the corpus meets its own bar.
 *(The provenance build gate is done — see Closed.)*
+
+- [ ] **32 archive bodies exist ONLY on the author's laptop.** The split works as
+  designed — the public repo carries the `.sha256` hashes and no bodies, and the
+  private `yoga-trainingen-archief` repo carries the bodies — but that private repo
+  was last pushed **2026-07-11**, and every capture since (07-12 and 07-14) lives on
+  one disk. That includes `site-ytt-200-2026-07` and `site-ytt-100h-2026-07`, the
+  two artifacts the published Yoga Den price finding rests on. The hashes for them
+  are already public.
+  **A hash proves a file is unaltered; it cannot reproduce the file.** If the disk
+  dies, 32 published hashes point at nothing, and the evidence behind a live finding
+  about a named business is gone. Sync the private archive repo — and then decide
+  whether the sync should be a step in `npm run archive` rather than a thing someone
+  has to remember.
 
 ## Open — research debt
 

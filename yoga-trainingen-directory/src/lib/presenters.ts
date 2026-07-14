@@ -18,6 +18,7 @@ import {
   type PriceBand,
 } from "./rules";
 import { nl } from "./strings";
+import { waybackIsPointless } from "./wayback";
 import type { Claim, Cohort, Program, Provider, Quad, Source } from "../schema";
 
 /**
@@ -1290,14 +1291,28 @@ function domainOf(url: string): string {
  * The two halves of the publication bar, spelled out — a present half and an
  * absent half are equally visible. Null when there is neither: the page then
  * prints the below-the-bar stamp instead of two empty slots.
+ *
+ * AND AN IMPOSSIBLE HALF IS NOT AN ABSENT ONE. This is the project's own cardinal
+ * distinction — a finding is not a gap — turned on our own archive: "publiek —"
+ * says *we have not done it*, and for the Yoga Alliance and CRKBO registers that
+ * is simply false. Wayback CANNOT capture them (a Salesforce shell; a search
+ * interface with no per-row permalink), the browser-rendered local copy is the
+ * only evidence that can exist, and the record was reporting our deliberate,
+ * correct decision as a hole in our research. Twelve sources read that way.
+ *
+ * So it says "n.v.t." with the reason, and the two are never spelled the same.
+ * The predicate is `waybackIsPointless` — the SAME one the archiver skips on and
+ * `integrityErrors` rejects a Wayback URL on, so the page cannot claim a thing is
+ * impossible while the script cheerfully archives it.
  */
 function archiveSlots(s: Source): string | null {
   if (s.archived_url == null && s.local_snapshot == null) return null;
   const mark = (present: boolean) => (present ? nl.archivePresent : nl.archiveAbsent);
-  return [
-    `${nl.archivePublic} ${mark(s.archived_url != null)}`,
-    `${nl.archiveLocal} ${mark(s.local_snapshot != null)}`,
-  ].join(" · ");
+  const publicHalf =
+    s.archived_url == null && s.url != null && waybackIsPointless(s.url)
+      ? `${nl.archivePublic} ${nl.archiveNotApplicable}`
+      : `${nl.archivePublic} ${mark(s.archived_url != null)}`;
+  return [publicHalf, `${nl.archiveLocal} ${mark(s.local_snapshot != null)}`].join(" · ");
 }
 
 export function toProviderView(p: Provider): ProviderView {

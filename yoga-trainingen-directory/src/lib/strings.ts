@@ -323,7 +323,13 @@ export const nl = {
   archivePublic: "publiek",
   archiveLocal: "lokaal",
   archivePresent: "✓",
+  /** WE HAVE NOT DONE IT — a gap in our work, and it must not be spelled like the next one. */
   archiveAbsent: "—",
+  /** IT CANNOT BE DONE — Wayback cannot capture a Salesforce register or a search page with
+   *  no per-row permalink, so the local capture is the only evidence that can exist. Printing
+   *  this as "—" reported a correct decision of ours as a hole in our research, on twelve
+   *  sources. Same rule as the quad: a finding is not a gap. See archiveSlots(). */
+  archiveNotApplicable: "n.v.t. (niet vast te leggen)",
   // Never one number: a count of public archives alone reads as archive coverage,
   // and the bar is BOTH halves. Both counts, side by side, over the total.
   sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>

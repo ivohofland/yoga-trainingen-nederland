@@ -44,7 +44,7 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260613075357/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-13"
     local_snapshot: data/archives/de-blikopener/crkbo-register-2026-06-2026-06-13.pdf
   - id: tarieven-2026-07

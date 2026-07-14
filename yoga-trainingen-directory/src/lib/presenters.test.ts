@@ -20,9 +20,10 @@ import { ourWorking, totalPrice, type TotalHours, type TotalPrice } from "./deri
 import { priceGapProvider } from "./price-gap.fixture";
 import { inkFor, quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
+import { waybackIsPointless } from "./wayback";
 // The SCHEMA, as a value — the contract test walks its shape rather than
 // hard-coding the key list it is supposed to be guarding. See SCHEMA_CONTRACT_KEYS.
-import { Program, Quad, type Cohort, type Provider } from "../schema";
+import { Program, Quad, type Cohort, type Provider, type Source } from "../schema";
 
 const { providers } = loadDataset();
 const NOW = new Date("2026-07-01T00:00:00Z"); // fixed — never let a test depend on the wall clock
@@ -1535,19 +1536,72 @@ test("RECORD: every source shows BOTH halves of the publication bar", () => {
       // both halves are named, every time, whichever one is missing
       assert.ok(slots.includes(nl.archivePublic) && slots.includes(nl.archiveLocal),
         `${p.id}/${s.id}: "${slots}" hides a half of the bar`);
+      // THE PUBLIC HALF HAS THREE STATES, NOT TWO — and the third is the whole point.
+      // "—" says WE HAVE NOT DONE IT (a gap in our work). For a Yoga Alliance or CRKBO
+      // register that is false: Wayback CANNOT capture them, the local browser capture is
+      // the only evidence that can exist, and printing "—" reported a correct decision of
+      // ours as a hole in our research. Twelve sources read that way. It is the project's
+      // own finding-vs-gap rule, turned on its own archive — so it gets the same treatment:
+      // the two are never spelled the same.
+      const impossible = !hasPublic && rec.url != null && waybackIsPointless(rec.url);
+      const expectedPublic = impossible
+        ? nl.archiveNotApplicable
+        : hasPublic
+          ? nl.archivePresent
+          : nl.archiveAbsent;
       assert.ok(
-        slots.includes(`${nl.archivePublic} ${hasPublic ? nl.archivePresent : nl.archiveAbsent}`),
-        `${p.id}/${s.id}: the public-archive slot misreports (archived_url ${hasPublic})`);
+        slots.includes(`${nl.archivePublic} ${expectedPublic}`),
+        `${p.id}/${s.id}: the public-archive slot misreports — "${slots}" (archived_url ${hasPublic}, wayback-impossible ${impossible})`);
+      if (impossible) {
+        assert.ok(
+          !slots.includes(`${nl.archivePublic} ${nl.archiveAbsent}`),
+          `${p.id}/${s.id}: an archive Wayback CANNOT make is shown as one we simply have not made`);
+      }
       assert.ok(
         slots.includes(`${nl.archiveLocal} ${hasLocal ? nl.archivePresent : nl.archiveAbsent}`),
         `${p.id}/${s.id}: the local-copy slot misreports (local_snapshot ${hasLocal})`);
-      seen.add(`${hasPublic}/${hasLocal}`);
+      seen.add(impossible ? "impossible/local" : `${hasPublic}/${hasLocal}`);
     }
   }
-  // all four shapes exist in the dataset — none of the branches above is dead
-  for (const shape of ["true/true", "false/true", "true/false", "neither"]) {
+  // every shape exists in the dataset — none of the branches above is dead
+  for (const shape of ["true/true", "false/true", "true/false", "neither", "impossible/local"]) {
     assert.ok(seen.has(shape), `no source has archive shape ${shape} — that branch is untested`);
   }
+});
+
+test("RECORD: 'we have not archived it' and 'it cannot be archived' never read alike", () => {
+  // The truth-table, stated once. These are the two sentences the project spends its whole
+  // model keeping apart, in the one place it had quietly collapsed them: our own archive
+  // status. A gap invites "why haven't you?"; an impossibility answers it.
+  assert.notEqual(nl.archiveAbsent, nl.archiveNotApplicable);
+  assert.notEqual(nl.archivePresent, nl.archiveNotApplicable);
+
+  const local = "data/archives/x/y-2026-01.pdf";
+  const src = (url: string) =>
+    ({ id: "s", type: "register", url, archived_url: null, captured: "2026-06", local_snapshot: local }) as Source;
+
+  const ya = toProviderView({
+    ...providerOf("yoga-den"),
+    sources: [src("https://app.yogaalliance.org/schoolpublicprofile?id=1")],
+    programs: [],
+  } as unknown as Provider).sources[0];
+  const crkbo = toProviderView({
+    ...providerOf("yoga-den"),
+    sources: [src("https://www.crkbo.nl/Register/Instellingen")],
+    programs: [],
+  } as unknown as Provider).sources[0];
+  const ordinary = toProviderView({
+    ...providerOf("yoga-den"),
+    sources: [src("https://example.test/opleiding")],
+    programs: [],
+  } as unknown as Provider).sources[0];
+
+  assert.match(ya.archiveSlots ?? "", /n\.v\.t\./, "a Salesforce register cannot be Wayback'd — say so");
+  assert.match(crkbo.archiveSlots ?? "", /n\.v\.t\./, "a search page with no permalink cannot be Wayback'd — say so");
+  assert.ok(
+    ordinary.archiveSlots?.includes(`${nl.archivePublic} ${nl.archiveAbsent}`),
+    "an ordinary page with no public archive is a GAP — that one really is a '—', and it must stay one",
+  );
 });
 
 test("RECORD: the source count never overstates what is archived", () => {

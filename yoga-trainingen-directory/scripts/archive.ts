@@ -26,6 +26,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { parseDocument } from "yaml";
+import { WAYBACK_POINTLESS as WAYBACK_POINTLESS_DOMAINS } from "../src/lib/wayback";
 
 // Minimale .env-loader (geen dependency): KEY=VALUE per regel, # = commentaar.
 const envFile = path.join(process.cwd(), ".env");
@@ -48,13 +49,12 @@ const ids = args.filter((a) => !a.startsWith("--"));
 
 const today = new Date().toISOString().slice(0, 10);
 
-/** Bronnen waar een Wayback-snapshot geen bewijswaarde heeft. Twee gevallen:
- *  - JS-shell (Salesforce YA-register): Wayback slaat header/footer op zonder data.
- *  - Zoek-register zonder permalink (CRKBO): Wayback legt alleen pagina 1 vast,
- *    nooit de gezochte rij.
- *  In beide gevallen is de lokale (eventueel gefilterde) Playwright-kopie het
- *  bewijs; Wayback wordt overgeslagen. */
-const WAYBACK_POINTLESS = [/app\.yogaalliance\.org/, /crkbo\.nl\/Register\//i];
+/** Bronnen waar een Wayback-snapshot geen bewijswaarde heeft — de lijst staat in
+ *  src/lib/wayback.ts, omdat `integrityErrors` de records aan DEZELFDE regel houdt.
+ *  Toen hij alleen hier stond, sloeg dit script Wayback keurig over terwijl twaalf
+ *  records de URL gewoon bleven dragen (één ervan 404'de al weken). Het script dat
+ *  archiveert en de validator die publiceert lezen nu hetzelfde. */
+const WAYBACK_POINTLESS = WAYBACK_POINTLESS_DOMAINS;
 
 function sha256(buf: Buffer | string): string {
   return crypto.createHash("sha256").update(buf).digest("hex");

@@ -12,6 +12,7 @@ import {
   totalPrice,
 } from "./derive";
 import { priceBand } from "./rules";
+import { waybackIsPointless } from "./wayback";
 import { YearMonth, type Program } from "../schema";
 
 const { providers } = loadDataset();
@@ -965,6 +966,48 @@ test("INTEGRITY: a snapshot is a capture of THEIR page, never text we wrote", ()
         /\.(md|txt)$/i,
         `${p.id}/${s.id}: cites text we wrote as its evidence`,
       );
+    }
+  }
+});
+
+test("INTEGRITY: a public archive that proves nothing is not claimed as one", () => {
+  // The archiver has always SKIPPED Wayback for the YA registers (a Salesforce JS shell:
+  // Wayback stores header and footer, no register data) and for the CRKBO register (a
+  // search interface with no per-row permalink: Wayback captures page 1, never the
+  // searched row — and a CRKBO finding is usually a NEGATIVE, which page 1 cannot
+  // evidence either way).
+  //
+  // But that rule lived in the SCRIPT, so nothing held the DATA to it. Twelve sources,
+  // captured before the rule existed, kept their Wayback URL, and the record page printed
+  // "publiek ✓" over an archive containing none of what we cite. One of them —
+  // namaste-studios' YA profile — had been returning 404 for weeks: a public archive that
+  // did not exist at all, displayed as though it did.
+  const base = providerOf("yoga-den");
+  const withPointlessArchive = {
+    ...base,
+    sources: base.sources.map((s) =>
+      s.id === "crkbo-register-2026-06"
+        ? { ...s, archived_url: "https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen" }
+        : s,
+    ),
+  };
+  const errors = integrityErrors(withPointlessArchive, "yoga-den.yaml");
+  assert.equal(errors.length, 1, "a Wayback URL for a page Wayback cannot capture must be a load error");
+  assert.match(errors[0], /Wayback cannot evidence it/);
+  assert.match(errors[0], /pagina 1/, "the error must say WHY, not merely that it is wrong");
+
+  // And the corpus holds to it: no record claims a Wayback archive of a page Wayback
+  // cannot capture. The local, browser-rendered copy is the evidence for these.
+  for (const p of providers) {
+    for (const s of p.sources) {
+      if (!s.url || !s.archived_url) continue;
+      if (waybackIsPointless(s.url)) {
+        assert.doesNotMatch(
+          s.archived_url,
+          /web\.archive\.org/i,
+          `${p.id}/${s.id}: claims a public archive that cannot show what we cite it for`,
+        );
+      }
     }
   }
 });

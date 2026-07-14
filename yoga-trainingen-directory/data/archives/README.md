@@ -15,8 +15,18 @@ on a specific date and has not been altered since, *without republishing the
 file*. Git's history dates the hash. If a provider changes a page and disputes
 what it previously said, the hash pins the copy — and the copy can be produced.
 
-**`*.md` — extracted text** for sources captured by hand before the archive
-script existed.
+**`*.md` — our own reading notes, and NOT EVIDENCE.** A handful survive from
+before the archive script existed: text extracted by hand from a web fetch, with
+the claim-bearing quotes picked out. They were never a capture of anyone's page —
+they are a file *we* composed — and for a while five records cited one as their
+`local_snapshot`. The provenance check duly opened them, searched them for the
+price the record claimed, found the price we ourselves had typed in, and passed:
+seven claims about four named businesses "verified" against our own summary.
+
+Every one of those pages is now properly archived, and a `.md` snapshot is a
+**load error** (`integrityErrors`). A snapshot is a capture of a page a reader saw.
+If we wrote it, it is a note, and notes evidence nothing. These files stay only as
+the research record of how those entries were first made.
 
 ## What this directory does not publish, and why
 

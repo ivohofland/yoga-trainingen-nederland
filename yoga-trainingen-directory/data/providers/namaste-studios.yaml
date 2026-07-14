@@ -41,7 +41,7 @@ sources:
     type: register
     url: "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&si\
       d=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga"
-    archived_url: https://web.archive.org/web/20260612/https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV
+    archived_url: null
     local_snapshot: data/archives/namaste-studios/ya-school-profile-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
     note: >
@@ -53,7 +53,7 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: https://web.archive.org/web/20260612/https://www.crkbo.nl/Register/Instellingen
+    archived_url: null
     captured: "2026-06-12"
     local_snapshot: data/archives/namaste-studios/crkbo-register-2026-06-2026-07-14.pdf
 
