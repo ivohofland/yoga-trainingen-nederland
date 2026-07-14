@@ -65,6 +65,19 @@
                 "unknown"
               ]
             },
+            "searched": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "brand",
+                  "website",
+                  "legal_name",
+                  "kvk",
+                  "person"
+                ]
+              }
+            },
             "register": {
               "type": "string",
               "enum": [
@@ -1258,8 +1271,15 @@
               "summary": {
                 "type": "string"
               },
+              "respond_by": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+              },
               "response": {
                 "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "awaiting"
+                  },
                   {
                     "type": "string",
                     "const": "none"
@@ -1290,6 +1310,7 @@
               "sent",
               "type",
               "summary",
+              "respond_by",
               "response"
             ],
             "additionalProperties": false

@@ -1,0 +1,90 @@
+name: Correctieverzoek
+description: Meld een feitelijke fout in een vermelding. Wordt beoordeeld aan de hand van bronnen.
+title: "Correctieverzoek: "
+labels: ["correctie"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Dit verzoek is openbaar.** Het blijft zichtbaar en gedateerd staan — ook als het wordt
+        afgewezen. Dat is het punt: stilzwijgende correcties bestaan hier niet.
+
+        Wilt u dit niet in het openbaar doen — bijvoorbeeld omdat u een school vertegenwoordigt
+        en een bevinding wilt aanvechten zonder publiek debat — mail dan naar **ivo@ivohofland.nl**.
+        Dat verzoek blijft privé; de correctie die eruit volgt niet.
+
+        **Binnen scope:** feitelijke fouten (prijzen, btw, uren, registerstatussen, cohortdata,
+        citaten). **Buiten scope:** toon, de volledigheid van positieve informatie, en verzoeken om
+        letterlijke citaten te verwijderen — een citaat met bron is geen fout.
+
+  - type: input
+    id: record
+    attributes:
+      label: Record
+      description: De vermelding waar het om gaat. Vanaf de site is dit veld al ingevuld.
+      placeholder: "Yoga Den Amsterdam (yoga-den)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: veld
+    attributes:
+      label: Betreffend veld
+      options:
+        - Prijs / btw
+        - Uren / uitsplitsing
+        - Accreditatie / registers
+        - Cohortdata
+        - Een geciteerde claim
+        - Anders
+    validations:
+      required: true
+
+  - type: textarea
+    id: onjuist
+    attributes:
+      label: Wat is onjuist
+      description: Welke uitspraak in het record klopt niet, en waar staat die?
+    validations:
+      required: true
+
+  - type: textarea
+    id: correctie
+    attributes:
+      label: Voorgestelde correctie
+      description: Wat zou er moeten staan?
+    validations:
+      required: false
+
+  - type: input
+    id: bewijs
+    attributes:
+      label: Bewijs-URL
+      description: >
+        Een pagina, registervermelding of document dat wij kunnen openen en controleren.
+        Elk gegeven op deze site heeft een bron die een lezer zelf kan naslaan; een correctie
+        zonder bron zou het enige zijn waarvoor dat niet geldt. Verwijst u naar een pagina, dan
+        leggen wij die vast (publiek archief + eigen kopie), precies zoals bij elk ander gegeven.
+      placeholder: "https://…"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: relatie
+    attributes:
+      label: Uw relatie tot deze opleiding
+      options:
+        - Vertegenwoordiger van de aanbieder
+        - (Oud-)student
+        - Particulier / lezer
+        - Anders
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: openbaar
+    attributes:
+      label: Openbaarheid
+      options:
+        - label: Ik begrijp dat dit verzoek openbaar en gedateerd is, en blijft staan.
+          required: true

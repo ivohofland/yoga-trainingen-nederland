@@ -15,16 +15,35 @@ locations:
       school noemt daarnaast meerdere leslocaties (over-ons/locaties); niet
       uitputtend geverifieerd."
 crkbo:
-  registered: no
+  registered: unknown
+  searched: [ brand, website ]
   checked: "2026-07-01"
   source: crkbo-register-2026-07
   note: >
-    Geen treffer: naam "Yogaschool" en website "yogaschool" → 3 andere
-    instellingen (De Nieuwe Yogaschool Online, Yogaschool de Toermalijn,
-    Yogaschool Nooord), GEEN yogaschool.nl / De Yogaschool Enschede
-    (2026-07-01). Niet CRKBO-Instelling. De opleidingspagina's vermelden geen
-    btw → price.vat = unknown (§4.11; NRTO is een kwaliteitskeurmerk, geen
-    btw-vrijstelling en geen CRKBO).
+    CORRECTIE 2026-07-14: dit stond op `no` — "Niet CRKBO-Instelling" — en dat
+    was een BEVINDING OVER EEN MET NAAM GENOEMD BEDRIJF, gebaseerd op een
+    mislukte zoekopdracht. Het register is volledig; ONZE ZOEKOPDRACHT WAS DAT
+    NIET. Er is gezocht op de merknaam ("Yogaschool") en op de website
+    ("yogaschool") — en een CRKBO-registratie staat routinematig op naam van een
+    BV, een holding, of van de oprichter persoonlijk in het Docentenregister. De
+    juridische naam van deze school kennen we niet (legal.legal_name ontbreekt),
+    dus de zoekopdracht die een `no` had kunnen dragen is niet overgeslagen — ze
+    was ONMOGELIJK. §4.11 verbood dit al met zoveel woorden, en het
+    schemacommentaar ook; sinds v0.10 dwingt `integrityErrors` het af.
+
+    WAT WE WEL WETEN (2026-07-01): geen treffer op naam "Yogaschool" of website
+    "yogaschool" in het Instellingenregister — wél drie ándere instellingen (De
+    Nieuwe Yogaschool Online, Yogaschool de Toermalijn, Yogaschool Nooord), geen
+    yogaschool.nl / De Yogaschool Enschede. Dat is een uitkomst van onze
+    zoekopdracht, geen feit over deze school.
+
+    OM DIT TE SLUITEN: zoek de KvK-naam op (of de namen van de Yogacharya's
+    Patrick Ros en Ylvy Vaanholt in het Docentenregister), zet die in
+    `crkbo.searched`, en dán pas mag `registered` op `no`.
+
+    De opleidingspagina's vermelden geen btw → price.vat = unknown (§4.11). NRTO
+    is een kwaliteitskeurmerk: geen btw-vrijstelling en geen CRKBO, en dus ook
+    geen aanwijzing in welke richting dan ook.
 registrations:
   - body: other
     identifier: "NRTO-kwaliteitskeurmerk (De Nederlandse Raad voor Training en
@@ -39,7 +58,6 @@ registrations:
       Claim verbatim vastgelegd; het NRTO-ledenregister is niet apart bevraagd →
       verified_in_register unknown.
 legal:
-  legal_name: "onbekend (De Yogaschool)"
   note: >
     Klassieke Raja Yoga-school in Enschede, ~30 jaar actief (de
     Docentenopleiding start in 2026 "voor de 30e keer"). Senior leerkrachten

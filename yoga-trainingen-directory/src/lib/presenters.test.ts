@@ -18,9 +18,11 @@ import { pphQuad, priceAmountIsOurGap, priceQuad } from "./rules";
 // total. See blockerOf and rowBacking.
 import { ourWorking, totalPrice, type TotalHours, type TotalPrice } from "./derive";
 import { priceGapProvider } from "./price-gap.fixture";
+import { toInquiryView } from "./presenters";
 import { inkFor, quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
 import { waybackIsPointless } from "./wayback";
+import { quadForInquiry } from "./quad";
 // The SCHEMA, as a value — the contract test walks its shape rather than
 // hard-coding the key list it is supposed to be guarding. See SCHEMA_CONTRACT_KEYS.
 import { Program, Quad, type Cohort, type Provider, type Source } from "../schema";
@@ -2167,4 +2169,40 @@ test("LISTING: the €/contactuur is rendered as OURS, with its working, on ever
   }
   assert.equal(computed, datasetStats(providers).pphComputable);
   assert.ok(computed > 0, "no programme has a €/contactuur — this test tests nothing");
+});
+
+test("INQUIRY: 'we are still waiting' and 'they refused to answer' never read alike", () => {
+  // Three states, three inks, and the mapping is the quad's own — so <Quad> remains the
+  // ONLY place a finding-vs-gap becomes pixels (see quadForInquiry).
+  assert.equal(quadForInquiry("none"), "not_published", "their silence, after our stated window, is a FINDING");
+  assert.equal(quadForInquiry("awaiting"), "unknown", "an open window is OUR gap — it says nothing about them");
+  assert.equal(quadForInquiry("answered"), "yes");
+  assert.notEqual(quadForInquiry("none"), quadForInquiry("awaiting"));
+
+  const view = (response: unknown, respond_by = "2026-08-04") =>
+    toInquiryView({
+      sent: "2026-07-14",
+      respond_by,
+      type: "correction_request",
+      summary: "Twee prijzen voorgelegd",
+      response,
+    } as never);
+
+  // THE SILENCE IS PRINTED WITH BOTH DATES. An accusation whose evidence is withheld —
+  // "no response", with no invitation date and no deadline — is an insinuation, and the
+  // reader has no way to judge whether we waited a month or an afternoon.
+  const silent = view("none");
+  assert.equal(silent.state, "none");
+  assert.match(silent.stateLabel, /14 jul 2026/, "the date we asked must be on the page");
+  assert.match(silent.stateLabel, /4 aug 2026/, "the deadline we gave them must be on the page");
+
+  const waiting = view("awaiting");
+  assert.equal(waiting.state, "awaiting");
+  assert.doesNotMatch(waiting.stateLabel, /geen reactie/i, "an open window must never read as a refusal to answer");
+  assert.match(waiting.stateLabel, /afwachting/);
+
+  const answered = view({ received: "2026-07-20", summary: "De school bevestigt de Mindbody-prijs" });
+  assert.equal(answered.state, "answered");
+  assert.equal(answered.replySummary, "De school bevestigt de Mindbody-prijs");
+  assert.match(answered.replyReceived ?? "", /20 jul 2026/);
 });

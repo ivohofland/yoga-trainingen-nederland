@@ -19,7 +19,7 @@ import {
 } from "./rules";
 import { nl } from "./strings";
 import { waybackIsPointless } from "./wayback";
-import type { Claim, Cohort, Program, Provider, Quad, Source } from "../schema";
+import type { Claim, Cohort, Inquiry, Program, Provider, Quad, Source } from "../schema";
 
 /**
  * The next cohort — its START and its STATUS, never a pre-baked label.
@@ -234,6 +234,23 @@ const MONTHS = ["jan", "feb", "mrt", "apr", "mei", "jun", "jul", "aug", "sep", "
  * slicing above the call — never a fact about a provider. Fail loudly at build
  * time, the same posture as unhandledQuad in quad.ts.
  */
+/**
+ * A date that MAY carry a day (`YYYY-MM` or `YYYY-MM-DD`). An inquiry's `sent` and
+ * `respond_by` are day-precise on purpose: "invited to correct in July, no response" is
+ * not a defensible sentence about a named business — "invited on 14 juli 2026, asked to
+ * reply by 4 augustus 2026, no response" is. Publishing someone's silence means publishing
+ * exactly how long you waited.
+ */
+export function formatDate(d: string): string {
+  const [y, m, day] = d.split("-");
+  if (!day) return formatMonth(d);
+  const name = MONTHS[Number(m) - 1];
+  if (!name || !/^\d{4}$/.test(y ?? "")) {
+    throw new Error(`formatDate: "${d}" is not a YYYY-MM-DD date — see formatMonth.`);
+  }
+  return `${Number(day)} ${name} ${y}`;
+}
+
 export function formatMonth(ym: string): string {
   const [y, m] = ym.split("-");
   const name = MONTHS[Number(m) - 1];
@@ -837,6 +854,41 @@ export interface ProviderView {
   /** Counted separately, and both are printed: neither number alone is the bar. */
   sourcesArchivedPublic: number;
   sourcesArchivedLocal: number;
+  /**
+   * THE RIGHT OF REPLY, RENDERED (spec §4.9/§12, v0.11).
+   *
+   * The model has carried `inquiries[]` since v0.1 and NO SURFACE HAS EVER SHOWN ONE —
+   * which is the same as not having it. This site publishes findings about named
+   * businesses: that a school advertises a Yoga Alliance registration the register does
+   * not show, that another quotes two different prices for the same training. A reader
+   * looking at that has one obvious question — *what does the school say?* — and until
+   * now the page could not answer it even when we had asked.
+   *
+   * A reply, a stated silence, or an open window: all three are printed, and none of them
+   * is spelled like the others (see inquiryStateLabel). Principle 8's "invited to correct
+   * on date X, no response" is only defensible if the invitation and the deadline are on
+   * the page beside it.
+   */
+  inquiries: InquiryView[];
+}
+
+/** One correction request, as the record page prints it. */
+export interface InquiryView {
+  sent: string;
+  respondBy: string;
+  type: string;
+  summary: string;
+  /**
+   * `awaiting` is OURS (the window is open — a fact about our process, and it must never
+   * read as a fact about them); `none` is a FINDING (they were asked, the window we stated
+   * has passed, they did not reply); a reply is THEIRS. Three states, three inks — the same
+   * rule as the quad, in the one place where collapsing it would be defamatory.
+   */
+  state: "awaiting" | "none" | "answered";
+  stateLabel: string;
+  /** Their words, when they replied. Never ours. */
+  replySummary: string | null;
+  replyReceived: string | null;
 }
 
 /** An absent optional object is a gap, never a finding (spec §2.2). */
@@ -1398,5 +1450,37 @@ export function toProviderView(p: Provider): ProviderView {
     })),
     sourcesArchivedPublic: p.sources.filter((s) => s.archived_url != null).length,
     sourcesArchivedLocal: p.sources.filter((s) => s.local_snapshot != null).length,
+    inquiries: (p.inquiries ?? []).map(toInquiryView),
+  };
+}
+
+/**
+ * One inquiry → what the page prints. The three states get three DIFFERENT sentences,
+ * because they are three different facts:
+ *
+ *   awaiting  — OURS. We asked; the window is open. Says nothing about the provider, and
+ *               must not be rendered as though it did.
+ *   none      — a FINDING. We asked, we said by when, and the date passed in silence. It
+ *               is published WITH both dates, because an accusation whose evidence is
+ *               withheld is just an accusation.
+ *   answered  — THEIRS. Their reply, summarised, and it is the last word on the page.
+ */
+export function toInquiryView(q: Inquiry): InquiryView {
+  const answered = typeof q.response !== "string";
+  const state: InquiryView["state"] = answered ? "answered" : q.response === "none" ? "none" : "awaiting";
+  return {
+    sent: formatDate(q.sent),
+    respondBy: formatDate(q.respond_by),
+    type: nl.inquiryType[q.type],
+    summary: q.summary,
+    state,
+    stateLabel:
+      state === "answered"
+        ? nl.inquiryAnswered
+        : state === "none"
+          ? nl.inquiryNoResponse(formatDate(q.sent), formatDate(q.respond_by))
+          : nl.inquiryAwaiting(formatDate(q.respond_by)),
+    replySummary: answered ? (q.response as { summary: string }).summary : null,
+    replyReceived: answered ? formatDate((q.response as { received: string }).received) : null,
   };
 }

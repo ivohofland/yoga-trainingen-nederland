@@ -18,7 +18,8 @@ import Link from "next/link";
 import { loadDataset } from "@/lib/loader";
 import { toProviderView, formatMonth, cohortLabel, type ClaimView } from "@/lib/presenters";
 import { Quad } from "@/components/Quad";
-import { inkFor } from "@/lib/quad";
+import { inkFor, quadForInquiry } from "@/lib/quad";
+import { emailCorrectionUrl, githubCorrectionUrl } from "@/lib/corrections";
 import { nl } from "@/lib/strings";
 import styles from "./page.module.css";
 
@@ -327,6 +328,67 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
           ))}
         </section>
       )}
+
+      {/* WEDERHOOR — the right of reply (§4.9/§12, v0.11).
+
+          This page prints findings about a named business. `inquiries[]` has been in the
+          model since v0.1 and NO SURFACE HAS EVER RENDERED ONE, which is the same as not
+          having it: a reader who sees "adverteert een RYS 200 die het register niet toont"
+          has one obvious question — what does the school say? — and the page could not
+          answer it even when we had asked.
+
+          Three states, three sentences, and they are never spelled alike. `awaiting` is
+          OURS (the window is open; it says nothing about them). `none` is a FINDING, and
+          it is printed with BOTH dates — invited on X, given until Y — because a silence
+          the reader cannot check is an insinuation, not evidence. A reply is THEIRS, and
+          it gets the last word. */}
+      {v.inquiries.length > 0 && (
+        <section className={styles.section}>
+          <div className={styles.sectionLabel}>{nl.inquiriesHeading}</div>
+          <p className={styles.note}>{nl.inquiriesIntro}</p>
+          {v.inquiries.map((q, i) => (
+            <div key={i} className={styles.srcRow}>
+              <div className={styles.srcKind}>
+                {q.type}
+                <div className={styles.srcCaptured}>{q.sent}</div>
+              </div>
+              <div>
+                <div>{q.summary}</div>
+                {/* Through <Quad>, which is the ONLY place a finding-vs-gap becomes pixels.
+                    "Geen reactie" is a finding; "wij wachten nog" is a gap of ours. A
+                    second, hand-rolled ink here would be a second chance to spell them
+                    alike — on the one surface where that mistake has a lawyer attached. */}
+                <Quad state={quadForInquiry(q.state)}>{q.stateLabel}</Quad>
+                {q.replySummary && (
+                  <blockquote className={styles.disclosure}>
+                    <strong>{nl.inquiryReplyHeading}</strong> ({q.replyReceived}) — {q.replySummary}
+                  </blockquote>
+                )}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {/* THE CORRECTION ROUTE, ON THE RECORD ITSELF.
+          A reader who has just found a mistake is looking at the mistake, not at the
+          navigation. Both links arrive pre-filled with this record — its id, and the YAML
+          the claim lives in — so a report costs the fields and nothing else. Public
+          (permanent, dated, and it stays up even if I reject it) or confidential (for a
+          school that will not dispute a finding in the open — and it should not have to,
+          because a silence we engineered is not a silence worth publishing). */}
+      <section className={styles.section}>
+        <div className={styles.sectionLabel}>{nl.corr.recordLink}</div>
+        <p className={styles.note}>
+          <a href={githubCorrectionUrl(v.name, v.id)} target="_blank" rel="noopener">
+            {nl.corr.publicCta}
+          </a>
+          {" · "}
+          <a href={emailCorrectionUrl(v.name, v.id)}>{nl.corr.privateCta}</a>
+          {" · "}
+          <Link href="/correcties">{nl.corr.navLabel}</Link>
+        </p>
+      </section>
 
       {/* Sources. Each row is the anchor target of every <Cite> that names it —
           id="bron-<source-id>". Source ids are unique within a provider record and

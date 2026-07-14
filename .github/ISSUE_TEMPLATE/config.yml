@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Vertrouwelijk melden (e-mail)
+    url: mailto:ivo@ivohofland.nl
+    about: >
+      Wilt u een bevinding aanvechten zonder dat het verzoek openbaar is — bijvoorbeeld als
+      vertegenwoordiger van een school — mail dan. Het verzoek blijft privé; de correctie die
+      eruit volgt niet.
+  - name: Correctie- en klachtenprocedure
+    url: https://github.com/ivohofland/yoga-trainingen-nederland/blob/main/yoga-trainingen-directory/content/correcties.md
+    about: Wat er met een melding gebeurt, wat binnen en buiten scope valt, en hoe een afwijzing wordt vastgelegd.

@@ -175,3 +175,32 @@ export function saysNotPublished(v: Quad | undefined | null): boolean {
       return unhandledQuad(v);
   }
 }
+
+/**
+ * An inquiry's state → the quad that carries its INK (spec §4.9/§12, v0.11).
+ *
+ * Not a semantic sleight of hand: the three states ARE the quad's three sentences, in a
+ * place where confusing them would be defamatory.
+ *
+ *   `none`     → `not_published`. A FINDING. We asked, we said by when, the date passed in
+ *                silence. Exactly the quad's "we looked; they do not provide it" — a
+ *                publishable fact about a named business, and it is printed with both dates.
+ *   `awaiting` → `unknown`. A GAP, and OURS. The window is open; nothing whatsoever has
+ *                been established about the provider, and it must never wear a finding's ink.
+ *   `answered` → `yes`. A fact, carrying its value: their words.
+ *
+ * Routing it through the quad is what keeps `<Quad>` THE ONLY PLACE a finding-vs-gap
+ * becomes pixels. A second, hand-rolled ink for inquiries would be a second chance to spell
+ * "we are still waiting" and "they refused to answer" the same way — and this is the one
+ * surface where that mistake has a lawyer attached to it.
+ */
+export function quadForInquiry(state: "awaiting" | "none" | "answered"): Quad {
+  switch (state) {
+    case "answered":
+      return "yes";
+    case "none":
+      return "not_published";
+    case "awaiting":
+      return "unknown";
+  }
+}

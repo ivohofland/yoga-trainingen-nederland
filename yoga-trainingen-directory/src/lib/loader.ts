@@ -38,7 +38,18 @@ function collectSourceRefs(node: unknown, refs: Set<string>): void {
 /** The checks Zod cannot express. Exported so the tests can put a record THROUGH
  *  them — a check that only ever runs over data that already passes it is a check
  *  whose failure branch nothing has proven. */
-export function integrityErrors(p: Provider, file: string): string[] {
+/**
+ * `today` is a PARAMETER, not a call to the clock, and the one rule that needs it says why:
+ * "you may not publish a silence you have not yet waited out" (1e) is inherently a question
+ * about now. Reading the clock in here would make validation non-deterministic and the rule
+ * untestable — the two things a build gate must never be. The caller supplies the date; the
+ * tests supply a fixed one.
+ */
+export function integrityErrors(
+  p: Provider,
+  file: string,
+  today: string = new Date().toISOString().slice(0, 10),
+): string[] {
   const errors: string[] = [];
   const sourceIds = new Set(p.sources.map((s) => s.id));
   const moduleIds = new Set(p.modules.map((m) => m.id));
@@ -71,6 +82,8 @@ export function integrityErrors(p: Provider, file: string): string[] {
       );
     }
 
+    // (see 1d below for the CRKBO rule — it is about the provider, not this source)
+
     // 1c. A PUBLIC ARCHIVE THAT PROVES NOTHING MUST NOT BE CLAIMED AS ONE.
     //
     // The archiver skips Wayback for the YA registers (a Salesforce JS shell — Wayback
@@ -89,6 +102,72 @@ export function integrityErrors(p: Provider, file: string): string[] {
         `${file}: source '${s.id}' claims a Wayback archive of ${s.url} — but Wayback cannot evidence it ` +
           `(${waybackPointlessReason(s.url)}). The local capture is the evidence; set archived_url: null so ` +
           `the record says "publiek —", which is true, instead of "publiek ✓", which is not.`,
+      );
+    }
+  }
+
+  // 1d. A REGISTER MISS IS NOT A REGISTER FINDING (spec §4.11, v0.10).
+  //
+  // THE REGISTER IS COMPLETE. OUR SEARCH OF IT IS NOT. A CRKBO registration is routinely
+  // held by a BV, a holding, or the founder personally in the Docenten register — so a
+  // miss on the BRAND or the WEBSITE proves only that the brand is not listed under that
+  // name. It says nothing about the provider, and rendering it as `no` states, on a page
+  // about a real business, a fact we have not established.
+  //
+  // The rule was written in the spec (§4.11), and again in the schema comment, and
+  // de-yogaschool-enschede published `registered: no` anyway — on the evidence "naam
+  // 'Yogaschool' en website 'yogaschool' → geen treffer", while its own legal_name was
+  // "onbekend". A rule stated three times in prose and enforced nowhere is not a rule.
+  //
+  // So: `no` requires that the search covered the identifier the registration would be
+  // HELD under. If you do not know that name, you cannot search it — and then you cannot
+  // conclude `no`. The impossibility falls out of the data, which is where it belongs.
+  if (p.crkbo.registered === "no") {
+    const searched = p.crkbo.searched ?? [];
+    const searchedLegalIdentifier = searched.includes("legal_name") || searched.includes("kvk");
+    if (!searchedLegalIdentifier) {
+      errors.push(
+        `${file}: crkbo.registered is 'no', but crkbo.searched is [${searched.join(", ") || "empty"}] — ` +
+          `a brand/website miss is NOT a finding of non-registration (§4.11). A CRKBO registration is ` +
+          `routinely held by a BV, a holding, or a teacher personally. Search the legal name / KvK and ` +
+          `record it in crkbo.searched, or set registered: unknown — which is what a failed lookup means.`,
+      );
+    }
+    if (searched.includes("legal_name") && !p.legal?.legal_name) {
+      errors.push(
+        `${file}: crkbo.searched claims a 'legal_name' search, but the record holds no legal.legal_name — ` +
+          `you cannot have searched a name you do not have.`,
+      );
+    }
+    if (searched.includes("kvk") && !p.legal?.kvk) {
+      errors.push(
+        `${file}: crkbo.searched claims a 'kvk' search, but the record holds no legal.kvk.`,
+      );
+    }
+  }
+
+  // 1e. YOU MAY NOT PUBLISH A SILENCE YOU HAVE NOT WAITED OUT (spec §4.9/§12, v0.11).
+  //
+  // `response: "none"` prints "uitgenodigd te corrigeren, geen reactie" about a named
+  // business. It is defensible only after the window WE stated has actually elapsed.
+  // Recording it on the day the request goes out — which the old model forced, because
+  // `response` was required and `awaiting` did not exist — publishes a school's silence
+  // before they have had a single day to break it.
+  //
+  // `awaiting` is the honest state while the window is open: a fact about our process,
+  // never about them.
+  for (const [i, q] of (p.inquiries ?? []).entries()) {
+    if (q.respond_by <= q.sent) {
+      errors.push(
+        `${file}: inquiries[${i}] closes its window (${q.respond_by}) on or before it was sent (${q.sent}) — ` +
+          `a response window that has already expired is not a window.`,
+      );
+    }
+    if (q.response === "none" && q.respond_by > today) {
+      errors.push(
+        `${file}: inquiries[${i}] records 'geen reactie' while the window we gave them is still open ` +
+          `(respond_by ${q.respond_by}, today ${today}). That publishes a silence they have not yet had the ` +
+          `chance to break. Use response: awaiting until ${q.respond_by} has passed.`,
       );
     }
   }

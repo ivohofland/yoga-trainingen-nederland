@@ -301,12 +301,45 @@ export type Assessment = z.infer<typeof Assessment>;
 
 /* ---------- Inquiry (correction workflow as data, spec §4.9) ---------- */
 
+/**
+ * A correction request put to a provider, and what came back (spec §4.9/§12, v0.11).
+ *
+ * WE PUBLISH FINDINGS ABOUT NAMED BUSINESSES — that they advertise a registration the
+ * register does not show, that they quote two different prices for the same training.
+ * Principle 8 says silence is recordable: *"invited to correct on date X, no response"*
+ * becomes a displayable, defensible fact. That is a strong sentence to print about a
+ * real company, and it is only defensible if two things are true, and the model used to
+ * be able to express neither:
+ *
+ *   THE WINDOW MUST BE STATED. `response: "none"` meant "no reply after the stated
+ *   window" — and the window appeared nowhere in the data. So the claim was
+ *   unfalsifiable: a reader could not tell whether we gave them a month or two days.
+ *   `respond_by` is required. If you are going to publish someone's silence, publish
+ *   how long you waited.
+ *
+ *   "THEY DID NOT REPLY" AND "WE ARE STILL WAITING" ARE DIFFERENT SENTENCES. `response`
+ *   was REQUIRED and its only silent value was `none`, so logging an inquiry on the day
+ *   you sent it forced you to publish "invited to correct, no response" about a school
+ *   that had had ZERO days to answer. That is this project's own cardinal error — a gap
+ *   in OUR process (`awaiting`) rendered as a FINDING about them (`none`) — the quad's
+ *   `unknown`-vs-`not_published` distinction, in a place where it is defamatory.
+ *
+ * `integrityErrors` refuses `none` while `respond_by` is still in the future: you may not
+ * publish a silence you have not yet waited out.
+ */
 export const Inquiry = strictObject({
   sent: YearMonth,
   type: z.enum(["correction_request", "question", "right_of_reply"]),
   summary: z.string(),
-  /** "none" after the stated window = displayable, defensible silence. */
+  /** The window we gave them, in their own copy of the request. Publishing a silence
+   *  without publishing how long we waited is an accusation with the evidence withheld. */
+  respond_by: YearMonth,
   response: z.union([
+    /** WE ARE WAITING, and the window is open. A fact about OUR process; it says NOTHING
+     *  about the provider, and no surface may render it as though it did. */
+    z.literal("awaiting"),
+    /** THEY DID NOT REPLY within the window we stated. A finding — displayable, and
+     *  defensible precisely because `sent` and `respond_by` are both published beside it. */
     z.literal("none"),
     strictObject({ received: YearMonth, summary: z.string(), source: z.string().optional() }),
   ]),
@@ -564,11 +597,36 @@ export const Provider = strictObject({
     }),
   ),
   crkbo: strictObject({
-    /** Quad. `no` ONLY after an adequate, documented register search (by legal
-     *  name from KvK + relevant person names), never from a brand-name miss or a
-     *  "charges BTW" inference. The register is complete, so non-membership is a
-     *  real finding — but only when the right keys were searched (record them in note/source). */
+    /**
+     * Quad. **`no` ONLY after a search that covered the identifier the registration
+     * would be HELD under** (§4.11, v0.10) — never from a brand-name miss, never from a
+     * "charges BTW" inference. `integrityErrors` enforces it against `searched` below.
+     *
+     * THE REGISTER IS COMPLETE. OUR SEARCH OF IT IS NOT. Those are different sentences,
+     * and this comment used to end by collapsing them — "the register is complete, so
+     * non-membership is a real finding" — with the qualifier ("but only when the right
+     * keys were searched") trailing behind, in prose, where nothing could check it.
+     * de-yogaschool-enschede duly published `registered: no` on the strength of
+     * *"naam 'Yogaschool' en website 'yogaschool' → geen treffer"*: a failed lookup,
+     * rendered to readers as an established fact about a named business. Its own
+     * `legal_name` was "onbekend", so the search that could have justified the finding
+     * was not skipped — it was impossible.
+     */
     registered: Quad,
+    /**
+     * WHICH KEYS THE REGISTER WAS ACTUALLY SEARCHED ON (v0.10). Structured, because as
+     * prose ("record the searched names in note/source") the rule could not be checked,
+     * and so it wasn't.
+     *
+     * A CRKBO registration is routinely held by a BV, a holding, or the founder
+     * personally in the **Docenten** register. So `brand` and `website` misses prove only
+     * that the BRAND is not listed under THAT NAME — they can never yield `no`, only
+     * `unknown`. `legal_name`/`kvk` is the identifier the registration would be held
+     * under, and it is the one that makes a negative finding falsifiable.
+     */
+    searched: z
+      .array(z.enum(["brand", "website", "legal_name", "kvk", "person"]))
+      .optional(),
     /** instelling = the organisation is registered; docent = a named individual.
      *  Exemption riding on a registered docent is tied to that person (same
      *  fragility as a personally-held YA registration). */

@@ -1011,3 +1011,113 @@ test("INTEGRITY: a public archive that proves nothing is not claimed as one", ()
     }
   }
 });
+
+test("INTEGRITY: a register MISS is not a register FINDING (§4.11, v0.10)", () => {
+  // THE REGISTER IS COMPLETE. OUR SEARCH OF IT IS NOT. Those are different sentences, and
+  // collapsing them turns a failed lookup into a published fact about a named business.
+  //
+  // A CRKBO registration is routinely held by a BV, a holding, or the founder personally
+  // in the Docentenregister. So a miss on the BRAND or the WEBSITE proves only that the
+  // brand is not listed under that name — it says nothing about the provider.
+  //
+  // This was written in the spec (§4.11), and again in the schema comment, and
+  // de-yogaschool-enschede published `registered: no` anyway, on the evidence "naam
+  // 'Yogaschool' en website 'yogaschool' → geen treffer" — while its own legal_name was
+  // "onbekend", so the search that could have justified the finding was IMPOSSIBLE. A rule
+  // stated three times in prose and enforced nowhere is not a rule.
+  const base = providerOf("yoga-den");
+
+  const brandMiss = {
+    ...base,
+    crkbo: { ...base.crkbo, registered: "no" as const, searched: ["brand", "website"] as const },
+  };
+  const errs = integrityErrors(brandMiss as never, "x.yaml");
+  assert.equal(errs.length, 1, "a `no` from a brand/website miss must not load");
+  assert.match(errs[0], /brand\/website miss is NOT a finding/);
+  assert.match(errs[0], /registered: unknown/, "the error must name the honest alternative");
+
+  // You cannot have searched a name you do not have. de Yogaschool's legal_name was the
+  // string "onbekend (De Yogaschool)" — a value standing in for null, which would have let
+  // this claim pass. The field is optional; absence is how "we don't know" is said.
+  const claimsLegalSearch = {
+    ...base,
+    legal: { note: "geen KvK-naam bekend" },
+    crkbo: { ...base.crkbo, registered: "no" as const, searched: ["legal_name"] as const },
+  };
+  const errs2 = integrityErrors(claimsLegalSearch as never, "x.yaml");
+  assert.equal(errs2.length, 1);
+  assert.match(errs2[0], /cannot have searched a name you do not have/);
+
+  // And a properly-grounded `no` still loads: the register IS complete, so a search that
+  // covered the identifier the registration would be held under is a real finding.
+  const grounded = {
+    ...base,
+    legal: { legal_name: "Yoga Den B.V.", kvk: "12345678" },
+    crkbo: {
+      ...base.crkbo,
+      registered: "no" as const,
+      searched: ["brand", "website", "legal_name", "kvk", "person"] as const,
+    },
+  };
+  assert.deepEqual(
+    integrityErrors(grounded as never, "x.yaml"),
+    [],
+    "a `no` backed by a legal-name/KvK search is exactly what the register's completeness licenses",
+  );
+});
+
+test("INTEGRITY: no record in the corpus asserts non-registration it did not establish", () => {
+  // The whole corpus, held to the rule. 27 providers are `yes` (a hit is a hit), 21 are
+  // `unknown` — which is what a failed lookup MEANS — and any future `no` must show its work.
+  for (const p of providers) {
+    if (p.crkbo.registered !== "no") continue;
+    const searched = p.crkbo.searched ?? [];
+    assert.ok(
+      searched.includes("legal_name") || searched.includes("kvk"),
+      `${p.id}: says a named business is NOT CRKBO-registered without having searched the ` +
+        `identifier such a registration would be held under (searched: ${searched.join(", ") || "nothing"})`,
+    );
+  }
+  // And a `no` that nobody can reach is a rule that tests nothing — so pin the shape of
+  // the corpus too: everything is a hit or an honest gap.
+  const states = new Set(providers.map((p) => p.crkbo.registered));
+  assert.ok(states.has("yes") && states.has("unknown"), "the corpus should hold both hits and gaps");
+});
+
+/* ---------- the right of reply (spec §4.9/§12, v0.11) ---------- */
+
+test("INQUIRY: you may not publish a silence you have not waited out", () => {
+  // `response: none` prints "voorgelegd op X, geen reactie binnen de gestelde termijn"
+  // about a named business. Before v0.11, `response` was REQUIRED and its only silent
+  // value was `none` — so logging a correction request on the day you sent it FORCED you
+  // to publish the school's silence before they had had a single day to break it.
+  //
+  // That is this project's cardinal error with a lawyer attached: a gap in OUR process
+  // rendered as a FINDING about them.
+  const base = providerOf("yoga-den");
+  const withInquiry = (response: unknown, respond_by: string) =>
+    ({
+      ...base,
+      inquiries: [
+        { sent: "2026-07-14", respond_by, type: "correction_request", summary: "Twee prijzen voorgelegd", response },
+      ],
+    }) as never;
+
+  // Sent today, window open, and we claim they did not answer.
+  const tooEarly = integrityErrors(withInquiry("none", "2026-08-04"), "x.yaml", "2026-07-14");
+  assert.equal(tooEarly.length, 1);
+  assert.match(tooEarly[0], /silence they have not yet had the chance to break/);
+  assert.match(tooEarly[0], /awaiting/, "the error must name the honest state");
+
+  // The honest state while the window is open loads fine, on the same day.
+  assert.deepEqual(integrityErrors(withInquiry("awaiting", "2026-08-04"), "x.yaml", "2026-07-14"), []);
+
+  // And once the window HAS passed, the silence is publishable — that is the whole point
+  // of principle 8: "invited to correct on X, no response" is a defensible fact.
+  assert.deepEqual(integrityErrors(withInquiry("none", "2026-08-04"), "x.yaml", "2026-08-05"), []);
+
+  // A window that closes before it opens is not a window.
+  const backwards = integrityErrors(withInquiry("awaiting", "2026-07-01"), "x.yaml", "2026-07-14");
+  assert.equal(backwards.length, 1);
+  assert.match(backwards[0], /already expired is not a window/);
+});
