@@ -71,6 +71,8 @@ export function integrityErrors(p: Provider, file: string): string[] {
       );
     }
 
+    // (see 1d below for the CRKBO rule — it is about the provider, not this source)
+
     // 1c. A PUBLIC ARCHIVE THAT PROVES NOTHING MUST NOT BE CLAIMED AS ONE.
     //
     // The archiver skips Wayback for the YA registers (a Salesforce JS shell — Wayback
@@ -89,6 +91,46 @@ export function integrityErrors(p: Provider, file: string): string[] {
         `${file}: source '${s.id}' claims a Wayback archive of ${s.url} — but Wayback cannot evidence it ` +
           `(${waybackPointlessReason(s.url)}). The local capture is the evidence; set archived_url: null so ` +
           `the record says "publiek —", which is true, instead of "publiek ✓", which is not.`,
+      );
+    }
+  }
+
+  // 1d. A REGISTER MISS IS NOT A REGISTER FINDING (spec §4.11, v0.10).
+  //
+  // THE REGISTER IS COMPLETE. OUR SEARCH OF IT IS NOT. A CRKBO registration is routinely
+  // held by a BV, a holding, or the founder personally in the Docenten register — so a
+  // miss on the BRAND or the WEBSITE proves only that the brand is not listed under that
+  // name. It says nothing about the provider, and rendering it as `no` states, on a page
+  // about a real business, a fact we have not established.
+  //
+  // The rule was written in the spec (§4.11), and again in the schema comment, and
+  // de-yogaschool-enschede published `registered: no` anyway — on the evidence "naam
+  // 'Yogaschool' en website 'yogaschool' → geen treffer", while its own legal_name was
+  // "onbekend". A rule stated three times in prose and enforced nowhere is not a rule.
+  //
+  // So: `no` requires that the search covered the identifier the registration would be
+  // HELD under. If you do not know that name, you cannot search it — and then you cannot
+  // conclude `no`. The impossibility falls out of the data, which is where it belongs.
+  if (p.crkbo.registered === "no") {
+    const searched = p.crkbo.searched ?? [];
+    const searchedLegalIdentifier = searched.includes("legal_name") || searched.includes("kvk");
+    if (!searchedLegalIdentifier) {
+      errors.push(
+        `${file}: crkbo.registered is 'no', but crkbo.searched is [${searched.join(", ") || "empty"}] — ` +
+          `a brand/website miss is NOT a finding of non-registration (§4.11). A CRKBO registration is ` +
+          `routinely held by a BV, a holding, or a teacher personally. Search the legal name / KvK and ` +
+          `record it in crkbo.searched, or set registered: unknown — which is what a failed lookup means.`,
+      );
+    }
+    if (searched.includes("legal_name") && !p.legal?.legal_name) {
+      errors.push(
+        `${file}: crkbo.searched claims a 'legal_name' search, but the record holds no legal.legal_name — ` +
+          `you cannot have searched a name you do not have.`,
+      );
+    }
+    if (searched.includes("kvk") && !p.legal?.kvk) {
+      errors.push(
+        `${file}: crkbo.searched claims a 'kvk' search, but the record holds no legal.kvk.`,
       );
     }
   }

@@ -564,11 +564,36 @@ export const Provider = strictObject({
     }),
   ),
   crkbo: strictObject({
-    /** Quad. `no` ONLY after an adequate, documented register search (by legal
-     *  name from KvK + relevant person names), never from a brand-name miss or a
-     *  "charges BTW" inference. The register is complete, so non-membership is a
-     *  real finding — but only when the right keys were searched (record them in note/source). */
+    /**
+     * Quad. **`no` ONLY after a search that covered the identifier the registration
+     * would be HELD under** (§4.11, v0.10) — never from a brand-name miss, never from a
+     * "charges BTW" inference. `integrityErrors` enforces it against `searched` below.
+     *
+     * THE REGISTER IS COMPLETE. OUR SEARCH OF IT IS NOT. Those are different sentences,
+     * and this comment used to end by collapsing them — "the register is complete, so
+     * non-membership is a real finding" — with the qualifier ("but only when the right
+     * keys were searched") trailing behind, in prose, where nothing could check it.
+     * de-yogaschool-enschede duly published `registered: no` on the strength of
+     * *"naam 'Yogaschool' en website 'yogaschool' → geen treffer"*: a failed lookup,
+     * rendered to readers as an established fact about a named business. Its own
+     * `legal_name` was "onbekend", so the search that could have justified the finding
+     * was not skipped — it was impossible.
+     */
     registered: Quad,
+    /**
+     * WHICH KEYS THE REGISTER WAS ACTUALLY SEARCHED ON (v0.10). Structured, because as
+     * prose ("record the searched names in note/source") the rule could not be checked,
+     * and so it wasn't.
+     *
+     * A CRKBO registration is routinely held by a BV, a holding, or the founder
+     * personally in the **Docenten** register. So `brand` and `website` misses prove only
+     * that the BRAND is not listed under THAT NAME — they can never yield `no`, only
+     * `unknown`. `legal_name`/`kvk` is the identifier the registration would be held
+     * under, and it is the one that makes a negative finding falsifiable.
+     */
+    searched: z
+      .array(z.enum(["brand", "website", "legal_name", "kvk", "person"]))
+      .optional(),
     /** instelling = the organisation is registered; docent = a named individual.
      *  Exemption riding on a registered docent is tied to that person (same
      *  fragility as a personally-held YA registration). */

@@ -106,10 +106,28 @@ content goes live. The site itself now exists; these are the parts of the
   *actually* costs end-to-end. **Open editorial question, deliberately not
   answered by inventing a number**: a market range would be our estimate about
   other people's prices. Revisit only if a *published* figure exists to cite.
-- [ ] **20 providers have `crkbo.registered: unknown`.** The spec calls this "a
-  1-minute register lookup". It is a **gap** (ours), not a finding (theirs), so
-  the site correctly says nothing about them — but it is cheap to close and it
-  suppresses a real signal.
+- [ ] **21 providers have `crkbo.registered: unknown` — and this is NOT "a 1-minute
+  register lookup".** That framing (this file's own, until now) is exactly what
+  produces a false finding, so it is worth being precise about what a lookup can and
+  cannot settle.
+
+  **The register is complete. A search of it is not.** A CRKBO registration is
+  routinely held by a BV, a holding, or the founder personally in the *Docenten*
+  register — so searching the brand and the website can only ever produce a **hit**
+  (`yes`, closed) or **nothing** (`unknown`, still open). It can never produce a `no`:
+  "we didn't find them" is a fact about our search, not about the school.
+
+  Closing one of these as `no` therefore requires knowing the **legal name / KvK** and
+  searching *that* — which for several providers we do not know, and for those the
+  question cannot be closed negatively at all. Since v0.10 this is structural:
+  `crkbo.searched[]` records which keys were queried, and `integrityErrors` rejects a
+  `no` that has not searched a legal identifier. One record had already made this
+  mistake (`de-yogaschool-enschede`, corrected 2026-07-14 — it published "Niet
+  CRKBO-Instelling" on a brand-name miss, while its own legal name was unknown).
+
+  **So the actionable work is: find KvK/legal names**, not "do lookups". A `yes` is
+  cheap and closes a record; a `no` is expensive and most of these will honestly stay
+  `unknown`. That is the correct outcome, not a failure to finish.
 - [ ] **`supervised_teaching_practice` is unrecorded on 72 of 77 programmes.**
   Expected — its emptiness across the market *is* the finding (§5), and the site
   renders it as one. Listed here only so it is not mistaken for an oversight.

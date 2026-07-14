@@ -82,7 +82,7 @@ never overwrites dated evidence.
 
 ## Architecture
 
-**The spec is the source of truth.** `data-model-spec.md` (currently v0.9)
+**The spec is the source of truth.** `data-model-spec.md` (currently v0.10)
 defines the model; `src/schema/index.ts` (Zod) mirrors it. **Change the spec
 first, then the schema.** The schema's inline comments cite the spec sections
 (`§N`) and explain *why* each field exists — read them before changing a field.
