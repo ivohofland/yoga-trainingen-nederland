@@ -2,8 +2,6 @@
 
 *Follow-up to `yoga-opleidingen-directory-overwegingen.md`. This document makes the deferred decisions concrete: storage/stack, the flat-vs-entity question, the full schema with layer markings, and two example records.*
 
-**v0.2 (2026-06-12)** — revised after the 5-provider pilot (`pilot/pilot-findings.md`): price variants + excludes, delivery language, program prerequisites, per-signal notes, module days, registration holder.
-
 **v0.9 (2026-07-13)** — `prerequisite[]` (structured) + `total_path_cost` (derived, §6). **The same disease, a fourth time.** de Yogaschool's teacher training is € 1.530/jaar × 3, and you cannot start it without first completing the Basisopleiding at € 1.590 — so qualifying there costs € 6.180, and the site published € 4.590. The record *knew*: the gate and its price sat in `prerequisites_claimed`, as prose, where no comparison could reach them. 20 of 74 programmes are gated; 2 carried the cost anywhere computable. As with v0.5 (per-period), v0.6 (hours) and v0.8 (unequal parts): **a number the reader needs, which the model cannot express, ends up in prose — and the comparison silently lies.** Structure the gate; derive the path; render it as ours.
 
 **v0.8 (2026-07-13)** — `total_price` gains its third derivation: the **sum of unequal composed parts**. `periods` can only multiply, so a training sold as Deel I € 1.420 + Deel II € 1.305 had no honest home for its € 2.725 total — and so it was stored in `amount_eur` and published in the school's own ink, cited to a page that prints only the parts. The same disease as v0.5 and v0.6, in its third costume: **a total the provider never states, stored as though they had.** Compose it from the modules, render it as ours.
@@ -17,6 +15,8 @@
 **v0.4 (2026-07-12)** — `hours_claimed.contact_published` (q) added. `breakdown_published` was doing two jobs: "do they break the total down at all?" and "do they publish the contact-hour figure?". Three providers answer yes to the first and no to the second — they publish by subject, by delivery mode, or as ranges — so the single quad forced the directory to call its most transparent schools either un-investigated or non-publishers. Both false. The model now asks twice, and `pricePerContactHour`'s blocking field is `contact_published`, not `breakdown_published`.
 
 **v0.3 (2026-07-12)** — `YYYY-MM` now states that the month part must be `01`–`12`. The old definition accepted `2026-13`, so a typo'd month was schema-valid data that only failed when a renderer tried to name the month — a validation job landing in a formatter. No record changes: all 78 month values in the corpus were already in range.
+
+**v0.2 (2026-06-12)** — revised after the 5-provider pilot (`pilot/pilot-findings.md`): price variants + excludes, delivery language, program prerequisites, per-signal notes, module days, registration holder.
 
 ---
 
