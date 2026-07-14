@@ -44,8 +44,8 @@ Three properties follow, and each is better than the Node-service variant:
 
 1. **No sudo anywhere in the deploy path.** Part 1 §6's `sudoers.d` rule exists
    solely so `deploy.sh` can restart the app service. There is no service to
-   restart, so the rule is never created and `webhook.service` runs with
-   `NoNewPrivileges=true`.
+   restart, so the rule is never created and `webhook-yoga-research.service` runs
+   with `NoNewPrivileges=true`.
 2. **The editorial gates become the deploy gates.** `deploy.sh` runs
    `npm run build`, which is gen-schema → validate → **provenance** → test →
    test:ci → export-json → next build, under `set -euo pipefail`. A failed gate
@@ -105,7 +105,7 @@ on the researcher's machine, where the archives are. Nowhere else.
 | `deploy/deploy.sh` | Self-locating (`APP_DIR` = this script's parent). `git fetch && git reset --hard origin/main`; `cd yoga-trainingen-directory`; `npm ci`; `npm run build`; rsync `out/` → `$DOCROOT`. `set -euo pipefail`. `DOCROOT` overridable by env, defaulting to the path in §3. No sudo. |
 | `deploy/deploy-webhook.sh` | Unchanged from `ivohofland.dev`: `nohup deploy.sh >> ~/deploy.log 2>&1 &`, so the HTTP request returns 200 immediately. |
 | `deploy/hooks.json` | Hook id **`deploy-yoga-trainingen`**. HMAC-SHA256 over the payload, secret via `{{ getenv "DEPLOY_WEBHOOK_SECRET" }}` so `git reset` never touches it. `trigger-rule-mismatch-http-response-code: 403`. Paths under `/home/ivohofland-research/src/yoga-trainingen`. |
-| `deploy/webhook.service` | `User=ivohofland-research`, `EnvironmentFile=/home/ivohofland-research/webhook.env`, `-port 9001`, `-hooks …/deploy/hooks.json`, **`NoNewPrivileges=true`** (allowed here — no sudo in the chain). |
+| `deploy/webhook-yoga-research.service` | `User=ivohofland-research`, `EnvironmentFile=/home/ivohofland-research/webhook.env`, `-port 9001`, `-hooks …/deploy/hooks.json`, **`NoNewPrivileges=true`** (allowed here — no sudo in the chain). Named for the site **in the repo**, so `cp` installs it under the right unit name with no rename step (§7). |
 | `.github/workflows/deploy.yml` | `workflow_run` on **`["validate"]`** (this repo's CI workflow is named `validate`, not `CI`), `branches: [main]`, `if: conclusion == 'success'`. Signs `{"ref":"refs/heads/main"}` with `DEPLOY_WEBHOOK_SECRET`, POSTs to `DEPLOY_WEBHOOK_URL`, asserts HTTP 200. Skips green while the secrets are unset. |
 | `DEPLOY.md` | The server runbook (§7), including §4's honesty note. |
 
@@ -184,10 +184,12 @@ three switch. Accepted, explicitly.
    ```
 3. **Node 22**, then a first manual deploy: `bash ~/src/yoga-trainingen/deploy/deploy.sh`.
    Builds run on the server (~1 GB RAM; add swap on a small VPS).
-4. **Webhook**: `openssl rand -hex 32` → `~/webhook.env` (chmod 600); install
-   `deploy/webhook.service` to `/etc/systemd/system/webhook-yoga.service`;
-   `systemctl enable --now`. Listens on `127.0.0.1:9001`. The `webhook` binary is
-   already installed (shared).
+4. **Webhook**: `openssl rand -hex 32` → `~/webhook.env` (chmod 600); then
+   ```bash
+   sudo cp ~/src/yoga-trainingen/deploy/webhook-yoga-research.service /etc/systemd/system/
+   sudo systemctl daemon-reload && sudo systemctl enable --now webhook-yoga-research
+   ```
+   Listens on `127.0.0.1:9001`. The `webhook` binary is already installed (shared).
 5. **One vhost edit** (CloudPanel → Site → Vhost), above `location / {`:
    ```nginx
    location /hooks/ {
@@ -196,8 +198,13 @@ three switch. Accepted, explicitly.
    ```
 6. **GitHub secrets** (§5). Until they exist, the Deploy workflow runs green and skips.
 
-The unit file is installed as **`webhook-yoga.service`**, not `webhook.service`:
-`ivohofland.dev`'s listener already owns that unit name on this box.
+The unit is **`webhook-yoga-research.service`**, and it carries that name **in the
+repo** — not `webhook.service` renamed on the way in. `ivohofland.dev`'s listener
+already owns `webhook.service` on this box, so Part 5's instruction as written
+(*"copy `deploy/webhook.service`, change `User`, the `-hooks` path, and `-port`"*)
+is one forgotten `mv` away from overwriting the other site's unit and silently
+taking its auto-deploy down. Naming the file for the site removes the rename step,
+and with it the chance to skip it. `daemon-reload` after installing.
 
 ## 8. Out of scope
 
