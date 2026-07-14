@@ -330,6 +330,28 @@ export const nl = {
    *  this as "—" reported a correct decision of ours as a hole in our research, on twelve
    *  sources. Same rule as the quad: a finding is not a gap. See archiveSlots(). */
   archiveNotApplicable: "n.v.t. (niet vast te leggen)",
+
+  /* ---------- right of reply (§4.9/§12, v0.11) ----------
+   * Three states, three sentences, and they must never collapse into each other. "Wij
+   * wachten nog" is a fact about US. "Geen reactie" is a finding about THEM — and it is
+   * published with both dates, because a silence you cannot check is not evidence, it is
+   * an insinuation. */
+  inquiriesHeading: "Wederhoor",
+  inquiriesIntro:
+    "Bevindingen over een school leggen we vóór publicatie aan die school voor. Vraag, " +
+    "termijn en antwoord staan hieronder — ook als er geen antwoord kwam.",
+  inquiryType: {
+    correction_request: "correctieverzoek",
+    question: "vraag",
+    right_of_reply: "wederhoor",
+  } as const,
+  /** OURS: the window is open. Says nothing whatsoever about the provider. */
+  inquiryAwaiting: (respondBy: string) => `in afwachting van reactie (termijn tot ${respondBy})`,
+  /** THEIRS, and a finding: asked on X, given until Y, silent. Both dates, always. */
+  inquiryNoResponse: (sent: string, respondBy: string) =>
+    `voorgelegd op ${sent}, geen reactie binnen de gestelde termijn (tot ${respondBy})`,
+  inquiryAnswered: "beantwoord door de school",
+  inquiryReplyHeading: "Reactie van de school",
   // Never one number: a count of public archives alone reads as archive coverage,
   // and the bar is BOTH halves. Both counts, side by side, over the total.
   sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>

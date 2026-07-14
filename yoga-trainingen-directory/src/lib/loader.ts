@@ -38,7 +38,18 @@ function collectSourceRefs(node: unknown, refs: Set<string>): void {
 /** The checks Zod cannot express. Exported so the tests can put a record THROUGH
  *  them — a check that only ever runs over data that already passes it is a check
  *  whose failure branch nothing has proven. */
-export function integrityErrors(p: Provider, file: string): string[] {
+/**
+ * `today` is a PARAMETER, not a call to the clock, and the one rule that needs it says why:
+ * "you may not publish a silence you have not yet waited out" (1e) is inherently a question
+ * about now. Reading the clock in here would make validation non-deterministic and the rule
+ * untestable — the two things a build gate must never be. The caller supplies the date; the
+ * tests supply a fixed one.
+ */
+export function integrityErrors(
+  p: Provider,
+  file: string,
+  today: string = new Date().toISOString().slice(0, 10),
+): string[] {
   const errors: string[] = [];
   const sourceIds = new Set(p.sources.map((s) => s.id));
   const moduleIds = new Set(p.modules.map((m) => m.id));
@@ -131,6 +142,32 @@ export function integrityErrors(p: Provider, file: string): string[] {
     if (searched.includes("kvk") && !p.legal?.kvk) {
       errors.push(
         `${file}: crkbo.searched claims a 'kvk' search, but the record holds no legal.kvk.`,
+      );
+    }
+  }
+
+  // 1e. YOU MAY NOT PUBLISH A SILENCE YOU HAVE NOT WAITED OUT (spec §4.9/§12, v0.11).
+  //
+  // `response: "none"` prints "uitgenodigd te corrigeren, geen reactie" about a named
+  // business. It is defensible only after the window WE stated has actually elapsed.
+  // Recording it on the day the request goes out — which the old model forced, because
+  // `response` was required and `awaiting` did not exist — publishes a school's silence
+  // before they have had a single day to break it.
+  //
+  // `awaiting` is the honest state while the window is open: a fact about our process,
+  // never about them.
+  for (const [i, q] of (p.inquiries ?? []).entries()) {
+    if (q.respond_by <= q.sent) {
+      errors.push(
+        `${file}: inquiries[${i}] closes its window (${q.respond_by}) on or before it was sent (${q.sent}) — ` +
+          `a response window that has already expired is not a window.`,
+      );
+    }
+    if (q.response === "none" && q.respond_by > today) {
+      errors.push(
+        `${file}: inquiries[${i}] records 'geen reactie' while the window we gave them is still open ` +
+          `(respond_by ${q.respond_by}, today ${today}). That publishes a silence they have not yet had the ` +
+          `chance to break. Use response: awaiting until ${q.respond_by} has passed.`,
       );
     }
   }

@@ -1271,8 +1271,15 @@
               "summary": {
                 "type": "string"
               },
+              "respond_by": {
+                "$ref": "#/definitions/Provider/properties/crkbo/properties/checked/anyOf/0"
+              },
               "response": {
                 "anyOf": [
+                  {
+                    "type": "string",
+                    "const": "awaiting"
+                  },
                   {
                     "type": "string",
                     "const": "none"
@@ -1303,6 +1310,7 @@
               "sent",
               "type",
               "summary",
+              "respond_by",
               "response"
             ],
             "additionalProperties": false

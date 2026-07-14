@@ -1083,3 +1083,41 @@ test("INTEGRITY: no record in the corpus asserts non-registration it did not est
   const states = new Set(providers.map((p) => p.crkbo.registered));
   assert.ok(states.has("yes") && states.has("unknown"), "the corpus should hold both hits and gaps");
 });
+
+/* ---------- the right of reply (spec §4.9/§12, v0.11) ---------- */
+
+test("INQUIRY: you may not publish a silence you have not waited out", () => {
+  // `response: none` prints "voorgelegd op X, geen reactie binnen de gestelde termijn"
+  // about a named business. Before v0.11, `response` was REQUIRED and its only silent
+  // value was `none` — so logging a correction request on the day you sent it FORCED you
+  // to publish the school's silence before they had had a single day to break it.
+  //
+  // That is this project's cardinal error with a lawyer attached: a gap in OUR process
+  // rendered as a FINDING about them.
+  const base = providerOf("yoga-den");
+  const withInquiry = (response: unknown, respond_by: string) =>
+    ({
+      ...base,
+      inquiries: [
+        { sent: "2026-07-14", respond_by, type: "correction_request", summary: "Twee prijzen voorgelegd", response },
+      ],
+    }) as never;
+
+  // Sent today, window open, and we claim they did not answer.
+  const tooEarly = integrityErrors(withInquiry("none", "2026-08-04"), "x.yaml", "2026-07-14");
+  assert.equal(tooEarly.length, 1);
+  assert.match(tooEarly[0], /silence they have not yet had the chance to break/);
+  assert.match(tooEarly[0], /awaiting/, "the error must name the honest state");
+
+  // The honest state while the window is open loads fine, on the same day.
+  assert.deepEqual(integrityErrors(withInquiry("awaiting", "2026-08-04"), "x.yaml", "2026-07-14"), []);
+
+  // And once the window HAS passed, the silence is publishable — that is the whole point
+  // of principle 8: "invited to correct on X, no response" is a defensible fact.
+  assert.deepEqual(integrityErrors(withInquiry("none", "2026-08-04"), "x.yaml", "2026-08-05"), []);
+
+  // A window that closes before it opens is not a window.
+  const backwards = integrityErrors(withInquiry("awaiting", "2026-07-01"), "x.yaml", "2026-07-14");
+  assert.equal(backwards.length, 1);
+  assert.match(backwards[0], /already expired is not a window/);
+});

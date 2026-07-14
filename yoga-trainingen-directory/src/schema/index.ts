@@ -301,12 +301,45 @@ export type Assessment = z.infer<typeof Assessment>;
 
 /* ---------- Inquiry (correction workflow as data, spec §4.9) ---------- */
 
+/**
+ * A correction request put to a provider, and what came back (spec §4.9/§12, v0.11).
+ *
+ * WE PUBLISH FINDINGS ABOUT NAMED BUSINESSES — that they advertise a registration the
+ * register does not show, that they quote two different prices for the same training.
+ * Principle 8 says silence is recordable: *"invited to correct on date X, no response"*
+ * becomes a displayable, defensible fact. That is a strong sentence to print about a
+ * real company, and it is only defensible if two things are true, and the model used to
+ * be able to express neither:
+ *
+ *   THE WINDOW MUST BE STATED. `response: "none"` meant "no reply after the stated
+ *   window" — and the window appeared nowhere in the data. So the claim was
+ *   unfalsifiable: a reader could not tell whether we gave them a month or two days.
+ *   `respond_by` is required. If you are going to publish someone's silence, publish
+ *   how long you waited.
+ *
+ *   "THEY DID NOT REPLY" AND "WE ARE STILL WAITING" ARE DIFFERENT SENTENCES. `response`
+ *   was REQUIRED and its only silent value was `none`, so logging an inquiry on the day
+ *   you sent it forced you to publish "invited to correct, no response" about a school
+ *   that had had ZERO days to answer. That is this project's own cardinal error — a gap
+ *   in OUR process (`awaiting`) rendered as a FINDING about them (`none`) — the quad's
+ *   `unknown`-vs-`not_published` distinction, in a place where it is defamatory.
+ *
+ * `integrityErrors` refuses `none` while `respond_by` is still in the future: you may not
+ * publish a silence you have not yet waited out.
+ */
 export const Inquiry = strictObject({
   sent: YearMonth,
   type: z.enum(["correction_request", "question", "right_of_reply"]),
   summary: z.string(),
-  /** "none" after the stated window = displayable, defensible silence. */
+  /** The window we gave them, in their own copy of the request. Publishing a silence
+   *  without publishing how long we waited is an accusation with the evidence withheld. */
+  respond_by: YearMonth,
   response: z.union([
+    /** WE ARE WAITING, and the window is open. A fact about OUR process; it says NOTHING
+     *  about the provider, and no surface may render it as though it did. */
+    z.literal("awaiting"),
+    /** THEY DID NOT REPLY within the window we stated. A finding — displayable, and
+     *  defensible precisely because `sent` and `respond_by` are both published beside it. */
     z.literal("none"),
     strictObject({ received: YearMonth, summary: z.string(), source: z.string().optional() }),
   ]),

@@ -18,7 +18,7 @@ import Link from "next/link";
 import { loadDataset } from "@/lib/loader";
 import { toProviderView, formatMonth, cohortLabel, type ClaimView } from "@/lib/presenters";
 import { Quad } from "@/components/Quad";
-import { inkFor } from "@/lib/quad";
+import { inkFor, quadForInquiry } from "@/lib/quad";
 import { nl } from "@/lib/strings";
 import styles from "./page.module.css";
 
@@ -324,6 +324,47 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
           <p className={styles.subNote}>{nl.claimsNote}</p>
           {v.claims.map((c) => (
             <Claim key={c.id} claim={c} showScope />
+          ))}
+        </section>
+      )}
+
+      {/* WEDERHOOR — the right of reply (§4.9/§12, v0.11).
+
+          This page prints findings about a named business. `inquiries[]` has been in the
+          model since v0.1 and NO SURFACE HAS EVER RENDERED ONE, which is the same as not
+          having it: a reader who sees "adverteert een RYS 200 die het register niet toont"
+          has one obvious question — what does the school say? — and the page could not
+          answer it even when we had asked.
+
+          Three states, three sentences, and they are never spelled alike. `awaiting` is
+          OURS (the window is open; it says nothing about them). `none` is a FINDING, and
+          it is printed with BOTH dates — invited on X, given until Y — because a silence
+          the reader cannot check is an insinuation, not evidence. A reply is THEIRS, and
+          it gets the last word. */}
+      {v.inquiries.length > 0 && (
+        <section className={styles.section}>
+          <div className={styles.sectionLabel}>{nl.inquiriesHeading}</div>
+          <p className={styles.note}>{nl.inquiriesIntro}</p>
+          {v.inquiries.map((q, i) => (
+            <div key={i} className={styles.srcRow}>
+              <div className={styles.srcKind}>
+                {q.type}
+                <div className={styles.srcCaptured}>{q.sent}</div>
+              </div>
+              <div>
+                <div>{q.summary}</div>
+                {/* Through <Quad>, which is the ONLY place a finding-vs-gap becomes pixels.
+                    "Geen reactie" is a finding; "wij wachten nog" is a gap of ours. A
+                    second, hand-rolled ink here would be a second chance to spell them
+                    alike — on the one surface where that mistake has a lawyer attached. */}
+                <Quad state={quadForInquiry(q.state)}>{q.stateLabel}</Quad>
+                {q.replySummary && (
+                  <blockquote className={styles.disclosure}>
+                    <strong>{nl.inquiryReplyHeading}</strong> ({q.replyReceived}) — {q.replySummary}
+                  </blockquote>
+                )}
+              </div>
+            </div>
           ))}
         </section>
       )}
