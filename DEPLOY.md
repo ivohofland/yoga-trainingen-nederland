@@ -43,8 +43,23 @@ before the `rsync -a --delete`, `deploy.sh` refuses to run unless `out/index.htm
 mode: a future regression where the build exits 0 but writes an empty or missing `out/`.
 `rsync --delete` against an empty source does not error; it empties the docroot and copies
 nothing back. Read the check for exactly what it is, not what it sounds like: it proves the
-export produced *an* `index.html`, not that the export is complete or current — a stale
-`index.html` left over from an earlier successful build would satisfy it just as well.
+export produced *an* `index.html` in *this* run — nothing more. It does not prove the export
+is complete or every page correct. It also cannot be satisfied by a stale `index.html` left
+over from an earlier build: `next build` deletes `out/` at the start of its own export phase,
+and `set -e` aborts before this line if the current build failed, so there is never an old
+file sitting there for this check to be fooled by — only ever this run's, or none.
+
+Deploys are also serialised: `deploy.sh` takes an exclusive, blocking lock (`flock`) right
+after the identity gate, so a second deploy started while one is already running (two pushes
+minutes apart, a "Re-run all jobs", a manual run during a webhook deploy) waits for the first
+to finish rather than racing it. Before that lock existed, the `out/index.html` check above
+could pass in one process while a second process's build deleted `out/` out from under it —
+a real bug in the shape of the one this paragraph rules out, closed at a different layer.
+
+A green **Deploy** run in GitHub Actions proves less than any of the above: it goes green the
+moment the webhook accepts the signed ping — before the build has even started. Every failure
+after that (a failed gate, a failed build, the lock timing out) is invisible to GitHub Actions
+entirely; it shows up only in `~/deploy.log` on the server.
 
 ## Part 1 — one-time server setup
 
@@ -53,9 +68,16 @@ export produced *an* `index.html`, not that the export is complete or current �
   Not a Node.js site: there is no app port to give it.
 - Site user: `ivohofland-research`.
 - **Confirm the docroot** CloudPanel reports. It should be
-  `/home/ivohofland-research/htdocs/research.ivohofland.nl`. If it differs, set `DOCROOT` in
-  `deploy/deploy.sh` — a wrong docroot is an `rsync --delete` into the wrong directory, and it
-  is the one mistake here that is not self-correcting.
+  `/home/ivohofland-research/htdocs/research.ivohofland.nl`. If it differs, put
+  `DOCROOT=<the path CloudPanel actually reports>` in `~/deploy.env` (create the file if it
+  doesn't exist yet; `deploy.sh` sources it, if present, before computing DOCROOT's default).
+  **Do not** set it in `deploy/deploy.sh` itself — that file is inside the repo, and every deploy runs
+  `git reset --hard origin/main` against it, so an edit there survives exactly one deploy
+  before the next one silently reverts it back to the wrong-for-this-site default. This is
+  the same reason the webhook secret lives in `~/webhook.env` and not in `hooks.json`'s
+  literal text (Part 2 below) — anything that must outlive a reset has to live outside the
+  repo the reset resets. A wrong docroot is an `rsync --delete` into the wrong directory, and
+  it is the one mistake here that is not self-correcting.
 - DNS `A` → the VPS IP; issue the **Let's Encrypt** cert.
 
 ### 2. Clone — OUTSIDE the docroot
@@ -146,7 +168,16 @@ Then push a trivial commit to `main`: `validate` passes, the Deploy workflow POS
 
 ## Notes
 - **Rotate the secret** by updating `~/webhook.env` (+ `systemctl restart webhook-yoga-research`)
-  and the `DEPLOY_WEBHOOK_SECRET` GitHub secret together.
+  and the `DEPLOY_WEBHOOK_SECRET` GitHub secret together. First check `~/deploy.log` and let
+  any in-progress build finish before restarting. The unit's `KillMode=process` means a
+  restart no longer SIGTERMs a deploy that's mid-`rsync` — it only replaces the listener — but
+  there's still no reason to restart into an active deploy when waiting for the log to go
+  quiet costs nothing.
+- **`hooks.json` changes need a manual restart.** The listener does not watch the file for
+  changes (`-hotreload` was removed — see `deploy/webhook-yoga-research.service` for why: the
+  file lives inside the repo this unit's own deploy resets, and a reset replaces its inode
+  from under an inotify watch). After editing `hooks.json`, run
+  `sudo systemctl restart webhook-yoga-research`.
 - **Analytics**: none. This site ships no tracking snippet. If GoatCounter is ever wanted, the
   `:8081` instance on this box is multi-site — see `ivohofland.dev/DEPLOY.md` Part 4/5.
 - **Rate limiting** (that DEPLOY.md's Part 3) protects `/api/contact`. There is no API here.
