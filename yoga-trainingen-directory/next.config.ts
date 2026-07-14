@@ -43,9 +43,14 @@ const nextConfig: NextConfig = {
   // until someone hand-edits `$uri.html` into the vhost — and the nginx config we never
   // have to write is the nginx config that can never drift from this repo.
   trailingSlash: true,
-  // TEMPORARY, LOCAL, NOT COMMITTED — see the report. The default 60s per-page
-  // guard trips on a machine whose CPU is saturated by unrelated processes; it is
-  // a wall-clock guard, not a correctness one.
+  // The default 60s per-page guard is WALL-CLOCK, not correctness: it trips on a machine
+  // whose CPU is busy with something else, and fails a build that was going to succeed.
+  //
+  // This line called itself "TEMPORARY, LOCAL, NOT COMMITTED" while sitting committed in
+  // the repo for weeks — a comment stating a fact about itself that anyone could check and
+  // nobody did. It stays, and it now says what it is: the build runs on a small VPS
+  // (deploy/deploy.sh) as well as here, and that is exactly the machine a 60s wall-clock
+  // guard would fail on.
   staticPageGenerationTimeout: 1200,
 };
 
