@@ -49,8 +49,9 @@ content goes live. The site itself now exists; these are the parts of the
   reason field, or a retry pass with `npm run archive`.
 - [ ] **Promote the provenance check to a build gate.** `src/lib/provenance.ts`
   currently *warns* (in `validate`, on `/qa`, strict via `npm run provenance`).
-  It is at **1 finding**. Once that clears and it holds at zero, make it fail
-  the build — the comment in the file says so.
+  It is at **0 findings across 163 claims** — the condition the file set for itself
+  ("once it holds at zero, make it fail the build") is now met. The only reason it
+  is still a warning is that nobody has flipped it. Flip it.
 
 ## Open — research debt
 
@@ -62,13 +63,29 @@ content goes live. The site itself now exists; these are the parts of the
   **page-level, not fact-level**, and this is its known false negative. Needs an
   editorial decision on the comparable base across the three routes, then the
   extraction.
-- [ ] **`yoga-den/200-vinyasa`** — `vat: incl`, cited to `site-ytt-200-2026-06`.
-  The note claims the page *"vermeldde 'Pricing incl. VAT'"*, but **no Yoga Den
-  artifact contains that string**, and this is not a partial capture (the pricing
-  block IS captured: *"Pricing"*, *"Investment: €3597"*, no VAT wording beside
-  it). **Our note and our own archive contradict each other.** Only the live page
-  can settle it: if the wording is there → recapture + re-cite; if not →
-  `vat: unknown` (§4.11). *The only open provenance finding in the corpus.*
+- [ ] **`yoga-den/200-vinyasa` publishes TWO different investments, in its own two
+  channels.** The opleidingspagina says *"Investment: €3597 (200 euro discount
+  before March 31st)"*; the Mindbody booking page its own **Sign Up** button leads
+  to says *"Member price €3297 until March 31 / Non member price €3397 until March
+  31"* — a different amount, a membership tier the website never mentions, and a
+  different early-bird date (Mar 15 vs Mar 31). Every deadline named is in the
+  past. **A reader cannot determine from the school's own channels what this
+  training costs today.** Both are archived (`site-ytt-200-2026-07`,
+  `mindbody-enrolment-200-2026-07`). Recorded as a finding in the price note, and
+  deliberately NOT as `price.variants` — that field means "tariffs you may choose
+  between" and renders as *"3 prijsvarianten"*, which would present a contradiction
+  as a tidy menu. **Actionable:** put it to the school as a correction request
+  (§4.9 `inquiries`), exactly as with de Yogaschool's two Basisopleiding prices.
+- [ ] **The Mindbody enrolment page cannot be captured locally.** Mindbody answers
+  our Playwright capture with a Cloudflare bot-check (*"Verifying you are human"*),
+  so the local artifact was a captcha, not the page — it has been deleted, because
+  a snapshot that evidences nothing is worse than none: it *looks* like evidence.
+  Wayback's snapshot DID render (verified: it contains the four price lines
+  verbatim), so this is a **public-only source** — the mirror image of the
+  Wayback-excluded YA registers, where only the local copy is evidence. Fine for
+  now, but it means one price finding rests on a snapshot the site owner could ask
+  to have withdrawn. Worth a browser-based local capture route if more providers
+  turn out to book through Mindbody (many Dutch studios do).
 - [ ] **`de-yogaschool-enschede` publishes TWO prices for the Basisopleiding.**
   The general opleidingspagina (`/yoga-opleiding/`) says *"€1510,00 per jaar"*;
   the Basisopleiding's own page (`/basisopleiding/`) says *"€ 1590,00 per seizoen
@@ -138,7 +155,7 @@ understate the project.*
   to readers as "not investigated".
 - [x] **spec v0.5** — `price.period` + `periods`; `total_price` derived.
   `amount_eur` silently assumed a whole-course total, which ranked de Blikopener
-  3rd cheapest of 54 when the real cost is ≈ € 5.260.
+  3rd cheapest of 54 when the real cost is ≈ € 5.160.
 - [x] **spec v0.6** — `total_hours` derived. Two records stored *our* sum in a
   field that renders as the school's claim.
 - [x] Five prices sourced, archived and extracted (AALO ×2, de Blikopener,
