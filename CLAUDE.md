@@ -28,15 +28,30 @@ npm install
 npx playwright install chromium   # once, only needed for the archive script
 npm run validate          # parse + integrity-check every record; run after EVERY edit to data/
 npm run dev               # local site on :3000
-npm run build             # gen-schema → validate → test → export-json → next build; refuses to build on invalid data
+npm run build             # gen-schema → validate → provenance → test → test:ci → export-json → next build
 npm run export-json       # writes the validated dataset to public/data/v1/providers.json (this is the API)
 npm run archive -- --all  # local snapshots + Wayback for sources missing them (run locally; needs network + chromium)
 npm test                  # unit tests (node:test); locks the quad/editorial invariants
+npm run test:ci           # the SAME suite as CI sees it: no archive bodies (see below)
+npm run provenance        # the provenance gate, strict; run after touching a price, an hour count or a source
 ```
 
 `npm test` runs the unit tests (`node:test` via `tsx --test`, no extra
-dependency). There is no linter. Both `validate` and `test` are build gates —
-`npm run build` runs them in order and refuses to build if either fails.
+dependency). There is no linter. `validate`, `provenance`, `test` and `test:ci`
+are ALL build gates — `npm run build` runs them in order and refuses to build if
+any fails.
+
+**`npm run test:ci` is not a duplicate of `npm test`.** The archive bodies are
+gitignored, so this repo's evidence lives on exactly one machine — which means a
+test can pass here and fail on a clone. One did, for weeks: the provenance
+report's `granularity` was asserted against what the *corpus holds* rather than
+what the *run examined*, green locally, red anywhere else, and unseen because CI
+did not run the tests at all. `test:ci` sets `PROVENANCE_WITHHOLD_BODIES=1`, which
+makes the check behave as it does in a fresh clone (hashes present, bodies gone).
+Note what it does NOT do: it never moves your archives to simulate their absence.
+An agent that moved a file, worked, and meant to move it back once crashed in
+between and destroyed 364 lines of unrecoverable research. **Never move the
+author's files.**
 
 The tests exist to lock the *editorial* invariants, not to chase coverage. The
 one that matters most is in `src/lib/quad.test.ts`: `not_published` (a finding)

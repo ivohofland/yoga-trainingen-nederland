@@ -529,10 +529,39 @@ interface Artifacts {
  * writes one line per captured file, so its very existence proves a snapshot was
  * taken even when the body is gitignored out of this checkout.
  */
+
+/**
+ * REPRODUCE CI'S STATE WITHOUT TOUCHING THE ARCHIVES. `npm run test:ci` sets this, and
+ * the check then behaves as it does in a fresh clone: the `.sha256` receipts are there,
+ * the bodies are not, so every content claim is SKIPPED and only the structural tier can
+ * fire.
+ *
+ * It exists because the researcher's machine is the ONE machine where this check sees
+ * everything — and that is exactly why a test can pass here and fail in CI. One did, for
+ * weeks: `granularity` was asserted against what the corpus HOLDS rather than what the
+ * run EXAMINED, green locally, red on a clone, and unnoticed because CI did not run the
+ * tests at all. There has to be a way to ask "would this pass where the evidence isn't?"
+ *
+ * AND IT IS AN ENV FLAG RATHER THAN A SHUFFLE OF FILES ON PURPOSE. The obvious way to
+ * simulate a missing archive is to move the archive. An agent doing exactly that — move
+ * the file, do the work, move it back — crashed in between and destroyed 364 lines of the
+ * author's unrecoverable research. Nothing in this repo simulates absence by making
+ * something absent. Never move the author's files.
+ *
+ * IT WITHHOLDS THE CHECKOUT'S BODIES, NOT EVERY FILE ON DISK. A caller that passes an
+ * explicit `cwd` is not reading the checkout — it is a test standing up a synthetic
+ * archive in a temp dir to prove what the check does WITH an artifact in hand (an
+ * unreadable capture, a priced gate). Blanking those too made the flag assert the
+ * opposite of what those tests exist to pin, and two of them went red saying so.
+ */
+const withheldBodies = (cwd: string) =>
+  process.env.PROVENANCE_WITHHOLD_BODIES === "1" && cwd === process.cwd();
 export function artifactsFor(source: Source, cwd = process.cwd()): Artifacts {
   if (!source.local_snapshot) return { readable: [], bodyWithheld: false, nothingCaptured: true };
   const base = source.local_snapshot.replace(/\.[a-z0-9]+$/i, "");
-  const readable = READABLE.map((ext) => path.join(cwd, base + ext)).filter((f) => fs.existsSync(f));
+  const readable = withheldBodies(cwd)
+    ? [] // the bodies are gitignored away, as in a fresh clone — see withheldBodies()
+    : READABLE.map((ext) => path.join(cwd, base + ext)).filter((f) => fs.existsSync(f));
   const hashFile = path.join(cwd, `${base}.sha256`);
   const hashed = fs.existsSync(hashFile)
     ? fs

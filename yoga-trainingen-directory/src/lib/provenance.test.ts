@@ -490,7 +490,28 @@ test("the report states its own coverage, so no consumer can overstate the check
   //
   // The fallback tier is therefore LICENSED, never assumed — PAGE_TIER_CLAIMS below names
   // every claim entitled to it and holds its parts to the artifact at FACT level.
-  assert.equal(report.granularity, PAGE_TIER_CLAIMS.length > 0 ? "page" : "fact");
+  //
+  // IT REPORTS THE QUESTION ASKED OF THE CLAIMS IT EXAMINED — not of the claims the corpus
+  // HOLDS, and the two part company exactly where this project's evidence lives. The
+  // snapshot bodies are gitignored, so in a fresh clone Adhouna's Yin XL — the one
+  // page-tier claim — is SKIPPED, nothing page-tier is examined, and the report says
+  // `fact`: truthfully, of the nine claims it could open. Asserting the corpus's answer
+  // here passed on the researcher's machine and failed in CI, and NOBODY SAW IT for weeks,
+  // because CI did not run the tests. It does now, and this was the first thing it caught.
+  //
+  // So: the implication holds everywhere (you cannot report `page` without a page-tier
+  // claim to report it about), and the equality is asserted only where the evidence is all
+  // actually openable — which is the run that decides whether a record may be published.
+  if (report.granularity === "page") {
+    assert.ok(
+      PAGE_TIER_CLAIMS.length > 0,
+      "the report fell back to the page tier with no claim entitled to it — the weaker " +
+        "question was asked about a record whose amount we DO hold",
+    );
+  }
+  if (report.skipped === 0) {
+    assert.equal(report.granularity, PAGE_TIER_CLAIMS.length > 0 ? "page" : "fact");
+  }
 });
 
 /**
@@ -628,6 +649,15 @@ test("GATE: the provenance check is actually wired into the build", () => {
     "provenance must run before `next build`, or the pages are already written when it fails",
   );
   assert.equal(pkg.scripts.provenance, "tsx scripts/provenance.ts");
+
+  // AND THE SUITE MUST ALSO RUN THE WAY CI RUNS IT — without the archive bodies. This
+  // repo's evidence lives on ONE machine, so a test can be green here and red on a clone.
+  // One was, for weeks (`granularity`, asserted against what the corpus holds rather than
+  // what the run examined), and nobody saw it because CI did not run the tests. `test:ci`
+  // reproduces that state in seconds, and it belongs in the build for the same reason the
+  // tests do: a check nobody runs is not a check.
+  assert.match(build, /npm run test:ci/, "the build does not run the suite in CI's shape");
+  assert.match(pkg.scripts["test:ci"], /PROVENANCE_WITHHOLD_BODIES=1/);
 });
 
 test("GATE: every finding reason is assigned a tier — a new one cannot slip in untriaged", () => {

@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run gen-schema && npm run validate && npm run provenance && npm test && npm run export-json && next build",
+    "build": "npm run gen-schema && npm run validate && npm run provenance && npm test && npm run test:ci && npm run export-json && next build",
     "start": "next start",
     "test": "tsx --test \"src/**/*.test.ts\"",
+    "test:ci": "PROVENANCE_WITHHOLD_BODIES=1 tsx --test \"src/**/*.test.ts\"",
     "validate": "tsx scripts/validate.ts",
     "provenance": "tsx scripts/provenance.ts",
     "gen-schema": "tsx scripts/gen-schema.ts",
