@@ -108,10 +108,21 @@
  * two of them still evidences the third's amount if the number happens to be there.
  * It is a floor under the citation, not a ceiling over it.
  *
- * NOT A BUILD GATE. It reports as a warning in `npm run validate` and counts on
- * `/qa`; `npm run provenance` is the same check with a non-zero exit, for use after
- * touching a price, an hour count or a source. The reason to keep the build green is
- * that a false positive here is an accusation against our own sourced research.
+ * A BUILD GATE, as of 2026-07-14. `npm run provenance` fails, and it runs inside
+ * `npm run build` — so a record that cites a page which does not state its fact
+ * cannot ship. It stayed a warning until it had held at zero findings across 163
+ * claims, because a false positive here is an accusation against our own sourced
+ * research; that condition was met, so the gate is on. `validate` still prints it as
+ * a warning and `/qa` still counts it — those are the friendly signals while you
+ * work. The build is where it bites.
+ *
+ * WHAT THE GATE CAN ENFORCE DEPENDS ON WHERE IT RUNS, and scripts/provenance.ts says
+ * so out loud on every run. The STRUCTURAL tier ("cited, but in no archive":
+ * no_source / no_snapshot / no_artifact) needs only the record and the committed
+ * `.sha256` sidecars, so it binds everywhere, CI included. The CONTENT tier
+ * ("archived, but the artifact does not state it": no_evidence) needs the snapshot
+ * body, which is gitignored — so on a fresh checkout it is not weakened but ABSENT,
+ * and every such claim is SKIPPED, never passed.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -354,6 +365,35 @@ export type Granularity = "page" | "fact";
  *  "the page contains no amount" — is an ACCUSATION built on our own broken extractor,
  *  and the two sentences must never be collapsed. */
 export type ProvenanceReason = "no_source" | "no_snapshot" | "no_artifact" | "unreadable" | "no_evidence";
+
+/**
+ * WHICH EVIDENCE A FINDING NEEDS — and therefore WHERE the gate can enforce it.
+ *
+ * The snapshot bodies are gitignored, so a fresh checkout (CI) can prove some of these
+ * and not others. The gate has to know the difference, or it either blocks every CI
+ * build or passes vacuously over evidence it never opened. Both have happened.
+ *
+ *   `structural` — provable from the record plus the committed `.sha256` sidecars
+ *     ALONE, so it binds EVERYWHERE. "You cited a page that is in no archive."
+ *   `content` — needs the snapshot body. "We opened the artifact; the fact is not in
+ *     it." Where the body is absent the claim is SKIPPED, never passed (see
+ *     `bodyWithheld` in allProvenance) — which is what keeps CI honest instead of green.
+ *   `tooling` — needs the body too, but it is NOT a claim about the provider: we hold a
+ *     capture and could not extract a character from it. Reporting that as `content`
+ *     would print "the page states no price" about a named business on the strength of
+ *     our own broken extractor. That is the `strings` disaster, and it stays its own tier.
+ *
+ * Exhaustive over ProvenanceReason ON PURPOSE: add a reason and this stops compiling
+ * until someone decides what evidence it needs. That decision is not one to make by
+ * accident.
+ */
+export const FINDING_TIER: Record<ProvenanceReason, "structural" | "content" | "tooling"> = {
+  no_source: "structural",
+  no_snapshot: "structural",
+  no_artifact: "structural",
+  unreadable: "tooling",
+  no_evidence: "content",
+};
 
 export interface ProvenanceFinding {
   providerId: string;

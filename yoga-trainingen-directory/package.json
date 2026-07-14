@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run gen-schema && npm run validate && npm test && npm run export-json && next build",
+    "build": "npm run gen-schema && npm run validate && npm run provenance && npm test && npm run export-json && next build",
     "start": "next start",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "validate": "tsx scripts/validate.ts",

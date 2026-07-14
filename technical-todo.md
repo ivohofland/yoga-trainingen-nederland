@@ -47,11 +47,7 @@ content goes live. The site itself now exists; these are the parts of the
   JS-rendered registers), but that distinction is not currently recorded, so a
   reader cannot tell a deliberate skip from a missing submission. Consider a
   reason field, or a retry pass with `npm run archive`.
-- [ ] **Promote the provenance check to a build gate.** `src/lib/provenance.ts`
-  currently *warns* (in `validate`, on `/qa`, strict via `npm run provenance`).
-  It is at **0 findings across 163 claims** — the condition the file set for itself
-  ("once it holds at zero, make it fail the build") is now met. The only reason it
-  is still a warning is that nobody has flipped it. Flip it.
+*(The provenance build gate is done — see Closed.)*
 
 ## Open — research debt
 
@@ -162,6 +158,16 @@ understate the project.*
   Yoga Academie Nederland); de Blikopener split into two properly-sourced
   programmes; Wahé's 500-hour route re-cited to the page that actually states it;
   four VAT treatments corrected to `unknown` per §4.11.
+- [x] **The provenance check is a BUILD GATE** (2026-07-14). It ran as a warning
+  until it had held at zero findings across 163 claims — the condition it set for
+  itself — and `npm run provenance` now runs inside `npm run build` and fails it.
+  It enforces two tiers, because the archive bodies are gitignored and a gate that
+  cannot open its evidence must say so rather than pass: **structural** ("cited, but
+  in no archive") is provable from the record plus the committed `.sha256` sidecars
+  alone and binds in CI too; **content** ("the artifact does not state it") needs the
+  body, and without it the claim is SKIPPED and the run prints `INHOUD NIET GETOETST`
+  instead of a tick. Proven both ways: breaking a price fails the build locally, and
+  citing an unarchived page fails it in a fresh clone with zero bodies present.
 
 ---
 

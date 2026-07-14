@@ -223,14 +223,30 @@ them silently corrupts the dataset's credibility.
   The order is therefore: find the page that states it → add it to `sources[]` →
   **archive it** → extract the value FROM THE CAPTURED FILE. Never from a search
   summary, never from memory. `src/lib/provenance.ts` enforces this for the **price,
-  the hours total and the BTW treatment** (warning in `npm run validate`, counted on
-  `/qa`, strict in `npm run provenance`); a linked PDF is exactly the artefact a
-  provider can silently replace, so it gets its own `Source` with its own capture.
-  The check searches the **visible text** of the HTML (scripts, styles and tags
-  stripped): an hours figure matched against raw markup is a `font-weight:500`
-  vouching for a claim about a named business. Its open findings are triaged in
-  `technical-todo.md` and pinned in `provenance.test.ts` so the count cannot grow
-  unnoticed.
+  the hours total, the BTW treatment and a priced prerequisite** — and since
+  2026-07-14 it is a **BUILD GATE**: `npm run provenance` runs inside `npm run build`
+  and fails it, so a record citing a page that does not state its fact cannot ship.
+  (It still warns in `npm run validate` and counts on `/qa` — those are the friendly
+  signals while you work; the build is where it bites.) A linked PDF is exactly the
+  artefact a provider can silently replace, so it gets its own `Source` with its own
+  capture. The check searches the **visible text** of the HTML (scripts, styles and
+  tags stripped): an hours figure matched against raw markup is a `font-weight:500`
+  vouching for a claim about a named business.
+
+  **What the gate can prove depends on where it runs, and it says so on every run.**
+  The archive bodies are gitignored, so a fresh clone (CI) cannot open them. The
+  check therefore has two tiers, `FINDING_TIER` in `provenance.ts`, exhaustive over
+  the reason union so a new reason cannot be added without deciding which it is:
+  **structural** (`no_source`/`no_snapshot`/`no_artifact` — "you cited a page that is
+  in no archive") is provable from the record plus the **committed `.sha256`**
+  sidecars alone, so it binds *everywhere, CI included*; **content** (`no_evidence` —
+  "we opened the artifact and the fact is not in it") needs the body, and where the
+  body is absent the claim is **SKIPPED, never passed** — the run prints `INHOUD NIET
+  GETOETST` rather than a green tick. A third tier, **tooling** (`unreadable`), is
+  ours, not theirs: an artifact we hold but could not extract a character from is a
+  hole in our extractor, and reporting it as "the page states no price" is the
+  `strings` disaster that put a false sentence about SanaYou into the dataset. Never
+  collapse it into `content`.
 - **The JS-rendered-price trap: search BOTH artifacts.** Each source is captured as
   `<id>-<date>.html` (raw DOM) *and* `<id>-<date>.pdf` (browser-rendered). Neither
   alone is evidence: 3 providers' prices exist ONLY in the PDF (injected by a JS

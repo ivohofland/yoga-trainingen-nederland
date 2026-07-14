@@ -32,9 +32,11 @@ import {
   evidencesHours,
   evidencesPrice,
   evidencesVat,
+  FINDING_TIER,
   pdftotextAvailable,
   providerProvenance,
   visibleText,
+  type ProvenanceReason,
 } from "./provenance";
 import type { Provider } from "../schema";
 
@@ -596,4 +598,126 @@ test("where the snapshot bodies are present, the check is not vacuously green", 
     `expected the archived artifacts to have been searched, examined only ${report.examined}`,
   );
   assert.equal(report.coverage, 1, "full checkout: every claim's evidence was actually opened");
+});
+
+/* ---------- THE GATE (2026-07-14) ----------
+ *
+ * The check now FAILS `npm run build`. Two things have to stay true for that to mean
+ * anything, and neither is guaranteed by the check being correct:
+ *
+ *   1. It has to still be WIRED. An invariant that runs nowhere enforces nothing —
+ *      that is precisely how 181 tests came to gate a CI pipeline that never ran them.
+ *   2. A snapshot body we do not HOLD must never become a FINDING. The bodies are
+ *      gitignored, so if `bodyWithheld` produced findings the gate would fail every CI
+ *      build and get switched off within a week — and the honest thing (skip it, say
+ *      so) is the only thing that keeps it survivable.
+ */
+
+test("GATE: the provenance check is actually wired into the build", () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8"));
+  const build: string = pkg.scripts.build;
+  assert.match(
+    build,
+    /npm run provenance/,
+    "the provenance gate is not in the build chain — a gate that never runs is not a gate",
+  );
+  // And it must run BEFORE the site is generated: failing after `next build` has already
+  // written the pages is a gate that fires once the horse is in the next county.
+  assert.ok(
+    build.indexOf("npm run provenance") < build.indexOf("next build"),
+    "provenance must run before `next build`, or the pages are already written when it fails",
+  );
+  assert.equal(pkg.scripts.provenance, "tsx scripts/provenance.ts");
+});
+
+test("GATE: every finding reason is assigned a tier — a new one cannot slip in untriaged", () => {
+  // FINDING_TIER decides WHERE a finding can be enforced (see its comment): `structural`
+  // binds in CI, `content` and `tooling` need the snapshot body. The Record type makes
+  // omission a compile error; this pins the values, because getting the tier WRONG is
+  // just as bad — filing `no_evidence` as structural would fail every CI build, and
+  // filing `no_snapshot` as content would let an unarchived citation ship.
+  const expected: Record<ProvenanceReason, string> = {
+    no_source: "structural",
+    no_snapshot: "structural",
+    no_artifact: "structural",
+    unreadable: "tooling",
+    no_evidence: "content",
+  };
+  assert.deepEqual(FINDING_TIER, expected);
+  // `unreadable` is OURS, not theirs. It must never be filed as content — "the page
+  // states no price" on the strength of an extractor that read nothing is the `strings`
+  // disaster, which put a false sentence about SanaYou into the dataset.
+  assert.notEqual(FINDING_TIER.unreadable, "content");
+});
+
+test("GATE: a snapshot body we do not hold is SKIPPED, never a finding", () => {
+  // THE LOAD-BEARING ONE. In CI every body is absent — gitignored by design, because they
+  // are other people's copyrighted pages. If that state produced findings, this gate would
+  // fail every CI build and be switched off inside a week. Silence is not evidence of
+  // absence when the evidence is elsewhere ON PURPOSE.
+  //
+  // The CI state, reproduced exactly: the `.sha256` receipt IS committed (so we can prove a
+  // capture was taken), and the body it names is NOT here.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-gate-"));
+  fs.mkdirSync(path.join(dir, "data/archives/withheld"), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, "data/archives/withheld/site-2026-07.sha256"),
+    "9f2c…  site-2026-07.pdf\n7a10…  site-2026-07.html\n",
+  );
+
+  const p = {
+    id: "withheld",
+    name: "Withheld Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: 1234, period: "total", vat: "incl", published: "yes", source: "site" },
+        hours_claimed: { total: 200, breakdown_published: "unknown", contact_published: "unknown", source: "site" },
+      },
+    ],
+    sources: [{ id: "site", local_snapshot: "data/archives/withheld/site-2026-07.pdf" }],
+  } as unknown as Provider;
+
+  const { findings, skipped, examined } = providerProvenance(p, dir);
+
+  assert.deepEqual(
+    findings,
+    [],
+    "a claim whose archived body is not in THIS checkout was reported as a finding — that fails " +
+      "every CI build, and it accuses a named business of not publishing a price on the strength " +
+      "of a file we simply do not have here",
+  );
+  assert.ok(skipped > 0, "the claims must be counted as SKIPPED — not silently dropped, and not passed");
+  assert.equal(examined, 0, "nothing was examined: there was nothing here to open");
+});
+
+test("GATE: a citation with NO archived artifact at all still fails, body or no body", () => {
+  // The other half, and the reason the gate is worth having in CI at all. This one needs
+  // no snapshot body to prove: the record cites a page for its price, and there is no
+  // capture and no hash — nothing was ever archived. That is `structural`, it is provable
+  // from the record and the committed sidecars alone, and it is the failure that actually
+  // recurs here: citing the page that LINKS to the price instead of the page that STATES it.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-gate-"));
+
+  const p = {
+    id: "unarchived",
+    name: "Unarchived Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: 1234, period: "total", vat: "unknown", published: "yes", source: "site" },
+        hours_claimed: { total: null, breakdown_published: "unknown", contact_published: "unknown" },
+      },
+    ],
+    sources: [{ id: "site" }], // cited, never archived: no local_snapshot at all
+  } as unknown as Provider;
+
+  const { findings } = providerProvenance(p, dir);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].reason, "no_snapshot");
+  assert.equal(
+    FINDING_TIER[findings[0].reason],
+    "structural",
+    "this must be enforceable WITHOUT the bodies — otherwise CI gates nothing at all",
+  );
 });
