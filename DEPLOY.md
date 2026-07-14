@@ -8,7 +8,8 @@ deploy path**. Deploys are **pull-based**: the server pulls itself; GitHub only 
 ```
 push to main → validate (CI) → Deploy workflow
    → signed HTTPS POST to /hooks/deploy-yoga-trainingen (HMAC-SHA256)
-   → webhook (:9001) → deploy.sh → npm run build → rsync out/ → docroot
+   → webhook (:9001) → deploy-webhook.sh (returns 200, backgrounds via nohup)
+   → deploy.sh → npm run build → rsync out/ → docroot          (~/deploy.log)
 ```
 
 **No inbound SSH, nothing to IP-whitelist.** The only inbound is the webhook POST on 443
@@ -35,6 +36,15 @@ content tier ("we opened the artifact and the fact is not in it"), printing `INH
 GETOETST`. This is exactly what CI does, so the deploy gate is no weaker — but a green deploy
 **does not mean the artifacts were read**. That check runs on the researcher's machine, where
 the archives live, and nowhere else.
+
+One more gate sits outside that chain, after the build has already succeeded. Immediately
+before the `rsync -a --delete`, `deploy.sh` refuses to run unless `out/index.html` exists.
+`set -e` already aborts if `npm run build` itself fails — this catches the other failure
+mode: a future regression where the build exits 0 but writes an empty or missing `out/`.
+`rsync --delete` against an empty source does not error; it empties the docroot and copies
+nothing back. Read the check for exactly what it is, not what it sounds like: it proves the
+export produced *an* `index.html`, not that the export is complete or current — a stale
+`index.html` left over from an earlier successful build would satisfy it just as well.
 
 ## Part 1 — one-time server setup
 
