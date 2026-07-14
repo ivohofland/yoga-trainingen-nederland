@@ -900,14 +900,65 @@ test("RENDER: Wahé's 500 stays THEIRS — no “onze optelling” row is invent
   assert.ok(hours.source, "their claim must carry the source that states it");
 });
 
-test("RENDER: `derived` is on the two derived totals and on NOTHING else", () => {
+test("RENDER: the path cost is a row of ITS OWN, muted, uncited — and only where there is a gate", () => {
+  // de Yogaschool. The Prijs row is THEIRS (€ 1.530 / studiejaar, cited). The Totaalprijs row
+  // is OURS (± € 4.590, 3 × € 1.530). And the row this test is about is also ours, and it is
+  // the one the reader actually came for: € 6.180 to qualify, because you may not start the
+  // Docentenopleiding without first buying the Basisopleiding.
+  const p = providers.find((prov) => prov.id === "de-yogaschool-enschede")!;
+  const docent = toProviderView(p).programs.find((v) => v.id === "docentenopleiding-raja")!;
+
+  const path = docent.rows.find((r) => r.label === nl.rowTotalPathCost)!;
+  assert.ok(path, "the gated programme shows no path cost — the reader is told € 4.590 and nothing else");
+  assert.equal(path.state, "yes");
+  assert.match(path.value ?? "", /6\.180/, "€ 4.590 + € 1.590");
+  assert.equal(path.derived, true,
+    "unflagged, the page paints € 6.180 in de Yogaschool's own fact ink — a figure they never published");
+  assert.equal(path.source, null, "our arithmetic cites no page of theirs; the parts carry the citations");
+  assert.match(path.note ?? "", /Basisopleiding/, "the working must say what was added, and for how much");
+
+  // The gate itself gets a row WITH a source — the price row above cannot carry it, and the
+  // prose row (Vooropleiding) has no source field at all.
+  const gate = docent.rows.find((r) => r.label === nl.rowPrerequisiteGate)!;
+  assert.equal(gate.state, "yes");
+  assert.match(gate.value ?? "", /Basisopleiding/);
+  assert.ok(gate.source, "a gate we ADD TO THE PRICE and cannot cite is a number with no page behind it");
+
+  // The three-link chain, on the other programme.
+  const meester = toProviderView(p).programs.find((v) => v.id === "meesteropleiding-raja")!;
+  assert.match(meester.rows.find((r) => r.label === nl.rowTotalPathCost)?.value ?? "", /10\.770/);
+});
+
+test("RENDER: a programme with nothing to buy first shows NO path-cost row", () => {
+  // The standing controls, and the rule the spec states in as many words: with no purchasable
+  // prerequisite `totalPathCost === totalPrice`, and a second row printing the same number
+  // under "onze optelling" would invent a second figure out of one — v0.6's error, sideways.
+  for (const [pid, progId] of [
+    ["bluebirds", "200-vinyasa-hybrid-2026"],
+    ["wahe", "500-pathway"],
+  ] as const) {
+    const p = providers.find((prov) => prov.id === pid)!;
+    const prog = toProviderView(p).programs.find((v) => v.id === progId)!;
+    assert.equal(prog.rows.find((r) => r.label === nl.rowTotalPathCost), undefined,
+      `${pid}/${progId}: a path-cost row on a programme with no gate — a second figure where the school published one`);
+  }
+
+  // And on the listing: exactly the gated rows carry the third line, nobody else.
+  const withPath = toListingRows(providers).filter((r) => r.priceDerivedPathCost != null);
+  assert.deepEqual(withPath.map((r) => `${r.providerId}/${r.programId}`).sort(),
+    ["de-yogaschool-enschede/docentenopleiding-raja", "de-yogaschool-enschede/meesteropleiding-raja"],
+    "the path-cost line appears on a programme that has no purchasable gate — or is missing from one that has");
+  assert.match(withPath[0].priceDerivedPathCost ?? "", /om te kwalificeren/);
+});
+
+test("RENDER: `derived` is on the three derived totals and on NOTHING else", () => {
   // The flag is a licence to print a number in non-factual ink. Anywhere else it would do
   // the opposite of its job: it would strip a provider's own sourced fact of its fact ink.
   // Conversely, every derived value that HAS a figure must carry it — a new derived row
   // added without the flag is exactly the regression this pins.
   // `Set<string>`, not the literal union TS infers: `row.label` is a string, and a Set
-  // narrowed to the two label literals rejects `.has()` on it (a pre-existing tsc error).
-  const DERIVED_LABELS = new Set<string>([nl.rowTotalPrice, nl.rowTotalHours]);
+  // narrowed to the three label literals rejects `.has()` on it (a pre-existing tsc error).
+  const DERIVED_LABELS = new Set<string>([nl.rowTotalPrice, nl.rowTotalHours, nl.rowTotalPathCost]);
   let flagged = 0;
   for (const p of providers) {
     for (const prog of toProviderView(p).programs) {

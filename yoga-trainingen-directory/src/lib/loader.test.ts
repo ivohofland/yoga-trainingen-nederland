@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { integrityErrors, loadDataset } from "./loader";
-import { bundleDelta, contactRatio, pricePerContactHour, totalHours, totalPrice } from "./derive";
+import { bundleDelta, contactRatio, pricePerContactHour, totalHours, totalPathCost, totalPrice } from "./derive";
 import { priceBand } from "./rules";
 import { YearMonth, type Program } from "../schema";
 
@@ -459,6 +459,222 @@ test("DERIVED: no bundle delta is invented from a module price we do not hold", 
       }
     }
   }
+});
+
+/* ---------- total_path_cost: what it costs to QUALIFY here (spec v0.9, §6) ----------
+ *
+ * The fourth costume of the same disease. de Yogaschool's Docentenopleiding is € 1.530 ×
+ * 3 = € 4.590 and you may not start it without first completing their Basisopleiding
+ * (€ 1.590) — a gate the record ALREADY carried, in `prerequisites_claimed`, as PROSE,
+ * where no comparison could reach it. The site published € 4.590. Qualifying costs € 6.180.
+ * The Meesteropleiding sits behind the Docentenopleiding: € 10.770, also shown as € 4.590.
+ */
+
+test("PATH: a training you must BUY first is added — and the sum is ours, with its working", () => {
+  const provider = providerOf("de-yogaschool-enschede");
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+
+  // Guards: the gate is STRUCTURED, priced from the page that prints it, and its cost is
+  // read off the Basisopleiding page (€ 1.590 per lesjaar, one lesjaar) — not off the older
+  // general page, whose € 1.510 is what the record's prose used to carry.
+  const gate = prog.prerequisite?.[0];
+  assert.equal(gate?.kind, "program", "the Basisopleiding is a training you must BUY, not an experience");
+  assert.equal(gate?.cost_eur, 1590);
+  assert.equal(gate?.period, "per_year");
+  assert.equal(gate?.periods, 1);
+  assert.ok(gate?.source, "what you are forced to buy is a fact about the price — it needs a page that states it");
+
+  assert.equal(totalPrice(provider, prog).value, 4590, "guard: the course itself is 3 × € 1.530");
+
+  const path = totalPathCost(provider, prog);
+  assert.equal(path.value, 6180, "€ 4.590 + the mandatory € 1.590 Basisopleiding is € 6.180");
+  assert.equal(path.derived, true,
+    "the PATH is never the school's figure — € 6.180 appears on no page they publish, even though " +
+    "€ 1.530 and € 1.590 both do");
+  assert.match(path.caveat ?? "", /Basisopleiding/, "the working must name what was added");
+  assert.match(path.caveat ?? "", /1\.590/, "…and for how much, so the reader can check the sum");
+});
+
+test("PATH: the chain is walked RECURSIVELY — Meester → Docenten → Basis", () => {
+  // Three links, and the middle one is itself gated. Summing only the direct prerequisite
+  // would publish € 9.180 — closer than € 4.590, and just as false.
+  const provider = providerOf("de-yogaschool-enschede");
+  const prog = programOf("de-yogaschool-enschede", "meesteropleiding-raja");
+  assert.equal(prog.prerequisite?.[0]?.program, "docentenopleiding-raja",
+    "guard: the gate is the OTHER programme on this record, so its own gate must come with it");
+
+  const path = totalPathCost(provider, prog);
+  assert.equal(path.value, 10770, "€ 4.590 (Meester) + € 4.590 (Docenten) + € 1.590 (Basis)");
+  assert.deepEqual(path.gates.map((g) => g.total), [1590, 4590],
+    "the gates come out in the order a student must buy them — Basis first");
+  assert.equal(path.derived, true);
+});
+
+test("PATH: with nothing to buy first, the path IS the price — and no second row exists", () => {
+  // The standing controls. A path cost equal to the total price is not a second figure, and
+  // rendering it as one would tell a reader there are two numbers where the school published
+  // one. `gates` empty is what every surface keys the row off (see presenters).
+  for (const [pid, progId] of [
+    ["bluebirds", "200-vinyasa-hybrid-2026"],
+    ["wahe", "500-pathway"],
+  ] as const) {
+    const provider = providerOf(pid);
+    const prog = programOf(pid, progId);
+    const path = totalPathCost(provider, prog);
+    assert.deepEqual(path.gates, [], `${pid}/${progId}: a gate was invented for a programme that has none`);
+    assert.equal(path.value, totalPrice(provider, prog).value,
+      `${pid}/${progId}: the path cost must equal the total price when nothing must be bought first`);
+  }
+});
+
+test("PATH: an experience gate and a market qualification add NOTHING — they are not purchases here", () => {
+  // "min. 2 jaar praktijk" is a real barrier with no euros. "afgeronde RYT200" is a gate the
+  // MARKET sells — but not this school, and pricing it with THEIR own 200 would assert a
+  // route they never require (SanaYou sells two, at € 2.999 and € 1.250: which one would we
+  // have added?). Both are recorded; neither is summed.
+  const sanayou = providerOf("sanayou");
+  const three = programOf("sanayou", "300-hybride");
+  assert.equal(three.prerequisite?.[0]?.kind, "other", "guard: an RYT200 from any school");
+  const path = totalPathCost(sanayou, three);
+  assert.deepEqual(path.gates, [], "an unpriced market qualification is not a purchasable gate here");
+  assert.equal(path.value, totalPrice(sanayou, three).value, "…so the path cost is the price, untouched");
+
+  const yogaeasy = providerOf("yogaeasy");
+  const twoHundred = programOf("yogaeasy", "200-hatha-vinyasa");
+  assert.equal(twoHundred.prerequisite?.[0]?.kind, "experience");
+  assert.deepEqual(totalPathCost(yogaeasy, twoHundred).gates, []);
+});
+
+test("PATH: an unpriced purchasable gate yields NULL — an incomplete path is a guess", () => {
+  // The same rule as bundleDelta and v0.8's sum, and for the same reason: a path cost that
+  // silently drops an unknown link is not a smaller number, it is a false one — and it would
+  // be published in a band, in a sort order, beside real ones.
+  const base = providerOf("de-yogaschool-enschede");
+  const prog = programOf("de-yogaschool-enschede", "docentenopleiding-raja");
+  const provider = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== prog.id
+        ? p
+        : { ...p, prerequisite: p.prerequisite?.map((pre) => ({ ...pre, cost_eur: null })) },
+    ),
+  };
+  const path = totalPathCost(provider, provider.programs.find((p) => p.id === prog.id)!);
+  assert.equal(path.value, null, "one link unpriced → no path cost, never a partial one");
+  assert.equal(path.gates.length, 1, "…but the gate is still REPORTED: it exists, we just cannot price it");
+  assert.match(path.caveat ?? "", /gok/, "and the row must say why, in our own words");
+});
+
+test("PATH: the price bands read the PATH COST, never a bare total", () => {
+  // The published symptom, one level up from v0.5's. A € 2.500 training with a mandatory
+  // € 1.000 gate costs € 3.500 to qualify at — and banded on its own total it sits under
+  // "onder €3.000", beside trainings you can simply enrol in.
+  const base = providerOf("yogaeasy");
+  const prog = programOf("yogaeasy", "200-hatha-vinyasa");
+  assert.equal(totalPrice(base, prog).value, 2500, "guard: on its own total this programme is 'cheap'");
+  assert.equal(priceBand(base, prog), "under3000", "guard: and it bands that way today, correctly — it has no gate");
+
+  const gated = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== prog.id
+        ? p
+        : {
+            ...p,
+            prerequisite: [
+              {
+                kind: "program" as const,
+                label: "verplichte voorafgaande opleiding",
+                cost_eur: 1000,
+                source: p.price.source!,
+              },
+            ],
+          },
+    ),
+  };
+  const gatedProg = gated.programs.find((p) => p.id === prog.id)!;
+  assert.equal(totalPathCost(gated, gatedProg).value, 3500);
+  assert.equal(priceBand(gated, gatedProg), "from3000",
+    "a training that costs € 3.500 to qualify at was banded as if it cost € 2.500 — the gate is part of " +
+    "the price, and the band is the reader's answer to 'what will this cost me'");
+});
+
+test("INTEGRITY: a prerequisite CYCLE fails the load — a path over a cycle is a route nobody walks", () => {
+  // Not a silent stop in the arithmetic: the record must not load. Two programmes that gate
+  // each other describe no path a student can take, and quietly returning some number for it
+  // would publish a total for a route that does not exist.
+  const base = providerOf("de-yogaschool-enschede");
+  const cyclic = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== "docentenopleiding-raja"
+        ? p
+        : {
+            ...p,
+            prerequisite: [
+              {
+                kind: "program" as const,
+                label: "Meesteropleiding Raja Yoga",
+                program: "meesteropleiding-raja",
+                source: p.price.source!,
+              },
+            ],
+          },
+    ),
+  };
+  const errors = integrityErrors(cyclic, "cyclic.yaml");
+  // Reported from BOTH ends of the ring — the walk starts at every programme, and a reader
+  // of the error should not have to guess which end we happened to enter from. Every error
+  // is the cycle; none is anything else.
+  assert.ok(errors.length > 0, "a record whose prerequisites form a ring loaded without complaint");
+  for (const e of errors) assert.match(e, /prerequisite cycle/, `unexpected error: ${e}`);
+  assert.ok(errors.some((e) => /docentenopleiding-raja → meesteropleiding-raja → docentenopleiding-raja/.test(e)),
+    `the error must name the route, not merely the record: ${errors.join(" | ")}`);
+  // And the derivation TERMINATES rather than overflowing the stack, even on data the
+  // loader would refuse — the guard is for termination, the loader is for truth.
+  assert.doesNotThrow(() =>
+    totalPathCost(cyclic, cyclic.programs.find((p) => p.id === "meesteropleiding-raja")!));
+});
+
+test("INTEGRITY: a prerequisite pointing at a programme that does not exist fails the load", () => {
+  const base = providerOf("de-yogaschool-enschede");
+  const dangling = {
+    ...base,
+    programs: base.programs.map((p) =>
+      p.id !== "meesteropleiding-raja"
+        ? p
+        : {
+            ...p,
+            prerequisite: [
+              { kind: "program" as const, label: "spookopleiding", program: "bestaat-niet", source: p.price.source! },
+            ],
+          },
+    ),
+  };
+  const errors = integrityErrors(dangling, "dangling.yaml");
+  assert.ok(errors.some((e) => /unknown program 'bestaat-niet'/.test(e)), errors.join(" | "));
+});
+
+test("PATH: every priced gate in the corpus cites a source, and every gate is one of the three kinds", () => {
+  // The schema requires `source` — this asserts the corpus actually honours what the gate is
+  // FOR: a cost we add to a named business's price, standing on a page that prints it. (The
+  // provenance check opens that page; this one guarantees there is one to open.)
+  let gates = 0;
+  for (const p of providers) {
+    for (const prog of p.programs) {
+      for (const pre of prog.prerequisite ?? []) {
+        gates++;
+        assert.ok(pre.source, `${p.id}/${prog.id}: gate '${pre.label}' cites no source`);
+        assert.ok(p.sources.some((s) => s.id === pre.source),
+          `${p.id}/${prog.id}: gate '${pre.label}' cites a source that is not in sources[]`);
+        assert.ok(["program", "experience", "other"].includes(pre.kind));
+        if (pre.kind !== "program")
+          assert.equal(pre.cost_eur ?? null, null,
+            `${p.id}/${prog.id}: '${pre.label}' is not a purchasable training here, yet carries an amount`);
+      }
+    }
+  }
+  assert.ok(gates >= 15, `only ${gates} structured gates in the corpus — the sweep did not happen`);
 });
 
 /* ---------- claim quotes carry no delimiters of their own ----------

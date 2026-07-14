@@ -308,6 +308,21 @@ programs:
       language: en
     prerequisites_claimed: "200H Vinyasa als foundational module; daarop bouw je de
       modules tot 300/500 uur."
+    prerequisite:
+      - kind: program
+        label: "200H Vinyasa Yoga Teacher Training"
+        program: 200-vinyasa
+        source: site-ytt-overview-2026-06
+        note: >
+          De routepagina zet de eigen 200u-opleiding vóór alles: "Start with our
+          foundational 200H Vinyasa Yoga Teacher Training, then build your own
+          path through a curated selection of optional 50H or 100H advanced
+          trainings", en de 500H-route is "For certified 200H teachers seeking
+          their 500H RYT". LET OP voor wie hier later een prijs invult: Yoga Den
+          publiceert géén prijs voor de 500u-route zelf — de route WORDT
+          gekocht als 200H + losse modules. Zou er ooit één routeprijs komen die
+          de 200H al bevat, dan is deze poort een dubbeltelling en hoort ze in
+          `composition`, niet hier.
     price:
       amount_eur: null
       vat: unknown

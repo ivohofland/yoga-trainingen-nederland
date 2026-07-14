@@ -153,6 +153,35 @@ test("API: the exported total_price is OUR arithmetic, flagged as ours, and neve
   assert.deepEqual(vinyasa.derived.total_price, { value: 2495, derived: false, caveat: null });
 });
 
+test("API: the exported total_path_cost is what it costs to QUALIFY — and it is always ours", () => {
+  // A consumer that bands or ranks on `total_price` publishes € 4.590 for a training you
+  // cannot enrol in without first buying a € 1.590 one. The rule that fixes that (v0.9) must
+  // be reachable by anyone holding nothing but this JSON file — the same reason `price_state`
+  // and `total_hours` ship here at all.
+  const enschede = PAYLOAD.providers.find((p) => p.id === "de-yogaschool-enschede")!;
+  const docent = enschede.programs.find((p) => p.id === "docentenopleiding-raja")!;
+  assert.equal(docent.derived.total_price.value, 4590, "guard: the course itself");
+  assert.equal(docent.derived.total_path_cost.value, 6180, "…and € 1.590 more to be allowed to start it");
+  assert.equal(docent.derived.total_path_cost.derived, true,
+    "the PATH is never the school's own figure, even where the course price is — € 6.180 is on no page of theirs");
+  assert.match(docent.derived.total_path_cost.caveat ?? "", /Basisopleiding/);
+
+  const meester = enschede.programs.find((p) => p.id === "meesteropleiding-raja")!;
+  assert.equal(meester.derived.total_path_cost.value, 10770, "three links: Basis → Docenten → Meester");
+
+  // Where nothing must be bought first it EQUALS total_price — so a consumer that always
+  // reads the path cost is never worse off, and is protected on the gated ones.
+  const wahe = PAYLOAD.providers.find((p) => p.id === "wahe")!;
+  const vinyasa = wahe.programs.find((p) => p.id === "200-vinyasa-ayurveda")!;
+  assert.equal(vinyasa.derived.total_path_cost.value, vinyasa.derived.total_price.value);
+  assert.equal(vinyasa.derived.total_path_cost.caveat, null, "no gate, no working: there is nothing to show");
+
+  // And, like every derived value: nowhere in data/ (§6).
+  const yaml = fs.readFileSync(path.join(process.cwd(), "data/providers/de-yogaschool-enschede.yaml"), "utf8");
+  assert.ok(!/^\s*total_path_cost\s*:/m.test(yaml), "a derived field found a home in the data");
+  assert.ok(!/6180|6\.180/.test(yaml), "€ 6.180 is stored in the record — it is our sum, not a fact we hold");
+});
+
 test("API: the exported total_hours says whose figure it is — ours or the school's", () => {
   // The same contract as total_price, in the other unit (spec v0.6, §6), and the same
   // three ways to turn it into a lie. Both directions are pinned, because a consumer that

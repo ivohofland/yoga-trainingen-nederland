@@ -314,6 +314,71 @@
               "prerequisites_claimed": {
                 "type": "string"
               },
+              "prerequisite": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "program",
+                        "experience",
+                        "other"
+                      ]
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "program": {
+                      "$ref": "#/definitions/Provider/properties/id"
+                    },
+                    "cost_eur": {
+                      "anyOf": [
+                        {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "period": {
+                      "type": "string",
+                      "enum": [
+                        "total",
+                        "per_year",
+                        "per_module",
+                        "per_day"
+                      ]
+                    },
+                    "periods": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "source": {
+                      "type": "string"
+                    },
+                    "note": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "label",
+                    "source"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "price": {
                 "type": "object",
                 "properties": {
@@ -329,13 +394,7 @@
                     ]
                   },
                   "period": {
-                    "type": "string",
-                    "enum": [
-                      "total",
-                      "per_year",
-                      "per_module",
-                      "per_day"
-                    ],
+                    "$ref": "#/definitions/Provider/properties/programs/items/properties/prerequisite/items/properties/period",
                     "default": "total"
                   },
                   "periods": {

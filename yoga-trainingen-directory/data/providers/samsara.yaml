@@ -66,8 +66,41 @@ programs:
     prerequisites_claimed: "min. 23 jaar; middelbare school afgerond; HBO
       werk-/denkniveau; min. 1 jaar yoga (bij voorkeur VYN-erkend docent);
       deelname open dag/gesprek"
+    prerequisite:
+      - kind: experience
+        label: "± 1 jaar regelmatige yogabeoefening"
+        source: site-2026-06
+        note: >
+          Toelatingseisen, letterlijk: "Om aan de opleiding te beginnen heb je
+          enige yoga-ervaring nodig, ongeveer een jaar van regelmatige
+          beoefening." Plus: middelbare school afgerond, HBO werk- en denkniveau,
+          en deelname aan een informatiebijeenkomst/open dag of een persoonlijk
+          gesprek. Ervaringseis, geen voorafgaande opleiding die je moet kopen —
+          geen bedrag opgeteld. (De verkenning bij v0.9 verwachtte hier een
+          BEPRIJSDE poort in het proza; het gearchiveerde artefact toont er geen.
+          Het artefact wint.)
+      - kind: experience
+        label: "min. 120 uur yogalessen volgen bij een (erkende) docent, náást de
+          opleiding"
+        source: site-2026-06
+        note: >
+          Een aparte verplichting tijdens de opleiding, geen voorafgaande
+          opleiding — en de school hangt er geen bedrag aan (dat hangt af van bij
+          wie je die lessen volgt). Echte kosten voor de student, met een prijs
+          die niemand publiceert: vastgelegd als poort, niet als bedrag.
     price:
+      # PER STUDIEJAAR (spec v0.5, §6) — en de opleiding duurt er VIER.
+      #
+      # Dit stond als `period: total` in het record, met de waarschuwing in het
+      # notitieveld: "LET OP: EUR 2.705 is de prijs PER STUDIEJAAR ... niet voor de
+      # hele 4-jarige opleiding." Dat is precies de ziekte die v0.5 uitroeide bij de
+      # Blikopener: een getal dat de lezer als prijs van de opleiding leest, terwijl
+      # het de prijs van één jaar is — hier zelfs met een bandje "onder €3.000" om,
+      # naast opleidingen die wél € 2.705 in totaal kosten. De waarschuwing stond in
+      # proza, waar geen vergelijking bij kan.
       amount_eur: 2705
+      period: per_year
+      periods: 4
       vat: exempt_crkbo
       published: "yes"
       includes: "22 lesdagen, begeleiding/intervisie, 2 individuele gesprekken/jaar,
@@ -75,10 +108,15 @@ programs:
         matten/kussens"
       excludes: "boeken (literatuurlijst per jaar); verdiepings-/specialisatiemodules"
       note: >
-        LET OP: EUR 2.705 is de prijs PER STUDIEJAAR (2026-2027), niet voor de
-        hele 4-jarige opleiding. Totale opleidingskosten (~4 jaar) nergens als
-        één bedrag gepubliceerd - transparantie-aandachtspunt. Gespreid betalen
-        in 4 termijnen.
+        De school publiceert een JAARPRIJS en een duur, en nergens hun product:
+        "De investering voor het studiejaar 2026-2027 bedraagt 2.705 euro." en
+        "Onze gedegen en brede opleiding omvat in totaal vier studiejaren". 4 ×
+        € 2.705 = € 10.820 is ONZE rekensom — dat bedrag staat op geen enkele
+        gearchiveerde pagina van Samsara en wordt daarom afgeleid en zichtbaar als
+        het onze getoond (spec §6), nooit opgeslagen. Let op: alleen het tarief
+        voor 2026-2027 is gepubliceerd; latere studiejaren kunnen afwijken — het
+        afgeleide totaal is dus een schatting op het huidige tarief. Gespreid
+        betalen in 4 termijnen.
       source: site-2026-06
     hours_claimed:
       total: 500 # eindkwalificatie VYN/EYU 500u over 4 jaar

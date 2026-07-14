@@ -78,6 +78,19 @@ programs:
       duration_months_min: 12
       language: nl
     prerequisites_claimed: "RYT 200 vereist voor volledige Yoga Alliance-registratie; modules los toegankelijk"
+    prerequisite:
+      - kind: other
+        label: "RYT 200 — nodig voor de Yoga Alliance-upgrade, niet voor deelname"
+        source: site-2026-06
+        note: >
+          GEEN TOEGANGSPOORT, en het onderscheid is de hele bevinding: de RYT 200
+          is nodig voor het REGISTER, niet voor de opleiding. Yogapoint: "Bij het
+          voltooien van alle drie de modules ontvang je het RYS 300 certificaat,
+          waarmee je je Yoga Alliance registratie kunt upgraden van RYT 200 naar
+          RYT 500." De modules zijn los toegankelijk. Wie de opleiding volgt
+          zónder RYT 200 kan haar dus wél volgen — maar niet verzilveren als
+          RYT 500. Geen bedrag opgeteld: dit is geen aankoop die deze school
+          eist.
     price:
       amount_eur: 3993
       vat: incl

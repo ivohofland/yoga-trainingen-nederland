@@ -96,6 +96,15 @@ programs:
     prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan
       23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een
       persoonlijk instapgesprek vooraf"
+    prerequisite:
+      - kind: experience
+        label: "ten minste twee jaar yoga-ervaring"
+        source: opleiding-2026-07
+        note: >
+          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee
+          jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
+          instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen:
+          geen bedrag opgeteld.
     price:
       # PER STUDIEJAAR (spec v0.5). De tarievenpagina zegt: "€ 1290,- (vanaf 1 juni
       # 2026) per studiejaar"; de opleidingspagina zegt dat het traject vier jaar
@@ -196,6 +205,15 @@ programs:
     prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan
       23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een
       persoonlijk instapgesprek vooraf"
+    prerequisite:
+      - kind: experience
+        label: "ten minste twee jaar yoga-ervaring"
+        source: opleiding-2026-07
+        note: >
+          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee
+          jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
+          instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen:
+          geen bedrag opgeteld.
     price:
       # Zelfde jaarbedrag, drie jaar: hetzelfde tarief geldt per studiejaar en de
       # tarievenpagina onderscheidt de twee trajecten niet. `periods: 3` → ons

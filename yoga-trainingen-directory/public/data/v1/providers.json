@@ -1,7 +1,7 @@
 {
   "data_current_as_of": "2026-07-12",
   "count": 47,
-  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare totaalprijs — niet rangschikken. DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe `hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun som). Is `total_hours.derived` waar, dan is het getal ONZE optelling (`caveat` toont de som) en geen totaal dat de aanbieder publiceert; is het onwaar, dan is het hún gepubliceerde claim (Wahé: 500 uur) en mag het als zodanig worden weergegeven. Die twee mogen nooit hetzelfde worden weergegeven.",
+  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: vijf programma's hebben `published: \"yes\"` zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd. Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding). Is `total_price.derived` waar, dan is het getal ONZE rekensom (`caveat` toont de som) en geen bedrag dat de aanbieder publiceert: geef het als zodanig weer. Is `total_price.value` null, dan is er geen vergelijkbare totaalprijs — niet rangschikken. DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe `hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun som). Is `total_hours.derived` waar, dan is het getal ONZE optelling (`caveat` toont de som) en geen totaal dat de aanbieder publiceert; is het onwaar, dan is het hún gepubliceerde claim (Wahé: 500 uur) en mag het als zodanig worden weergegeven. Die twee mogen nooit hetzelfde worden weergegeven. EN VOOR HET RANGSCHIKKEN VAN PRIJZEN (spec v0.9): lees `derived.total_path_cost`, niet `total_price` — sommige opleidingen mag je pas volgen ná een ándere opleiding van dezelfde school, die je eerst moet kopen (de Yogaschool: de Docentenopleiding kost € 4.590, maar je mag niet beginnen zonder de Basisopleiding van € 1.590 — docent worden kost daar € 6.180; de Meesteropleiding € 10.770). Zonder verplichte voorafgaande opleiding is dit veld gelijk aan `total_price`. Het is ALTIJD onze optelling (`derived` is altijd waar): geef het weer als zodanig. Is de waarde null, dan ontbreekt de prijs van een verplichte schakel — niet rangschikken, en niet terugvallen op `total_price`: dát is juist het getal dat te laag is.",
   "providers": [
     {
       "id": "7-yoga-academy",
@@ -119,6 +119,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2499,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -290,6 +295,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2838.6,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -373,6 +383,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2838.6,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -550,6 +565,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -644,6 +664,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2725,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -872,6 +897,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3250,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -989,6 +1019,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "HBO/BSc denkniveau + min. 1 jaar persoonlijke lichaam-&-geest-beoefening; Module 2 vereist afgeronde Module 1",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "min. 1 jaar persoonlijke lichaam-&-geest-beoefening",
+              "source": "brochure-2026-06",
+              "note": "De toelatingslijst in de brochure, in de eerste persoon: \"I have at least 1 year of personal body & ...\" Ervaringseis, geen aankoop. De tweede eis in het proza hierboven — Module 2 pas ná Module 1 — is een VOLGORDE BINNEN deze opleiding (beide modules zitten in de prijs van € 3.115), geen voorafgaande opleiding die je apart moet kopen: zie `coherence_signals.required_sequence`.\n"
+            }
+          ],
           "price": {
             "amount_eur": 3115,
             "period": "total",
@@ -1120,6 +1158,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 3115,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -1442,6 +1485,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3150,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -1564,6 +1612,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2990,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -1765,6 +1818,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "minimaal twee jaar ervaring met yoga",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "minimaal twee jaar ervaring met yoga",
+              "source": "site-2026-06",
+              "note": "\"twee jaar ervaring\" met yoga — een ervaringsdrempel, geen opleiding die je eerst moet kopen. Een echte hindernis, zonder bedrag.\n"
+            }
+          ],
           "price": {
             "amount_eur": 2600,
             "period": "total",
@@ -1816,6 +1877,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2600,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -1979,6 +2045,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2075,6 +2146,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan 23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een persoonlijk instapgesprek vooraf",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "ten minste twee jaar yoga-ervaring",
+              "source": "opleiding-2026-07",
+              "note": "\"Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee jaar yoga[-ervaring]\" — plus HBO-niveau en een persoonlijk instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen: geen bedrag opgeteld.\n"
+            }
+          ],
           "price": {
             "amount_eur": 1290,
             "period": "per_year",
@@ -2139,6 +2218,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 5160,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "unknown",
             "contact_ratio": null,
@@ -2168,6 +2252,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan 23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een persoonlijk instapgesprek vooraf",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "ten minste twee jaar yoga-ervaring",
+              "source": "opleiding-2026-07",
+              "note": "\"Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee jaar yoga[-ervaring]\" — plus HBO-niveau en een persoonlijk instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen: geen bedrag opgeteld.\n"
+            }
+          ],
           "price": {
             "amount_eur": 1290,
             "period": "per_year",
@@ -2230,6 +2322,11 @@
             "total_hours": {
               "value": 372,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 3870,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -2456,6 +2553,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2964.5,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2545,6 +2647,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2964.5,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -2632,6 +2739,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2964.5,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -2867,7 +2979,18 @@
             "duration_months_min": 36,
             "language": "nl"
           },
-          "prerequisites_claimed": "Afgeronde Basisopleiding Raja Yoga (1 jaar, €1510) is voorwaarde. Voor wie nog niet bij de school bekend is: kennismakingsgesprek/intake. Gericht op persoonlijke ontwikkeling; wekelijkse lessen + dagelijkse eigen beoefening.\n",
+          "prerequisites_claimed": "\"Je kunt met de Docentenopleiding beginnen na het volbrengen van de Basisopleiding.\" Voor wie nog niet bij de school bekend is: kennismakingsgesprek/intake. Gericht op persoonlijke ontwikkeling; wekelijkse lessen + dagelijkse eigen beoefening. (Het bedrag van de Basisopleiding stond hier tot v0.9 in proza — als \"€1510\", het bedrag van de ALGEMENE opleidingspagina. De eigen Basisopleidingspagina noemt € 1.590 per lesjaar; de poort staat nu gestructureerd in `prerequisite[]`, met de bron die haar prijs stelt, zodat de vergelijking haar kan zien.)\n",
+          "prerequisite": [
+            {
+              "kind": "program",
+              "label": "Basisopleiding Raja Yoga",
+              "cost_eur": 1590,
+              "period": "per_year",
+              "periods": 1,
+              "source": "site-basisopleiding-2026-07",
+              "note": "\"Aangezien de Basisopleiding je het fundament over Raja Yoga bijbrengt, is deze opleiding verplicht als je wilt starten met de Docentenopleiding.\" Kosten: \"€ 1590,00 per seizoen of lesjaar van 40 weken\" (vanaf januari 2026), en de opleiding duurt één lesjaar (\"40 lesblokken ... verspreid over een jaar\") → één periode, € 1.590. De Basisopleiding is GEEN docentenopleiding en staat daarom niet als eigen `program` in dit record; haar prijs staat hier, geciteerd aan de pagina die haar afdrukt. LET OP: de algemene opleidingspagina (site-basis-2026-07) noemt voor de Basisopleiding €1510,00 per jaar — twee gepubliceerde bedragen voor dezelfde opleiding; zie de bronnoten.\n"
+            }
+          ],
           "price": {
             "amount_eur": 1530,
             "period": "per_year",
@@ -2924,6 +3047,11 @@
               "derived": true,
               "caveat": "onze optelling: 360 contacturen + 240 zelfstudie-uren. De aanbieder publiceert deze twee getallen apart en noemt hun som niet."
             },
+            "total_path_cost": {
+              "value": 6180,
+              "derived": true,
+              "caveat": "incl. verplichte Basisopleiding Raja Yoga € 1.590. Onze optelling — de aanbieder publiceert dit totaal niet."
+            },
             "pph": 12.75,
             "pph_state": "yes",
             "contact_ratio": 0.6,
@@ -2955,7 +3083,16 @@
             "duration_months_min": 36,
             "language": "nl"
           },
-          "prerequisites_claimed": "Succesvol afgeronde Docentenopleiding Raja Yoga is voorwaarde.",
+          "prerequisites_claimed": "\"De Meesteropleing Raja Yoga kan je volgen nadat je de Docentenopleiding succesvol hebt afgesloten.\"\n",
+          "prerequisite": [
+            {
+              "kind": "program",
+              "label": "Docentenopleiding Raja Yoga",
+              "program": "docentenopleiding-raja",
+              "source": "site-meester-2026-07",
+              "note": "\"De Meesteropleing Raja Yoga kan je volgen nadat je de Docentenopleiding succesvol hebt afgesloten.\" Die opleiding staat als `program` in dit record en draagt haar eigen (afgeleide) totaal én haar eigen poort — de Basisopleiding. Het pad is dus drie schakels lang: Basisopleiding → Docentenopleiding → Meesteropleiding. Geen bedrag hier: dat zou een tweede, verouderbare kopie zijn van een prijs die de Docentenopleiding zelf al draagt.\n"
+            }
+          ],
           "price": {
             "amount_eur": 1530,
             "period": "per_year",
@@ -3004,6 +3141,11 @@
               "value": null,
               "derived": false,
               "caveat": null
+            },
+            "total_path_cost": {
+              "value": 10770,
+              "derived": true,
+              "caveat": "incl. verplichte Basisopleiding Raja Yoga € 1.590 + Docentenopleiding Raja Yoga € 4.590. Onze optelling — de aanbieder publiceert dit totaal niet."
             },
             "pph": 12.75,
             "pph_state": "yes",
@@ -3086,7 +3228,16 @@
           "archived_url": "https://web.archive.org/web/20260702063435/https://yogaschool.nl/yoga-opleiding/",
           "local_snapshot": "data/archives/de-yogaschool-enschede/site-basis-2026-07-2026-07-02.pdf",
           "captured": "2026-07",
-          "note": "LIVE (browser-gerenderd) Basisopleiding Raja Yoga: klassiek 8-ledig systeem (Yama's/Niyama's, asana, energiebeheersing/pranayama, concentratie & meditatie). Iedere maand in 2025 nieuwe Basisopleidingen; toegang na kennismakingsgesprek (met Ylvy of Mascha, Emmastraat 147). Kosten €1510/jaar (termijnen; lesboeken t.w.v. €120 inbegrepen). Draagt het NRTO-kwaliteitskeurmerk. Basis is voorwaarde voor de Docentenopleiding.\n"
+          "note": "/yoga-opleiding/ — een ALGEMENE opleidingspagina, NIET de eigen pagina van de Basisopleiding (dat is /basisopleiding/, zie de bron hieronder). Klassiek 8-ledig systeem (Yama's/Niyama's, asana, energiebeheersing/pranayama, concentratie & meditatie). Iedere maand in 2025 nieuwe Basisopleidingen; toegang na kennismakingsgesprek (met Ylvy of Mascha, Emmastraat 147). Draagt het NRTO-kwaliteitskeurmerk.\nTWEE PAGINA'S, TWEE PRIJZEN — een bevinding, geen keuze. Deze pagina zegt letterlijk: \"De kosten voor de opleiding zijn €1510,00 per jaar. Dit wordt betaald in termijnen van €1510,00 per maand (10 maanden).\" (het termijnbedrag is op de pagina zelf een kennelijke fout: €1510 per maand × 10 ≠ €1510 per jaar). De eigen Basisopleidingspagina zegt: \"De kosten voor de Basisopleiding vanaf januari 2026 zijn € 1590,00 per seizoen of lesjaar van 40 weken.\" Beide staan er, beide zijn gearchiveerd; de school noemt geen van beide bedragen achterhaald. De verplichte-vooropleiding-kosten worden geciteerd aan de pagina die de Basisopleiding zelf beschrijft (site-basisopleiding-2026-07, € 1.590), en dít blijft staan als het gepubliceerde andere bedrag.\n"
+        },
+        {
+          "id": "site-basisopleiding-2026-07",
+          "type": "website",
+          "url": "https://yogaschool.nl/basisopleiding/",
+          "archived_url": "https://web.archive.org/web/20260713202536/https://yogaschool.nl/basisopleiding/",
+          "local_snapshot": "data/archives/de-yogaschool-enschede/site-basisopleiding-2026-07-2026-07-13.pdf",
+          "captured": "2026-07",
+          "note": "DE EIGEN PAGINA VAN DE BASISOPLEIDING — de opleiding die verplicht is vóór de Docentenopleiding, en tot v0.9 nergens in dit record als bron stond. Letterlijk: \"De kosten voor de Basisopleiding vanaf januari 2026 zijn € 1590,00 per seizoen of lesjaar van 40 weken. Dit wordt betaald in termijnen van € 159,00 per maand (10 maanden).\" Lesmateriaal/lesboeken (t.w.v. € 125) inbegrepen. Duur: \"De basisopleiding bestaat uit 40 lesblokken van wekelijks 2 1/2 uur, verspreid over een jaar\" — één lesjaar, dus één periode. \"Er zijn minimaal 100 lesuren en er staan 80 thuisstudie-uren per lesjaar.\" De poort, letterlijk: \"Aangezien de Basisopleiding je het fundament over Raja Yoga bijbrengt, is deze opleiding verplicht als je wilt starten met de Docentenopleiding.\" Geen btw-vermelding op de pagina.\n"
         },
         {
           "id": "site-docenten-2026-07",
@@ -3297,6 +3448,11 @@
             "total_hours": {
               "value": null,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2961,
+              "derived": true,
               "caveat": null
             },
             "pph": 13.46,
@@ -3538,6 +3694,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -3802,6 +3963,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 4197,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4056,6 +4222,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3895,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4143,6 +4314,11 @@
             "total_hours": {
               "value": 75,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 1800,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -4352,6 +4528,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -4578,6 +4759,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2890,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -4649,6 +4835,11 @@
             "total_hours": {
               "value": 350,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2385,
+              "derived": true,
               "caveat": null
             },
             "pph": 11.93,
@@ -4861,6 +5052,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3000,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5054,6 +5250,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2885,
+              "derived": true,
               "caveat": null
             },
             "pph": 16.03,
@@ -5276,6 +5477,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 449,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5373,6 +5579,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 449,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -5600,6 +5811,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2890,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -5630,6 +5846,15 @@
             "language": "en"
           },
           "prerequisites_claimed": "afgeronde 200u (Fundamental/Basis) Teacher Training",
+          "prerequisite": [
+            {
+              "kind": "program",
+              "label": "Basis Yoga Opleiding (200u) / Fundamental Teacher Training",
+              "program": "200-basis",
+              "source": "site-advanced-2026-06",
+              "note": "De pagina noemt de eigen 200u-opleiding als de opleiding die eraan voorafgaat: \"After finishing your Fundamental Teacher Training (200-hour) you can deepen your teaching skills and expand your knowledge with our Continuing Education program.\" Een extern behaalde 200u wordt op deze pagina niet genoemd. Het padtotaal blijft niettemin leeg: Open Yoga publiceert voor de Advanced (300u) zélf geen prijs (`published: not_published`), en een pad zonder eerste term is geen som maar een gok.\n"
+            }
+          ],
           "price": {
             "amount_eur": null,
             "period": "total",
@@ -5686,6 +5911,11 @@
               "value": 300,
               "derived": false,
               "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
+              "caveat": "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou een gok zijn."
             },
             "pph": null,
             "pph_state": "not_published",
@@ -5918,6 +6148,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2700,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -6190,6 +6425,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2897,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -6394,6 +6634,20 @@
             "language": "nl"
           },
           "prerequisites_claimed": "Toegankelijk voor beginners t/m gevorderden en docenten. Vereisten: min. 2 jaar eigen yogabeoefening; het is een VEREISTE om naast de opleiding yogalessen bij een yogadocent te blijven volgen; vrij van zware blessures; schriftelijk intake-assessment + intake-gesprek mogelijk. Fysiek/emotioneel veeleisend programma.\n",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "min. 2 jaar eigen yogabeoefening",
+              "source": "site-deelname-2026-06",
+              "note": "De deelnamevoorwaarden, letterlijk: \"Je hebt 2 jaar zelf yoga beoefend.\" Ervaringseis, geen aankoop.\n"
+            },
+            {
+              "kind": "experience",
+              "label": "tijdens de opleiding yogalessen bij een yogadocent blijven volgen (een VEREISTE volgens de school)",
+              "source": "site-deelname-2026-06",
+              "note": "Een doorlopende verplichting NAAST de opleiding, geen voorafgaande opleiding — en de school hangt er geen prijs aan (die hangt af van waar je die lessen volgt). Een echte kostenpost voor de student, met een bedrag dat op geen enkele pagina staat: dus wél vastgelegd als poort, niet als bedrag (spec §4.3 — een gat dat je niet kunt prijzen is geen gat dat je mag verzwijgen).\n"
+            }
+          ],
           "price": {
             "amount_eur": 4235.2,
             "period": "total",
@@ -6479,6 +6733,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 4235.2,
+              "derived": true,
               "caveat": null
             },
             "pph": 21.18,
@@ -6703,14 +6962,29 @@
             "language": "nl"
           },
           "prerequisites_claimed": "min. 23 jaar; middelbare school afgerond; HBO werk-/denkniveau; min. 1 jaar yoga (bij voorkeur VYN-erkend docent); deelname open dag/gesprek",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "± 1 jaar regelmatige yogabeoefening",
+              "source": "site-2026-06",
+              "note": "Toelatingseisen, letterlijk: \"Om aan de opleiding te beginnen heb je enige yoga-ervaring nodig, ongeveer een jaar van regelmatige beoefening.\" Plus: middelbare school afgerond, HBO werk- en denkniveau, en deelname aan een informatiebijeenkomst/open dag of een persoonlijk gesprek. Ervaringseis, geen voorafgaande opleiding die je moet kopen — geen bedrag opgeteld. (De verkenning bij v0.9 verwachtte hier een BEPRIJSDE poort in het proza; het gearchiveerde artefact toont er geen. Het artefact wint.)\n"
+            },
+            {
+              "kind": "experience",
+              "label": "min. 120 uur yogalessen volgen bij een (erkende) docent, náást de opleiding",
+              "source": "site-2026-06",
+              "note": "Een aparte verplichting tijdens de opleiding, geen voorafgaande opleiding — en de school hangt er geen bedrag aan (dat hangt af van bij wie je die lessen volgt). Echte kosten voor de student, met een prijs die niemand publiceert: vastgelegd als poort, niet als bedrag.\n"
+            }
+          ],
           "price": {
             "amount_eur": 2705,
-            "period": "total",
+            "period": "per_year",
+            "periods": 4,
             "vat": "exempt_crkbo",
             "published": "yes",
             "includes": "22 lesdagen, begeleiding/intervisie, 2 individuele gesprekken/jaar, lesmaterialen, retraiteweekend (jaar 4) incl. maaltijden, gebruik matten/kussens",
             "excludes": "boeken (literatuurlijst per jaar); verdiepings-/specialisatiemodules",
-            "note": "LET OP: EUR 2.705 is de prijs PER STUDIEJAAR (2026-2027), niet voor de hele 4-jarige opleiding. Totale opleidingskosten (~4 jaar) nergens als één bedrag gepubliceerd - transparantie-aandachtspunt. Gespreid betalen in 4 termijnen.\n",
+            "note": "De school publiceert een JAARPRIJS en een duur, en nergens hun product: \"De investering voor het studiejaar 2026-2027 bedraagt 2.705 euro.\" en \"Onze gedegen en brede opleiding omvat in totaal vier studiejaren\". 4 × € 2.705 = € 10.820 is ONZE rekensom — dat bedrag staat op geen enkele gearchiveerde pagina van Samsara en wordt daarom afgeleid en zichtbaar als het onze getoond (spec §6), nooit opgeslagen. Let op: alleen het tarief voor 2026-2027 is gepubliceerd; latere studiejaren kunnen afwijken — het afgeleide totaal is dus een schatting op het huidige tarief. Gespreid betalen in 4 termijnen.\n",
             "source": "site-2026-06"
           },
           "hours_claimed": {
@@ -6755,15 +7029,20 @@
           ],
           "derived": {
             "price_state": "yes",
-            "price_band": "under3000",
+            "price_band": "from3000",
             "total_price": {
-              "value": 2705,
-              "derived": false,
-              "caveat": null
+              "value": 10820,
+              "derived": true,
+              "caveat": "onze berekening: 4 × € 2.705"
             },
             "total_hours": {
               "value": 500,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 10820,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -6989,6 +7268,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2999,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7072,6 +7356,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 1250,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7104,6 +7393,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "afgeronde RYT200",
+          "prerequisite": [
+            {
+              "kind": "other",
+              "label": "afgeronde RYT200 (van een willekeurige school)",
+              "source": "site-300-2026-06",
+              "note": "\"Groei van RYT200 naar RYT500\" / \"Je bouwt verder op je RYT200 met vernieuwende modules.\" De pagina vraagt een RYT200, niet die van SanaYou zelf. Een RYT200 is in de markt een te kópen poort — maar niet er één die deze school u verplicht bij hén te kopen, dus er wordt geen bedrag opgeteld (spec §4.3).\n"
+            }
+          ],
           "price": {
             "amount_eur": 2250,
             "period": "total",
@@ -7146,6 +7443,11 @@
             "total_hours": {
               "value": 300,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2250,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -7477,6 +7779,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3450,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -7518,6 +7825,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "afgeronde 200u-yogaopleiding (elders mag, na overleg over ontbrekende onderdelen); modules ook los te volgen als bijscholing",
+          "prerequisite": [
+            {
+              "kind": "other",
+              "label": "afgeronde 200-uursopleiding (ook elders behaald)",
+              "source": "site-300-2026-06",
+              "note": "\"Deze verdiepende yoga docent opleiding is bedoeld voor mensen die al een 200 uur ... hebt afgerond\", en met zoveel woorden ook elders: \"Heb je wel een 200 uur opleiding gedaan, maar niet bij Spark of Light Yoga?\" De school verkoopt zelf een 200u (€ 3.450), maar eist die niet — dus geen bedrag opgeteld: dat zou een verplichte aankoop bij hén beweren die de pagina uitdrukkelijk niet stelt.\n"
+            }
+          ],
           "price": {
             "period": "total",
             "vat": "unknown",
@@ -7574,6 +7889,11 @@
             "total_hours": {
               "value": 300,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -7779,6 +8099,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2795,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -8033,6 +8358,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3050,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8228,6 +8558,14 @@
             "language": "en"
           },
           "prerequisites_claimed": "min. 1 jaar consistente eigen praktijk (~2x/week, studio of thuis); ook geschikt voor bewegingsdocenten (pilates/dans/barre) die willen verbreden. Geen expertise vereist, wel bereidheid je comfortzone te verlaten.",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "min. 1 jaar consistente eigen praktijk (~2×/week)",
+              "source": "site-vinyasa200-2026-06",
+              "note": "\"one year of consistent\" praktijk — een ervaringsdrempel, geen certificaat en geen aankoop. Geen bedrag.\n"
+            }
+          ],
           "price": {
             "amount_eur": 3150,
             "period": "total",
@@ -8306,6 +8644,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 3150,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -8424,6 +8767,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8462,6 +8810,14 @@
             "language": "en"
           },
           "prerequisites_claimed": "gecertificeerde yogadocenten (200u+) of docenten op weg naar hun 300u; toegewijde, open practitioners die het groepsritme respecteren.",
+          "prerequisite": [
+            {
+              "kind": "other",
+              "label": "gecertificeerd yogadocent (200u+)",
+              "source": "site-vinyasa300-2026-06",
+              "note": "De pagina richt zich op \"Certified yoga teachers (200h+)\" — een certificaat van welke school dan ook. Tribes verkoopt zelf een 200u (€ 3.150), maar eist die niet; geen bedrag opgeteld. (Tribes publiceert voor de 300u zelf geen prijs, dus er is ook geen pad om bij op te tellen.)\n"
+            }
+          ],
           "price": {
             "amount_eur": null,
             "period": "total",
@@ -8535,6 +8891,11 @@
             "total_hours": {
               "value": 300,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -8851,6 +9212,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2990,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -8965,6 +9331,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 1650,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -9236,6 +9607,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2495,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9323,6 +9699,11 @@
             "total_hours": {
               "value": 150,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -9415,6 +9796,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 1495,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9496,6 +9882,11 @@
             "total_hours": {
               "value": 500,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -9844,6 +10235,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2500,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -9932,6 +10328,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2500,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -10157,6 +10558,11 @@
             "total_hours": {
               "value": 300,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 5095,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -10458,6 +10864,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10565,6 +10976,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -10866,6 +11282,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3597,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -10901,6 +11322,15 @@
             "language": "en"
           },
           "prerequisites_claimed": "200H Vinyasa als foundational module; daarop bouw je de modules tot 300/500 uur.",
+          "prerequisite": [
+            {
+              "kind": "program",
+              "label": "200H Vinyasa Yoga Teacher Training",
+              "program": "200-vinyasa",
+              "source": "site-ytt-overview-2026-06",
+              "note": "De routepagina zet de eigen 200u-opleiding vóór alles: \"Start with our foundational 200H Vinyasa Yoga Teacher Training, then build your own path through a curated selection of optional 50H or 100H advanced trainings\", en de 500H-route is \"For certified 200H teachers seeking their 500H RYT\". LET OP voor wie hier later een prijs invult: Yoga Den publiceert géén prijs voor de 500u-route zelf — de route WORDT gekocht als 200H + losse modules. Zou er ooit één routeprijs komen die de 200H al bevat, dan is deze poort een dubbeltelling en hoort ze in `composition`, niet hier.\n"
+            }
+          ],
           "price": {
             "amount_eur": null,
             "period": "total",
@@ -10947,6 +11377,11 @@
               "value": 500,
               "derived": false,
               "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
+              "caveat": "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou een gok zijn."
             },
             "pph": null,
             "pph_state": "not_published",
@@ -11253,6 +11688,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2860,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11287,6 +11727,14 @@
             "language": "en"
           },
           "prerequisites_claimed": "200-hour certificate from a recognised school; practising a form of Vinyasa yoga",
+          "prerequisite": [
+            {
+              "kind": "other",
+              "label": "200-hour certificate from a recognised school",
+              "source": "site-300-2026-06",
+              "note": "\"... as long as you already hold a 200-hour certificate from a recognised school.\" Uitdrukkelijk ELKE erkende school — geen verplichte aankoop bij Yoga Moves (die zelf een 200u van € 2.860 verkoopt), dus geen bedrag opgeteld.\n"
+            }
+          ],
           "price": {
             "amount_eur": 3950,
             "period": "total",
@@ -11388,6 +11836,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3950,
+              "derived": true,
+              "caveat": null
+            },
             "pph": 16.12,
             "pph_state": "yes",
             "contact_ratio": 0.82,
@@ -11420,6 +11873,14 @@
             "language": "en"
           },
           "prerequisites_claimed": "solid foundation in Ashtanga yoga practice (Led classes and/or Mysore) of preferably at least 1 year; min. 3 maanden regelmatige praktijk bij instroom uit andere stijl",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "eigen Ashtanga-praktijk (Led/Mysore), bij voorkeur ≥ 1 jaar; ≥ 3 maanden bij instroom uit een andere stijl",
+              "source": "site-ashtanga-2026-06",
+              "note": "Een ervaringseis, geen aankoop: de pagina vraagt een eigen praktijk (\"Mysore ... at least 1 year\", \"months regular\"), geen certificaat en geen voorafgaande opleiding. Een echte drempel — met een prijs die niemand publiceert, dus zonder bedrag.\n"
+            }
+          ],
           "price": {
             "amount_eur": 2750,
             "period": "total",
@@ -11488,6 +11949,11 @@
             "total_hours": {
               "value": null,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2750,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -11685,6 +12151,14 @@
             "language": "mixed"
           },
           "prerequisites_claimed": "1-2 jaar regelmatige yoga-ervaring; goede basis practice; begrip NL en Engels",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "min. 1–2 jaar regelmatige yoga-ervaring",
+              "source": "site-200-2026-06",
+              "note": "FAQ, letterlijk: \"Do I need any yoga experience to participate in this yoga training? Yes, we require at least one to two years of regular yoga experience.\" (Staat in de HTML-kopie; in de PDF-render is de FAQ ingeklapt — vgl. de HTML/PDF-splitsing in provenance.ts.) Plus: \"We expect you to have spent a significant amount of time on the mat and have a good foundation of practice.\" Ervaringseis, geen aankoop.\n"
+            }
+          ],
           "price": {
             "amount_eur": 2700,
             "period": "total",
@@ -11778,6 +12252,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2700,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -11806,6 +12285,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "200-uur Yoga Teacher Training of vergelijkbare ervaring; sommige modules ook voor ervaren beoefenaars",
+          "prerequisite": [
+            {
+              "kind": "other",
+              "label": "200-uur Yoga Teacher Training (of vergelijkbare ervaring)",
+              "source": "site-300-2026-06",
+              "note": "\"Yoga teachers with a 200-hour Yoga Teacher Training\" — en \"of vergelijkbare ervaring\": de eis is niet aan deze school gebonden, en de studio verkoopt zelf een 200u (€ 2.700) zonder die te verplichten. Geen bedrag opgeteld; bovendien publiceert de studio voor de 300u zelf geen prijs, dus er is ook geen pad om bij op te tellen.\n"
+            }
+          ],
           "price": {
             "amount_eur": null,
             "period": "total",
@@ -11860,6 +12347,11 @@
             "total_hours": {
               "value": 300,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -12039,6 +12531,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "minimaal 2 jaar wekelijks yoga (thuis of in groep); goede beheersing van de Engelse taal vereist. Intakegesprek; deelname in onderling overleg besloten. Geen vrijstellingen.",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "min. 2 jaar wekelijks yoga (thuis of in groep)",
+              "source": "site-2026-06",
+              "note": "\"We verwachten dat je minstens twee jaar ...\" wekelijks yoga beoefent. Ervaringseis, geen aankoop — en let op: de school verleent expliciet \"geen vrijstellingen\", dus de eis is hard.\n"
+            }
+          ],
           "price": {
             "amount_eur": 2950,
             "period": "total",
@@ -12101,6 +12601,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2950,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -12359,6 +12864,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 4600,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12525,6 +13035,14 @@
             "language": "en"
           },
           "prerequisites_claimed": "min. 2 jaar consistente praktijk + leergierigheid; geschikt voor aankomend docenten, bestaande docenten, verdiepende practitioners en wellness-professionals. Deelnemers worden geselecteerd.",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "min. 2 jaar consistente eigen praktijk",
+              "source": "site-academy-tt-2026-06",
+              "note": "Letterlijk: \"a passion for learning and a minimum of two years' consistent practice is required.\" Ervaringseis, geen aankoop.\n"
+            }
+          ],
           "price": {
             "amount_eur": 2500,
             "period": "total",
@@ -12610,6 +13128,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 2500,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -12842,6 +13365,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3695,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -12997,6 +13525,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "RYT 200 vereist voor volledige Yoga Alliance-registratie; modules los toegankelijk",
+          "prerequisite": [
+            {
+              "kind": "other",
+              "label": "RYT 200 — nodig voor de Yoga Alliance-upgrade, niet voor deelname",
+              "source": "site-2026-06",
+              "note": "GEEN TOEGANGSPOORT, en het onderscheid is de hele bevinding: de RYT 200 is nodig voor het REGISTER, niet voor de opleiding. Yogapoint: \"Bij het voltooien van alle drie de modules ontvang je het RYS 300 certificaat, waarmee je je Yoga Alliance registratie kunt upgraden van RYT 200 naar RYT 500.\" De modules zijn los toegankelijk. Wie de opleiding volgt zónder RYT 200 kan haar dus wél volgen — maar niet verzilveren als RYT 500. Geen bedrag opgeteld: dit is geen aankoop die deze school eist.\n"
+            }
+          ],
           "price": {
             "amount_eur": 3993,
             "period": "total",
@@ -13086,6 +13622,11 @@
             "total_hours": {
               "value": 300,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 3993,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -13336,6 +13877,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 3497,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -13572,6 +14118,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": null,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -13772,6 +14323,11 @@
               "derived": false,
               "caveat": null
             },
+            "total_path_cost": {
+              "value": 2399,
+              "derived": true,
+              "caveat": null
+            },
             "pph": null,
             "pph_state": "not_published",
             "contact_ratio": null,
@@ -13803,6 +14359,14 @@
             "language": "mixed"
           },
           "prerequisites_claimed": "afgeronde RYT200 Yoga Docentenopleiding",
+          "prerequisite": [
+            {
+              "kind": "other",
+              "label": "afgeronde RYT200 Yoga Docentenopleiding (van een willekeurige school)",
+              "source": "site-ryt300-2026-06",
+              "note": "Letterlijk: \"Toelatingseis: Een afgeronde RYT200 Yoga Docentenopleiding.\" Geen eis dat die bij Yogic Life zelf is behaald (zij verkopen er wél één, € 2.399) — dus een poort die in de markt geld kost, maar geen bedrag dat wij bij DEZE opleiding mogen optellen.\n"
+            }
+          ],
           "price": {
             "amount_eur": 3599,
             "period": "total",
@@ -13845,6 +14409,11 @@
             "total_hours": {
               "value": 300,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 3599,
+              "derived": true,
               "caveat": null
             },
             "pph": null,
@@ -14009,6 +14578,14 @@
             "language": "nl"
           },
           "prerequisites_claimed": "minimaal 1 jaar eigen yogapraktijk; min. 85% aanwezigheid; ruimte voor huiswerk/zelfstudie. Geschikt voor (aankomend) docenten, coaches en zorgprofessionals.",
+          "prerequisite": [
+            {
+              "kind": "experience",
+              "label": "minimaal 1 jaar eigen yogapraktijk",
+              "source": "site-2026-06",
+              "note": "\"Wel verwachten we minimaal 1 jaar eigen yoga-praktijk.\" Ervaringseis, geen voorafgaande opleiding en geen bedrag.\n"
+            }
+          ],
           "price": {
             "amount_eur": 3450,
             "period": "total",
@@ -14107,6 +14684,11 @@
             "total_hours": {
               "value": 200,
               "derived": false,
+              "caveat": null
+            },
+            "total_path_cost": {
+              "value": 3450,
+              "derived": true,
               "caveat": null
             },
             "pph": null,

@@ -63,7 +63,37 @@ export function integrityErrors(p: Provider, file: string): string[] {
     }
   }
 
-  // 4. claim scopes must resolve
+  // 4. prerequisite.program must resolve, and the chain must not CYCLE (spec v0.9).
+  //
+  //    A cycle is a VALIDATION ERROR, never a silent stop in the arithmetic. Two
+  //    programmes that each gate the other describe no path a student can walk, and
+  //    `totalPathCost` returning *some* number for it would publish a total for a route
+  //    that does not exist — about a named business, in a price band, in a sort order,
+  //    indistinguishable from a real one. The derivation guards itself against infinite
+  //    recursion (see purchasableGates), but the guard is for termination; the record must
+  //    not load at all.
+  for (const program of p.programs) {
+    for (const pre of program.prerequisite ?? []) {
+      if (pre.program == null) continue;
+      if (pre.kind !== "program")
+        errors.push(
+          `${file}: program '${program.id}' prerequisite '${pre.label}' points at program '${pre.program}' but has kind '${pre.kind}' — only kind 'program' is a training you must buy`,
+        );
+      if (!programIds.has(pre.program))
+        errors.push(
+          `${file}: program '${program.id}' has a prerequisite on unknown program '${pre.program}'`,
+        );
+    }
+  }
+  for (const program of p.programs) {
+    const cycle = prerequisiteCycle(p, program.id, []);
+    if (cycle)
+      errors.push(
+        `${file}: prerequisite cycle ${cycle.join(" → ")} — a programme cannot be its own gate, and a path cost over a cycle is a total for a route no student can walk`,
+      );
+  }
+
+  // 5. claim scopes must resolve
   for (const claim of p.claims) {
     const [kind, id] = claim.scope.split(":");
     if (kind === "program" && id && !programIds.has(id))
@@ -71,7 +101,7 @@ export function integrityErrors(p: Provider, file: string): string[] {
     if (kind === "module" && id && !moduleIds.has(id))
       errors.push(`${file}: claim '${claim.id}' scoped to unknown module '${id}'`);
 
-    // 5. A claim's quote is the provider's WORDS. The delimiters are the
+    // 6. A claim's quote is the provider's WORDS. The delimiters are the
     //    RENDERER's: the record page wraps every quote in curly quotes, so a value
     //    stored with its own outer quote marks renders as “"Het eerste jaar…"” —
     //    doubled. One of 34 claims was stored that way (de-yogaschool-enschede,
@@ -92,6 +122,25 @@ export function integrityErrors(p: Provider, file: string): string[] {
   }
 
   return errors;
+}
+
+/**
+ * The prerequisite chain from `programId`, or the cycle it runs into.
+ *
+ * Depth-first over `prerequisite[].program` — the only link that can cycle, because it is
+ * the only one that points BACK INTO this record. Returns the offending path
+ * (`a → b → a`) so the error names the route, not merely the record.
+ */
+function prerequisiteCycle(p: Provider, programId: string, path: string[]): string[] | null {
+  if (path.includes(programId)) return [...path, programId];
+  const program = p.programs.find((pr) => pr.id === programId);
+  if (!program) return null; // unresolvable ref — reported by its own check above
+  for (const pre of program.prerequisite ?? []) {
+    if (pre.program == null) continue;
+    const cycle = prerequisiteCycle(p, pre.program, [...path, programId]);
+    if (cycle) return cycle;
+  }
+  return null;
 }
 
 /** Straight and curly, opening and closing, single and double: every mark a

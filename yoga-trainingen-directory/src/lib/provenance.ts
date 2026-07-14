@@ -15,7 +15,7 @@
  * A human cannot catch that by reading YAML: the record looks perfect. Only the
  * ARTIFACT can answer it. So this check reads the artifacts.
  *
- * THREE CLAIMS, ONE MACHINERY, AND EACH ASKS FOR **THE FACT WE RECORDED** (v0.7).
+ * FOUR CLAIMS, ONE MACHINERY, AND EACH ASKS FOR **THE FACT WE RECORDED** (v0.7, v0.9).
  * The first version asked a weaker question — "is there *a* price / *an* hours-like
  * number / *any* mention of tax on this page?" — and a weaker question is a weaker
  * check: it certified as sourced six statements the cited page does not make. What
@@ -35,6 +35,14 @@
  *     in "€ 2.500" the character before `500` is `.`, not a digit, so `(?<!\d)500`
  *     matched, and 200/300/500 are exactly the standard formats while Dutch prices use
  *     `.` as the thousands separator. `hours(200)` matched "€ 1.200" and "logo-200x200".
+ *   - PREREQUISITE (v0.9) — a gate with a `cost_eur` → the cited artifact must print THAT
+ *     AMOUNT. A training you are forced to buy first is an ADDEND in the price we publish
+ *     (`total_path_cost`: de Yogaschool's Docentenopleiding is € 4.590 + a mandatory
+ *     € 1.590 Basisopleiding = € 6.180), so its price is held to the identical question as
+ *     the programme's own — by the identical regex. The record's own prose said "€1510",
+ *     which is what an OLDER page of that school prints; the Basisopleiding page prints
+ *     € 1.590,00. Only the artifact could tell those apart. An unpriced gate (`experience`,
+ *     `other`) asserts no amount and is not checked — see claimsOf.
  *   - VAT — `price.vat` of `incl`/`excl`/`exempt_crkbo` → the cited artifact must state
  *     **THAT TREATMENT**. Asking only "does the page mention tax" is the check
  *     CERTIFYING the very inference it was built to forbid: spec §4.11 (v0.7) says
@@ -325,7 +333,7 @@ export function evidencesVat(text: string, treatment: VatTreatment): boolean {
 }
 
 /** Which claim a finding is about. The message names the field; this makes it filterable. */
-export type ProvenanceCheck = "price" | "hours" | "vat";
+export type ProvenanceCheck = "price" | "hours" | "vat" | "prerequisite";
 
 /**
  * WHICH QUESTION WAS ASKED of the artifact — and therefore what a pass is worth.
@@ -585,6 +593,37 @@ function claimsOf(program: Program): Claimed[] {
       claim: `${total} uur volgens het record`,
       evidences: (text) => evidencesHours(text, total),
       missing: `noemt ${total} nergens als urental (staat het er als som van deelgetallen, dan is het totaal ONZE optelling — spec §6)`,
+    });
+  }
+
+  // PREREQUISITE (v0.9). A GATE WITH A PRICE IS A PRICE CLAIM ABOUT A NAMED BUSINESS, and
+  // it is an ADDEND in a figure we publish: `total_path_cost` puts de Yogaschool's
+  // Docentenopleiding at € 6.180 by adding € 1.590 to it. That € 1.590 must be printed on
+  // the page we cite for it — held to the SAME question as `price.amount_eur`, by the same
+  // regex, because it is the same kind of statement. Recording a gate's cost from memory,
+  // from a summary, or from the sibling page that merely mentions it is exactly how € 1.510
+  // (the figure on an older page) ended up in this record's prose while the school's own
+  // Basisopleiding page says € 1.590.
+  //
+  // AN UNPRICED GATE ASSERTS NO AMOUNT and is therefore not checked here — `kind:
+  // experience` ("min. 2 jaar praktijk") and `kind: other` ("afgeronde RYT200") carry no
+  // euros, and demanding a number from a page that states a barrier without one would
+  // invert the rule. Their `source` is still REQUIRED by the schema and rendered beside the
+  // gate; what this check cannot do is read a sentence. That limit is the same one stated
+  // in the header: a floor under the citation, not a ceiling over it.
+  for (const pre of program.prerequisite ?? []) {
+    const cost = pre.cost_eur;
+    if (cost == null) continue;
+    claims.push({
+      check: "prerequisite",
+      granularity: "fact",
+      programId: program.id,
+      sourceId: pre.source,
+      claim: `verplichte vooropleiding '${pre.label}' kost €${cost} volgens het record`,
+      evidences: (text) => evidencesAmount(text, cost),
+      missing:
+        `drukt dat bedrag nergens af (staat er een ANDER bedrag, dan citeren we de verkeerde ` +
+        `pagina — of is €${cost} ONZE rekensom, spec §6)`,
     });
   }
 

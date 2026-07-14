@@ -289,6 +289,82 @@ test("an artifact that extracts to NOTHING is `unreadable`, never `no_evidence`"
   assert.match(findings[0].message, /gereedschap/);
 });
 
+/* ---------- the priced gate (spec v0.9) ---------- */
+
+test("PREREQUISITE: a gate's price is held to the page cited for it — like any other price", () => {
+  // A training you must BUY first is an addend in a figure we publish about a named
+  // business (`total_path_cost`: de Yogaschool's € 4.590 + € 1.590 = € 6.180). So its cost
+  // is a price claim, and it is held to the identical question: does the cited page print
+  // that amount? This is not hypothetical — the record's own prose carried "€1510", which
+  // is the figure on an OLDER page of that school, while the Basisopleiding page prints
+  // € 1.590,00. Only the artifact can tell those apart, and only if it is asked.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-gate-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/basis-2026-01.md"),
+    "De kosten voor de Basisopleiding zijn € 1590,00 per lesjaar.\n",
+  );
+
+  const program = {
+    id: "200-test",
+    price: { amount_eur: null, period: "total", vat: "unknown", published: "not_published" },
+    hours_claimed: { total: null, breakdown_published: "unknown", contact_published: "unknown" },
+    prerequisite: [
+      { kind: "program", label: "Basisopleiding", cost_eur: 1590, source: "basis" },
+    ],
+  };
+  const sources = [{ id: "basis", local_snapshot: "data/archives/testco/basis-2026-01.md" }];
+  const provider = { id: "testco", name: "Test Co", programs: [program], sources } as unknown as Provider;
+
+  assert.deepEqual(providerProvenance(provider, dir).findings, [],
+    "the cited page prints € 1.590,00 — the gate's price stands on the artifact that states it");
+
+  // AND THE FAILURE BRANCH. Record the OTHER page's figure — the € 1.510 this project itself
+  // carried in prose — and the check must say so, rather than wave through a number the
+  // cited artifact never prints.
+  const wrong = {
+    ...provider,
+    programs: [{ ...program, prerequisite: [{ ...program.prerequisite[0], cost_eur: 1510 }] }],
+  } as unknown as Provider;
+  const { findings } = providerProvenance(wrong, dir);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].check, "prerequisite");
+  assert.equal(findings[0].reason, "no_evidence");
+  assert.equal(findings[0].granularity, "fact", "a gate's cost is never held to the weaker page-level question");
+});
+
+test("PREREQUISITE: an UNPRICED gate asserts no amount, and is not asked for one", () => {
+  // "min. 2 jaar praktijk" and "afgeronde RYT200" are real barriers with no euros attached.
+  // Demanding a number from the page that states them would invert the rule: the check would
+  // report a finding against a record that says exactly what the page says.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-gate2-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/site-2026-01.md"),
+    "Toelatingseis: minimaal twee jaar ervaring met yoga. Geen prijs op deze pagina.\n",
+  );
+  const provider = {
+    id: "testco",
+    name: "Test Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: null, period: "total", vat: "unknown", published: "not_published" },
+        hours_claimed: { total: null, breakdown_published: "unknown", contact_published: "unknown" },
+        prerequisite: [
+          { kind: "experience", label: "min. 2 jaar praktijk", source: "site" },
+          { kind: "other", label: "afgeronde RYT200", source: "site" },
+        ],
+      },
+    ],
+    sources: [{ id: "site", local_snapshot: "data/archives/testco/site-2026-01.md" }],
+  } as unknown as Provider;
+
+  const report = providerProvenance(provider, dir);
+  assert.deepEqual(report.findings, []);
+  assert.equal(report.claims, 0, "an unpriced gate is not a price claim, and must not be counted as one");
+});
+
 /* ---------- the corpus ---------- */
 
 test("every cited source evidences the claim it is cited for — or the finding is triaged", () => {
@@ -366,14 +442,17 @@ function expectedFindings(): string[] {
 }
 
 test("the corpus holds claims for the check to be about", () => {
-  // A check whose subject set is empty passes forever. The subject set is every
-  // published price, every stored hours total and every asserted VAT treatment, and
-  // each is either examined or skipped.
+  // A check whose subject set is empty passes forever. The subject set is every published
+  // price, every stored hours total, every asserted VAT treatment — and, since v0.9, every
+  // PRICED GATE: a training you are forced to buy first is an addend in a figure we publish
+  // (`total_path_cost`), so its amount is a price claim about a named business like any
+  // other, and it is held to the same page-must-print-it question.
   const programs = providers.flatMap((p) => p.programs);
   const claims =
     programs.filter((pr) => pr.price.published === "yes").length +
     programs.filter((pr) => pr.hours_claimed.total != null).length +
-    programs.filter((pr) => ["incl", "excl", "exempt_crkbo"].includes(pr.price.vat)).length;
+    programs.filter((pr) => ["incl", "excl", "exempt_crkbo"].includes(pr.price.vat)).length +
+    programs.flatMap((pr) => pr.prerequisite ?? []).filter((pre) => pre.cost_eur != null).length;
   assert.ok(claims > 60, `expected the corpus to hold sourced claims, found ${claims}`);
   assert.equal(report.claims, claims, "the report must count every claim it had a subject for");
   // Every claim reaches exactly one outcome: EXAMINED (we opened the artifacts and

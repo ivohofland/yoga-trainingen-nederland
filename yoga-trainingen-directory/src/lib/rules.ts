@@ -21,7 +21,7 @@
  * so the server pages, the client filter island and the JSON export all call the
  * SAME functions. One rule, three surfaces, no re-derivation possible.
  */
-import { pricePerContactHour, totalPrice } from "./derive";
+import { pricePerContactHour, totalPathCost, totalPrice } from "./derive";
 import { saysNotPublished } from "./quad";
 import type { Program, Provider, Quad } from "../schema";
 
@@ -244,16 +244,38 @@ export type PriceBand =
 const AFFORDABLE_BELOW_EUR = 3000;
 
 /**
- * THE BAND CONSUMES `totalPrice`, NEVER `amount_eur` (spec §6). The two are the same
- * number on 53 of 54 priced programmes — which is why reading the raw field looked
- * right for a year, and why the 54th was published in the wrong band.
+ * THE BAND CONSUMES `totalPathCost`, NEVER `amount_eur` AND NEVER A BARE `totalPrice`
+ * (spec §6, v0.9).
+ *
+ * The three figures coincide on almost every programme — which is exactly why each
+ * omission looked right until it didn't. `amount_eur` put de Blikopener's € 1.290 *per
+ * studiejaar* third-cheapest of 54 trainings (v0.5). `totalPrice` puts de Yogaschool's
+ * Docentenopleiding at € 4.590 beside trainings you can simply enrol in — while you may
+ * not start it without first buying their Basisopleiding at € 1.590. A band is the
+ * reader's answer to "what will this cost me", and for a gated training the answer is
+ * € 6.180. Ranking it as € 4.590 against an ungated course is not a smaller error than
+ * ranking a yearly fee as a whole-course price; it is the same error, one level up.
+ *
+ * `totalPathCost` IS `totalPrice` wherever there is no purchasable gate (see derive.ts),
+ * so this is a strictly better read, never a different one.
+ *
+ * NOT €/CONTACTUUR, deliberately. That ratio divides by THIS programme's contact hours,
+ * and the path cost buys another course's hours too — € 6.180 ÷ 360 would put a numerator
+ * that includes the Basisopleiding over a denominator that does not. That is a fabricated
+ * ratio, and the only honest one there is price ÷ hours of the same course.
  */
 export function priceBand(provider: Provider, program: Program): PriceBand {
-  const total = totalPrice(provider, program).value;
-  // A total exists only where the provider publishes amounts we can compare — their own
-  // whole-course figure, a per-period one with a count, or the parts of a per-module one
-  // (spec v0.8). Those are exactly the bandable rows.
-  if (total != null) return total < AFFORDABLE_BELOW_EUR ? "under3000" : "from3000";
-  if (program.price.amount_eur != null) return "no_comparable_total";
+  const path = totalPathCost(provider, program).value;
+  // A comparable figure exists only where the provider publishes amounts we can compare —
+  // their own whole-course figure, a per-period one with a count, the parts of a per-module
+  // one (v0.8), plus the price of every training they force you to buy first (v0.9). Those
+  // are exactly the bandable rows.
+  if (path != null) return path < AFFORDABLE_BELOW_EUR ? "under3000" : "from3000";
+  // No comparable PATH figure. A programme can reach here holding a perfectly good price
+  // (a gate whose cost the school does not publish nulls the path, not the price), so the
+  // test for "do they publish a price at all" must ask BOTH — `amount_eur` alone would call
+  // a provider who prices per module, in two published parts, a non-publisher of prices.
+  if (totalPrice(provider, program).value != null || program.price.amount_eur != null)
+    return "no_comparable_total";
   return saysNotPublished(program.price.published) ? "none_published" : "amount_not_in_record";
 }

@@ -58,13 +58,44 @@ sources:
     archived_url: https://web.archive.org/web/20260702063435/https://yogaschool.nl/yoga-opleiding/
     captured: "2026-07"
     note: >
-      LIVE (browser-gerenderd) Basisopleiding Raja Yoga: klassiek 8-ledig
-      systeem (Yama's/Niyama's, asana, energiebeheersing/pranayama, concentratie
-      & meditatie). Iedere maand in 2025 nieuwe Basisopleidingen; toegang na
-      kennismakingsgesprek (met Ylvy of Mascha, Emmastraat 147). Kosten
-      €1510/jaar (termijnen; lesboeken t.w.v. €120 inbegrepen). Draagt het
-      NRTO-kwaliteitskeurmerk. Basis is voorwaarde voor de Docentenopleiding.
+      /yoga-opleiding/ — een ALGEMENE opleidingspagina, NIET de eigen pagina van
+      de Basisopleiding (dat is /basisopleiding/, zie de bron hieronder).
+      Klassiek 8-ledig systeem (Yama's/Niyama's, asana,
+      energiebeheersing/pranayama, concentratie & meditatie). Iedere maand in
+      2025 nieuwe Basisopleidingen; toegang na kennismakingsgesprek (met Ylvy of
+      Mascha, Emmastraat 147). Draagt het NRTO-kwaliteitskeurmerk.
+
+      TWEE PAGINA'S, TWEE PRIJZEN — een bevinding, geen keuze. Deze pagina zegt
+      letterlijk: "De kosten voor de opleiding zijn €1510,00 per jaar. Dit wordt
+      betaald in termijnen van €1510,00 per maand (10 maanden)." (het
+      termijnbedrag is op de pagina zelf een kennelijke fout: €1510 per maand ×
+      10 ≠ €1510 per jaar). De eigen Basisopleidingspagina zegt: "De kosten voor
+      de Basisopleiding vanaf januari 2026 zijn € 1590,00 per seizoen of lesjaar
+      van 40 weken." Beide staan er, beide zijn gearchiveerd; de school noemt
+      geen van beide bedragen achterhaald. De verplichte-vooropleiding-kosten
+      worden geciteerd aan de pagina die de Basisopleiding zelf beschrijft
+      (site-basisopleiding-2026-07, € 1.590), en dít blijft staan als het
+      gepubliceerde andere bedrag.
     local_snapshot: data/archives/de-yogaschool-enschede/site-basis-2026-07-2026-07-02.pdf
+  - id: site-basisopleiding-2026-07
+    type: website
+    url: https://yogaschool.nl/basisopleiding/
+    archived_url: https://web.archive.org/web/20260713202536/https://yogaschool.nl/basisopleiding/
+    captured: "2026-07"
+    note: >
+      DE EIGEN PAGINA VAN DE BASISOPLEIDING — de opleiding die verplicht is
+      vóór de Docentenopleiding, en tot v0.9 nergens in dit record als bron
+      stond. Letterlijk: "De kosten voor de Basisopleiding vanaf januari 2026
+      zijn € 1590,00 per seizoen of lesjaar van 40 weken. Dit wordt betaald in
+      termijnen van € 159,00 per maand (10 maanden)." Lesmateriaal/lesboeken
+      (t.w.v. € 125) inbegrepen. Duur: "De basisopleiding bestaat uit 40
+      lesblokken van wekelijks 2 1/2 uur, verspreid over een jaar" — één lesjaar,
+      dus één periode. "Er zijn minimaal 100 lesuren en er staan 80
+      thuisstudie-uren per lesjaar." De poort, letterlijk: "Aangezien de
+      Basisopleiding je het fundament over Raja Yoga bijbrengt, is deze opleiding
+      verplicht als je wilt starten met de Docentenopleiding." Geen
+      btw-vermelding op de pagina.
+    local_snapshot: data/archives/de-yogaschool-enschede/site-basisopleiding-2026-07-2026-07-13.pdf
   - id: site-docenten-2026-07
     type: website
     url: https://yogaschool.nl/docentenopleiding/
@@ -147,10 +178,32 @@ programs:
       duration_months_min: 36
       language: nl
     prerequisites_claimed: >
-      Afgeronde Basisopleiding Raja Yoga (1 jaar, €1510) is voorwaarde. Voor wie
-      nog niet bij de school bekend is: kennismakingsgesprek/intake. Gericht op
-      persoonlijke ontwikkeling; wekelijkse lessen + dagelijkse eigen
-      beoefening.
+      "Je kunt met de Docentenopleiding beginnen na het volbrengen van de
+      Basisopleiding." Voor wie nog niet bij de school bekend is:
+      kennismakingsgesprek/intake. Gericht op persoonlijke ontwikkeling;
+      wekelijkse lessen + dagelijkse eigen beoefening. (Het bedrag van de
+      Basisopleiding stond hier tot v0.9 in proza — als "€1510", het bedrag van
+      de ALGEMENE opleidingspagina. De eigen Basisopleidingspagina noemt € 1.590
+      per lesjaar; de poort staat nu gestructureerd in `prerequisite[]`, met de
+      bron die haar prijs stelt, zodat de vergelijking haar kan zien.)
+    prerequisite:
+      - kind: program
+        label: "Basisopleiding Raja Yoga"
+        cost_eur: 1590
+        period: per_year
+        periods: 1
+        source: site-basisopleiding-2026-07
+        note: >
+          "Aangezien de Basisopleiding je het fundament over Raja Yoga bijbrengt,
+          is deze opleiding verplicht als je wilt starten met de
+          Docentenopleiding." Kosten: "€ 1590,00 per seizoen of lesjaar van 40
+          weken" (vanaf januari 2026), en de opleiding duurt één lesjaar ("40
+          lesblokken ... verspreid over een jaar") → één periode, € 1.590. De
+          Basisopleiding is GEEN docentenopleiding en staat daarom niet als eigen
+          `program` in dit record; haar prijs staat hier, geciteerd aan de pagina
+          die haar afdrukt. LET OP: de algemene opleidingspagina
+          (site-basis-2026-07) noemt voor de Basisopleiding €1510,00 per jaar —
+          twee gepubliceerde bedragen voor dezelfde opleiding; zie de bronnoten.
     price:
       amount_eur: 1530
       period: per_year
@@ -166,9 +219,10 @@ programs:
         het getal 4590 komt in geen enkel gearchiveerd artefact van deze school
         voor, en werd tot v0.8 in `amount_eur` bewaard en als hún gepubliceerde
         prijs gerenderd. Nu: `period: per_year` + `periods: 3`; het totaal wordt
-        afgeleid en zichtbaar als het onze getoond (spec §6). Geen btw-vermelding
-        op de pagina → vat unknown (§4.11; NRTO is een kwaliteitskeurmerk, geen
-        btw-vrijstelling, en de school staat niet in het CRKBO-register).
+        afgeleid en zichtbaar als het onze getoond (spec §6). Geen
+        btw-vermelding op de pagina → vat unknown (§4.11; NRTO is een
+        kwaliteitskeurmerk, geen btw-vrijstelling, en de school staat niet in
+        het CRKBO-register).
       source: site-docenten-2026-07
     hours_claimed:
       total: null
@@ -182,12 +236,12 @@ programs:
         DE SCHOOL PUBLICEERT GEEN TOTAAL. Ze publiceert twee getallen, apart:
         "De opleiding neemt drie jaar of 360 uren in beslag. Daarnaast is er
         minimale zelfstudie van 240 uur." (120 lesblokken van wekelijks 3 uur =
-        360 contacturen over 3 jaar; de zelfstudie is een minimum, min. 1 uur per
-        dag.) 360 + 240 = 600 is ONZE optelling — het getal 600 komt op geen
+        360 contacturen over 3 jaar; de zelfstudie is een minimum, min. 1 uur
+        per dag.) 360 + 240 = 600 is ONZE optelling — het getal 600 komt op geen
         enkele gearchiveerde pagina van deze school voor, en total blijft daarom
         leeg (spec §6: afgeleide waarden worden niet opgeslagen). Een geïsoleerd
-        lespraktijk-/supervised-teaching-getal wordt niet gegeven; de opleiding is
-        sterk beoefenings-/theoriegericht met een eindexamen, niet primair
+        lespraktijk-/supervised-teaching-getal wordt niet gegeven; de opleiding
+        is sterk beoefenings-/theoriegericht met een eindexamen, niet primair
         lespraktijk-uren.
     composition:
       type: single_program
@@ -239,7 +293,22 @@ programs:
       structure: mixed
       duration_months_min: 36
       language: nl
-    prerequisites_claimed: "Succesvol afgeronde Docentenopleiding Raja Yoga is voorwaarde."
+    prerequisites_claimed: >
+      "De Meesteropleing Raja Yoga kan je volgen nadat je de Docentenopleiding
+      succesvol hebt afgesloten."
+    prerequisite:
+      - kind: program
+        label: "Docentenopleiding Raja Yoga"
+        program: docentenopleiding-raja
+        source: site-meester-2026-07
+        note: >
+          "De Meesteropleing Raja Yoga kan je volgen nadat je de
+          Docentenopleiding succesvol hebt afgesloten." Die opleiding staat als
+          `program` in dit record en draagt haar eigen (afgeleide) totaal én haar
+          eigen poort — de Basisopleiding. Het pad is dus drie schakels lang:
+          Basisopleiding → Docentenopleiding → Meesteropleiding. Geen bedrag
+          hier: dat zou een tweede, verouderbare kopie zijn van een prijs die de
+          Docentenopleiding zelf al draagt.
     price:
       amount_eur: 1530
       period: per_year

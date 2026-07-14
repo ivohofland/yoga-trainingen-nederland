@@ -235,6 +235,13 @@ programs:
       of thuis); ook geschikt voor bewegingsdocenten (pilates/dans/barre) die
       willen verbreden. Geen expertise vereist, wel bereidheid je comfortzone te
       verlaten."
+    prerequisite:
+      - kind: experience
+        label: "min. 1 jaar consistente eigen praktijk (~2×/week)"
+        source: site-vinyasa200-2026-06
+        note: >
+          "one year of consistent" praktijk — een ervaringsdrempel, geen
+          certificaat en geen aankoop. Geen bedrag.
     price:
       amount_eur: 3150
       vat: exempt_crkbo
@@ -431,6 +438,16 @@ programs:
     prerequisites_claimed: "gecertificeerde yogadocenten (200u+) of docenten op weg
       naar hun 300u; toegewijde, open practitioners die het groepsritme
       respecteren."
+    prerequisite:
+      - kind: other
+        label: "gecertificeerd yogadocent (200u+)"
+        source: site-vinyasa300-2026-06
+        note: >
+          De pagina richt zich op "Certified yoga teachers (200h+)" — een
+          certificaat van welke school dan ook. Tribes verkoopt zelf een 200u
+          (€ 3.150), maar eist die niet; geen bedrag opgeteld. (Tribes publiceert
+          voor de 300u zelf geen prijs, dus er is ook geen pad om bij op te
+          tellen.)
     price:
       amount_eur: null
       vat: unknown

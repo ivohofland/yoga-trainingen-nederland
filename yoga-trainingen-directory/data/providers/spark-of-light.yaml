@@ -250,6 +250,17 @@ programs:
       language: nl
     prerequisites_claimed: "afgeronde 200u-yogaopleiding (elders mag, na overleg
       over ontbrekende onderdelen); modules ook los te volgen als bijscholing"
+    prerequisite:
+      - kind: other
+        label: "afgeronde 200-uursopleiding (ook elders behaald)"
+        source: site-300-2026-06
+        note: >
+          "Deze verdiepende yoga docent opleiding is bedoeld voor mensen die al
+          een 200 uur ... hebt afgerond", en met zoveel woorden ook elders: "Heb
+          je wel een 200 uur opleiding gedaan, maar niet bij Spark of Light
+          Yoga?" De school verkoopt zelf een 200u (€ 3.450), maar eist die niet
+          — dus geen bedrag opgeteld: dat zou een verplichte aankoop bij hén
+          beweren die de pagina uitdrukkelijk niet stelt.
     price:
       vat: unknown
       published: no

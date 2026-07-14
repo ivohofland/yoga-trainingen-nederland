@@ -116,6 +116,14 @@ programs:
     prerequisites_claimed: "minimaal 2 jaar wekelijks yoga (thuis of in groep);
       goede beheersing van de Engelse taal vereist. Intakegesprek; deelname in
       onderling overleg besloten. Geen vrijstellingen."
+    prerequisite:
+      - kind: experience
+        label: "min. 2 jaar wekelijks yoga (thuis of in groep)"
+        source: site-2026-06
+        note: >
+          "We verwachten dat je minstens twee jaar ..." wekelijks yoga beoefent.
+          Ervaringseis, geen aankoop — en let op: de school verleent expliciet
+          "geen vrijstellingen", dus de eis is hard.
     price:
       amount_eur: 2950
       vat: exempt_crkbo

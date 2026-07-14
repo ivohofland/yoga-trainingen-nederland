@@ -77,6 +77,13 @@ export type Source = z.infer<typeof Source>;
 
 /* ---------- shared sub-objects ---------- */
 
+/** WHAT ONE AMOUNT BUYS (spec v0.5). Shared, because a PREREQUISITE's price buys a
+ *  unit too: de Yogaschool's mandatory Basisopleiding is € 1.590 *per lesjaar*, and a
+ *  gate priced per year is not a gate priced per training. One vocabulary, so the two
+ *  cannot drift into meaning different things by the same word. */
+export const PricePeriod = z.enum(["total", "per_year", "per_module", "per_day"]);
+export type PricePeriod = z.infer<typeof PricePeriod>;
+
 export const Price = strictObject({
   /** Comparable base: cheapest generally-available variant (methodology convention). */
   amount_eur: z.number().positive().nullable().optional(),
@@ -99,7 +106,7 @@ export const Price = strictObject({
    * derive.ts). Storing `4 × 1290` would publish a figure the provider never stated,
    * resting on an assumption their own price line denies ("(vanaf 1 juni 2026)").
    */
-  period: z.enum(["total", "per_year", "per_module", "per_day"]).default("total"),
+  period: PricePeriod.default("total"),
   /** How many periods make up the WHOLE training. `null`/absent = the provider does
    *  not publish it — and then no total is derivable: a per-period price with no
    *  period count is not comparable and must never be ranked as though it were. */
@@ -342,6 +349,64 @@ export const Program = strictObject({
     language: z.enum(["nl", "en", "mixed"]).optional(),
   }),
   prerequisites_claimed: z.string().optional(),
+  /**
+   * THE GATE, STRUCTURED — because a gate you must BUY changes the price (spec §4.3, v0.9).
+   *
+   * `prerequisites_claimed` above stays: it is their prose, verbatim-ish, and it is
+   * where the gate has always lived. THAT IS THE PROBLEM. de Yogaschool's
+   * Docentenopleiding is € 1.530/jaar × 3 = € 4.590, and you may not start it without
+   * first completing the Basisopleiding at € 1.590 — a sentence the record ALREADY
+   * carried ("Afgeronde Basisopleiding Raja Yoga (1 jaar, €1510) is voorwaarde"), in a
+   * string, where no comparison could reach it. The site published € 4.590. Qualifying
+   * there costs € 6.180. The Meesteropleiding sits behind the Docentenopleiding, so that
+   * path is € 10.770 — also shown as € 4.590.
+   *
+   * Structure the gate; `totalPathCost` (derive.ts) walks it and derives the path.
+   *
+   *   `kind: program`    — a purchasable training you must complete FIRST. Either
+   *                        `program:` (another Program on THIS record — the school's own
+   *                        prior training) or `cost_eur` + `period`/`periods` read off the
+   *                        page that prices it.
+   *   `kind: experience` — an unpriced gate ("min. 2 jaar praktijk"). A REAL barrier, and
+   *                        it must be recordable without euros: it is not free, it is
+   *                        unpriceable, and a gate we cannot price is not a gate we may
+   *                        silently drop.
+   *   `kind: other`      — a qualification obtainable in the market, which THIS SCHOOL DOES
+   *                        NOT SELL YOU ("afgeronde RYT200", "200-hour certificate from a
+   *                        recognised school"). It is a purchasable gate in the market —
+   *                        but not this school's product, and pricing it with THEIR own 200
+   *                        would assert a path they never require. `note` says so; no cost.
+   *
+   * `source` IS REQUIRED, and it is the only required field besides kind/label: what you
+   * are FORCED TO BUY is a fact about the price, and a fact about a named business's price
+   * needs a page that states it. `price.source` is required by nothing in Zod either — but
+   * this one is, because the gate is the half of the price the school does not print in the
+   * price box.
+   */
+  prerequisite: z
+    .array(
+      strictObject({
+        kind: z.enum(["program", "experience", "other"]),
+        /** What the school says you must have — short, and theirs, not ours. */
+        label: z.string(),
+        /** Another Program on THIS record, when the gate is the school's own prior
+         *  training. Its own (possibly derived) total is what the path sums — so a
+         *  price change on the gate cannot leave a stale copy behind here. */
+        program: slug.optional(),
+        /** The gate's price where the school prints it and the gate is NOT a Program on
+         *  this record (de Yogaschool's Basisopleiding: € 1.590 per lesjaar). `null` =
+         *  we could not read it off any artifact — and then the path cost is null, never
+         *  guessed. */
+        cost_eur: z.number().positive().nullable().optional(),
+        /** Same unit vocabulary as `price.period`, and the same default (`total`): a gate
+         *  priced per lesjaar is not a gate priced per training. */
+        period: PricePeriod.optional(),
+        periods: z.number().int().positive().nullable().optional(),
+        source: z.string(),
+        note: z.string().optional(),
+      }),
+    )
+    .optional(),
   price: Price,
   /** The §5 decomposition. supervised_teaching_practice = the only number
    *  about teaching ability; its emptiness across the market is the finding. */

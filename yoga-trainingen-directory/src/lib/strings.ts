@@ -179,6 +179,39 @@ export const nl = {
     "Geen vergelijkbare totaalprijs: de aanbieder prijst per module en niet elke module " +
     "heeft een gepubliceerde prijs — een onvolledige optelling zou een gok zijn.",
 
+  /* ---------- Wat het kost om HIER te kwalificeren (spec v0.9, §6) ---------- */
+
+  /**
+   * HET GETAL WAAR DE LEZER VOOR KWAM. `total_price` beantwoordt "wat kost deze
+   * opleiding"; een opleiding waaraan je niet mag beginnen zonder eerst een ándere
+   * opleiding te kopen, beantwoordt die vraag niet. de Yogaschool: € 4.590 voor de
+   * Docentenopleiding, en je mag pas beginnen "na het volbrengen van de Basisopleiding"
+   * (€ 1.590 per lesjaar). Docent worden kost daar € 6.180.
+   *
+   * ALTIJD ONZE OPTELLING — ook waar de opleiding zélf een gepubliceerde totaalprijs
+   * heeft: het PAD is nooit hun getal. € 6.180 staat op geen enkele pagina van deze
+   * school. Het label, de "±" en de uitgeschreven optelling zeggen dat, en de pagina zet
+   * het bovendien in de eigen, zichtbaar niet-feitelijke inkt.
+   */
+  rowTotalPathCost: "Totaal om te kwalificeren (onze optelling)",
+  /** De rij op de lijst, in één regel: "± € 6.180 om te kwalificeren — incl. verplichte …". */
+  priceDerivedPathCost: (total: string, working: string) => `± ${total} om te kwalificeren — ${working}`,
+  /** Het afgeleide pad-totaal op de recordpagina. */
+  pathCostDerivedTotal: (total: string) => `± ${total} om te kwalificeren`,
+  /** De uitgeschreven optelling: welke verplichte opleiding(en) erbij zitten, en voor
+   *  hoeveel — zodat de lezer haar kan narekenen en niemand € 6.180 kan aanzien voor een
+   *  bedrag dat de school publiceert. */
+  totalPathCostWorking: (gates: string[]) =>
+    `incl. verplichte ${gates.join(" + ")}. Onze optelling — de aanbieder publiceert dit ` +
+    `totaal niet.`,
+  /** Eén schakel zonder gepubliceerde prijs → geen pad-totaal. Een onvolledig pad-totaal
+   *  is een gok, en een gegokte vergelijking is erger dan geen (dezelfde regel als
+   *  `bundleDelta` en de optelling van ongelijke delen). */
+  totalPathCostIncomplete:
+    "Geen vergelijkbaar totaal om te kwalificeren: van ten minste één verplichte " +
+    "voorafgaande opleiding is de prijs niet vastgelegd — een onvolledige optelling zou " +
+    "een gok zijn.",
+
   /* ---------- De afgeleide totaaluren (spec v0.6, §6) ---------- */
 
   /**
@@ -287,6 +320,25 @@ export const nl = {
   rowAssessment: "Toetsing",
   rowGroupSize: "Groepsgrootte",
   rowPrerequisites: "Vooropleiding",
+  /** De gestructureerde toegangseis (spec v0.9) — één rij per eis, mét bron. De rij
+   *  hierboven is hún proza en draagt geen bron; deze eis is een OPTELPOST in een prijs
+   *  die wij publiceren, en dan is de pagina die haar stelt niet optioneel. */
+  rowPrerequisiteGate: "Toegangseis",
+  /**
+   * Wat voor soort hindernis dit is — en het verschil is geld.
+   *
+   * `program` = een opleiding die je eerst moet KOPEN (de Yogaschool: de Basisopleiding,
+   * € 1.590). Die telt mee in "Totaal om te kwalificeren". `experience` = een echte
+   * hindernis zonder prijskaartje ("min. 2 jaar praktijk"). `other` = een kwalificatie die
+   * de markt verkoopt maar DEZE aanbieder niet ("afgeronde RYT200") — een gate die geld
+   * kost, alleen niet aan hen: haar prijzen met hún eigen 200u-opleiding zou een route
+   * beweren die zij nergens eisen.
+   */
+  prerequisiteKind: {
+    program: "verplichte voorafgaande opleiding — telt mee in het totaal",
+    experience: "ervaringseis (geen aankoop)",
+    other: "kwalificatie die deze aanbieder zelf niet verkoopt — geen bedrag opgeteld",
+  } as const,
   rowComposition: "Samenstelling",
   rowTrackRecord: "Track record",
   rowAccreditation: "Accreditatie (geclaimd)",

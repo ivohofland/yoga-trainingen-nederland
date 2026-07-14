@@ -64,7 +64,7 @@ try {
   }
   // De dekkingsregel wordt ALTIJD geprint — ook (juist) als er bevindingen zijn. Wat de
   // check onderzocht heeft is een feit over de RUN, geen voetnoot bij een schone uitslag.
-  const dekking = `${examined}/${claims} claim(s) (prijs/uren/btw) onderzocht op ${granularity === "fact" ? "de waarde in het record" : "paginaniveau"}`;
+  const dekking = `${examined}/${claims} claim(s) (prijs/uren/btw/vooropleiding) onderzocht op ${granularity === "fact" ? "de waarde in het record" : "paginaniveau"}`;
   if (skipped > 0)
     console.log(
       `⚠ provenance: ${dekking} — ${skipped} niet doorzocht (snapshot-body niet in deze checkout; alleen de hash is publiek). ` +

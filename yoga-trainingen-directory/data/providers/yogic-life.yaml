@@ -129,6 +129,15 @@ programs:
       duration_months_min: 10
       language: mixed
     prerequisites_claimed: "afgeronde RYT200 Yoga Docentenopleiding"
+    prerequisite:
+      - kind: other
+        label: "afgeronde RYT200 Yoga Docentenopleiding (van een willekeurige school)"
+        source: site-ryt300-2026-06
+        note: >
+          Letterlijk: "Toelatingseis: Een afgeronde RYT200 Yoga
+          Docentenopleiding." Geen eis dat die bij Yogic Life zelf is behaald
+          (zij verkopen er wél één, € 2.399) — dus een poort die in de markt geld
+          kost, maar geen bedrag dat wij bij DEZE opleiding mogen optellen.
     price:
       amount_eur: 3599
       vat: unknown

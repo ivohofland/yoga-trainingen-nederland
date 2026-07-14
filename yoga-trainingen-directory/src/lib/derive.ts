@@ -126,6 +126,123 @@ export function totalPrice(provider: Provider, program: Program): TotalPrice {
   };
 }
 
+/**
+ * WHAT IT COSTS TO QUALIFY HERE — `total_price` plus every training you must BUY first
+ * (spec §6 `total_path_cost`, v0.9).
+ *
+ * `total_price` answers "what does this course cost". A course you cannot enrol in
+ * without first completing another course of theirs does not answer that question, and
+ * for one release this directory published the wrong answer to it: de Yogaschool's
+ * Docentenopleiding showed € 4.590 (our 3 × € 1.530) while the school's own Basisopleiding
+ * page — mandatory, € 1.590 per lesjaar — sat outside the arithmetic entirely. The gate was
+ * IN THE RECORD, as prose, in `prerequisites_claimed`, where no comparison could reach it.
+ * Qualifying there costs € 6.180. The Meesteropleiding is gated behind the Docentenopleiding,
+ * which is gated behind the Basisopleiding: € 10.770, also shown as € 4.590.
+ *
+ * `derived: true` ALWAYS — even where the programme's own total is the school's published
+ * figure. The PATH is never their number: no page of de Yogaschool's prints € 6.180. The
+ * sum is ours, it is rendered as ours, and the caveat shows the working.
+ *
+ * RECURSIVE, because the chain is (Meester → Docenten → Basis). Only `kind: program`
+ * links are summed: they are the ones you must BUY. `kind: experience` ("min. 2 jaar
+ * praktijk") is a real barrier with no euros, and `kind: other` is a qualification the
+ * market sells and THIS SCHOOL DOES NOT — pricing either would invent a number.
+ *
+ * `null` IF ANY LINK'S COST IS UNKNOWN — the same rule as bundleDelta and totalPrice's
+ * sum. An incomplete path cost is a guess, and a guessed comparison is worse than none:
+ * it would be published beside real totals, in a band, in a sort order, indistinguishable.
+ *
+ * A CYCLE IS A VALIDATION ERROR, not a silent stop (loader.ts). Two programmes that each
+ * gate the other describe no path a student can walk, and quietly returning *some* number
+ * for it would publish a total for a route that does not exist. `seen` here only guarantees
+ * termination — the record never loads.
+ */
+export interface TotalPathCost {
+  value: number | null;
+  /** The working, always — the path total is ours in every case. */
+  caveat?: string;
+  /** Always true. Present so the shape matches TotalPrice/TotalHours and no consumer has
+   *  to remember which of the three is exempt from the labelling rule. None is. */
+  derived: true;
+  /** The purchasable gates, flattened, in the order the student must buy them. Empty →
+   *  the path IS the programme, and no surface may render a second row (see presenters). */
+  gates: { label: string; total: number | null }[];
+}
+
+export function totalPathCost(provider: Provider, program: Program): TotalPathCost {
+  const gates = purchasableGates(provider, program, new Set([program.id]));
+  const own = totalPrice(provider, program);
+
+  if (gates.length === 0) {
+    // No gate to buy: the path cost IS the total price. It still reports `derived: true` —
+    // this function's number is always ours — but presenters render NO second row, because
+    // there is no second number and printing one would relabel their total as our sum.
+    return { value: own.value, derived: true, gates };
+  }
+
+  const missing = own.value == null || gates.some((g) => g.total == null);
+  if (missing) {
+    return {
+      value: null,
+      caveat: nl.totalPathCostIncomplete,
+      derived: true,
+      gates,
+    };
+  }
+
+  const total = gates.reduce((sum, g) => sum + (g.total ?? 0), own.value ?? 0);
+  return {
+    value: Math.round(total * 100) / 100,
+    caveat: nl.totalPathCostWorking(
+      gates.map((g) => `${g.label} ${formatEuroForCaveat(g.total ?? 0)}`),
+    ),
+    derived: true,
+    gates,
+  };
+}
+
+/**
+ * Every training in the chain that must be BOUGHT, depth-first, gates-of-gates first —
+ * so the caveat reads in the order a student walks it (Basis, then Docenten).
+ *
+ * `seen` carries the programme ids already on the path. A repeat means a CYCLE, and this
+ * returns rather than recursing: termination only. The record is refused by loader.ts's
+ * integrity check long before any surface calls this, so the truncated result is never
+ * rendered — but a stack overflow inside a presenter would be a worse way to find out.
+ */
+function purchasableGates(
+  provider: Provider,
+  program: Program,
+  seen: Set<string>,
+): { label: string; total: number | null }[] {
+  const out: { label: string; total: number | null }[] = [];
+  for (const pre of program.prerequisite ?? []) {
+    if (pre.kind !== "program") continue; // experience / other: real gates, no euros
+    const target = pre.program ? provider.programs.find((p) => p.id === pre.program) : undefined;
+    if (target) {
+      if (seen.has(target.id)) continue; // cycle — loader.ts refuses the record
+      out.push(...purchasableGates(provider, target, new Set([...seen, target.id])));
+      out.push({ label: pre.label, total: totalPrice(provider, target).value });
+      continue;
+    }
+    // A gate that is NOT a Program on this record (de Yogaschool's Basisopleiding is not a
+    // teacher training and so is not one): its price is read off the page that prints it.
+    out.push({ label: pre.label, total: prerequisiteCost(pre) });
+  }
+  return out;
+}
+
+/** The gate's own whole-cost, by the same three rules as a programme's price — a gate
+ *  priced "per lesjaar" with no count of lesjaren has no comparable cost, and `null`
+ *  here nulls the path rather than guessing at one. */
+function prerequisiteCost(pre: NonNullable<Program["prerequisite"]>[number]): number | null {
+  const { cost_eur: cost, period, periods } = pre;
+  if (cost == null) return null;
+  if (period == null || period === "total") return cost;
+  if (periods == null) return null;
+  return Math.round(cost * periods * 100) / 100;
+}
+
 /** Money inside a caveat string. Kept here (not in presenters) because the caveat IS
  *  the arithmetic — the working has to travel with the number it explains. */
 function formatEuroForCaveat(n: number): string {

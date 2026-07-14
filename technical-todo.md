@@ -69,6 +69,25 @@ content goes live. The site itself now exists; these are the parts of the
   it). **Our note and our own archive contradict each other.** Only the live page
   can settle it: if the wording is there → recapture + re-cite; if not →
   `vat: unknown` (§4.11). *The only open provenance finding in the corpus.*
+- [ ] **`de-yogaschool-enschede` publishes TWO prices for the Basisopleiding.**
+  The general opleidingspagina (`/yoga-opleiding/`) says *"€1510,00 per jaar"*;
+  the Basisopleiding's own page (`/basisopleiding/`) says *"€ 1590,00 per seizoen
+  of lesjaar van 40 weken"* (vanaf januari 2026). Both are archived; neither is
+  marked superseded by the school. v0.9 cites the **Basisopleiding page** for the
+  mandatory-gate cost (it is the page about that training), and the record states
+  the discrepancy as a finding. **Actionable:** put it to the school as a
+  correction request (§4.9 `inquiries`) — a school with two live prices for one
+  training is exactly the kind of thing a reader cannot resolve alone. Note the
+  /yoga-opleiding/ page also prints an internally impossible instalment line
+  (*"termijnen van €1510,00 per maand (10 maanden)"* against €1510 per year).
+- [ ] **Gated programmes whose gate this school does not sell (`prerequisite[]`
+  `kind: other`, 7 programmes).** An "afgeronde RYT200" on a 300-hour course is a
+  purchasable gate *in the market* — but not one the school forces you to buy
+  from them, so no amount is summed into `total_path_cost` (spec §4.3/§6). The
+  reader therefore still cannot see what qualifying at, e.g., yogic-life
+  *actually* costs end-to-end. **Open editorial question, deliberately not
+  answered by inventing a number**: a market range would be our estimate about
+  other people's prices. Revisit only if a *published* figure exists to cite.
 - [ ] **20 providers have `crkbo.registered: unknown`.** The spec calls this "a
   1-minute register lookup". It is a **gap** (ours), not a finding (theirs), so
   the site correctly says nothing about them — but it is cheap to close and it

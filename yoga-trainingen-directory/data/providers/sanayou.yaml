@@ -302,6 +302,21 @@ programs:
       structure: modular
       language: nl
     prerequisites_claimed: "afgeronde RYT200"
+    prerequisite:
+      # EEN POORT DIE GELD KOST — maar niet aan hén, en dus geen optelpost. De
+      # pagina eist "je RYT200", niet ÓNZE RYT200; SanaYou verkoopt er zelf wel
+      # twee (klassikaal € 2.999, online € 1.250), maar de opleiding met hún 200u
+      # beprijzen zou een route beweren die zij nergens eisen — en welke van de
+      # twee zou dat dan zijn? Een gok met twee antwoorden is geen bedrag.
+      - kind: other
+        label: "afgeronde RYT200 (van een willekeurige school)"
+        source: site-300-2026-06
+        note: >
+          "Groei van RYT200 naar RYT500" / "Je bouwt verder op je RYT200 met
+          vernieuwende modules." De pagina vraagt een RYT200, niet die van
+          SanaYou zelf. Een RYT200 is in de markt een te kópen poort — maar niet
+          er één die deze school u verplicht bij hén te kopen, dus er wordt geen
+          bedrag opgeteld (spec §4.3).
     price:
       amount_eur: 2250
       variants:

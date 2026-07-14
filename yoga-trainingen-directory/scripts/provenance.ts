@@ -40,7 +40,7 @@ if (skipped > 0) {
   );
   console.log(`  Getoetst op: ${niveau}. Over die ${skipped} zegt deze run NIETS.`);
 } else if (findings.length === 0) {
-  console.log(`\n✓ ${examined}/${claims} claim(s) (prijs/uren/btw) — elk gedekt door een gearchiveerd artefact dat het STELT`);
+  console.log(`\n✓ ${examined}/${claims} claim(s) (prijs/uren/btw/vooropleiding) — elk gedekt door een gearchiveerd artefact dat het STELT`);
   console.log(`  Getoetst op: ${niveau}.`);
 }
 console.log();

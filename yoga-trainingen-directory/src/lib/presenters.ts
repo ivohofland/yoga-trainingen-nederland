@@ -7,7 +7,7 @@
  * It is PURE — it reaches `derive.ts` and `rules.ts`, never `loader.ts` — so a
  * client component may import values from it, not merely types.
  */
-import { bundleDelta, pricePerContactHour, totalHours, totalPrice } from "./derive";
+import { bundleDelta, pricePerContactHour, totalHours, totalPathCost, totalPrice } from "./derive";
 import {
   missingBecause,
   pphBlocker,
@@ -111,6 +111,21 @@ export interface ListingRow {
    * arithmetic, with the working shown, never as the school's claim.
    */
   priceDerivedTotal: string | null;
+  /**
+   * WHAT IT COSTS TO QUALIFY HERE — "± € 6.180 om te kwalificeren — incl. verplichte
+   * Basisopleiding € 1.590" — or null when nothing must be bought first (spec §6, v0.9).
+   *
+   * A THIRD field, beside `priceDisplay` (theirs) and `priceDerivedTotal` (our sum over
+   * their unit), and separate for the same reason the second one is: the path cost is
+   * ours, it is a different question from either, and folding it into one string would
+   * print a figure that appears on no page of the school in the school's own colours.
+   *
+   * NULL WHERE THERE IS NO PURCHASABLE GATE — on 76 of 78 programmes the path cost simply
+   * IS the total, and a second row repeating it would invent a second claim out of one
+   * number. The row exists only where the two differ, which is exactly where the reader
+   * is being misled without it.
+   */
+  priceDerivedPathCost: string | null;
   pph: number | null;
   /**
    * The formatted €/contactuur, or null when there is none. Formatted HERE, like
@@ -335,6 +350,22 @@ function priceDerivedTotalDisplay(provider: Provider, program: Program): string 
 }
 
 /**
+ * The cost of the whole PATH — the course plus every training you must buy before you may
+ * start it (spec §6, v0.9) — or null when there is nothing to add.
+ *
+ * `gates.length === 0` returns null, and that is the rule the spec states in as many
+ * words: where nothing must be bought first, `totalPathCost === totalPrice`, and a second
+ * row printing the same number under a different label would tell the reader there are two
+ * figures where the school published one. The row appears on exactly the programmes whose
+ * price the gate makes wrong — today: de Yogaschool's two.
+ */
+function priceDerivedPathCostDisplay(provider: Provider, program: Program): string | null {
+  const path = totalPathCost(provider, program);
+  if (path.gates.length === 0 || path.value == null || path.caveat == null) return null;
+  return nl.priceDerivedPathCost(formatEuro(path.value), path.caveat);
+}
+
+/**
  * The human-readable "why" behind the cell. It must never contradict the quad
  * above: a finding names the provider's omission, a gap is phrased as a gap in
  * our record — never as an accusation that the provider withheld something.
@@ -435,6 +466,7 @@ export function toListingRows(providers: Provider[], now: Date = new Date()): Li
         priceBand: priceBand(provider, program),
         priceDisplay: priceDisplay(provider, program),
         priceDerivedTotal: priceDerivedTotalDisplay(provider, program),
+        priceDerivedPathCost: priceDerivedPathCostDisplay(provider, program),
         pph: pph.value,
         pphDisplay: pph.value != null ? formatEuro2(pph.value) : null,
         pphState,
@@ -948,6 +980,47 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
     );
   }
 
+  // WHAT IT COSTS TO QUALIFY HERE (spec v0.9) — the course plus every training the school
+  // makes you buy before you may start it.
+  //
+  // ONLY WHERE SOMETHING MUST BE BOUGHT FIRST. With no purchasable gate the path cost IS
+  // the total price (derive.ts returns exactly that), and a second row repeating it under
+  // "onze optelling" would manufacture a second figure out of one number — the same
+  // relabelling error the Totaaluren row above avoids in the other direction.
+  //
+  // AND ONLY WHERE THERE IS A TOTAL TO ADD TO. Where the school publishes no price for the
+  // course itself (open-yoga's 300, yoga-den's 500-route), the path has no first term; the
+  // Prijs row above already says so, and a row here saying "one of the required trainings
+  // has no recorded price" would name the wrong absence — a false statement about a named
+  // business, in the smallest possible print.
+  //
+  // NO CITATION, like every derived row: € 6.180 appears on no page de Yogaschool
+  // published. The label says whose sum it is, the note shows the working.
+  const path = totalPathCost(provider, program);
+  const ownTotal = totalPrice(provider, program).value;
+  if (path.gates.length > 0 && (path.value != null || ownTotal != null)) {
+    rows.push(
+      path.value != null
+        ? {
+            label: nl.rowTotalPathCost,
+            state: "yes",
+            value: nl.pathCostDerivedTotal(formatEuro(path.value)),
+            note: path.caveat ?? null,
+            source: null,
+            derived: true,
+          }
+        : {
+            label: nl.rowTotalPathCost,
+            // A GAP IN OUR RECORD, never a finding about them: `cost_eur: null` on a gate
+            // means we could not read its price off any archived artifact (it is logged as
+            // research debt), and "wij weten het nog niet" is not "zij publiceren het niet".
+            state: "unknown",
+            note: path.caveat ?? null,
+            source: null,
+          },
+    );
+  }
+
   // The same epistemic rule as the listing's €/contactuur column, from the same
   // pair of helpers — the record must never say something the listing does not.
   //
@@ -1069,6 +1142,28 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   ));
 
   rows.push(fact(nl.rowPrerequisites, program.prerequisites_claimed));
+
+  // THE GATE, ONE ROW EACH, AND EACH WITH ITS SOURCE (spec §4.3, v0.9).
+  //
+  // The row above is the school's prose, and prose carries no citation — the schema holds
+  // no `source` for `prerequisites_claimed`, so the page shows none. That was survivable
+  // while the gate was only a description. It is not survivable now: the gate is an ADDEND
+  // in a price we publish, and a number we add to a named business's price needs the page
+  // that states it. Hence `prerequisite.source` is required by the schema, and it is
+  // rendered here, beside the gate it evidences.
+  for (const pre of program.prerequisite ?? []) {
+    const cost = pre.cost_eur != null
+      ? pre.period == null || pre.period === "total"
+        ? formatEuro(pre.cost_eur)
+        : nl.pricePerPeriod(formatEuro(pre.cost_eur), nl.pricePeriod[pre.period])
+      : null;
+    rows.push(fact(
+      nl.rowPrerequisiteGate,
+      pre.label,
+      joinDot([nl.prerequisiteKind[pre.kind], cost, pre.note]),
+      pre.source,
+    ));
+  }
 
   if (program.composition) {
     const moduleCount = program.composition.modules?.length ?? 0;

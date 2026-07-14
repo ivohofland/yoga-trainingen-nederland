@@ -32,6 +32,7 @@ import {
   isMultistyle,
   pricePerContactHour,
   totalHours,
+  totalPathCost,
   totalPrice,
 } from "./derive";
 import { priceBand, priceQuad, pphQuad, type PriceBand } from "./rules";
@@ -87,7 +88,28 @@ export interface ProgramDerived {
    * `value: null`    → no total is derivable. Do not invent one.
    */
   total_hours: { value: number | null; derived: boolean; caveat: string | null };
-  /** Price ÷ CONTACT hours (never total hours), or null when either is missing. */
+  /**
+   * WHAT IT COSTS TO QUALIFY HERE (spec §6, v0.9) — `total_price` plus the price of every
+   * training the school makes you complete FIRST, recursively.
+   *
+   * A CONSUMER THAT BANDS OR RANKS PRICES MUST READ THIS, not `total_price`: on de
+   * Yogaschool's Docentenopleiding `total_price` is € 4.590 and you may not enrol without
+   * first completing their Basisopleiding (€ 1.590 per lesjaar) — so the figure a reader
+   * needs is € 6.180. The Meesteropleiding sits behind the Docentenopleiding: € 10.770.
+   * Both showed € 4.590. Where nothing must be bought first this EQUALS `total_price`, so
+   * reading it costs a consumer nothing and protects them from the gated cases.
+   *
+   * `derived` is ALWAYS true — the path is never the school's own figure, even when the
+   * course price is. Render it as the consumer's-side arithmetic, with `caveat` (the
+   * working: "incl. verplichte Basisopleiding € 1.590") beside it.
+   * `value: null` → a required training's price is not in our record. Do not band it, do
+   *                 not rank it, and do not fall back to `total_price`: that is the number
+   *                 that is wrong.
+   */
+  total_path_cost: { value: number | null; derived: boolean; caveat: string | null };
+  /** Price ÷ CONTACT hours (never total hours), or null when either is missing. NOT over
+   *  the path cost: that buys another course's hours too, and the ratio would divide a
+   *  numerator including the Basisopleiding by a denominator that excludes it. */
   pph: number | null;
   /** What may be said when `pph` is null — the same finding-vs-gap rule as price_state. */
   pph_state: Quad;
@@ -103,11 +125,13 @@ export interface ProgramDerived {
 export function programDerived(provider: Provider, program: Program): ProgramDerived {
   const total = totalPrice(provider, program);
   const hours = totalHours(program);
+  const path = totalPathCost(provider, program);
   return {
     price_state: priceQuad(provider, program),
     price_band: priceBand(provider, program),
     total_price: { value: total.value, derived: total.derived, caveat: total.caveat ?? null },
     total_hours: { value: hours.value, derived: hours.derived, caveat: hours.caveat ?? null },
+    total_path_cost: { value: path.value, derived: path.derived, caveat: path.caveat ?? null },
     pph: pricePerContactHour(provider, program).value,
     pph_state: pphQuad(provider, program),
     contact_ratio: contactRatio(program),
@@ -151,7 +175,16 @@ const README =
   "som). Is `total_hours.derived` waar, dan is het getal ONZE optelling (`caveat` toont de som) " +
   "en geen totaal dat de aanbieder publiceert; is het onwaar, dan is het hún gepubliceerde " +
   "claim (Wahé: 500 uur) en mag het als zodanig worden weergegeven. Die twee mogen nooit " +
-  "hetzelfde worden weergegeven.";
+  "hetzelfde worden weergegeven. " +
+  "EN VOOR HET RANGSCHIKKEN VAN PRIJZEN (spec v0.9): lees `derived.total_path_cost`, niet " +
+  "`total_price` — sommige opleidingen mag je pas volgen ná een ándere opleiding van " +
+  "dezelfde school, die je eerst moet kopen (de Yogaschool: de Docentenopleiding kost " +
+  "€ 4.590, maar je mag niet beginnen zonder de Basisopleiding van € 1.590 — docent worden " +
+  "kost daar € 6.180; de Meesteropleiding € 10.770). Zonder verplichte voorafgaande " +
+  "opleiding is dit veld gelijk aan `total_price`. Het is ALTIJD onze optelling (`derived` " +
+  "is altijd waar): geef het weer als zodanig. Is de waarde null, dan ontbreekt de prijs " +
+  "van een verplichte schakel — niet rangschikken, en niet terugvallen op `total_price`: " +
+  "dát is juist het getal dat te laag is.";
 
 export function toApiPayload(providers: Provider[]): ApiPayload {
   return {

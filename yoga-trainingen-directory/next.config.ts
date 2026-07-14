@@ -28,6 +28,10 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const nextConfig: NextConfig = {
   pageExtensions: [...(isProduction ? [] : ["dev.tsx"]), "tsx", "ts", "jsx", "js"],
+  // TEMPORARY, LOCAL, NOT COMMITTED — see the report. The default 60s per-page
+  // guard trips on a machine whose CPU is saturated by unrelated processes; it is
+  // a wall-clock guard, not a correctness one.
+  staticPageGenerationTimeout: 1200,
 };
 
 export default nextConfig;

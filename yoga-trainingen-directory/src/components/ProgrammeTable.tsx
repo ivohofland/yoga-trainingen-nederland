@@ -181,9 +181,18 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
           style. A yearly fee printed as a price is what put de Blikopener among the
           cheapest trainings in the corpus while their opleiding costs ≈ € 5.260; a
           derived total printed in the provider's ink would be the same lie, corrected. */}
+      {/* And a THIRD line where the school makes you buy another course first (spec v0.9):
+          "± € 6.180 om te kwalificeren — incl. verplichte Basisopleiding € 1.590". Same
+          muted ink, because it is the same kind of number: ours. de Yogaschool's
+          Docentenopleiding is € 4.590 and you may not start it without the Basisopleiding
+          — a gate that sat in the record as prose, where the price comparison could not
+          see it, while the listing ranked the training against courses you can simply
+          enrol in. Rendered only where something must actually be bought first; elsewhere
+          the path cost IS the total and a second line would invent a second figure. */}
       <div className={styles.cell}>
         <Quad state={r.priceState}>{r.priceDisplay}</Quad>
         {r.priceDerivedTotal && <div className={styles.derived}>{r.priceDerivedTotal}</div>}
+        {r.priceDerivedPathCost && <div className={styles.derived}>{r.priceDerivedPathCost}</div>}
       </div>
       {/* Both the string and the quad come from the presenter. The quad comes from
           the RECORD, never from the mere absence of a value: see pphQuad() in
