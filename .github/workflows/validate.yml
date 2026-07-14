@@ -22,8 +22,9 @@ jobs:
       # The gate everything passes through: parses every record, checks
       # referential integrity, and fails the run on invalid data.
       - run: npm run validate
-      # THE INVARIANTS. `npm run build` runs gen-schema → validate → test →
-      # export-json → next build, and it is the same gate a contributor runs
+      # THE INVARIANTS. `npm run build` runs gen-schema → validate → provenance →
+      # test → test:ci → export-json → next build (package.json is the source of
+      # truth for the exact order), and it is the same gate a contributor runs
       # locally — so CI cannot pass a change that `npm run build` would refuse.
       #
       # Until this line existed, CI ran `validate` and NOTHING ELSE: every one of
@@ -38,11 +39,17 @@ jobs:
       - run: npm test
       - run: npm run build
       #
-      # `npm run provenance` (the STRICT pass) is deliberately NOT a step here.
+      # `npm run provenance` (the STRICT pass) DOES run here — it's inside `npm run
+      # build` above, not a separate step, and it is a build gate: a failure fails
+      # this job. But it proves less in CI than it does on a researcher's machine.
       # Archive bodies are gitignored — the .sha256 beside each one is committed,
-      # the copyrighted page is not (data/archives/README.md) — so in CI the check
-      # can open almost none of the artifacts it exists to read. `validate` above
-      # already runs it in warning mode and prints its coverage ratio with a ⚠
-      # rather than a green tick: the honest result of a check that could not look.
-      # Gating on it here would make a green run mean "the artifacts were absent".
-      # Run it locally, where the archives are.
+      # the copyrighted page is not (data/archives/README.md) — so a CI checkout
+      # can open almost none of the artifacts the check exists to read. Its
+      # STRUCTURAL tier ("you cited a page that is in no archive") needs only the
+      # record plus the committed .sha256 sidecars, so it runs and gates the build
+      # everywhere, CI included. Its CONTENT tier ("we opened the artifact and the
+      # fact is not in it") needs the body: where the body is absent, that claim is
+      # SKIPPED, not passed — the run prints `INHOUD NIET GETOETST` rather than a
+      # green tick. So a green run here means the structural tier held, not that
+      # the artifacts were read; that full read only happens locally, where the
+      # archives are.

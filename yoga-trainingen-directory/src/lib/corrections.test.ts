@@ -190,11 +190,9 @@ test("CORRECTION: the methodology's promised channel actually exists and is link
 
 test("CORRECTION: the retired personal address survives in no tracked file", () => {
   // The confidential route is a ROLE address now, and this test is why it stays one.
-  // The old address was a person's inbox, and it lived in five places — the constant,
-  // three lines of the issue chooser, one line of the issue form — of which only one
-  // is in this app's source tree at all. Any one of them left behind would have put a
-  // personal inbox back on a public page, harvestable, the day the site went live.
-  // Remembering is not a mechanism.
+  // The old address was a person's inbox. Leaving it behind in even one tracked file
+  // would have put a personal inbox back on a public page, harvestable, the day the
+  // site went live. Remembering is not a mechanism.
   //
   // Built with join() and never written out: a test that spells the string it forbids
   // is a test that fails itself.

@@ -17,7 +17,22 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    # Three checks, not one. `workflow_run` fires for every run of the named workflow,
+    # whatever triggered it — including `validate.yml`'s `pull_request` runs. A fork PR
+    # whose head branch happens to be named `main` makes `head_branch == "main"` true even
+    # though nothing pushed to THIS repo's main, so `conclusion == 'success'` alone would
+    # still match and this job would run with secrets and POST the deploy ping. It can't
+    # deploy the fork's code — the server always resets to this repo's own `origin/main` —
+    # but an outsider could make the VPS rebuild on demand for free. `event == 'push'`
+    # closes that; `head_repository.full_name == github.repository` closes the remaining
+    # edge (a branch named `main` in this repo that isn't the one push runs on).
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    # This job only POSTs to an external webhook URL; it never touches the GITHUB_TOKEN,
+    # so it is granted none of its scopes.
+    permissions: {}
     runs-on: ubuntu-latest
     steps:
       # Stays green and no-ops until the DEPLOY_WEBHOOK_* secrets are configured, so this
