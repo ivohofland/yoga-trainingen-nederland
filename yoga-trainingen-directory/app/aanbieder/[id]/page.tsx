@@ -19,6 +19,7 @@ import { loadDataset } from "@/lib/loader";
 import { toProviderView, formatMonth, cohortLabel, type ClaimView } from "@/lib/presenters";
 import { Quad } from "@/components/Quad";
 import { inkFor, quadForInquiry } from "@/lib/quad";
+import { emailCorrectionUrl, githubCorrectionUrl } from "@/lib/corrections";
 import { nl } from "@/lib/strings";
 import styles from "./page.module.css";
 
@@ -368,6 +369,26 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
           ))}
         </section>
       )}
+
+      {/* THE CORRECTION ROUTE, ON THE RECORD ITSELF.
+          A reader who has just found a mistake is looking at the mistake, not at the
+          navigation. Both links arrive pre-filled with this record — its id, and the YAML
+          the claim lives in — so a report costs the fields and nothing else. Public
+          (permanent, dated, and it stays up even if I reject it) or confidential (for a
+          school that will not dispute a finding in the open — and it should not have to,
+          because a silence we engineered is not a silence worth publishing). */}
+      <section className={styles.section}>
+        <div className={styles.sectionLabel}>{nl.corr.recordLink}</div>
+        <p className={styles.note}>
+          <a href={githubCorrectionUrl(v.name, v.id)} target="_blank" rel="noopener">
+            {nl.corr.publicCta}
+          </a>
+          {" · "}
+          <a href={emailCorrectionUrl(v.name, v.id)}>{nl.corr.privateCta}</a>
+          {" · "}
+          <Link href="/correcties">{nl.corr.navLabel}</Link>
+        </p>
+      </section>
 
       {/* Sources. Each row is the anchor target of every <Cite> that names it —
           id="bron-<source-id>". Source ids are unique within a provider record and

@@ -1,0 +1,62 @@
+/* The correction route. Design tokens only — no new colours, and deliberately no
+   --finding / --gap: this page says something about US and our process, never a finding
+   about a provider. Same reason the disclosure block and the archive slots are not quads. */
+
+.scope {
+  font-size: 14px;
+  color: var(--muted);
+  border-left: 2px solid var(--rule);
+  padding-left: 14px;
+  margin: 18px 0 28px;
+}
+
+.routes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: 28px 0 40px;
+}
+
+@media (max-width: 640px) {
+  .routes {
+    grid-template-columns: 1fr;
+  }
+}
+
+.route {
+  border: 1px solid var(--ink);
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.routeHead {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.routeBody {
+  margin: 0 0 16px;
+  font-size: 15px;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.routeCta {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink);
+  align-self: flex-start;
+  padding-bottom: 2px;
+}
+
+.routeCta:hover {
+  color: var(--muted);
+  border-color: var(--muted);
+}

@@ -41,6 +41,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <nav className={styles.nav}>
               <Link href="/" className={styles.navLink}>{nl.navDirectory}</Link>
               <Link href="/methodologie" className={styles.navLink}>{nl.navMethod}</Link>
+              {/* In the nav, not buried in a footer. The methodology tells readers they can
+                  correct this site; a channel they have to go looking for is a channel that
+                  would rather not be found. */}
+              <Link href="/correcties" className={styles.navLink}>{nl.corr.navLabel}</Link>
             </nav>
           </header>
 

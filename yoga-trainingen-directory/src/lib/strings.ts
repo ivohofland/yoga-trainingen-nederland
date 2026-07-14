@@ -352,6 +352,69 @@ export const nl = {
     `voorgelegd op ${sent}, geen reactie binnen de gestelde termijn (tot ${respondBy})`,
   inquiryAnswered: "beantwoord door de school",
   inquiryReplyHeading: "Reactie van de school",
+
+  /* ---------- the correction route (methodology "Wederhoor en correcties") ----------
+   *
+   * The copy is the imported design's, and it is good — the in-scope/out-of-scope line
+   * especially: a correction channel that will entertain "please remove that verbatim
+   * quote" is not a correction channel, it is a takedown queue.
+   *
+   * TWO OF THE DESIGN'S STRINGS ARE NOT SHIPPED, because they describe a machine we do not
+   * have. Its confirmation screen said "Het verzoek is gelogd bij dit record … U hoort
+   * terug op het opgegeven adres." Nothing here logs anything automatically and nothing
+   * dispatches a reply: this is a static export, and the honest sentence is that a person
+   * reads it. A button that promises what it cannot do is the same false statement this
+   * project hunts everywhere else — pointed, for once, at the reader. */
+  corr: {
+    navLabel: "Correcties",
+    heading: "Correctie aanvragen",
+    intro:
+      "Staat er in een record iets dat feitelijk onjuist is, vertel dan wat — en wijs op " +
+      "iets dat te verifiëren is. Correcties worden beoordeeld aan de hand van bronnen, " +
+      "niet van voorkeur.",
+    /** The line that makes this a correction channel rather than a takedown queue. */
+    scope:
+      "Binnen scope: feitelijke fouten (prijzen, btw, uren, registerstatussen, cohortdata, " +
+      "citaten). Buiten scope: toon, de volledigheid van positieve informatie, en verzoeken " +
+      "om letterlijke citaten te verwijderen — een citaat met bron is geen fout.",
+    publicHeading: "Openbaar melden",
+    publicBody:
+      "Een openbaar correctieverzoek op GitHub. Zichtbaar voor iedereen, gedateerd, en het " +
+      "blijft staan — ook als ik het afwijs. Dat is het punt: stilzwijgende correcties " +
+      "bestaan hier niet.",
+    publicCta: "Correctieverzoek openen",
+    privateHeading: "Vertrouwelijk melden",
+    privateBody:
+      "Niet iedereen wil een bevinding in het openbaar aanvechten, en een school die dat " +
+      "niet wil hoort daar niet toe gedwongen te worden — haar zwijgen zou dan gaan lijken " +
+      "op instemming. Mailen kan dus ook. Het verzoek zelf blijft privé; de correctie die " +
+      "eruit volgt niet.",
+    privateCta: "Stuur een e-mail",
+    /** What actually happens. No auto-logging, no automatic reply — say so. */
+    processHeading: "Wat er daarna gebeurt",
+    recordLink: "Correctie van dit record aanvragen",
+
+    issueTitle: (name: string) => `Correctieverzoek: ${name}`,
+    tplRecord: "Record",
+    tplUrl: "Brongegevens (YAML)",
+    tplField: "Betreffend veld",
+    tplWrong: "Wat is onjuist",
+    tplRight: "Voorgestelde correctie",
+    tplEvidence: "Bewijs-URL",
+    tplEvidenceHint:
+      "een pagina, registervermelding of document dat wij kunnen controleren — " +
+      "een melding zonder verifieerbaar bewijs kan een record niet wijzigen",
+    tplRole: "Uw relatie tot deze opleiding",
+    fieldOptions: [
+      "prijs/btw",
+      "uren/uitsplitsing",
+      "accreditatie/registers",
+      "cohortdata",
+      "een geciteerde claim",
+      "anders",
+    ],
+    roleOptions: ["vertegenwoordiger aanbieder", "(oud-)student", "particulier", "anders"],
+  },
   // Never one number: a count of public archives alone reads as archive coverage,
   // and the bar is BOTH halves. Both counts, side by side, over the total.
   sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>
