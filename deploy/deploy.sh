@@ -149,6 +149,33 @@ git fetch --all --prune
 git reset --hard origin/main
 
 cd "$APP_DIR"
+
+# NODE 22, whichever way this script was invoked — this is load-bearing, not hygiene.
+# A MANUAL `bash deploy.sh` runs from the site user's login shell, which already has nvm's
+# Node on PATH. The WEBHOOK does not: the listener runs deploy-webhook.sh (and this script)
+# straight out of systemd's own environment — a non-login, non-interactive shell whose PATH
+# holds the SYSTEM /usr/bin/node, which on this box is v20. Node < 21 does not expand the
+# `src/**/*.test.ts` glob in its test runner, so `npm run build`'s test step fails with
+# "Could not find" and the deploy dies — and dies INVISIBLY, because the webhook already
+# answered 200 to GitHub. (That is exactly how the first webhook deploy failed: green ping,
+# red build-info check, stale site.) Sourcing nvm here makes both invocation paths build on
+# the same Node the project pins and CI uses.
+#
+# Guarded: on a machine with no nvm (CI, where setup-node already put Node 22 on PATH) the
+# block is a no-op. It also never runs on a developer laptop — GATE 1 (identity) refused long
+# before this line. So in practice this executes only on the server, where nvm is present and
+# Node 22 was installed with `nvm install 22`.
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  # shellcheck disable=SC1091
+  . "$NVM_DIR/nvm.sh"
+  nvm use 22 >/dev/null || {
+    echo "✗ nvm is installed but has no Node 22 — run 'nvm install 22' as the site user" >&2
+    exit 1
+  }
+fi
+node -v
+
 npm ci
 
 # out/ is GITIGNORED, so `git reset --hard` above never touches it — it survives across runs
