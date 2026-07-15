@@ -2,8 +2,9 @@
  * Internal QA / review dashboard — a read-only authoring aid, and one that the
  * build CANNOT emit: the file is `page.dev.tsx`, and `pageExtensions` admits
  * `.dev.tsx` in development only. Not published is a fact about the build here,
- * not a promise in a comment (see PUBLISHED_BUILD below, which is the belt to
- * that brace).
+ * not a promise in a comment (see PUBLISHED_BUILD below — it re-checks the SAME
+ * fact `pageExtensions` already acted on, not an independent one; see its own
+ * docblock, and next.config.ts, for where the genuinely independent check lives).
  *
  * Surfaces, per record, what still needs work: open `unknown` gaps, unarchived
  * sources (below the publication bar), completeness, depth, and how stale
@@ -29,6 +30,18 @@ export const metadata = { title: "QA / review — interne werklijst" };
  * It stays a first-class page in development and does not exist in production.
  * There is no secret here worth protecting with an env var or a header check;
  * the requirement is simply that the build cannot emit it.
+ *
+ * THIS GUARD AND next.config.ts's `pageExtensions` GATE ARE ONE LOCK, WRITTEN TWICE — not
+ * two independent ones. Both read `NODE_ENV === "production"`, so both fail together: an
+ * externally-set `NODE_ENV=development` (Next.js only warns about that, never corrects it)
+ * admits `.dev.tsx` into the build AND leaves this `notFound()` open, for the same reason,
+ * at the same time. It stays, as a harmless second check within that one family — if
+ * `pageExtensions` is ever edited without this context, the page still refuses to render in
+ * production — but it is not what catches a `NODE_ENV` mistake; nothing in this file can,
+ * because this file is exactly what a wrong `NODE_ENV` fails to exclude. The check that
+ * actually catches that failure mode is `deploy/deploy.sh`'s artifact gate, immediately
+ * before the rsync (`[ -e out/qa ]`): it inspects the EXPORTED BYTES, a different thing than
+ * this env var, so it still refuses when this guard has already opened.
  */
 const PUBLISHED_BUILD = process.env.NODE_ENV === "production";
 

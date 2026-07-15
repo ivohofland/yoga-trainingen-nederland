@@ -18,8 +18,17 @@ import type { NextConfig } from "next";
  * So the file is named `page.dev.tsx`, and `dev.tsx` is a page extension ONLY
  * outside a production build. In `next dev` it is a first-class page; in
  * `next build` it is not a page, so no route is emitted and nothing is rendered.
- * (The `notFound()` guard inside it stays as a second lock: if this list is ever
- * edited without that context, the page still refuses to render in production.)
+ *
+ * The `notFound()` guard inside the page (page.dev.tsx's `PUBLISHED_BUILD`) is NOT a
+ * second, independent lock on top of this one — it reads the same `NODE_ENV ===
+ * "production"` this file reads for `isProduction` below, so the two fail TOGETHER: Next.js
+ * keeps an externally-set `NODE_ENV` (it only warns about it, never corrects it), so one
+ * `NODE_ENV=development` in `~/deploy.env` — which `deploy/deploy.sh` sources unfiltered —
+ * admits `.dev.tsx` here AND leaves that guard open, at the same time, for the same reason.
+ * It stays, as a harmless second check within the same family, but the genuinely
+ * independent gate lives in `deploy/deploy.sh`, immediately before the rsync: it inspects
+ * the EXPORTED BYTES (`[ -e out/qa ]`), not this env var, so it still refuses even when
+ * both of the checks above have already failed open.
  *
  * Order matters only in that the standard extensions must remain — everything
  * else in the app is a plain `.tsx`.
