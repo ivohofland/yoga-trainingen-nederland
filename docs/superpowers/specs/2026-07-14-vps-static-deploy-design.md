@@ -154,9 +154,9 @@ project it specifies.
 
 | File | Change |
 | --- | --- |
-| `src/lib/corrections.ts:39` | `CORRECTION_EMAIL = "research@ivohofland.nl"` — the single definition. |
-| `.github/ISSUE_TEMPLATE/config.yml` | 3 lines (chooser `name`, `about`, and the explanatory comment). |
-| `.github/ISSUE_TEMPLATE/correctie.yml` | 1 line (the confidential-route note in the form body). |
+| `src/lib/corrections.ts` | `CORRECTION_EMAIL = "research@ivohofland.nl"` — the single definition. |
+| `.github/ISSUE_TEMPLATE/config.yml` | The chooser `name`, `about`, and the explanatory comment. |
+| `.github/ISSUE_TEMPLATE/correctie.yml` | The confidential-route note in the form body. |
 | `src/lib/corrections.test.ts` | The two assertions stop matching a hardcoded literal and match **`CORRECTION_EMAIL`**. |
 
 The test change is the point, not a chore. What those assertions are *for* is

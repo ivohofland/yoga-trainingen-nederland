@@ -24,8 +24,12 @@ jobs:
       - run: npm run validate
       # THE INVARIANTS. `npm run build` runs gen-schema → validate → provenance →
       # test → test:ci → export-json → next build (package.json is the source of
-      # truth for the exact order), and it is the same gate a contributor runs
-      # locally — so CI cannot pass a change that `npm run build` would refuse.
+      # truth for the exact order) — and npm's own `postbuild` lifecycle hook then
+      # runs scripts/verify-export.ts against the export `next build` just wrote,
+      # automatically, as part of this SAME `npm run build` invocation: a failure
+      # there fails this step's exit code too, not a separate one. It is the same
+      # gate a contributor runs locally — so CI cannot pass a change that
+      # `npm run build` would refuse.
       #
       # Until this line existed, CI ran `validate` and NOTHING ELSE: every one of
       # the editorial invariants — a finding never rendered as a gap, our
