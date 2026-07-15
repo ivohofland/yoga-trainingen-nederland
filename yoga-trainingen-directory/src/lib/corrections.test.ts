@@ -206,10 +206,41 @@ test("CORRECTION: the retired personal address survives in no tracked file", () 
     .split("\0")
     .filter(Boolean);
 
-  const offenders = tracked.filter((f) => {
-    const abs = path.join(root, f);
-    return fs.existsSync(abs) && fs.readFileSync(abs, "utf8").includes(RETIRED);
-  });
+  // A CORPUS OF NOTHING PASSES VACUOUSLY. If `git ls-files` ever returned zero paths — an
+  // empty index, a sparse checkout, a packaging step that strips `.git` before this runs —
+  // `offenders` below would be `[]` too, and this test would go GREEN having examined not
+  // one file. "Found no offender" and "examined no file" would then render identically,
+  // which is exactly the not_published/unknown collapse this project refuses everywhere
+  // else in the data model. Pin the scan to a size no real checkout of this repo is under.
+  assert.ok(
+    tracked.length > 100,
+    `git ls-files returned ${tracked.length} tracked file(s) — this guard scans the TRACKED ` +
+      `corpus, and a corpus of nothing passes vacuously. "Found no offender" and "examined no ` +
+      `file" are different claims; only the file count tells them apart.`,
+  );
+
+  // A TRACKED PATH MISSING FROM DISK (a stale index, a partial checkout) must not silently
+  // count as clean — it was SKIPPED, not examined, and the old `fs.existsSync(abs) && …`
+  // guard below used to make those the same outcome.
+  const unread = tracked.filter((f) => !fs.existsSync(path.join(root, f)));
+  assert.deepEqual(
+    unread,
+    [],
+    `tracked but missing from disk: ${unread.join(", ")} — these were SKIPPED, not cleared; ` +
+      `a gap in the scan is not a finding of "clean"`,
+  );
+
+  // Compared lowercased and whitespace-collapsed, not by a literal `.includes()`: the exact
+  // same laxness the sibling test twenty lines up already applies to its own copy, extended
+  // here so a differently-cased rendering of the address, or one split across a hard-wrapped
+  // line, cannot slip past a check that was comparing case- and layout-sensitively.
+  // (No example is spelled out in this comment, on purpose — see the file header: a test
+  // that spells the string it forbids is a test that fails itself, and this one now checks
+  // its own source too.)
+  const retiredFlat = RETIRED.toLowerCase().replace(/\s+/g, "");
+  const offenders = tracked.filter((f) =>
+    fs.readFileSync(path.join(root, f), "utf8").toLowerCase().replace(/\s+/g, "").includes(retiredFlat),
+  );
 
   assert.deepEqual(
     offenders,
