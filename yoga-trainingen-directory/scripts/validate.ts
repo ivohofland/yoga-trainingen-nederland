@@ -25,6 +25,25 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
+// A CORPUS FLOOR, NOT A SCHEMA RULE. loadDataset() treats a MISSING data/providers/ as an
+// error (see loader.ts) but an EMPTY one — or one accidentally emptied by a bad `mv`, a
+// half-finished rebase, a wrong branch checkout — as a perfectly valid, zero-record result:
+// `errors` stays empty, and without this check we would print "✓ 0 records valid" and exit
+// 0. Downstream, deploy/deploy.sh's own gate treats that green exit as license to build and
+// rsync --delete the live site down to nothing. 40 is well below the corpus size at the time
+// this floor was written (~48 records) — generous headroom, not a count tuned to today's
+// exact number; the point is to catch "the corpus is gone", not to police its growth.
+const MIN_PROVIDERS = 40;
+if (providers.length < MIN_PROVIDERS) {
+  console.error(
+    `\n✗ only ${providers.length} provider record(s) loaded (expected ≥${MIN_PROVIDERS}).\n` +
+      `  Zero validation errors does not mean the corpus is intact — an EMPTY or near-empty\n` +
+      `  data/providers/ passes schema validation trivially. Refusing rather than reporting\n` +
+      `  a healthy build over a directory that lost its records.\n`,
+  );
+  process.exit(1);
+}
+
 console.log();
 for (const p of providers) {
   console.log(`  ${p.name} [${p.depth}] — completeness ${completeness(p)}%`);

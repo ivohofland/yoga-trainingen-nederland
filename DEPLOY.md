@@ -37,23 +37,43 @@ GETOETST`. This is exactly what CI does, so the deploy gate is no weaker — but
 **does not mean the artifacts were read**. That check runs on the researcher's machine, where
 the archives live, and nowhere else.
 
-One more gate sits outside that chain, after the build has already succeeded. Immediately
-before the `rsync -a --delete`, `deploy.sh` refuses to run unless `out/index.html` exists.
-`set -e` already aborts if `npm run build` itself fails — this catches the other failure
-mode: a future regression where the build exits 0 but writes an empty or missing `out/`.
-`rsync --delete` against an empty source does not error; it empties the docroot and copies
-nothing back. Read the check for exactly what it is, not what it sounds like: it proves the
-export produced *an* `index.html` in *this* run — nothing more. It does not prove the export
-is complete or every page correct. It also cannot be satisfied by a stale `index.html` left
-over from an earlier build: `next build` deletes `out/` at the start of its own export phase,
-and `set -e` aborts before this line if the current build failed, so there is never an old
-file sitting there for this check to be fooled by — only ever this run's, or none.
+Two more gates sit outside that chain, after the build has already succeeded, immediately
+before the `rsync`. `deploy.sh` runs `rm -rf out/` itself right before `npm run build`
+(`out/` is gitignored, so `git reset --hard` never clears it, and a build that fails BEFORE
+reaching `next build`'s own export phase never reaches that phase's own `rm -rf out/`
+either — without the explicit one, a PREVIOUS successful run's `out/` could sit there and get
+blessed by the gates below as if it were this run's). So by the time these two gates run,
+`out/` can only ever be this run's export, or nothing at all:
+
+- **The QA gate** refuses if `out/qa` exists. `page.dev.tsx` (the internal review dashboard —
+  every open gap, unarchived source, staleness flag, per named business) is excluded from
+  the export by a page-extension trick keyed on `NODE_ENV === "production"` — see that
+  file's own docblock for why that guard and its in-page `notFound()` call are the SAME lock
+  written twice, not two independent ones. This gate inspects the built BYTES instead, so it
+  still catches a leak caused by an externally-set `NODE_ENV` (Next.js only warns about
+  that; it does not correct it) even when both of those in-app checks have already failed
+  open together — including the case where `~/deploy.env` (sourced unfiltered, see Part 1
+  below) carries a stray `NODE_ENV=development` line.
+- **The page-count floor** refuses unless `out/index.html` exists AND `out/aanbieder/` holds
+  at least 40 provider directories. `set -e` already aborts if `npm run build` itself fails —
+  this catches the failure mode that doesn't: `loader.ts` treats a MISSING
+  `data/providers/` as an error but an EMPTY one as a valid, zero-record dataset, so an
+  accidentally-emptied data directory still builds, still writes an `out/index.html`, and
+  would still pass a bare "does index.html exist" check — while `rsync --delete` removed
+  every provider page from the live site. 40 is well below the corpus size at the time this
+  gate was written (~48); it is a floor against catastrophe, not a tripwire tuned to today's
+  exact count. (`npm run validate` carries the same floor, independently, as the first line
+  of defense — see its own comment.)
+
+Read both for exactly what they are, not what they sound like: they prove the export is
+neither the internal work-list nor near-empty. Neither proves the export is complete or
+every page correct.
 
 Deploys are also serialised: `deploy.sh` takes an exclusive, blocking lock (`flock`) right
 after the identity gate, so a second deploy started while one is already running (two pushes
 minutes apart, a "Re-run all jobs", a manual run during a webhook deploy) waits for the first
-to finish rather than racing it. Before that lock existed, the `out/index.html` check above
-could pass in one process while a second process's build deleted `out/` out from under it —
+to finish rather than racing it. Before that lock existed, the page-count floor above could
+pass in one process while a second process's build deleted `out/` out from under it —
 a real bug in the shape of the one this paragraph rules out, closed at a different layer.
 
 A green **Deploy** run in GitHub Actions proves less than any of the above: it goes green the
@@ -71,13 +91,29 @@ entirely; it shows up only in `~/deploy.log` on the server.
   `/home/ivohofland-research/htdocs/research.ivohofland.nl`. If it differs, put
   `DOCROOT=<the path CloudPanel actually reports>` in `~/deploy.env` (create the file if it
   doesn't exist yet; `deploy.sh` sources it, if present, before computing DOCROOT's default).
-  **Do not** set it in `deploy/deploy.sh` itself — that file is inside the repo, and every deploy runs
-  `git reset --hard origin/main` against it, so an edit there survives exactly one deploy
-  before the next one silently reverts it back to the wrong-for-this-site default. This is
-  the same reason the webhook secret lives in `~/webhook.env` and not in `hooks.json`'s
-  literal text (Part 2 below) — anything that must outlive a reset has to live outside the
-  repo the reset resets. A wrong docroot is an `rsync --delete` into the wrong directory, and
-  it is the one mistake here that is not self-correcting.
+  **Do not** set it in `deploy/deploy.sh` itself — that file is inside the repo, and *this*
+  deploy's own `git reset --hard origin/main` (which runs before the build, in the same
+  invocation) discards an edit there from disk before this run even reaches the build. The
+  currently-running process only keeps *behaving* as if the edit were still there because
+  bash already holds the script open against its now-deleted inode — so the edit appears to
+  "work" for the rest of *this* deploy, then the *next* deploy starts a fresh process, opens
+  the freshly-reset file from scratch, and the edit is simply gone. Net effect: it works
+  once, then stops — but the reset that undoes it already ran during the deploy that seemed
+  to honor it, not during the next one. This is the same reason the webhook secret lives in
+  `~/webhook.env` and not in `hooks.json`'s literal text (Part 2 below) — anything that must
+  outlive a reset has to live outside the repo the reset resets. A wrong docroot is an
+  `rsync --delete` into the wrong directory, and it is the one mistake here that is not
+  self-correcting (`deploy.sh`'s GATE 2 requires DOCROOT to have the shape
+  `/home/*/htdocs/*`, so a typo landing on `$HOME` itself is refused rather than emptied —
+  but a typo landing on some OTHER real htdocs-shaped path is not, so confirm it carefully).
+
+  **`~/deploy.env` is sourced UNFILTERED** (`deploy.sh` runs `. "$HOME/deploy.env"` with no
+  allowlist) — put ONLY deploy config in it (`DOCROOT=...`), never anything else. It is not a
+  general scratch env file: one stray `NODE_ENV=development` line here flips the same
+  predicate that both `next.config.ts`'s `pageExtensions` and `page.dev.tsx`'s own guard
+  read, and the build would then admit `/qa` — the internal work-list — into the export (see
+  "What a green deploy does and does not prove" above, and `deploy.sh`'s QA gate, which is
+  what actually catches it if this happens anyway).
 - DNS `A` → the VPS IP; issue the **Let's Encrypt** cert.
 
 ### 2. Clone — OUTSIDE the docroot
@@ -158,10 +194,17 @@ curl -sS -o /dev/null -w '%{http_code}\n' https://research.ivohofland.nl/       
 curl -sS -o /dev/null -w '%{http_code}\n' https://research.ivohofland.nl/qa/         # 404
 curl -sS -o /dev/null -w '%{http_code}\n' https://research.ivohofland.nl/data/v1/providers.json  # 200
 
-# A forged signature is refused.
+# No signature header at all — the case hooks.json's
+# trigger-rule-mismatch-http-response-code:403 actually governs.
+curl -sS -o /dev/null -w '%{http_code}\n' -X POST -d '{}' \
+  https://research.ivohofland.nl/hooks/deploy-yoga-trainingen                        # 403
+
+# A signature header that is PRESENT but WRONG. adnanh/webhook treats this as a
+# SignatureError, not a rule mismatch, so it answers 500 here — not the 403 above — and
+# that is still a refusal: no unsigned or wrongly-signed request is ever admitted either way.
 curl -sS -o /dev/null -w '%{http_code}\n' -X POST \
   -H 'X-Hub-Signature-256: sha256=deadbeef' -d '{}' \
-  https://research.ivohofland.nl/hooks/deploy-yoga-trainingen                        # 403
+  https://research.ivohofland.nl/hooks/deploy-yoga-trainingen           # 500 (refused, wrong signature)
 ```
 Then push a trivial commit to `main`: `validate` passes, the Deploy workflow POSTs, and
 `~/deploy.log` on the server shows the build. The change appears on the live site.
