@@ -229,7 +229,7 @@ and with it the chance to skip it. `daemon-reload` after installing.
 | The export builds | `npm run build` locally, with `output: "export"` — all gates green, `out/` written. |
 | Every route survives export | `out/index.html`, `out/aanbieder/<id>/index.html` for a known id, `out/methodologie/index.html`, `out/correcties/index.html`, `out/data/v1/providers.json`. |
 | `/qa` does **not** ship | No `out/qa/` directory exists. |
-| The address is retired | `git grep ivo@ivohofland` returns nothing; `npm test` green (the assertions now track `CORRECTION_EMAIL`). |
+| The address is retired | `npm test` green — the `corrections.test.ts` guard walks every tracked file for the retired address and the two template assertions track `CORRECTION_EMAIL`. (Stated as the test, not a `git grep` one-liner: a grep for the literal address in this table would match this very row.) |
 | The site is live | `curl -I https://research.ivohofland.nl/` → 200; a record URL → 200; `/qa/` → 404. |
-| The hook rejects a forgery | POST with a bad signature → **403**; with a good one → 200 and a new line in `~/deploy.log`. |
+| The hook rejects a forgery | POST with **no** signature header → **403**; with a **wrong** signature → **500** (both refused, nothing runs); a valid one → 200 and a new line in `~/deploy.log`. The two codes differ because adnanh/webhook returns 500 on a signature-evaluation error and the configured 403 only on an absent header — see DEPLOY.md's Verify section. |
 | Auto-deploy works end to end | Push a trivial commit to main; `validate` passes; the change appears on the live site. |
