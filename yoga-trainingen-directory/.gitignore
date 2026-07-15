@@ -6,6 +6,15 @@ out/
 next-env.d.ts
 .DS_Store
 
+# Regenerated on every build with a NEW sha and a NEW timestamp, by design (its whole job
+# is stating which commit and moment produced the CURRENT out/, per export-json.ts) — unlike
+# public/data/v1/providers.json, a committed copy of this one could never describe the commit
+# it is part of: the instant it is committed, the sha inside it names a PARENT commit, not
+# HEAD. Committing it would also mean a diff on every single build regardless of whether the
+# data changed. It exists only to be written into public/, copied into out/ by `next build`,
+# and read live at /build-info.json.
+public/build-info.json
+
 # Archive BODIES are not published — see data/archives/README.md.
 # The .sha256 next to each one IS published, and proves the snapshot exists
 # and has not been altered, without republishing a provider's copyrighted page.

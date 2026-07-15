@@ -76,10 +76,20 @@ to finish rather than racing it. Before that lock existed, the page-count floor 
 pass in one process while a second process's build deleted `out/` out from under it —
 a real bug in the shape of the one this paragraph rules out, closed at a different layer.
 
-A green **Deploy** run in GitHub Actions proves less than any of the above: it goes green the
-moment the webhook accepts the signed ping — before the build has even started. Every failure
-after that (a failed gate, a failed build, the lock timing out) is invisible to GitHub Actions
-entirely; it shows up only in `~/deploy.log` on the server.
+A green **Deploy** run in GitHub Actions used to prove less than any of the above: it went
+green the moment the webhook accepted the signed ping — before the build had even started.
+Every failure after that (a failed gate, a failed build, the lock timing out, a wrong DOCROOT)
+was invisible to GitHub Actions entirely; it showed up only in `~/deploy.log` on the server,
+which nothing was watching.
+
+It no longer stops there. `export-json.ts` stamps `public/build-info.json` with the git sha
+`deploy.sh` actually built, and it ships to `/build-info.json` exactly like any other exported
+file — no separate wiring. The Deploy workflow's last step polls that URL for up to 20 minutes
+and fails the RUN, not just the log, if the live sha never becomes the sha that was pushed. A
+green **Deploy** check now means the live site reported building this commit — not merely that
+a ping was accepted — and every silent failure two paragraphs up (the QA leak, the empty-corpus
+floor, a wrong DOCROOT, a stuck lock, a half rsync) surfaces there as a red check on the commit
+that caused it, instead of a line in a log file nobody was tailing.
 
 ## Part 1 — one-time server setup
 
@@ -184,7 +194,14 @@ Settings → Secrets and variables → Actions:
 | `DEPLOY_WEBHOOK_URL` | `https://research.ivohofland.nl/hooks/deploy-yoga-trainingen` |
 | `DEPLOY_WEBHOOK_SECRET` | the same secret as in `~/webhook.env` |
 
-Until they exist, the Deploy workflow runs green and skips.
+**Behavior change, worth saying plainly: until these secrets exist, the Deploy workflow now
+FAILS, loudly, on every push to `main`.** It used to skip silently and stay green forever —
+which made "nobody has configured the secret yet" and "deploying is disabled on purpose" the
+exact same green tick, with no expiry and nothing to notice the difference. If the site is not
+ready to deploy yet, say so on purpose: Settings → Secrets and variables → Actions → Variables
+→ add `DEPLOY_DISABLED` (any non-empty value, e.g. `1`) — the workflow then skips, and says
+that it was told to. Set the two secrets above, or remove `DEPLOY_DISABLED`, when the server is
+ready; either one is a decision recorded in GitHub, not a config that silently drifted.
 
 ## Verify
 
@@ -193,6 +210,12 @@ Until they exist, the Deploy workflow runs green and skips.
 curl -sS -o /dev/null -w '%{http_code}\n' https://research.ivohofland.nl/            # 200
 curl -sS -o /dev/null -w '%{http_code}\n' https://research.ivohofland.nl/qa/         # 404
 curl -sS -o /dev/null -w '%{http_code}\n' https://research.ivohofland.nl/data/v1/providers.json  # 200
+
+# What the site claims to be running. Written by export-json.ts, shipped like any other
+# exported file — no separate deploy.sh step. `.sha` should equal `git rev-parse HEAD` of
+# whatever commit was most recently pushed to main; the Deploy workflow polls exactly this
+# URL and does not go green until it does (see "What a green deploy does and does not prove").
+curl -sS https://research.ivohofland.nl/build-info.json                             # {"sha":"…","built_at":"…","providers":N}
 
 # No signature header at all — the case hooks.json's
 # trigger-rule-mismatch-http-response-code:403 actually governs.

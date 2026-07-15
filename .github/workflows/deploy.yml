@@ -5,6 +5,8 @@ name: Deploy
 # The workflow name here must match `name:` in validate.yml exactly. ivohofland.dev's copy
 # of this file watches a workflow called "CI"; ours is called "validate", and a typo here
 # does not error — the trigger simply never fires, and the site quietly stops deploying.
+# (deploy-config.test.ts pins this exact name coupling, so a future rename of either file
+# fails a test instead of silently ending every deploy.)
 on:
   workflow_run:
     workflows: ["validate"]
@@ -35,25 +37,44 @@ jobs:
     permissions: {}
     runs-on: ubuntu-latest
     steps:
-      # Stays green and no-ops until the DEPLOY_WEBHOOK_* secrets are configured, so this
-      # file can land before the server exists.
+      # ABSENCE MUST BE LOUD. This used to skip silently — exit 0, "ready=false" — the
+      # moment DEPLOY_WEBHOOK_URL was unset, which made "nobody has configured the secret
+      # yet" and "deploying is disabled on purpose" the exact same green tick, forever, with
+      # no expiry and nothing to notice it. A missing secret is not a decision anyone made;
+      # it now FAILS the run unless the decision is made explicit, via the DEPLOY_DISABLED
+      # repo VARIABLE (see DEPLOY.md's "GitHub repo secrets" section for how to set either).
+      # SECRET is checked too, separately: URL set + SECRET empty used to sign the ping with
+      # an empty HMAC key, which the listener refuses with a 403 that reads exactly like a
+      # botched key rotation — not what it actually is, SECRET never having been set at all.
       - name: Check deploy config
         id: cfg
         env:
           URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
+          DISABLED: ${{ vars.DEPLOY_DISABLED }}
         run: |
-          if [ -z "${URL:-}" ]; then
-            echo "DEPLOY_WEBHOOK_URL not set — skipping (add the webhook secrets to enable)."
+          if [ -n "${DISABLED:-}" ]; then
+            echo "deploy disabled by repo variable DEPLOY_DISABLED"
             echo "ready=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "ready=true" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          : "${URL:?DEPLOY_WEBHOOK_URL not set — the site is not deploying. Set the secret, or set repo variable DEPLOY_DISABLED=1 to say so on purpose.}"
+          : "${SECRET:?DEPLOY_WEBHOOK_SECRET not set — the ping would be signed with an empty key and refused.}"
+          echo "ready=true" >> "$GITHUB_OUTPUT"
 
       # A signed HTTPS ping, and nothing else. The server pulls itself; there is no inbound
       # SSH and no IP to whitelist. The only inbound is this POST on 443, authenticated by
       # an HMAC-SHA256 signature the listener verifies before it runs anything.
       - name: Trigger deploy webhook
         if: ${{ steps.cfg.outputs.ready == 'true' }}
+        # No `shell:` on a step means GitHub runs it as `bash -e {0}` on Linux — NO pipefail.
+        # In the pipeline below, an `openssl` failure (missing binary, bad key) still lets
+        # `awk` exit 0, so `sig` comes out empty and gets POSTed — refused by the listener,
+        # and indistinguishable from a real signature mismatch. Naming `shell: bash`
+        # explicitly selects the LOGICAL shell, which GitHub runs as
+        # `bash --noprofile --norc -eo pipefail {0}` — WITH pipefail — so the real failure
+        # aborts this step instead of surfacing as a mystery refusal.
+        shell: bash
         env:
           URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
           SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
@@ -68,3 +89,32 @@ jobs:
             -o /dev/null -w '%{http_code}')
           echo "webhook responded: HTTP $code"
           test "$code" = "200"
+
+      # THE UNIFYING CHECK. Every gate in deploy.sh — the QA-leak refusal, the empty-corpus
+      # floor, a wrong DOCROOT, a lock timeout, an aborted rsync — fails on the SERVER,
+      # invisibly to GitHub Actions: the step above only proves the webhook ACCEPTED the
+      # signed ping, before the build has even started. This step polls the live site for
+      # build-info.json (written into public/ by scripts/export-json.ts, shipped to out/ by
+      # `next build`'s existing copy of public/, and rsynced like any other file) and fails
+      # the RUN — not just ~/deploy.log — if the live sha never becomes the sha that was
+      # pushed.
+      #
+      # CAVEAT, made explicit rather than assumed: for a `workflow_run`-triggered job,
+      # `github.sha` is documented as "the last commit on the default branch", which is a
+      # different name than `github.event.workflow_run.head_sha` (the exact commit validate
+      # ran against) — they only coincide here because nothing else pushes to `main` between
+      # that trigger and this poll. `build-info.json`'s `sha` is whatever `deploy.sh` actually
+      # built (`git rev-parse HEAD` on the server, immediately after its own
+      # `git reset --hard origin/main`) — i.e. current HEAD of `main` at deploy time — which
+      # is the same thing `github.sha` names in that ordinary, non-racing case.
+      - name: Confirm the deploy actually landed
+        if: ${{ steps.cfg.outputs.ready == 'true' }}
+        run: |
+          for i in $(seq 1 60); do
+            live=$(curl -fsS "https://research.ivohofland.nl/build-info.json" | jq -r .sha || echo "")
+            [ "$live" = "${{ github.sha }}" ] && { echo "✓ live: $live"; exit 0; }
+            sleep 20
+          done
+          echo "✗ 20 min after the ping, live still reports '$live', not ${{ github.sha }}." >&2
+          echo "  The webhook accepted the ping; the deploy did not land. Check ~/deploy.log." >&2
+          exit 1
