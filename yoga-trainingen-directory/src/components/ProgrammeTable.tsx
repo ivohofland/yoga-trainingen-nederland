@@ -129,6 +129,17 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
     setSort(DEFAULT_SORT);
   };
 
+  // Whether the visitor has narrowed anything — the condition for offering the
+  // clear control in the NORMAL filter bar, not only in the empty state below.
+  // Someone who has filtered down to a handful of rows (not zero) still needs a
+  // one-click way back to the whole list, and until now the only "Filters wissen"
+  // lived inside the "no results" message they only saw once they had filtered
+  // everything away. A typed postcode counts even before it resolves to an origin;
+  // the chip selections are the rest. (radius and sort are reset by clearAll too,
+  // but neither is on its own a reason to offer a *filter* reset.)
+  const anyFilterActive =
+    postcode.trim() !== "" || Object.values(filters).some((v) => v != null);
+
   // DERIVED FROM THE DATA, in a pure function, under test: `online` exists in the
   // dataset and the original design hard-coded a chip list without it, which made
   // those five programmes unreachable through the UI. Derived here in the component
@@ -324,12 +335,21 @@ export function ProgrammeTable({ rows, providerCount }: Props) {
         </div>
         {/* Every filter, sort and radius change rewrites the whole list below.
             Announce the new count — otherwise the change is invisible to anyone
-            not looking at the list. */}
-        <div className={styles.resultLine} aria-live="polite">
-          {nl.resultLine(view.shownCount, rows.length, view.providerCount, providerCount)}
-          {view.farCount > 0 && (
-            // Excluded rows are COUNTED, never silently dropped.
-            <div>{nl.farExcluded(view.farCount)}</div>
+            not looking at the list. The clear control sits beside the count, and
+            appears the moment anything is filtered — so it is reachable while
+            results are still showing, not only from the empty state. */}
+        <div className={styles.results}>
+          <div className={styles.resultLine} aria-live="polite">
+            {nl.resultLine(view.shownCount, rows.length, view.providerCount, providerCount)}
+            {view.farCount > 0 && (
+              // Excluded rows are COUNTED, never silently dropped.
+              <div>{nl.farExcluded(view.farCount)}</div>
+            )}
+          </div>
+          {anyFilterActive && (
+            <button type="button" className={styles.chip} onClick={clearAll}>
+              {nl.clearFilters}
+            </button>
           )}
         </div>
       </div>
