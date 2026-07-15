@@ -59,6 +59,15 @@
   color: var(--paper);
 }
 
+/* The current page, marked the way the design already speaks: the hover
+   inversion, made permanent. Filled means "you are here"; outlined means
+   "elsewhere you could go". Paired with aria-current="page" in Nav.tsx. */
+.navLinkActive,
+.navLinkActive:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
 .footer {
   display: flex;
   flex-wrap: wrap;

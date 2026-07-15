@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { Newsreader, IBM_Plex_Mono } from "next/font/google";
 import { nl } from "@/lib/strings";
+import { Nav } from "./Nav";
 import "./globals.css";
 import styles from "./layout.module.css";
 
@@ -38,14 +39,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <div className={styles.overline}>{nl.overline}</div>
               <h1 className={styles.title}>{nl.title}</h1>
             </Link>
-            <nav className={styles.nav}>
-              <Link href="/" className={styles.navLink}>{nl.navDirectory}</Link>
-              <Link href="/methodologie" className={styles.navLink}>{nl.navMethod}</Link>
-              {/* In the nav, not buried in a footer. The methodology tells readers they can
-                  correct this site; a channel they have to go looking for is a channel that
-                  would rather not be found. */}
-              <Link href="/correcties" className={styles.navLink}>{nl.corr.navLabel}</Link>
-            </nav>
+            <Nav />
           </header>
 
           {children}
