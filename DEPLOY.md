@@ -96,9 +96,14 @@ that caused it, instead of a line in a log file nobody was tailing.
 ### 1. CloudPanel site
 - **Sites → Add Site → Create a Static Site**, domain `research.ivohofland.nl`.
   Not a Node.js site: there is no app port to give it.
-- Site user: `ivohofland-research`.
+- Site user: the account CloudPanel derives for this domain. Whatever it is, it must equal
+  `DEPLOY_USER` in `deploy/deploy.sh` — the first thing `deploy.sh` does is refuse to run
+  unless `id -un` matches it (Part 1 §3) — so use exactly the name CloudPanel produces, and if
+  it ever differs, change `DEPLOY_USER` to match. `deploy/deploy.sh` is the source of truth for
+  that name; this runbook does not repeat it.
 - **Confirm the docroot** CloudPanel reports. It should be
-  `/home/ivohofland-research/htdocs/research.ivohofland.nl`. If it differs, put
+  `/home/<that site user>/htdocs/research.ivohofland.nl` (the `DOCROOT` default in `deploy.sh`).
+  If it differs, put
   `DOCROOT=<the path CloudPanel actually reports>` in `~/deploy.env` (create the file if it
   doesn't exist yet; `deploy.sh` sources it, if present, before computing DOCROOT's default).
   **Do not** set it in `deploy/deploy.sh` itself — that file is inside the repo, and *this*
@@ -138,7 +143,7 @@ node -v   # must be 22 (CloudPanel's Node selector, or nvm)
 ```
 
 ### 3. First deploy
-Run this **as the site user** (`ivohofland-research`). `deploy.sh`'s first gate checks
+Run this **as the site user** (the account from step 1). `deploy.sh`'s first gate checks
 `id -un` before it checks anything else — including the docroot — and refuses to run under
 any other identity, with no environment override possible:
 ```bash
