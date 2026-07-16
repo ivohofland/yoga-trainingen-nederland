@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import path from "node:path";
-import { buildMeta, noteJsonLd, readNotesFrom, type NoteMeta } from "./notes";
+import { buildMeta, noteJsonLd, readNoteFrom, readNotesFrom, type NoteMeta } from "./notes";
 import { categories } from "./notes-view";
 import { SITE_URL } from "./site";
 
@@ -48,6 +48,35 @@ test("readNotesFrom sorts newest-first", () => {
 
 test("readNotesFrom returns [] for a missing directory", () => {
   assert.deepEqual(readNotesFrom(path.join(FIX, "does-not-exist")), []);
+});
+
+test("readNotesFrom returns [] for a directory that exists but holds no .md", () => {
+  // __fixtures__/ itself holds only subdirectories, no .md files.
+  assert.deepEqual(readNotesFrom(path.join(process.cwd(), "src", "lib", "__fixtures__")), []);
+});
+
+test("readNotesFrom names the REAL offending file, not content/notities", () => {
+  assert.throws(
+    () => readNotesFrom(path.join(FIX, "..", "notities-bad-field")),
+    /notities-bad-field\/kapot\.md/,
+  );
+});
+
+test("readNotesFrom throws on a file with no frontmatter block", () => {
+  assert.throws(() => readNotesFrom(path.join(FIX, "..", "notities-nofm")), /frontmatter/);
+});
+
+test("readNoteFrom returns a post's meta + non-empty body", () => {
+  const note = readNoteFrom(FIX, "first-post");
+  assert.ok(note, "expected a non-null note");
+  assert.equal(note.meta.slug, "first-post");
+  assert.equal(typeof note.content, "string");
+  assert.ok(note.content.length > 0, "expected a non-empty body");
+});
+
+test("readNoteFrom returns null for a bad slug or an absent file", () => {
+  assert.equal(readNoteFrom(FIX, "Ongeldige Slug"), null);
+  assert.equal(readNoteFrom(FIX, "bestaat-niet"), null);
 });
 
 test("categories returns distinct cats in first-seen order (no 'Alle')", () => {

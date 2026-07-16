@@ -48,12 +48,13 @@ function requireString(data: Record<string, unknown>, key: string): string {
 }
 
 function requireDate(data: Record<string, unknown>): Date {
-  // YAML parses an unquoted ISO date to a Date; also accept a strict YYYY-MM-DD string.
+  // This repo's `yaml` parses `date: 2026-07-10` to a STRING, not a Date, so we
+  // require a strict YYYY-MM-DD string and validate it by round-trip: parse it as
+  // UTC midnight, then reject anything the round-trip does not reproduce exactly
+  // (e.g. calendar rollovers like 2026-02-30, which Date silently rolls to March).
   const raw = data.date;
-  if (raw instanceof Date && !Number.isNaN(raw.getTime())) return raw;
   if (typeof raw === "string" && ISO_DATE_RE.test(raw)) {
     const d = new Date(`${raw}T00:00:00Z`);
-    // reject calendar rollovers like 2026-02-30
     if (!Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === raw) return d;
   }
   throw new Error(`frontmatter "date" must be a valid YYYY-MM-DD (got ${JSON.stringify(raw)})`);
@@ -103,8 +104,11 @@ export function readNotesFrom(dir: string): NoteMeta[] {
         const { data } = splitFrontmatter(fs.readFileSync(path.join(dir, file), "utf8"));
         return buildMeta(file.replace(/\.md$/, ""), data);
       } catch (e) {
-        // name the offending file so a bad post is findable, not a bare stack trace
-        throw new Error(`content/notities/${file}: ${(e as Error).message}`);
+        // name the ACTUAL offending file so a bad post is findable — this reader
+        // runs against the fixtures dir too, so a hardcoded path would lie.
+        throw new Error(
+          `${path.relative(process.cwd(), path.join(dir, file))}: ${(e as Error).message}`,
+        );
       }
     })
     .sort((a, b) => b.published.getTime() - a.published.getTime())
@@ -117,14 +121,28 @@ export const readAllNotes = (): NoteMeta[] => readNotesFrom(NOTES_DIR);
 /** The React-cached variant Server Components call (one read per render). */
 export const getAllNotes = cache(readAllNotes);
 
-/** One post's metadata + raw Markdown body, or null if the slug is bad or absent. */
-export const getNote = cache((slug: string): { meta: NoteMeta; content: string } | null => {
+/**
+ * Exported for tests: one post's metadata + raw Markdown body from `dir`, or null
+ * if the slug is bad or the file is absent. Bad frontmatter throws, naming the
+ * real path (parallel to readNotesFrom).
+ */
+export function readNoteFrom(
+  dir: string,
+  slug: string,
+): { meta: NoteMeta; content: string } | null {
   if (!SLUG_RE.test(slug)) return null;
-  const full = path.join(NOTES_DIR, `${slug}.md`);
+  const full = path.join(dir, `${slug}.md`);
   if (!fs.existsSync(full)) return null;
-  const { data, body } = splitFrontmatter(fs.readFileSync(full, "utf8"));
-  return { meta: buildMeta(slug, data).meta, content: body };
-});
+  try {
+    const { data, body } = splitFrontmatter(fs.readFileSync(full, "utf8"));
+    return { meta: buildMeta(slug, data).meta, content: body };
+  } catch (e) {
+    throw new Error(`${path.relative(process.cwd(), full)}: ${(e as Error).message}`);
+  }
+}
+
+/** The React-cached variant the article page calls (one read per render). */
+export const getNote = cache((slug: string) => readNoteFrom(NOTES_DIR, slug));
 
 /** Exported for tests: the BlogPosting JSON-LD for one post (spec §8). */
 export function noteJsonLd(meta: NoteMeta): Record<string, unknown> {
