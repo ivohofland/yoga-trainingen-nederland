@@ -19,6 +19,7 @@ import styles from "./layout.module.css";
 const items = [
   { href: "/", label: nl.navDirectory },
   { href: "/methodologie", label: nl.navMethod },
+  { href: "/notities", label: nl.notes.navLabel },
   { href: "/correcties", label: nl.corr.navLabel },
 ] as const;
 
