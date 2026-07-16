@@ -32,8 +32,8 @@ mockup *drew* a blog with zero posts and no content pipeline behind it, so
 rendering it would have been an empty invented section.
 
 This spec removes that objection by building the missing half: a real content
-directory, a validated schema, a documented authoring pipeline, and posts
-authored by the researcher. The cut is therefore **superseded, not violated**.
+directory, a validated schema, and a documented authoring pipeline. The cut is
+therefore **superseded, not violated**.
 As part of shipping, the two listing-spec lines above are edited to point here
 (a "superseded by" note), so the specs do not quietly contradict each other.
 
