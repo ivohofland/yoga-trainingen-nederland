@@ -8,9 +8,9 @@ materials.
 
 **Architecture:** Plain Markdown files under `content/notities/`, one per post,
 filename = URL slug; frontmatter validated at build (fail-loud); body rendered
-with the existing `marked`; frontmatter parsed with the existing `yaml`. Three
-static routes (listing, article, RSS) plus a nav item, in the existing
-static-export + CSS-Modules design system. **No new dependencies.**
+with the existing `marked`; frontmatter parsed with the existing `yaml`. Two
+page routes (listing, article), a build-time RSS file, and a nav item, in the
+existing static-export + CSS-Modules design system. **No new dependencies.**
 
 **Tech stack:** Next.js 15 App Router, `output: "export"`, `trailingSlash:
 true`, `marked`, `yaml`, `react` `cache`, node:test via `tsx`.
@@ -54,7 +54,7 @@ nothing. The first post (the Yoga Alliance explainer) follows.
 | Listing view | `/notities` — post rows, newest first |
 | Category filter | Client-side `cat` filter on the listing ("Alle" + derived categories) |
 | Article view | `/notities/<slug>` — header + rendered body, statically prerendered |
-| RSS feed | `/notities/feed.xml` — static, XML-escaped |
+| RSS feed | `/notities/feed.xml` — static file, XML-escaped |
 | BlogPosting JSON-LD | Per-article structured data (first JSON-LD in the repo) |
 | Nav item | "Notities" in the masthead nav, lit on the section and its articles |
 | Honest empty state | Truthful "nog geen notities" when the directory is empty |
@@ -93,94 +93,113 @@ nothing. The first post (the Yoga Alliance explainer) follows.
 - A missing/empty field, a non-`YYYY-MM-DD` date, or a bad slug **throws at
   build**, naming the offending file — never ships the word "undefined". This
   matches the repo's fail-loud gates (`validate`, `provenance`, tests).
+- The post body must **not** start with a level-1 `#` heading — the title comes
+  from frontmatter and is rendered by the page. Sections use `##`.
 
 ## 4. Modules (purity split preserved)
 
-- **`src/lib/site.ts`** — the single origin source.
+- **`src/lib/site.ts`** — the single origin/identity source. Pure.
   - `export const SITE_URL = "https://research.ivohofland.nl";`
   - `export const SITE_NAME = "Yoga-docentenopleidingen";`
-  - Used by the RSS feed and JSON-LD for absolute, trailing-slash URLs. Pure.
+  - `export const AUTHOR_NAME = "Ivo Hofland";`
+  - Used by the RSS feed and the JSON-LD for absolute, trailing-slash URLs and
+    the byline. One place to change origin, site name, or attribution.
 
 - **`src/lib/notes.ts`** — the feature's one impure module (`node:fs`, `yaml`).
   - `type NoteMeta = { slug; title; cat; date; publishedISO; readTime; intro }`
     (`date` = display, e.g. `"juli 2026"`, via `Intl.DateTimeFormat("nl-NL", {
     month: "long", year: "numeric", timeZone: "UTC" })`; `publishedISO` =
-    `YYYY-MM-DD` for feeds/JSON-LD).
+    `YYYY-MM-DD` for the feed/JSON-LD).
   - `buildMeta(slug, data): { published: Date; meta: NoteMeta }` — **pure**,
     validates + shapes one post, throws on bad input. Exported for tests.
-  - `readAllNotes(): NoteMeta[]` — plain, impure; reads `content/notities`,
-    filters `.md`, validates each (wrapping errors with the filename), sorts
-    newest-first. **Empty directory → `[]` (never throws).**
+  - `readNotesFrom(dir): NoteMeta[]` — the impure read, parameterised by
+    directory so tests can point it at a fixture. Reads `*.md`, splits
+    frontmatter (a small `---`-block regex + `yaml.parse`, no `gray-matter`),
+    validates each (wrapping errors with the filename), sorts newest-first.
+    **A missing or empty directory → `[]` (never throws).**
+  - `readAllNotes = () => readNotesFrom(<content/notities>)` — plain, impure.
   - `getAllNotes = cache(readAllNotes)` — the React-cached variant Server
-    Components call. (The plain `readAllNotes` exists so the RSS route can run
-    outside a render.)
-  - `getNote(slug): { meta; content } | null`.
+    Components call. (The plain `readAllNotes` exists so the RSS build script can
+    run outside a render.)
+  - `getNote(slug): { meta; content } | null` — null for a bad or absent slug.
+  - `categories(posts): string[]` — **pure**, `["Alle", ...distinct cats]` in
+    first-seen order. Exported for the listing filter and tests.
   - `noteJsonLd(meta): object` — **pure**, builds the BlogPosting object (§8).
     Exported for tests.
 
 - **`src/lib/feed.ts`** — `renderFeed(notes: NoteMeta[]): string`, **pure**,
-  XML-escaped RSS 2.0 (§7). Type-only import of `NoteMeta`. Tested. The route
-  handler is a thin wrapper, so if `output: "export"` ever rejects the handler
-  the fallback (an `export-json`-style build script) reuses this same function.
+  XML-escaped RSS 2.0 (§7). Type-only import of `NoteMeta`. Tested.
+  `scripts/build-feed.ts` (§5) is its only caller — a thin wrapper.
+
+- **`scripts/build-feed.ts`** — writes `renderFeed(readAllNotes())` to
+  `public/notities/feed.xml`, run in the `build` chain **before** `next build`,
+  which copies `public/` into `out/`. The exact static-artifact pattern
+  `scripts/export-json.ts` uses for `providers.json`. This is why the feed needs
+  **no route handler** — `next.config.ts` documents that this site ships none.
 
 - **`src/components/JsonLd.tsx`** — a server component rendering
-  `<script type="application/ld+json">{JSON.stringify(data)}</script>`. Takes
+  `<script type="application/ld+json" dangerouslySetInnerHTML=…>` with `<`
+  escaped to `<` (so a value can never close the script tag). Takes
   `data: object`. The repo's first JSON-LD primitive; deliberately minimal.
 
 **Empty-directory decision (documented divergence):** the dataset loader
 *refuses* an empty corpus (a directory with no providers is a bug). `notes.ts`
-does the opposite — an empty `content/notities` is a legitimate day-one state,
-so `readAllNotes` returns `[]`. This is the honest-empty-state choice from §1,
-encoded in the one place it lives.
+does the opposite — a missing or empty `content/notities` is a legitimate
+day-one state, so the readers return `[]`. This is the honest-empty-state choice
+from §1, encoded in the one place it lives.
 
-## 5. Routes (static-export safe)
+## 5. Routes, script, and build wiring (static-export safe)
 
 - **`app/notities/page.tsx`** (Server Component): `const posts = getAllNotes();`
-  → renders `<NotitiesIndex posts={posts} />` inside the section's page chrome
-  (eyebrow/title/lead from `nl.notes`). Exports `metadata` (title + description).
+  → renders the section header (eyebrow/title/lead from `nl.notes`) then
+  `<NotitiesIndex posts={posts} />`. Exports `metadata` (title + description).
 
-- **`app/notities/NotitiesIndex.tsx`** (`"use client"`): derives
-  `["Alle", ...unique cats]`; `useState` selected category; filters rows;
-  renders each row as a `<Link href={/notities/${slug}}>` (category label · date ·
-  title · intro). Includes the RSS link (`/notities/feed.xml`). When `posts` is
-  empty, renders only the honest empty-state line (`nl.notes.empty`) — with zero
-  posts there are no category buttons, so it degrades gracefully.
+- **`app/notities/NotitiesIndex.tsx`** (`"use client"`): uses `categories(posts)`
+  for the filter buttons; `useState` selected category; filters rows; renders
+  each as a `<Link href={/notities/${slug}}>` (category · date · title · intro).
+  Shows the RSS link (`/notities/feed.xml`). When `posts` is empty it renders
+  only the honest empty-state line (`nl.notes.empty`) — with zero posts there are
+  no category buttons, so it degrades gracefully.
 
 - **`app/notities/[slug]/page.tsx`** (Server Component):
   - `export const dynamicParams = false;`
   - `export function generateStaticParams()` → `getAllNotes().map(p => ({ slug: p.slug }))`.
   - `generateMetadata` → title = post title, description = intro; unknown slug →
     `notFound()`.
-  - Renders: a back-link (`nl.notes.backLink`), `<h1>`, a meta line
-    (`CAT · date · readTime leestijd · door <byline>`), then
-    `<div className={prose.prose} dangerouslySetInnerHTML={{ __html:
-    marked.parse(content, { async: false }) }} />` — **reusing methodologie's
-    `.prose`** (imported like `correcties` does; one prose treatment, never a
-    second copy). Emits `<JsonLd data={noteJsonLd(meta)} />`.
+  - Renders, inside methodologie's shared `.prose` (imported like `correcties`
+    does — one prose treatment, never a second copy): a back-link
+    (`nl.notes.backLink`), `<h1>`, a meta line
+    (`CAT · date · readTime <readTimeSuffix> · door <AUTHOR_NAME>`), then
+    `dangerouslySetInnerHTML={{ __html: marked.parse(content, { async: false }) }}`.
+    Emits `<JsonLd data={noteJsonLd(meta)} />`.
 
-- **`app/notities/feed.xml/route.ts`**: `export const dynamic = "force-static";`
-  `export function GET()` → `new Response(renderFeed(readAllNotes()), { headers:
-  { "Content-Type": "application/rss+xml; charset=utf-8" } })`.
-  - **Static-export note:** this must emit a static `feed.xml` under
-    `output: "export"`. `verify-export.ts` asserts the file exists and is
-    well-formed (§9), so a build that fails to produce it fails **loudly**. If a
-    future Next version rejects a route handler in export mode, the documented
-    fallback is a build script (like `scripts/export-json.ts`) writing
-    `public/notities/feed.xml` from the same `renderFeed` — a mechanical swap.
+- **RSS is a build script, not a route** (`next.config.ts` documents "No route
+  handlers"): `scripts/build-feed.ts` writes `public/notities/feed.xml`. Wired
+  into `package.json`'s `build` before `next build`:
+  `… && npm run export-json && npm run build-feed && next build`, with
+  `"build-feed": "tsx scripts/build-feed.ts"`. The file is **gitignored** (a
+  generated artifact, like `public/build-info.json`) and regenerated every build;
+  `verify-export.ts` asserts it landed in `out/` (§9). *Consequence:* the feed
+  does not exist under `npm run dev` (which does not run the build chain); the
+  listing's RSS link resolves in the built/deployed site only. Acceptable — RSS
+  is a build artifact.
 
 ## 6. Nav, strings, styling
 
 - **`app/Nav.tsx`:** add `{ href: "/notities", label: nl.notes.navLabel }` to
   `items`. The existing `isActive` (`pathname.startsWith(\`${href}/\`)`) already
   lights the nav on `/notities` and every `/notities/<slug>`. No logic change.
-- **`src/lib/strings.ts`:** add a nested `notes: { … }` group (mirrors `corr`):
-  `navLabel: "Notities"`, `eyebrow`, `title`, `lead`, `empty`, `allCategories:
-  "Alle"`, `rssLabel`, `backLink`, `byline: "Ivo Hofland"`, `readTimeSuffix:
-  "leestijd"`. NL-only; no user-facing string inlined in a component.
-- **Styling:** `app/notities/page.module.css` (listing rows + filter chips reuse
-  the existing chip look and `--ink/--paper/--mono/--muted/--rule` tokens) and
-  `app/notities/[slug]/page.module.css` (article header only). The article body
-  uses the shared `.prose`, so post typography matches methodologie exactly.
+- **`src/lib/strings.ts`:** add a nested `notes: { … }` group (mirrors `corr`),
+  placed after the `corr` group: `navLabel: "Notities"`, `eyebrow`, `title`,
+  `lead`, `empty`, `allCategories: "Alle"`, `rssLabel`, `backLink`, `byPrefix:
+  "door"`, `readTimeSuffix: "leestijd"`. NL-only; no user-facing string inlined
+  in a component. (The author *name* is `AUTHOR_NAME` in `site.ts`, shared with
+  the JSON-LD; `byPrefix` is just the word "door".)
+- **Styling:** `app/notities/page.module.css` (section header + listing rows +
+  filter chips reuse the existing chip look and `--ink/--paper/--mono/--muted/
+  --rule` tokens) and `app/notities/[slug]/page.module.css` (article back-link +
+  meta line only). The article body uses the shared `.prose`, so post typography
+  matches methodologie exactly.
 
 ## 7. RSS (`renderFeed`)
 
@@ -204,29 +223,29 @@ Minimal valid `BlogPosting`:
   "description": "<intro>",
   "datePublished": "<publishedISO>",
   "inLanguage": "nl-NL",
-  "author": { "@type": "Person", "name": "Ivo Hofland" },
+  "author": { "@type": "Person", "name": "<AUTHOR_NAME>" },
   "url": "<SITE_URL>/notities/<slug>/",
   "mainEntityOfPage": "<SITE_URL>/notities/<slug>/"
 }
 ```
 
-Trailing slashes match `trailingSlash: true`. The author name is
-`nl.notes.byline` so voice/attribution is one string to change.
+Trailing slashes match `trailingSlash: true`. `AUTHOR_NAME` comes from `site.ts`,
+shared with the article byline, so attribution is one string to change.
 
 ## 9. Validation, tests, build gates
 
 - **`src/lib/notes.test.ts`** (node:test): `buildMeta` rejects a bad slug, each
   missing/empty required field, and a non-`YYYY-MM-DD` / rolled-over date
   (e.g. `2026-02-30`); accepts a good record and derives `date`/`publishedISO`
-  correctly. Also: `readAllNotes` on a fixture directory sorts newest-first; on
-  an empty fixture returns `[]`. `noteJsonLd` produces the §8 shape with correct
-  trailing-slash URLs.
+  correctly. `readNotesFrom` on a fixture directory sorts newest-first; on a
+  missing directory returns `[]`. `categories` dedupes and prepends "Alle".
+  `noteJsonLd` produces the §8 shape with correct trailing-slash URLs.
 - **`src/lib/feed.test.ts`** (node:test): `renderFeed` escapes `< > & ' "` in
   title/intro; emits absolute trailing-slash links; a `&` in a title does not
-  produce invalid XML.
+  produce invalid XML; a `<pubDate>` is a well-formed RFC-822 string.
 - **`verify-export.ts`** (existing postbuild): assert `out/notities/index.html`
   and `out/notities/feed.xml` exist and the feed contains `<rss` and
-  `</channel>`. This turns a static-export regression into a red build.
+  `</channel>`. Turns a static-export regression into a red build.
 - All of the above run inside `npm test` → `npm run build`. Bad frontmatter also
   fails `next build` directly (the listing page calls `getAllNotes`).
 
@@ -254,14 +273,16 @@ the rest of the site.
 | Condition | Behaviour |
 |---|---|
 | Missing/empty frontmatter field, bad date, bad slug | `buildMeta` throws, filename attached → build fails |
+| No `---` frontmatter block | `readNotesFrom`/`getNote` throw, filename attached → build fails |
 | Unknown `/notities/<slug>` | `dynamicParams = false` → 404 at the routing layer, never hits fs |
-| Empty `content/notities/` | `readAllNotes` → `[]` → honest empty state (not an error) |
-| RSS route fails to export | `verify-export.ts` asserts the file → red build; documented fallback build script |
+| Missing or empty `content/notities/` | readers → `[]` → honest empty state (not an error) |
+| `build-feed` fails, or `feed.xml` missing from `out/` | `build-feed` throws → red build; `verify-export.ts` also asserts `out/notities/feed.xml` |
 
 ## 13. Content README
 
 `content/notities/README.md` documents: filename = slug, the required
-frontmatter with the validation rules, that adding a post = drop a `.md` file and
+frontmatter with the validation rules, that the body must not open with an `#`
+h1 (the title comes from frontmatter), that adding a post = drop a `.md` file and
 commit (index/article/feed pick it up on the next build), and the verbatim +
 source expectation for claims about named organisations. Mirrors the reference's
 `content/blog/README.md`, adapted to this repo's Markdown-not-MDX pipeline and
@@ -270,4 +291,5 @@ editorial standard.
 ## 14. Open questions
 
 None. `readTime` is author-supplied and OG images are deferred by decision (§2.2);
-the nav link ships live per the honest-empty-state choice (§1).
+the nav link ships live per the honest-empty-state choice (§1); RSS is a build
+script, not a route, per `next.config.ts`'s documented stance (§5).
