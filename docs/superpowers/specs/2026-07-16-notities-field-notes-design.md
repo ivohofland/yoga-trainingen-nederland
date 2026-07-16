@@ -122,10 +122,17 @@ nothing. The first post (the Yoga Alliance explainer) follows.
     Components call. (The plain `readAllNotes` exists so the RSS build script can
     run outside a render.)
   - `getNote(slug): { meta; content } | null` — null for a bad or absent slug.
-  - `categories(posts): string[]` — **pure**, `["Alle", ...distinct cats]` in
-    first-seen order. Exported for the listing filter and tests.
   - `noteJsonLd(meta): object` — **pure**, builds the BlogPosting object (§8).
     Exported for tests.
+  - **Server-only** (imports `node:fs`); the client never imports a value from it.
+
+- **`src/lib/notes-view.ts`** — **node-free** view helpers, so the client filter
+  island can import them (the same rule that keeps `derive`/`rules`/`quad`/
+  `presenters` free of `node:*` — CLAUDE.md). Exports `categories(posts):
+  string[]` (**pure**, the distinct categories in first-seen order; the "Alle"
+  label is prepended by the component from `nl.notes.allCategories`, so it lives
+  only in strings) and a **type-only** re-export of `NoteMeta` (erased at
+  compile). Tested.
 
 - **`src/lib/feed.ts`** — `renderFeed(notes: NoteMeta[]): string`, **pure**,
   XML-escaped RSS 2.0 (§7). Type-only import of `NoteMeta`. Tested.
@@ -238,8 +245,9 @@ shared with the article byline, so attribution is one string to change.
   missing/empty required field, and a non-`YYYY-MM-DD` / rolled-over date
   (e.g. `2026-02-30`); accepts a good record and derives `date`/`publishedISO`
   correctly. `readNotesFrom` on a fixture directory sorts newest-first; on a
-  missing directory returns `[]`. `categories` dedupes and prepends "Alle".
-  `noteJsonLd` produces the §8 shape with correct trailing-slash URLs.
+  missing directory returns `[]`. `categories` returns the distinct categories,
+  first-seen order, without "Alle". `noteJsonLd` produces the §8 shape with
+  correct trailing-slash URLs.
 - **`src/lib/feed.test.ts`** (node:test): `renderFeed` escapes `< > & ' "` in
   title/intro; emits absolute trailing-slash links; a `&` in a title does not
   produce invalid XML; a `<pubDate>` is a well-formed RFC-822 string.
