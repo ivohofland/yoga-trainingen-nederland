@@ -42,7 +42,7 @@ Everything below follows from that.
 |---|---|
 | **EN/NL toggle** | Every `note:` in the dataset is Dutch; the design's own NL disclaimer ("record content is maintained in English") is false. NL-only. UI strings live in one module so EN remains a data change, not a refactor. |
 | **"Research notes" section** (design's `flags[]`) | No field in the model holds a provider-level sourced finding. Per §2, the section is cut rather than the field invented. |
-| **Field notes / blog** (list + article views) | No posts, no schema, no content directory. Pure invention. |
+| **Field notes / blog** (list + article views) | Cut when no content existed. **Superseded 2026-07-16** by `docs/superpowers/specs/2026-07-16-notities-field-notes-design.md` — built as `/notities` once real posts and a content pipeline existed. |
 | **Correction form** | `inquiries[]` records inquiries *we sent*; it is not a submission inbox, and a static export has no endpoint. Reduced to a `mailto:` link — chrome, not data. |
 
 ### 3.3 Where the notes go instead
@@ -377,7 +377,7 @@ single-test command — `npm run validate` is the gate"* is no longer true.
 - EN locale (the strings module makes it additive).
 - Research-notes findings — needs a decision on whether a `research_notes[]`
   field or a public marker belongs in the spec. Deliberately not decided here.
-- Field notes / blog.
+- Field notes / blog. **Superseded 2026-07-16** — now `/notities`; see `docs/superpowers/specs/2026-07-16-notities-field-notes-design.md`.
 - A real correction workflow with an endpoint.
 - Rendering `people[]`, `inquiries[]`, `assessment` (layer 3) — no record is at
   `depth: assessed` yet.

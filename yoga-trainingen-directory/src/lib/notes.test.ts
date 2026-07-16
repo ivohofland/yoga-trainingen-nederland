@@ -46,6 +46,17 @@ test("readNotesFrom sorts newest-first", () => {
   );
 });
 
+test("readNotesFrom skips README.md rather than parsing it as a post", () => {
+  // __fixtures__/notities/ also holds a README.md with no frontmatter block —
+  // if it were parsed as a post, this would throw instead of returning the
+  // usual two posts.
+  const posts = readNotesFrom(FIX);
+  assert.deepEqual(
+    posts.map((p) => p.slug),
+    ["second-post", "first-post"],
+  );
+});
+
 test("readNotesFrom returns [] for a missing directory", () => {
   assert.deepEqual(readNotesFrom(path.join(FIX, "does-not-exist")), []);
 });

@@ -98,7 +98,8 @@ export function readNotesFrom(dir: string): NoteMeta[] {
   if (!fs.existsSync(dir)) return [];
   return fs
     .readdirSync(dir)
-    .filter((f) => f.endsWith(".md"))
+    // content/notities/README.md is an authoring doc, not a post — skip it.
+    .filter((f) => f.endsWith(".md") && f !== "README.md")
     .map((file) => {
       try {
         const { data } = splitFrontmatter(fs.readFileSync(path.join(dir, file), "utf8"));
