@@ -4,3 +4,8 @@
 
 # scratch: the subagent-driven-development ledger and review artefacts
 .superpowers/
+
+# Generated at build from content/notities/*.md by scripts/build-feed.ts, then
+# copied into out/ by next build. Like public/build-info.json, a committed copy
+# could go stale against the posts; it is regenerated every build.
+public/notities/feed.xml
