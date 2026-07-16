@@ -70,6 +70,33 @@ for (const f of walkHtml(OUT)) {
 // 2. THE SITE ITSELF MUST EXIST.
 if (!fs.existsSync(path.join(OUT, "index.html"))) fail(`out/index.html is missing`);
 
+// 2b. THE NOTITIES SECTION AND ITS FEED MUST SHIP. The listing is a route; the
+// feed is a build artifact (scripts/build-feed.ts writes public/notities/feed.xml,
+// next build copies it into out/). If build-feed did not run, or the export did not
+// copy public/, this catches it — loudly — rather than shipping a dead RSS link.
+if (!fs.existsSync(path.join(OUT, "notities", "index.html"))) {
+  fail(`out/notities/index.html is missing — the Notities listing did not export`);
+}
+const feedPath = path.join(OUT, "notities", "feed.xml");
+if (!fs.existsSync(feedPath)) {
+  fail(`out/notities/feed.xml is missing — build-feed did not run, or next build did not copy public/ into out/`);
+}
+const feed = fs.readFileSync(feedPath, "utf8");
+if (!feed.includes("<rss") || !feed.includes("</channel>")) {
+  fail(`out/notities/feed.xml is not well-formed RSS (missing <rss or </channel>)`);
+}
+// Both the feed's <item> count and the exported article directories derive from
+// the same post set — a feed that silently dropped posts would still contain
+// <rss and </channel> (emitted unconditionally), so this is the only check that
+// would catch it.
+const itemCount = (feed.match(/<item>/g) ?? []).length;
+const articleDirs = fs
+  .readdirSync(path.join(OUT, "notities"), { withFileTypes: true })
+  .filter((e) => e.isDirectory()).length;
+if (itemCount !== articleDirs) {
+  fail(`out/notities/feed.xml has ${itemCount} item(s) but ${articleDirs} article page(s) exported — the feed dropped posts`);
+}
+
 // 3. THE JSON API MUST SHIP, MUST PARSE, AND MUST MATCH WHAT export-json.ts JUST WROTE.
 // Comparing counts against public/data/v1/providers.json (rather than trusting out/'s copy
 // alone) catches `next build` shipping something OTHER than this run's export — a stale

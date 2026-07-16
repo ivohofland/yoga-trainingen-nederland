@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run gen-schema && npm run validate && npm run provenance && npm test && npm run test:ci && npm run export-json && next build",
+    "build": "npm run gen-schema && npm run validate && npm run provenance && npm test && npm run test:ci && npm run export-json && npm run build-feed && next build",
     "postbuild": "tsx scripts/verify-export.ts",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "test:ci": "PROVENANCE_WITHHOLD_BODIES=1 tsx --test \"src/**/*.test.ts\"",
@@ -12,6 +12,7 @@
     "provenance": "tsx scripts/provenance.ts",
     "gen-schema": "tsx scripts/gen-schema.ts",
     "export-json": "tsx scripts/export-json.ts",
+    "build-feed": "tsx scripts/build-feed.ts",
     "archive": "tsx scripts/archive.ts"
   },
   "dependencies": {
