@@ -415,6 +415,28 @@ export const nl = {
     ],
     roleOptions: ["vertegenwoordiger aanbieder", "(oud-)student", "particulier", "anders"],
   },
+
+  /* ---------- Notities (veldnotities) — spec 2026-07-16 ----------
+   * A writing section: research dispatches + sector explainers. NL-only, in the
+   * project's voice. The author NAME is AUTHOR_NAME in src/lib/site.ts (shared
+   * with the JSON-LD); byPrefix here is just the word "door". */
+  notes: {
+    navLabel: "Notities",
+    eyebrow: "Veldnotities",
+    title: "Notities",
+    lead:
+      "Bevindingen uit het onderzoek en achtergrond bij de sector — bijvoorbeeld hoe je " +
+      "een registervermelding leest. Elk stuk noemt zijn bron.",
+    empty:
+      "Nog geen notities. Ze verschijnen hier zodra er iets te melden valt — met bron, " +
+      "zoals de rest van deze site.",
+    filterLabel: "Filter op categorie",
+    allCategories: "Alle",
+    rssLabel: "RSS",
+    backLink: "← Alle notities",
+    byPrefix: "door",
+    readTimeSuffix: "leestijd",
+  },
   // Never one number: a count of public archives alone reads as archive coverage,
   // and the bar is BOTH halves. Both counts, side by side, over the total.
   sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>
