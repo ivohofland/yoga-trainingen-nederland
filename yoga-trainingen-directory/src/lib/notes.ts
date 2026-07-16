@@ -1,8 +1,9 @@
 /**
  * Notities (field notes) — loading + validation. One Markdown file per post
  * under content/notities/, filename = slug. The ONE impure module of the feature
- * (node:fs, yaml); buildMeta / categories / noteJsonLd are pure and exported for
- * tests. Mirrors ivohofland.dev's lib/blog.ts, in this repo's materials: `yaml`
+ * (node:fs, yaml); buildMeta and noteJsonLd are pure and exported for tests
+ * (categories lives in the node-free notes-view.ts). Mirrors ivohofland.dev's
+ * lib/blog.ts, in this repo's materials: `yaml`
  * (already a dep) not gray-matter, and `marked` renders the body in the page.
  *
  * A missing OR empty content/notities/ is a legitimate day-one state, so the
@@ -44,7 +45,7 @@ function requireString(data: Record<string, unknown>, key: string): string {
   if (typeof value !== "string" || value.trim() === "") {
     throw new Error(`frontmatter "${key}" is missing or empty`);
   }
-  return value;
+  return value.trim();
 }
 
 function requireDate(data: Record<string, unknown>): Date {
@@ -107,9 +108,9 @@ export function readNotesFrom(dir: string): NoteMeta[] {
       } catch (e) {
         // name the ACTUAL offending file so a bad post is findable — this reader
         // runs against the fixtures dir too, so a hardcoded path would lie.
-        throw new Error(
-          `${path.relative(process.cwd(), path.join(dir, file))}: ${(e as Error).message}`,
-        );
+        const rel = path.relative(process.cwd(), path.join(dir, file));
+        const msg = e instanceof Error ? e.message : String(e);
+        throw new Error(`${rel}: ${msg}`, { cause: e });
       }
     })
     .sort((a, b) => b.published.getTime() - a.published.getTime())
@@ -138,7 +139,9 @@ export function readNoteFrom(
     const { data, body } = splitFrontmatter(fs.readFileSync(full, "utf8"));
     return { meta: buildMeta(slug, data).meta, content: body };
   } catch (e) {
-    throw new Error(`${path.relative(process.cwd(), full)}: ${(e as Error).message}`);
+    const rel = path.relative(process.cwd(), full);
+    const msg = e instanceof Error ? e.message : String(e);
+    throw new Error(`${rel}: ${msg}`, { cause: e });
   }
 }
 
@@ -146,7 +149,7 @@ export function readNoteFrom(
 export const getNote = cache((slug: string) => readNoteFrom(NOTES_DIR, slug));
 
 /** Exported for tests: the BlogPosting JSON-LD for one post (spec §8). */
-export function noteJsonLd(meta: NoteMeta): Record<string, unknown> {
+export function noteJsonLd(meta: NoteMeta) {
   const url = `${SITE_URL}/notities/${meta.slug}/`;
   return {
     "@context": "https://schema.org",

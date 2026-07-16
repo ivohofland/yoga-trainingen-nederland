@@ -37,3 +37,8 @@ test("renderFeed on an empty list is still valid channel XML", () => {
   assert.ok(xml.includes("<rss") && xml.includes("</channel>"));
   assert.ok(!xml.includes("<item>"));
 });
+
+test("renderFeed escapes XML entities in category", () => {
+  const xml = renderFeed([{ ...post, cat: "R&D" }]);
+  assert.ok(xml.includes("<category>R&amp;D</category>"));
+});

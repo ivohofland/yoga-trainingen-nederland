@@ -21,12 +21,11 @@ const escapeXml = (s: string): string => s.replace(/[<>&'"]/g, (c) => XML_ENTITI
 
 // RFC-822 date, derived deterministically from the ISO date. No Date.now() and
 // no lastBuildDate: the static output must be reproducible build to build.
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+// toUTCString() is spec-pinned to exactly this shape ("ddd, DD MMM YYYY HH:mm:ss
+// GMT", zero-padded, English) since ES2018 — no hand-rolled day/month tables to
+// keep in sync, and still deterministic (no Date.now()).
 function rfc822(iso: string): string {
-  const d = new Date(`${iso}T00:00:00Z`);
-  const dd = String(d.getUTCDate()).padStart(2, "0");
-  return `${DAYS[d.getUTCDay()]}, ${dd} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()} 00:00:00 GMT`;
+  return new Date(`${iso}T00:00:00Z`).toUTCString();
 }
 
 export function renderFeed(notes: NoteMeta[]): string {

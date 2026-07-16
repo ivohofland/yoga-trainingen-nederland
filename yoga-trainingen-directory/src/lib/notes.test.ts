@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import path from "node:path";
 import { buildMeta, noteJsonLd, readNoteFrom, readNotesFrom, type NoteMeta } from "./notes";
 import { categories } from "./notes-view";
-import { SITE_URL } from "./site";
+import { SITE_URL, AUTHOR_NAME } from "./site";
 
 const FIX = path.join(process.cwd(), "src", "lib", "__fixtures__", "notities");
 
@@ -90,6 +90,13 @@ test("readNoteFrom returns null for a bad slug or an absent file", () => {
   assert.equal(readNoteFrom(FIX, "bestaat-niet"), null);
 });
 
+test("readNoteFrom names the REAL offending file, not content/notities", () => {
+  assert.throws(
+    () => readNoteFrom(path.join(FIX, "..", "notities-bad-field"), "kapot"),
+    /kapot\.md/,
+  );
+});
+
 test("categories returns distinct cats in first-seen order (no 'Alle')", () => {
   const posts: NoteMeta[] = readNotesFrom(FIX);
   assert.deepEqual(categories(posts), ["Bevinding", "Achtergrond"]);
@@ -97,10 +104,14 @@ test("categories returns distinct cats in first-seen order (no 'Alle')", () => {
 
 test("noteJsonLd builds a BlogPosting with trailing-slash URLs", () => {
   const { meta } = buildMeta("een-stuk", good);
-  const ld = noteJsonLd(meta) as Record<string, unknown>;
+  const ld = noteJsonLd(meta);
+  assert.equal(ld["@context"], "https://schema.org");
   assert.equal(ld["@type"], "BlogPosting");
   assert.equal(ld.headline, "Titel");
+  assert.equal(ld.description, "Intro.");
   assert.equal(ld.datePublished, "2026-07-20");
+  assert.equal(ld.inLanguage, "nl-NL");
+  assert.deepEqual(ld.author, { "@type": "Person", name: AUTHOR_NAME });
   assert.equal(ld.url, `${SITE_URL}/notities/een-stuk/`);
   assert.equal(ld.mainEntityOfPage, `${SITE_URL}/notities/een-stuk/`);
 });

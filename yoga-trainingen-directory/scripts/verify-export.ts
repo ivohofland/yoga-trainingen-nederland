@@ -85,6 +85,17 @@ const feed = fs.readFileSync(feedPath, "utf8");
 if (!feed.includes("<rss") || !feed.includes("</channel>")) {
   fail(`out/notities/feed.xml is not well-formed RSS (missing <rss or </channel>)`);
 }
+// Both the feed's <item> count and the exported article directories derive from
+// the same post set — a feed that silently dropped posts would still contain
+// <rss and </channel> (emitted unconditionally), so this is the only check that
+// would catch it.
+const itemCount = (feed.match(/<item>/g) ?? []).length;
+const articleDirs = fs
+  .readdirSync(path.join(OUT, "notities"), { withFileTypes: true })
+  .filter((e) => e.isDirectory()).length;
+if (itemCount !== articleDirs) {
+  fail(`out/notities/feed.xml has ${itemCount} item(s) but ${articleDirs} article page(s) exported — the feed dropped posts`);
+}
 
 // 3. THE JSON API MUST SHIP, MUST PARSE, AND MUST MATCH WHAT export-json.ts JUST WROTE.
 // Comparing counts against public/data/v1/providers.json (rather than trusting out/'s copy
