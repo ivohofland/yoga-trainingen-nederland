@@ -2898,6 +2898,18 @@
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
             "contact_published": "not_published",
+            "schedule": {
+              "source": "site-intensive-2026-06",
+              "note": "3,5 weken immersion, 27 jul–19 aug 2026 in vier blokken (ma–za resp. ma–wo), dagelijks 10:00–17:00; geen pauze op de pagina vermeld. count = 21 lesdagen; onze telling is een bovengrens op de contacturen (pauzes niet meegerekend).\n",
+              "blocks": [
+                {
+                  "count": 21,
+                  "start": "10:00",
+                  "end": "17:00",
+                  "label": "lesdag"
+                }
+              ]
+            },
             "source": "site-intensive-2026-06",
             "note": "Volledig 200u-programma in 3,5 weken immersion, dagelijks 10:00-17:00, Amsterdam. Bevat 'mentored teaching labs' + feedback van senior teachers; geen geïsoleerd uren-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -2949,12 +2961,14 @@
             "bundle_delta": null,
             "multistyle": false,
             "scheduled_hours_ceiling": {
-              "kind": "no_schedule",
-              "value": null
+              "kind": "computed",
+              "value": 147,
+              "working": "onze telling: 21× 10:00–17:00. Ten hoogste — contacturen zijn nooit meer dan de ingeroosterde tijd, en alleen de opgegeven pauzes zijn afgetrokken."
             },
             "hours_disconnect": {
-              "kind": "no_comparison",
-              "value": null
+              "kind": "computed",
+              "value": 53,
+              "working": "de school claimt 200 uur; het gepubliceerde rooster beslaat ten hoogste 147 uur, dus ten minste 53 uur valt buiten het rooster (zelfstudie, en wat verder niet is ingeroosterd)."
             }
           }
         }

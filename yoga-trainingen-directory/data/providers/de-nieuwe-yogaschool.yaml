@@ -318,6 +318,15 @@ programs:
       supervised_teaching_practice: null
       breakdown_published: not_published
       contact_published: not_published
+      schedule:
+        source: site-intensive-2026-06
+        note: >
+          3,5 weken immersion, 27 jul–19 aug 2026 in vier blokken (ma–za resp.
+          ma–wo), dagelijks 10:00–17:00; geen pauze op de pagina vermeld. count =
+          21 lesdagen; onze telling is een bovengrens op de contacturen (pauzes
+          niet meegerekend).
+        blocks:
+          - { count: 21, start: "10:00", end: "17:00", label: "lesdag" }
       source: site-intensive-2026-06
       note: >
         Volledig 200u-programma in 3,5 weken immersion, dagelijks 10:00-17:00,
