@@ -390,6 +390,8 @@ test("API: every programme carries a complete derived block, and the payload doc
     "contact_ratio",
     "bundle_delta",
     "multistyle",
+    "scheduled_hours_ceiling",
+    "hours_disconnect",
   ];
   for (const provider of PAYLOAD.providers) {
     for (const program of provider.programs) {

@@ -969,7 +969,7 @@ test("RENDER: a programme with nothing to buy first shows NO path-cost row", () 
   assert.match(withPath[0].priceDerivedPathCost ?? "", /om te kwalificeren/);
 });
 
-test("RENDER: `derived` is on the FOUR derived figures and on NOTHING else", () => {
+test("RENDER: `derived` is on the SIX derived figures and on NOTHING else", () => {
   // The flag is a licence to print a number in non-factual ink. Anywhere else it would do
   // the opposite of its job: it would strip a provider's own sourced fact of its fact ink.
   // Conversely, every derived value that HAS a figure must carry it — a new derived row
@@ -983,11 +983,18 @@ test("RENDER: `derived` is on the FOUR derived figures and on NOTHING else", () 
   // under a Prijs row and an Urenuitsplitsing row that really are theirs and that carry the
   // citations to prove it. On de Yogaschool it is our arithmetic OVER our arithmetic:
   // (3 × € 1.530) ÷ 360, in the school's own colours.
+  //
+  // THE SCHEDULE CEILING AND THE DISCONNECT ARE THE FIFTH AND SIXTH (v0.12). Both are OUR
+  // arithmetic over the school's own published session times — a strict upper bound summed
+  // from their block times, and the claimed total minus that bound — and neither is a figure
+  // any school states. They must carry the flag exactly like the other four.
   const DERIVED_LABELS = new Set<string>([
     nl.rowTotalPrice,
     nl.rowTotalHours,
     nl.rowTotalPathCost,
     nl.colPph,
+    nl.rowScheduleCeiling,
+    nl.rowHoursDisconnect,
   ]);
   const flagged: Record<string, number> = {};
   for (const p of providers) {
