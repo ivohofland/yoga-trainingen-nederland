@@ -73,7 +73,7 @@ sources:
   - id: site-intensive-2026-06
     type: website
     url: https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/
-    archived_url: null
+    archived_url: https://web.archive.org/web/20260716133943/https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/
     captured: "2026-06-20"
     note: "Vinyasa Teacher Training Intensive (EN): 3,5 weken immersion, prijs,
       certificering."
@@ -122,6 +122,19 @@ sources:
       bewijs is de gefilterde snapshot; Wayback overgeslagen voor
       crkbo.nl/Register/*.
     local_snapshot: data/archives/de-nieuwe-yogaschool/crkbo-register-2026-06-2026-06-20.pdf
+  - id: boekenlijst-2026-07
+    type: website
+    url: https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/
+    archived_url: https://web.archive.org/web/20260716134020/https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/
+    captured: "2026-07-16"
+    note: >
+      Los gepubliceerde boekenlijst — de "boekenlijst apart gepubliceerd"
+      waarnaar price.excludes van de Yin- en Vinyasa-opleiding verwijst. Bevat
+      per opleiding een "Verplichte boekenlijst" én een "Aanbevolen" lijst. LET
+      OP: staat op het /en/-pad maar de inhoud is Nederlandstalig (paginatitel
+      "Yoga Teacher Trainingen Boekenlijst") en dekt alleen de NL Yin- en
+      Vinyasa-200u — NIET de Engelstalige Vinyasa Teacher Training Intensive.
+    local_snapshot: data/archives/de-nieuwe-yogaschool/boekenlijst-2026-07-2026-07-16.pdf
 
 programs:
   - id: 200-vinyasa
@@ -185,6 +198,9 @@ programs:
       final: yes
       quote: "Aan het einde van de 200-uurs Vinyasa yoga opleiding rond je de training
         af met een praktijkexamen en een theorie-examen."
+    transparency:
+      reading_list_published: yes
+      source: boekenlijst-2026-07
     track_record:
       first_seen_year: 2014
       source: site-vinyasa-2026-06
@@ -251,6 +267,9 @@ programs:
       exists: yes
       quote: "Word Yin yoga docent (Yoga Alliance) met onze 200-uurs Yin yoga
         opleiding"
+    transparency:
+      reading_list_published: yes
+      source: boekenlijst-2026-07
     track_record:
       first_seen_year: 2014
       source: ya-register-2026-06
