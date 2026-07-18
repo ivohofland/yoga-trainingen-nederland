@@ -228,6 +228,22 @@ export const nl = {
   /** Het afgeleide totaal zelf. Het "±" en het label zeggen samen wiens getal dit is. */
   hoursDerivedTotal: (hours: number) => `± ${hours} uur`,
 
+  /* ---------- Rooster: het plafond op contacturen en het verschil (spec §6, v0.12) ---------- */
+
+  /** De uitgeschreven telling per blok, zodat de lezer haar kan narekenen. "Ten hoogste":
+   *  contacturen zijn nooit méér dan de tijd in de zaal, en alleen opgegeven pauzes zijn eraf. */
+  scheduleCeilingWorking: (parts: string[]) =>
+    `onze telling: ${parts.join(" + ")}. Ten hoogste — contacturen zijn nooit meer dan de ` +
+    `ingeroosterde tijd, en alleen de opgegeven pauzes zijn afgetrokken.`,
+  /** Het plafond zelf. "Ten hoogste" en het label zeggen samen dat dit ONS getal is, en een bovengrens. */
+  scheduleCeilingValue: (hours: number) => `ten hoogste ${hours} uur`,
+  /** Het verschil: geclaimd totaal minus het plafond. Een ONDERgrens (het plafond is een bovengrens). */
+  hoursDisconnectValue: (hours: number) => `minstens ${hours} uur niet ingeroosterd`,
+  hoursDisconnectWorking: (total: number, ceiling: number) =>
+    `de school claimt ${total} uur; het gepubliceerde rooster beslaat ten hoogste ${ceiling} uur, ` +
+    `dus ten minste ${Math.round((total - ceiling) * 100) / 100} uur valt buiten het rooster ` +
+    `(zelfstudie, en wat verder niet is ingeroosterd).`,
+
   /* ---------- €/contactuur en de contactratio: ALTIJD van ons (spec §6) ---------- */
 
   /**
