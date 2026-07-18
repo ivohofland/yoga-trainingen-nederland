@@ -58,6 +58,12 @@ export const YearMonth = z
 
 export const Year = z.number().int().min(1900).max(2100);
 
+/** A clock time "HH:MM", 00:00–23:59 (spec §4.3, v0.12). Validated HERE, like YearMonth —
+ *  so `validate` names a bad time by record and field, and derive.ts may assume a real one. */
+export const Time = z
+  .string()
+  .regex(/^([01]\d|2[0-3]):[0-5]\d$/, "expected HH:MM, 00:00–23:59");
+
 const slug = z.string().regex(/^[a-z0-9][a-z0-9-]*$/, "expected kebab-case slug");
 
 /* ---------- Source (provenance anchor, spec §4.1) ---------- */
@@ -348,6 +354,50 @@ export type Inquiry = z.infer<typeof Inquiry>;
 
 /* ---------- Program (spec §4.3) ---------- */
 
+/* ---------- Schedule (spec §4.3, v0.12) ---------- */
+
+/** Minutes since midnight — for the intra-block invariants below. */
+const hhmm = (t: string): number => {
+  const [h, m] = t.split(":");
+  return Number(h) * 60 + Number(m);
+};
+
+/**
+ * ONE SESSION TYPE, AND HOW MANY OF IT (spec §4.3, v0.12). `count` sessions running
+ * `start`–`end`, minus a STATED break (`pause_min`). The three refinements are all
+ * intra-block — end after start, a break shorter than the session, a real clock time —
+ * so Zod can check them from the block alone, and `validate` names the offender.
+ */
+const ScheduleBlock = strictObject({
+  count: z.number().int().positive(),
+  start: Time,
+  end: Time,
+  /** Published break per session, MINUTES. Present only when the school states it —
+   *  omitted means "not stated", never "no break". Subtracted from the ceiling. */
+  pause_min: z.number().int().nonnegative().optional(),
+  label: z.string().optional(),
+})
+  .refine((b) => hhmm(b.end) > hhmm(b.start), {
+    message: "end must be after start",
+    path: ["end"],
+  })
+  .refine((b) => b.pause_min == null || b.pause_min < hhmm(b.end) - hhmm(b.start), {
+    message: "pause_min must be shorter than the session",
+    path: ["pause_min"],
+  });
+
+/**
+ * A programme's published timetable, as typed blocks — irregular schedules are just more
+ * blocks (Friday evening + full Saturday + half Sunday = three). `source` is required: the
+ * block times are facts about a named business and need the page that states them.
+ * `scheduled_hours_ceiling` (derive.ts) sums it as an UPPER BOUND on contact hours.
+ */
+export const Schedule = strictObject({
+  source: z.string(),
+  note: z.string().optional(),
+  blocks: z.array(ScheduleBlock).min(1, "a schedule needs at least one block"),
+});
+
 export const CoherenceSignals = strictObject({
   required_sequence: Quad.optional(),
   required_sequence_note: z.string().optional(),
@@ -491,6 +541,9 @@ export const Program = strictObject({
      * that stops the derivation is the field we must cite when we say why.
      */
     contact_published: Quad,
+    /** The published timetable (spec §4.3, v0.12). Feeds scheduled_hours_ceiling +
+     *  hours_disconnect (derive.ts). Absent = we hold no session times; the feature is silent. */
+    schedule: Schedule.optional(),
     source: z.string().optional(),
     /** What the provider says about practice/hours when not given as an isolated
      *  number — keeps the §5 nuance the bare numbers would otherwise drop. */
