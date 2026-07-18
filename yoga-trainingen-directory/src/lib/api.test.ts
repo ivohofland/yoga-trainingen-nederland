@@ -16,7 +16,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { loadDataset } from "./loader";
 import { toApiPayload } from "./api";
-import { ourWorking } from "./derive";
+import { ourWorking, scheduledHoursCeiling, hoursDisconnect } from "./derive";
 import { toListingRows, toProviderView } from "./presenters";
 import { priceAmountIsOurGap, priceQuad } from "./rules";
 import { saysNotPublished, quadClass } from "./quad";
@@ -482,4 +482,19 @@ test("API: multistyle is published per programme, and a single-style school is n
   assert.ok(single > 0,
     "every programme in the export is multistyle — which is exactly what the `>= 1` mutation produces, " +
     "and this test could not tell the difference");
+});
+
+test("API: derived.scheduled_hours_ceiling and hours_disconnect equal the derive functions", () => {
+  for (const provider of PAYLOAD.providers) {
+    const src = providers.find((p) => p.id === provider.id)!;
+    for (const program of provider.programs) {
+      const prog = src.programs.find((pr) => pr.id === program.id)!;
+      assert.deepEqual(program.derived.scheduled_hours_ceiling, scheduledHoursCeiling(prog));
+      assert.deepEqual(program.derived.hours_disconnect, hoursDisconnect(prog));
+    }
+  }
+});
+
+test("API README documents the ceiling as an upper bound", () => {
+  assert.match(PAYLOAD.readme, /bovengrens|ten hoogste|upper bound/i);
 });
