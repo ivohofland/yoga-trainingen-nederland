@@ -2206,3 +2206,53 @@ test("INQUIRY: 'we are still waiting' and 'they refused to answer' never read al
   assert.equal(answered.replySummary, "De school bevestigt de Mindbody-prijs");
   assert.match(answered.replyReceived ?? "", /20 jul 2026/);
 });
+
+test("record: a schedule adds a derived ceiling row (ours), and a disconnect row when the gap is positive", () => {
+  const provider = {
+    id: "sched", name: "Sched", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: {
+        total: 200, breakdown_published: "not_published", contact_published: "not_published",
+        schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
+      },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  const ceiling = rows.find((r) => r.label === nl.rowScheduleCeiling)!;
+  const disconnect = rows.find((r) => r.label === nl.rowHoursDisconnect)!;
+
+  // OURS: derived ink, working in the note, and NO source key (spec §6).
+  assert.equal(inkFor(ceiling), "derived");
+  assert.equal(ceiling.value, nl.scheduleCeilingValue(147));
+  assert.ok(ceiling.note && ceiling.note.length > 0);
+  assert.equal("source" in ceiling, false);
+
+  assert.equal(inkFor(disconnect), "derived");
+  assert.equal(disconnect.value, nl.hoursDisconnectValue(53));
+});
+
+test("record: no schedule → no ceiling row and no disconnect row", () => {
+  const provider = {
+    id: "nosched", name: "NoSched", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: { total: 200, breakdown_published: "not_published", contact_published: "not_published" },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  assert.equal(rows.some((r) => r.label === nl.rowScheduleCeiling), false);
+  assert.equal(rows.some((r) => r.label === nl.rowHoursDisconnect), false);
+});
