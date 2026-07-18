@@ -433,7 +433,14 @@ export function scheduledHoursCeiling(program: Program): ScheduledHoursCeiling {
  *
  * Because the ceiling is an UPPER bound, this gap is a LOWER bound: "at least 53 u are not
  * scheduled contact time" (self-study, and whatever else is not on the timetable). OURS.
- * `no_comparison` where there is no schedule, or no claimed total to compare against.
+ *
+ * ONLY AGAINST A PUBLISHED TOTAL — `totalHours()` returns `published` (the school's own
+ * figure) or `computed` (OUR sum of contact + self_study, which the school never stated).
+ * The working says "de school claimt X uur"; over our own sum that sentence is the exact
+ * misattribution the published/computed split exists to prevent, and against an
+ * already-decomposed total the gap would also double-count the self-study. So:
+ * `no_comparison` where there is no schedule, or where the total is anything but the
+ * school's own published figure.
  */
 export type HoursDisconnect =
   | Computed
@@ -442,7 +449,12 @@ export type HoursDisconnect =
 export function hoursDisconnect(program: Program): HoursDisconnect {
   const total = totalHours(program);
   const ceiling = scheduledHoursCeiling(program);
-  if (total.value == null || ceiling.kind !== "computed") {
+  // Only a PUBLISHED total is a CLAIM to disconnect from. A `computed` total is OUR sum of
+  // contact + self_study (the school stated no total) — and the working says "de school claimt
+  // {total} uur", which over our own sum is the exact misattribution the published/computed
+  // split exists to prevent. Against an already-decomposed total the gap would also
+  // double-count the self-study. So: a published total only.
+  if (total.kind !== "published" || ceiling.kind !== "computed") {
     return { kind: "no_comparison", value: null };
   }
   return {

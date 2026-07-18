@@ -70,3 +70,10 @@ test("disconnect: no claimed total → no_comparison", () => {
 test("disconnect: no schedule → no_comparison even with a total", () => {
   assert.equal(hoursDisconnect(program(HC({ total: 200 }))).kind, "no_comparison");
 });
+
+test("disconnect: a COMPUTED total (our sum, not their claim) → no_comparison", () => {
+  // totalHours is `computed` when the school publishes contact + self_study but no total.
+  // The disconnect must never print "de school claimt X uur" over a total WE summed.
+  const p = program(HC({ contact: 120, self_study: 80, schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] } }));
+  assert.equal(hoursDisconnect(p).kind, "no_comparison");
+});
