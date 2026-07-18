@@ -206,7 +206,9 @@ export interface ProgramDerived {
   /**
    * total_hours − scheduled_hours_ceiling (spec §6, v0.12) — a LOWER BOUND on the claimed
    * hours the timetable can't account for. OURS. `{kind:"no_comparison"}` where there is no
-   * schedule or no claimed total.
+   * schedule or the total is not the school's own PUBLISHED figure (a total WE summed is not
+   * a claim to disconnect from). `{kind:"no_shortfall"}` where the published total is AT OR
+   * BELOW the ceiling — there is no shortfall to report, never a negative "minstens" figure.
    */
   hours_disconnect: HoursDisconnectWire;
 }
@@ -289,7 +291,9 @@ const README =
   "hoogste` zoveel — géén door de school gepubliceerd contactuur-getal. `derived.hours_disconnect` " +
   "= `total_hours` − dit plafond, een ONDERgrens op de geclaimde uren die niet in het rooster " +
   "terug te vinden zijn. Beide zijn van ons; `no_schedule`/`no_comparison` = geen rooster of geen " +
-  "geclaimd totaal.";
+  "geclaimd totaal. `hours_disconnect` vergelijkt alleen tegen een DOOR DE SCHOOL GEPUBLICEERD " +
+  "totaal (een door ons opgeteld totaal telt niet als hun claim → `no_comparison`); is het " +
+  "gepubliceerde totaal ≤ het plafond, dan is er geen tekort → `no_shortfall`.";
 
 export function toApiPayload(providers: Provider[]): ApiPayload {
   return {

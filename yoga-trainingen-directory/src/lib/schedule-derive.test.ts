@@ -62,18 +62,42 @@ test("disconnect: 200 claimed − 147 ceiling = 53 (a lower bound)", () => {
   assert.equal(d.value, 53);
 });
 
-test("disconnect: no claimed total → no_comparison", () => {
+test("disconnect: no claimed total → no_comparison, value null", () => {
   const p = program(HC({ schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] } }));
-  assert.equal(hoursDisconnect(p).kind, "no_comparison");
+  const d = hoursDisconnect(p);
+  assert.equal(d.kind, "no_comparison");
+  assert.equal(d.value, null);
 });
 
-test("disconnect: no schedule → no_comparison even with a total", () => {
-  assert.equal(hoursDisconnect(program(HC({ total: 200 }))).kind, "no_comparison");
+test("disconnect: no schedule → no_comparison, value null, even with a total", () => {
+  const d = hoursDisconnect(program(HC({ total: 200 })));
+  assert.equal(d.kind, "no_comparison");
+  assert.equal(d.value, null);
 });
 
-test("disconnect: a COMPUTED total (our sum, not their claim) → no_comparison", () => {
+test("disconnect: a COMPUTED total (our sum, not their claim) → no_comparison, value null", () => {
   // totalHours is `computed` when the school publishes contact + self_study but no total.
   // The disconnect must never print "de school claimt X uur" over a total WE summed.
   const p = program(HC({ contact: 120, self_study: 80, schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] } }));
-  assert.equal(hoursDisconnect(p).kind, "no_comparison");
+  const d = hoursDisconnect(p);
+  assert.equal(d.kind, "no_comparison");
+  assert.equal(d.value, null);
+});
+
+test("disconnect: a published total at or below the ceiling → no_shortfall (never a negative computed)", () => {
+  const p = program(HC({ total: 100, schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] } }));
+  assert.equal(hoursDisconnect(p).kind, "no_shortfall");
+});
+
+test("disconnect: total exactly equal to the ceiling → no_shortfall (the gap must be > 0)", () => {
+  const p = program(HC({ total: 147, schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] } }));
+  assert.equal(hoursDisconnect(p).kind, "no_shortfall");
+});
+
+test("ceiling: a fractional session length rounds to 2 decimals (75 min = 1.25 u)", () => {
+  const p = program(HC({ total: 200, schedule: { source: "s", blocks: [{ count: 1, start: "19:00", end: "20:15" }] } }));
+  const c = scheduledHoursCeiling(p);
+  assert.equal(c.kind, "computed");
+  assert.equal(c.value, 1.25);
+  assert.equal(hoursDisconnect(p).value, 198.75);
 });
