@@ -221,6 +221,8 @@ export const nl = {
    * "Urenuitsplitsing" hierboven, als hún claim — deze rij verschijnt dan niet.
    */
   rowTotalHours: "Totaaluren (onze optelling)",
+  rowScheduleCeiling: "Ingeroosterde uren (onze telling)",
+  rowHoursDisconnect: "Verschil met geclaimde uren",
   /** De uitgeschreven som, zodat de lezer haar kan narekenen. */
   totalHoursWorking: (contact: number, selfStudy: number) =>
     `onze optelling: ${contact} contacturen + ${selfStudy} zelfstudie-uren. De aanbieder ` +
