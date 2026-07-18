@@ -390,6 +390,69 @@ export function totalHours(program: Program): TotalHours {
 }
 
 /**
+ * A CEILING ON CONTACT HOURS, FROM THE PUBLISHED SCHEDULE — OURS ON EVERY PROGRAMME
+ * (spec §6, v0.12). Like €/contactuur and the contact ratio, there is no `published`
+ * variant: no school publishes this bound.
+ *
+ * Contact time can only ever be ≤ time in the room, so the raw clock sum is a strict UPPER
+ * BOUND: "at most 147 u". We never guess the break — a STATED `pause_min` only lowers the
+ * bound (a stronger, still-true statement), and an unstated one leaves it where it is,
+ * conservative against our own critique. The block times are theirs (cited via
+ * `schedule.source`); this SUM is ours, and the working shows it.
+ */
+export type ScheduledHoursCeiling =
+  | Computed
+  | { kind: "no_schedule"; value: null };
+
+/** Minutes since midnight. The time is schema-validated HH:MM (Time), so this cannot NaN
+ *  on a real record; a bad one would have failed `validate` by record and field. */
+function minutesOfDay(t: string): number {
+  const [h, m] = t.split(":");
+  return Number(h) * 60 + Number(m);
+}
+
+export function scheduledHoursCeiling(program: Program): ScheduledHoursCeiling {
+  const schedule = program.hours_claimed.schedule;
+  if (!schedule) return { kind: "no_schedule", value: null };
+  const parts: string[] = [];
+  let minutes = 0;
+  for (const b of schedule.blocks) {
+    minutes += b.count * (minutesOfDay(b.end) - minutesOfDay(b.start) - (b.pause_min ?? 0));
+    parts.push(`${b.count}× ${b.start}–${b.end}${b.pause_min ? ` (−${b.pause_min} min pauze)` : ""}`);
+  }
+  return {
+    kind: "computed",
+    value: Math.round((minutes / 60) * 100) / 100,
+    working: nl.scheduleCeilingWorking(parts),
+  };
+}
+
+/**
+ * THE CLAIM MINUS THE CEILING — how much of the claimed total the timetable cannot account
+ * for (spec §6, v0.12). Consumes the DERIVED total (`totalHours`), never the raw field.
+ *
+ * Because the ceiling is an UPPER bound, this gap is a LOWER bound: "at least 53 u are not
+ * scheduled contact time" (self-study, and whatever else is not on the timetable). OURS.
+ * `no_comparison` where there is no schedule, or no claimed total to compare against.
+ */
+export type HoursDisconnect =
+  | Computed
+  | { kind: "no_comparison"; value: null };
+
+export function hoursDisconnect(program: Program): HoursDisconnect {
+  const total = totalHours(program);
+  const ceiling = scheduledHoursCeiling(program);
+  if (total.value == null || ceiling.kind !== "computed") {
+    return { kind: "no_comparison", value: null };
+  }
+  return {
+    kind: "computed",
+    value: Math.round((total.value - ceiling.value) * 100) / 100,
+    working: nl.hoursDisconnectWorking(total.value, ceiling.value),
+  };
+}
+
+/**
  * €/CONTACTUUR — PRICE ÷ CONTACT HOURS, AND IT IS OURS ON EVERY SINGLE PROGRAMME.
  *
  * There is no `published` variant here, and that absence is the correction (spec §6, and
