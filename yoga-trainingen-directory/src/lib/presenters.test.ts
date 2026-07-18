@@ -2263,3 +2263,50 @@ test("record: no schedule → no ceiling row and no disconnect row", () => {
   assert.equal(rows.some((r) => r.label === nl.rowScheduleCeiling), false);
   assert.equal(rows.some((r) => r.label === nl.rowHoursDisconnect), false);
 });
+
+test("record: a published total at or below the ceiling → ceiling row present, disconnect row ABSENT (no_shortfall)", () => {
+  const provider = {
+    id: "sched-noshortfall", name: "SchedNoShortfall", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: {
+        total: 100, breakdown_published: "not_published", contact_published: "not_published",
+        schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
+      },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  assert.equal(rows.some((r) => r.label === nl.rowScheduleCeiling), true,
+    "the ceiling is derivable regardless of the total — it must still render");
+  assert.equal(rows.some((r) => r.label === nl.rowHoursDisconnect), false,
+    "a published total (100) at or below the ceiling (147) is no_shortfall — never a negative disconnect row");
+});
+
+test("record: a schedule with NO total at all → ceiling row present, disconnect row absent (no_comparison)", () => {
+  const provider = {
+    id: "sched-nototal", name: "SchedNoTotal", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: {
+        breakdown_published: "not_published", contact_published: "not_published",
+        schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
+      },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  assert.equal(rows.some((r) => r.label === nl.rowScheduleCeiling), true);
+  assert.equal(rows.some((r) => r.label === nl.rowHoursDisconnect), false,
+    "totalHours() is no_total with no total/contact/self_study at all, so hoursDisconnect is no_comparison");
+});

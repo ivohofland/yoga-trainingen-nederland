@@ -1205,13 +1205,14 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   // where the school publishes no session times. The ceiling is an UPPER bound ("ten
   // hoogste"), rendered through derivedRow like every figure of ours; the block times it
   // sums are theirs, cited in the Sources section via schedule.source. The disconnect row
-  // appears only where there is a claimed total to compare AND the gap is positive — a
-  // non-positive gap means the timetable already covers the claim, which is not the finding.
+  // appears only where `hoursDisconnect` yields a real shortfall — it returns `no_shortfall`
+  // when the published total is at or below the ceiling, so the non-positive case never
+  // reaches here (decided in derive.ts, not re-checked on this surface).
   const ceiling = scheduledHoursCeiling(program);
   if (ceiling.kind === "computed") {
     rows.push(derivedRow(nl.rowScheduleCeiling, ceiling, nl.scheduleCeilingValue(ceiling.value)));
     const disconnect = hoursDisconnect(program);
-    if (disconnect.kind === "computed" && disconnect.value > 0) {
+    if (disconnect.kind === "computed") {
       rows.push(derivedRow(nl.rowHoursDisconnect, disconnect, nl.hoursDisconnectValue(disconnect.value)));
     }
   }

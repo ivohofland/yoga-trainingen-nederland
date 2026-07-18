@@ -356,7 +356,8 @@ export type Inquiry = z.infer<typeof Inquiry>;
 
 /* ---------- Schedule (spec §4.3, v0.12) ---------- */
 
-/** Minutes since midnight — for the intra-block invariants below. */
+/** Minutes since midnight — for the intra-block invariants below.
+ *  Mirror of derive.ts `minutesOfDay` — kept separate across the node-free boundary; keep in sync. */
 const hhmm = (t: string): number => {
   const [h, m] = t.split(":");
   return Number(h) * 60 + Number(m);
@@ -364,9 +365,10 @@ const hhmm = (t: string): number => {
 
 /**
  * ONE SESSION TYPE, AND HOW MANY OF IT (spec §4.3, v0.12). `count` sessions running
- * `start`–`end`, minus a STATED break (`pause_min`). The three refinements are all
- * intra-block — end after start, a break shorter than the session, a real clock time —
- * so Zod can check them from the block alone, and `validate` names the offender.
+ * `start`–`end`, minus a STATED break (`pause_min`). Two `.refine()`s check the
+ * cross-field invariants — end after start, a break shorter than the session — and the
+ * `Time` regex on `start`/`end` checks the third: a real clock time. All three are
+ * intra-block, so `validate` names the offender.
  */
 const ScheduleBlock = strictObject({
   count: z.number().int().positive(),
