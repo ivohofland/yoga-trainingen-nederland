@@ -254,9 +254,10 @@ them silently corrupts the dataset's credibility.
   The order is therefore: find the page that states it → add it to `sources[]` →
   **archive it** → extract the value FROM THE CAPTURED FILE. Never from a search
   summary, never from memory. `src/lib/provenance.ts` enforces this for the **price,
-  the hours total, the BTW treatment and a priced prerequisite** — and since
-  2026-07-14 it is a **BUILD GATE**: `npm run provenance` runs inside `npm run build`
-  and fails it, so a record citing a page that does not state its fact cannot ship.
+  the hours total, the BTW treatment, a priced prerequisite and the published session
+  times** — and since 2026-07-14 it is a **BUILD GATE**: `npm run provenance` runs
+  inside `npm run build` and fails it, so a record citing a page that does not state
+  its fact cannot ship.
   (It still warns in `npm run validate` and counts on `/qa` — those are the friendly
   signals while you work; the build is where it bites.) A linked PDF is exactly the
   artefact a provider can silently replace, so it gets its own `Source` with its own

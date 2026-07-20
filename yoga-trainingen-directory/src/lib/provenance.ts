@@ -15,11 +15,11 @@
  * A human cannot catch that by reading YAML: the record looks perfect. Only the
  * ARTIFACT can answer it. So this check reads the artifacts.
  *
- * FOUR CLAIMS, ONE MACHINERY, AND EACH ASKS FOR **THE FACT WE RECORDED** (v0.7, v0.9).
- * The first version asked a weaker question — "is there *a* price / *an* hours-like
- * number / *any* mention of tax on this page?" — and a weaker question is a weaker
- * check: it certified as sourced six statements the cited page does not make. What
- * each check asks now:
+ * FIVE CLAIMS, ONE MACHINERY, AND EACH ASKS FOR **THE FACT WE RECORDED** (v0.7, v0.9,
+ * v0.12). The first version asked a weaker question — "is there *a* price / *an*
+ * hours-like number / *any* mention of tax on this page?" — and a weaker question is a
+ * weaker check: it certified as sourced six statements the cited page does not make.
+ * What each check asks now:
  *
  *   - PRICE — `price.amount_eur` set → the cited artifact must print THAT AMOUNT.
  *     "Is there a price on the page" passed de Yogaschool Enschede, whose page prints
@@ -53,6 +53,13 @@
  *     grounded it on "er is geen vrijstelling mogelijk", which is about COURSE CREDIT;
  *     and with no direction check, a page reading "€3150,- Excl BTW" grounded
  *     `exempt_crkbo`. The three treatments have near-disjoint vocabularies. Use them.
+ *   - SCHEDULE (v0.12) — `hours_claimed.schedule` set → the cited artifact must print
+ *     EVERY distinct block TIME (start and end). The ceiling and the disconnect
+ *     (derive.ts) are numbers we publish about a named business, computed from those
+ *     times, so they are held to the same standard. It gates the TIMES, not the block
+ *     COUNT — the page states the count only as a date range ("Mon to Sat"), which no
+ *     regex can honestly turn into "21"; that stays a documented, manually-verified
+ *     limit (see `claimsOf`).
  *
  * HOW IT READS THEM, and why both:
  *
@@ -343,8 +350,32 @@ export function evidencesVat(text: string, treatment: VatTreatment): boolean {
   return VAT_PATTERNS[treatment].test(text.replace(VAT_REGISTRATION_RE, " "));
 }
 
+/**
+ * A SESSION TIME, AS A PAGE PRINTS IT — the times the ceiling/disconnect are computed from.
+ *
+ * Colon is the unambiguous form (the DNYS capture: "Daily schedule 10:00 – 17:00"); `.`, `u`
+ * and `h` are the Dutch/informal spellings ("10.00 uur", "10u00"). The dot could in theory
+ * collide with an English price "€ 17.00" — but a training's prices are in the thousands, never
+ * €17, so in THIS domain that collision is not real, and INCLUDING the dot avoids a FALSE
+ * NEGATIVE on a Dutch "10.00 uur" page, which is the worse failure (it accuses our own sourced
+ * research). Separator required (a bare "1000" is not a time). A single-digit hour may drop its
+ * leading zero on the page ("9:00" for "09:00"). Minutes exact; digit boundaries so "17:00" is
+ * not matched inside "217:00" or "17:000".
+ */
+export function scheduleTimeRe(hhmm: string): RegExp {
+  const [hh, mm] = hhmm.split(":");
+  const hour = Number(hh);
+  const hourPat = hour < 10 ? String.raw`0?${hour}` : String(hour);
+  return new RegExp(String.raw`(?<![\d.,:])${hourPat}[.:uh]${mm}(?!\d)`, "i");
+}
+
+/** Does the artifact print EVERY distinct session time the record holds? See scheduleTimeRe. */
+export function evidencesScheduleTimes(text: string, times: string[]): boolean {
+  return times.every((t) => scheduleTimeRe(t).test(text));
+}
+
 /** Which claim a finding is about. The message names the field; this makes it filterable. */
-export type ProvenanceCheck = "price" | "hours" | "vat" | "prerequisite";
+export type ProvenanceCheck = "price" | "hours" | "vat" | "prerequisite" | "schedule";
 
 /**
  * WHICH QUESTION WAS ASKED of the artifact — and therefore what a pass is worth.
@@ -735,6 +766,27 @@ function claimsOf(program: Program): Claimed[] {
         vat === "exempt_crkbo"
           ? "stelt nergens dat er géén btw wordt gerekend (een CRKBO-vermelding, een 'vrijstelling' van iets anders, of een 'excl. btw' is dat niet — §4.11)"
           : `stelt nergens dat de prijs '${vat}. btw' is`,
+    });
+  }
+
+  // SCHEDULE (v0.12). The ceiling and the disconnect are numbers we publish about a named
+  // business, and they rest on the block TIMES. So the cited page must PRINT those times —
+  // held to the same standard as price and hours. THE LIMIT, in this file's own tradition:
+  // it gates the TIMES, not the COUNT. The page states the count only as date ranges ("Mon to
+  // Sat"), which no regex can honestly turn into "21", so the count stays manually verified —
+  // a floor under the citation, not a ceiling over it. (A stated `pause_min` — none in the
+  // corpus today — would be a further claim; add it when a record first needs it.)
+  const schedule = program.hours_claimed.schedule;
+  if (schedule) {
+    const times = [...new Set(schedule.blocks.flatMap((b) => [b.start, b.end]))];
+    claims.push({
+      check: "schedule",
+      granularity: "fact",
+      programId: program.id,
+      sourceId: schedule.source,
+      claim: `roostertijden ${times.join(", ")} volgens het record`,
+      evidences: (text) => evidencesScheduleTimes(text, times),
+      missing: "drukt die tijd(en) nergens af — citeer de pagina die het rooster STELT, en archiveer die",
     });
   }
 

@@ -78,7 +78,7 @@ if (skipped > 0) {
   console.log("  Draai dit lokaal, mét de archieven, voor de volledige toets.");
 } else if (findings.length === 0) {
   console.log(
-    `\n✓ ${examined}/${claims} claim(s) (prijs/uren/btw/vooropleiding) — elk gedekt door een gearchiveerd artefact dat het STELT`,
+    `\n✓ ${examined}/${claims} claim(s) (prijs/uren/btw/vooropleiding/rooster) — elk gedekt door een gearchiveerd artefact dat het STELT`,
   );
   console.log(`  Getoetst op: ${niveau}.`);
 }
