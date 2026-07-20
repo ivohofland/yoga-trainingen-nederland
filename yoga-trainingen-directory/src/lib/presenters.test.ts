@@ -969,7 +969,7 @@ test("RENDER: a programme with nothing to buy first shows NO path-cost row", () 
   assert.match(withPath[0].priceDerivedPathCost ?? "", /om te kwalificeren/);
 });
 
-test("RENDER: `derived` is on the FOUR derived figures and on NOTHING else", () => {
+test("RENDER: `derived` is on the SIX derived figures and on NOTHING else", () => {
   // The flag is a licence to print a number in non-factual ink. Anywhere else it would do
   // the opposite of its job: it would strip a provider's own sourced fact of its fact ink.
   // Conversely, every derived value that HAS a figure must carry it — a new derived row
@@ -983,11 +983,18 @@ test("RENDER: `derived` is on the FOUR derived figures and on NOTHING else", () 
   // under a Prijs row and an Urenuitsplitsing row that really are theirs and that carry the
   // citations to prove it. On de Yogaschool it is our arithmetic OVER our arithmetic:
   // (3 × € 1.530) ÷ 360, in the school's own colours.
+  //
+  // THE SCHEDULE CEILING AND THE DISCONNECT ARE THE FIFTH AND SIXTH (v0.12). Both are OUR
+  // arithmetic over the school's own published session times — a strict upper bound summed
+  // from their block times, and the claimed total minus that bound — and neither is a figure
+  // any school states. They must carry the flag exactly like the other four.
   const DERIVED_LABELS = new Set<string>([
     nl.rowTotalPrice,
     nl.rowTotalHours,
     nl.rowTotalPathCost,
     nl.colPph,
+    nl.rowScheduleCeiling,
+    nl.rowHoursDisconnect,
   ]);
   const flagged: Record<string, number> = {};
   for (const p of providers) {
@@ -2205,4 +2212,101 @@ test("INQUIRY: 'we are still waiting' and 'they refused to answer' never read al
   assert.equal(answered.state, "answered");
   assert.equal(answered.replySummary, "De school bevestigt de Mindbody-prijs");
   assert.match(answered.replyReceived ?? "", /20 jul 2026/);
+});
+
+test("record: a schedule adds a derived ceiling row (ours), and a disconnect row when the gap is positive", () => {
+  const provider = {
+    id: "sched", name: "Sched", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: {
+        total: 200, breakdown_published: "not_published", contact_published: "not_published",
+        schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
+      },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  const ceiling = rows.find((r) => r.label === nl.rowScheduleCeiling)!;
+  const disconnect = rows.find((r) => r.label === nl.rowHoursDisconnect)!;
+
+  // OURS: derived ink, working in the note, and NO source key (spec §6).
+  assert.equal(inkFor(ceiling), "derived");
+  assert.equal(ceiling.value, nl.scheduleCeilingValue(147));
+  assert.ok(ceiling.note && ceiling.note.length > 0);
+  assert.equal("source" in ceiling, false);
+
+  assert.equal(inkFor(disconnect), "derived");
+  assert.equal(disconnect.value, nl.hoursDisconnectValue(53));
+});
+
+test("record: no schedule → no ceiling row and no disconnect row", () => {
+  const provider = {
+    id: "nosched", name: "NoSched", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: { total: 200, breakdown_published: "not_published", contact_published: "not_published" },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  assert.equal(rows.some((r) => r.label === nl.rowScheduleCeiling), false);
+  assert.equal(rows.some((r) => r.label === nl.rowHoursDisconnect), false);
+});
+
+test("record: a published total at or below the ceiling → ceiling row present, disconnect row ABSENT (no_shortfall)", () => {
+  const provider = {
+    id: "sched-noshortfall", name: "SchedNoShortfall", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: {
+        total: 100, breakdown_published: "not_published", contact_published: "not_published",
+        schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
+      },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  assert.equal(rows.some((r) => r.label === nl.rowScheduleCeiling), true,
+    "the ceiling is derivable regardless of the total — it must still render");
+  assert.equal(rows.some((r) => r.label === nl.rowHoursDisconnect), false,
+    "a published total (100) at or below the ceiling (147) is no_shortfall — never a negative disconnect row");
+});
+
+test("record: a schedule with NO total at all → ceiling row present, disconnect row absent (no_comparison)", () => {
+  const provider = {
+    id: "sched-nototal", name: "SchedNoTotal", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: {
+        breakdown_published: "not_published", contact_published: "not_published",
+        schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
+      },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const rows = toProviderView(provider).programs[0]!.rows;
+  assert.equal(rows.some((r) => r.label === nl.rowScheduleCeiling), true);
+  assert.equal(rows.some((r) => r.label === nl.rowHoursDisconnect), false,
+    "totalHours() is no_total with no total/contact/self_study at all, so hoursDisconnect is no_comparison");
 });

@@ -7,7 +7,15 @@
  * It is PURE — it reaches `derive.ts` and `rules.ts`, never `loader.ts` — so a
  * client component may import values from it, not merely types.
  */
-import { bundleDelta, pricePerContactHour, totalHours, totalPathCost, totalPrice } from "./derive";
+import {
+  bundleDelta,
+  hoursDisconnect,
+  pricePerContactHour,
+  scheduledHoursCeiling,
+  totalHours,
+  totalPathCost,
+  totalPrice,
+} from "./derive";
 import {
   missingBecause,
   pphBlocker,
@@ -1191,6 +1199,22 @@ function programRows(provider: Provider, program: Program): KeyValueRow[] {
   const hours = totalHours(program);
   if (hours.kind === "computed") {
     rows.push(derivedRow(nl.rowTotalHours, hours, nl.hoursDerivedTotal(hours.value)));
+  }
+
+  // THE SCHEDULE CEILING + THE DISCONNECT (spec §6, v0.12) — ours, and additive: silent
+  // where the school publishes no session times. The ceiling is an UPPER bound ("ten
+  // hoogste"), rendered through derivedRow like every figure of ours; the block times it
+  // sums are theirs, cited in the Sources section via schedule.source. The disconnect row
+  // appears only where `hoursDisconnect` yields a real shortfall — it returns `no_shortfall`
+  // when the published total is at or below the ceiling, so the non-positive case never
+  // reaches here (decided in derive.ts, not re-checked on this surface).
+  const ceiling = scheduledHoursCeiling(program);
+  if (ceiling.kind === "computed") {
+    rows.push(derivedRow(nl.rowScheduleCeiling, ceiling, nl.scheduleCeilingValue(ceiling.value)));
+    const disconnect = hoursDisconnect(program);
+    if (disconnect.kind === "computed") {
+      rows.push(derivedRow(nl.rowHoursDisconnect, disconnect, nl.hoursDisconnectValue(disconnect.value)));
+    }
   }
 
   // The §5 field. Its emptiness across the market is the finding — so it gets

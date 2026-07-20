@@ -15,8 +15,8 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { loadDataset } from "./loader";
-import { toApiPayload } from "./api";
-import { ourWorking } from "./derive";
+import { toApiPayload, programDerived } from "./api";
+import { ourWorking, scheduledHoursCeiling, hoursDisconnect } from "./derive";
 import { toListingRows, toProviderView } from "./presenters";
 import { priceAmountIsOurGap, priceQuad } from "./rules";
 import { saysNotPublished, quadClass } from "./quad";
@@ -390,6 +390,8 @@ test("API: every programme carries a complete derived block, and the payload doc
     "contact_ratio",
     "bundle_delta",
     "multistyle",
+    "scheduled_hours_ceiling",
+    "hours_disconnect",
   ];
   for (const provider of PAYLOAD.providers) {
     for (const program of provider.programs) {
@@ -482,4 +484,47 @@ test("API: multistyle is published per programme, and a single-style school is n
   assert.ok(single > 0,
     "every programme in the export is multistyle — which is exactly what the `>= 1` mutation produces, " +
     "and this test could not tell the difference");
+});
+
+test("API: derived.scheduled_hours_ceiling and hours_disconnect equal the derive functions", () => {
+  for (const provider of PAYLOAD.providers) {
+    const src = providers.find((p) => p.id === provider.id)!;
+    for (const program of provider.programs) {
+      const prog = src.programs.find((pr) => pr.id === program.id)!;
+      assert.deepEqual(program.derived.scheduled_hours_ceiling, scheduledHoursCeiling(prog));
+      assert.deepEqual(program.derived.hours_disconnect, hoursDisconnect(prog));
+    }
+  }
+});
+
+test("API README documents the ceiling as an upper bound", () => {
+  assert.match(PAYLOAD.readme, /bovengrens|ten hoogste|upper bound/i);
+});
+
+test("API: a published total at or below the ceiling ships hours_disconnect as no_shortfall, NEVER a negative computed", () => {
+  // The core of this PR: hoursDisconnect(program) used to be shipped raw, and for value <= 0
+  // that meant `{kind:"computed", value:-47, working:"…ten minste -47 uur…"}` — a false
+  // statement about a named business, on the wire. The existing deep-equal test above
+  // (`derived.scheduled_hours_ceiling and hours_disconnect equal the derive functions`) would
+  // pass even if BOTH sides shipped that negative figure — it only checks the API agrees with
+  // derive.ts, not that derive.ts itself refuses a negative shortfall. This pins the refusal.
+  const provider = {
+    id: "api-sched-noshortfall", name: "ApiSchedNoShortfall", website: "https://x.test", status: "active",
+    locations: [{ city: "A" }], crkbo: { registered: "unknown", checked: null },
+    registrations: [], programs: [{
+      id: "p", name: "P", format_label: "200", accreditation: [],
+      delivery: { mode: "in_person", structure: "intensive" },
+      price: { period: "total", vat: "unknown", published: "unknown" },
+      hours_claimed: {
+        total: 100, breakdown_published: "not_published", contact_published: "not_published",
+        schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
+      },
+    }], modules: [], claims: [], people: [], inquiries: [],
+    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    depth: "listed", last_verified: "2026-07",
+  } as unknown as import("../schema").Provider;
+
+  const derived = programDerived(provider, provider.programs[0]!);
+  assert.equal(derived.hours_disconnect.kind, "no_shortfall");
+  assert.equal(derived.hours_disconnect.value, null);
 });

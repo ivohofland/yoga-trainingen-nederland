@@ -33,13 +33,17 @@
 import {
   bundleDelta,
   contactRatio,
+  hoursDisconnect,
   isMultistyle,
   pricePerContactHour,
+  scheduledHoursCeiling,
   totalHours,
   totalPathCost,
   totalPrice,
   type ContactRatio,
+  type HoursDisconnect,
   type PricePerContactHour,
+  type ScheduledHoursCeiling,
   type TotalHours,
   type TotalPathCost,
   type TotalPrice,
@@ -77,6 +81,8 @@ export type TotalPriceWire = TotalPrice;
 export type TotalHoursWire = TotalHours;
 export type PphWire = PricePerContactHour;
 export type ContactRatioWire = ContactRatio;
+export type ScheduledHoursCeilingWire = ScheduledHoursCeiling;
+export type HoursDisconnectWire = HoursDisconnect;
 /** The path cost, minus the internal `gates` array (an implementation detail of the
  *  recursion — its labels and part-totals are already spelled out in `working`). */
 export type TotalPathCostWire =
@@ -190,6 +196,21 @@ export interface ProgramDerived {
   /** Self-tagged multistyle, or ≥2 co-equal specific styles (spec §4.12). Never a residual
    *  default: a programme that names ONE style, or none, is not multistyle. */
   multistyle: boolean;
+  /**
+   * A CEILING ON CONTACT HOURS FROM THE PUBLISHED SCHEDULE (spec §6, v0.12) — OURS, no
+   * `published` variant. `{kind:"computed", value, working}` is a strict UPPER BOUND
+   * (clock time ≥ contact time); `{kind:"no_schedule"}` where we hold no session times.
+   * Do not read it as the school's contact-hour figure — they published none; we bounded it.
+   */
+  scheduled_hours_ceiling: ScheduledHoursCeilingWire;
+  /**
+   * total_hours − scheduled_hours_ceiling (spec §6, v0.12) — a LOWER BOUND on the claimed
+   * hours the timetable can't account for. OURS. `{kind:"no_comparison"}` where there is no
+   * schedule or the total is not the school's own PUBLISHED figure (a total WE summed is not
+   * a claim to disconnect from). `{kind:"no_shortfall"}` where the published total is AT OR
+   * BELOW the ceiling — there is no shortfall to report, never a negative "minstens" figure.
+   */
+  hours_disconnect: HoursDisconnectWire;
 }
 
 export function programDerived(provider: Provider, program: Program): ProgramDerived {
@@ -204,6 +225,8 @@ export function programDerived(provider: Provider, program: Program): ProgramDer
     contact_ratio: contactRatio(program),
     bundle_delta: bundleDelta(provider, program),
     multistyle: isMultistyle(program),
+    scheduled_hours_ceiling: scheduledHoursCeiling(program),
+    hours_disconnect: hoursDisconnect(program),
   };
 }
 
@@ -262,7 +285,15 @@ const README =
   "`incomplete`, dan ontbreekt de prijs van een verplichte schakel — niet rangschikken, en " +
   "niet terugvallen op `total_price`: dát is juist het getal dat te laag is. " +
   "`derived.pph` (€/contactuur) en `derived.contact_ratio` HEBBEN GEEN `published`-variant: " +
-  "geen enkele school publiceert die getallen. Ze zijn altijd van ons.";
+  "geen enkele school publiceert die getallen. Ze zijn altijd van ons. " +
+  "`derived.scheduled_hours_ceiling` is ONZE bovengrens op de contacturen, afgeleid uit het " +
+  "gepubliceerde rooster: contacturen zijn nooit méér dan de tijd in de zaal, dus dit is `ten " +
+  "hoogste` zoveel — géén door de school gepubliceerd contactuur-getal. `derived.hours_disconnect` " +
+  "= `total_hours` − dit plafond, een ONDERgrens op de geclaimde uren die niet in het rooster " +
+  "terug te vinden zijn. Beide zijn van ons; `no_schedule`/`no_comparison` = geen rooster of geen " +
+  "geclaimd totaal. `hours_disconnect` vergelijkt alleen tegen een DOOR DE SCHOOL GEPUBLICEERD " +
+  "totaal (een door ons opgeteld totaal telt niet als hun claim → `no_comparison`); is het " +
+  "gepubliceerde totaal ≤ het plafond, dan is er geen tekort → `no_shortfall`.";
 
 export function toApiPayload(providers: Provider[]): ApiPayload {
   return {

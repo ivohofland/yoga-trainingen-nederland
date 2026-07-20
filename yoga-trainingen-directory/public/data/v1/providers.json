@@ -1,7 +1,7 @@
 {
   "data_current_as_of": "2026-07-14",
   "count": 48,
-  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. DE KERNREGEL: een getal dat wij over een met naam genoemd bedrijf publiceren is óf HÚN claim (geef het weer als hun feit, met hun bron) óf ZICHTBAAR ONZE REKENSOM (gedempt, zonder bronvermelding, mét de uitgeschreven som ernaast). Er is geen derde optie, en geen neutrale weergave. ELK AFGELEID GETAL IS DAAROM EEN UNIE MET EEN `kind`, en de varianten hebben VERSCHILLENDE VELDEN: `{kind: \"published\", value}` = hún gepubliceerde cijfer; `{kind: \"computed\", value, working}` = ONZE rekensom, en `working` is de uitgeschreven som (\"onze berekening: 4 × € 1.290\"). `working` bestaat ALLEEN op `computed`. Wie `working` toont zodra het er staat, doet het dus vanzelf goed. De overige `kind`s (`no_price`, `no_comparable_total`, `no_total`, `incomplete`, `no_gates`, `no_ratio`) hebben `value: null` — niet rangschikken, niet in een prijsklasse zetten, en niets verzinnen. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: een programma kan `published: \"yes\"` dragen zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd (vijf programma's waren zo; op dit moment geen enkel, maar dat kan morgen weer). Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding; Adhouna prijst per deel, € 1.420 + € 1.305). DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe `hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun som). `computed` is ONZE optelling; `published` is hún claim (Wahé: 500 uur) en mag als zodanig worden weergegeven. Die twee mogen nooit hetzelfde worden weergegeven. EN VOOR HET RANGSCHIKKEN VAN PRIJZEN (spec v0.9): lees `derived.total_path_cost`, niet `total_price` — sommige opleidingen mag je pas volgen ná een ándere opleiding van dezelfde school, die je eerst moet kopen (de Yogaschool: de Docentenopleiding kost € 4.590, maar je mag niet beginnen zonder de Basisopleiding van € 1.590 — docent worden kost daar € 6.180; de Meesteropleiding € 10.770). Zonder verplichte voorafgaande opleiding is `kind: \"no_gates\"` en is dit veld gelijk aan `total_price`. Is het `incomplete`, dan ontbreekt de prijs van een verplichte schakel — niet rangschikken, en niet terugvallen op `total_price`: dát is juist het getal dat te laag is. `derived.pph` (€/contactuur) en `derived.contact_ratio` HEBBEN GEEN `published`-variant: geen enkele school publiceert die getallen. Ze zijn altijd van ons.",
+  "readme": "Elk programma draagt een `derived`-blok. Dat wordt bij het exporteren berekend uit het record — nooit opgeslagen in data/ (spec §6): deze export is een weergave van de records, niet de bron. DE KERNREGEL: een getal dat wij over een met naam genoemd bedrijf publiceren is óf HÚN claim (geef het weer als hun feit, met hun bron) óf ZICHTBAAR ONZE REKENSOM (gedempt, zonder bronvermelding, mét de uitgeschreven som ernaast). Er is geen derde optie, en geen neutrale weergave. ELK AFGELEID GETAL IS DAAROM EEN UNIE MET EEN `kind`, en de varianten hebben VERSCHILLENDE VELDEN: `{kind: \"published\", value}` = hún gepubliceerde cijfer; `{kind: \"computed\", value, working}` = ONZE rekensom, en `working` is de uitgeschreven som (\"onze berekening: 4 × € 1.290\"). `working` bestaat ALLEEN op `computed`. Wie `working` toont zodra het er staat, doet het dus vanzelf goed. De overige `kind`s (`no_price`, `no_comparable_total`, `no_total`, `incomplete`, `no_gates`, `no_ratio`) hebben `value: null` — niet rangschikken, niet in een prijsklasse zetten, en niets verzinnen. LEES `derived.price_state` (en `pph_state`), NOOIT het ruwe `price.published`: een programma kan `published: \"yes\"` dragen zonder `amount_eur` — de aanbieder publiceert wél een prijs, wij hebben die nog niet vastgelegd (vijf programma's waren zo; op dit moment geen enkel, maar dat kan morgen weer). Wie het ruwe veld rendert, zet daar een harde \"ja\" zonder bedrag neer over een met naam genoemd bedrijf. `not_published` = wij keken, zij publiceren het niet (een BEVINDING over hen). `unknown` = wij hebben het nog niet onderzocht (een HIAAT bij ons). Die twee mogen nooit hetzelfde worden weergegeven. VERGELIJKEN EN SORTEREN: lees `derived.total_price`, NOOIT `price.amount_eur` — dat bedrag koopt wat `price.period` zegt, en dat is niet altijd de hele opleiding (de Blikopener: € 1.290 per STUDIEJAAR van een vierjarige opleiding; Adhouna prijst per deel, € 1.420 + € 1.305). DEZELFDE REGEL VOOR DE UREN (spec v0.6): lees `derived.total_hours`, NOOIT het ruwe `hours_claimed.total` — dat veld is null bij elke school die haar uren alleen in DELEN publiceert (de Yogaschool Enschede: 360 contacturen + 240 zelfstudie-uren, en nergens hun som). `computed` is ONZE optelling; `published` is hún claim (Wahé: 500 uur) en mag als zodanig worden weergegeven. Die twee mogen nooit hetzelfde worden weergegeven. EN VOOR HET RANGSCHIKKEN VAN PRIJZEN (spec v0.9): lees `derived.total_path_cost`, niet `total_price` — sommige opleidingen mag je pas volgen ná een ándere opleiding van dezelfde school, die je eerst moet kopen (de Yogaschool: de Docentenopleiding kost € 4.590, maar je mag niet beginnen zonder de Basisopleiding van € 1.590 — docent worden kost daar € 6.180; de Meesteropleiding € 10.770). Zonder verplichte voorafgaande opleiding is `kind: \"no_gates\"` en is dit veld gelijk aan `total_price`. Is het `incomplete`, dan ontbreekt de prijs van een verplichte schakel — niet rangschikken, en niet terugvallen op `total_price`: dát is juist het getal dat te laag is. `derived.pph` (€/contactuur) en `derived.contact_ratio` HEBBEN GEEN `published`-variant: geen enkele school publiceert die getallen. Ze zijn altijd van ons. `derived.scheduled_hours_ceiling` is ONZE bovengrens op de contacturen, afgeleid uit het gepubliceerde rooster: contacturen zijn nooit méér dan de tijd in de zaal, dus dit is `ten hoogste` zoveel — géén door de school gepubliceerd contactuur-getal. `derived.hours_disconnect` = `total_hours` − dit plafond, een ONDERgrens op de geclaimde uren die niet in het rooster terug te vinden zijn. Beide zijn van ons; `no_schedule`/`no_comparison` = geen rooster of geen geclaimd totaal. `hours_disconnect` vergelijkt alleen tegen een DOOR DE SCHOOL GEPUBLICEERD totaal (een door ons opgeteld totaal telt niet als hun claim → `no_comparison`); is het gepubliceerde totaal ≤ het plafond, dan is er geen tekort → `no_shortfall`.",
   "providers": [
     {
       "id": "7-yoga-academy",
@@ -134,7 +134,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -312,7 +320,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -406,7 +422,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -590,7 +614,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -696,7 +728,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -931,7 +971,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -1200,7 +1248,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -1529,7 +1585,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -1662,7 +1726,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -1931,7 +2003,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -2101,7 +2181,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -2279,7 +2367,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -2390,7 +2486,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -2573,6 +2677,10 @@
             "final": "yes",
             "quote": "Aan het einde van de 200-uurs Vinyasa yoga opleiding rond je de training af met een praktijkexamen en een theorie-examen."
           },
+          "transparency": {
+            "reading_list_published": "yes",
+            "source": "boekenlijst-2026-07"
+          },
           "track_record": {
             "first_seen_year": 2014,
             "source": "site-vinyasa-2026-06",
@@ -2623,7 +2731,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -2681,6 +2797,10 @@
             "exists": "yes",
             "quote": "Word Yin yoga docent (Yoga Alliance) met onze 200-uurs Yin yoga opleiding"
           },
+          "transparency": {
+            "reading_list_published": "yes",
+            "source": "boekenlijst-2026-07"
+          },
           "track_record": {
             "first_seen_year": 2014,
             "source": "ya-register-2026-06"
@@ -2721,7 +2841,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -2770,6 +2898,18 @@
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
             "contact_published": "not_published",
+            "schedule": {
+              "source": "site-intensive-2026-06",
+              "note": "3,5 weken immersion, 27 jul–19 aug 2026 in vier blokken (drie ma–za, één ma–wo), dagelijks 10:00–17:00; geen pauze op de pagina vermeld. count = 21 lesdagen; onze telling is een bovengrens op de contacturen (pauzes niet meegerekend).\n",
+              "blocks": [
+                {
+                  "count": 21,
+                  "start": "10:00",
+                  "end": "17:00",
+                  "label": "lesdag"
+                }
+              ]
+            },
             "source": "site-intensive-2026-06",
             "note": "Volledig 200u-programma in 3,5 weken immersion, dagelijks 10:00-17:00, Amsterdam. Bevat 'mentored teaching labs' + feedback van senior teachers; geen geïsoleerd uren-/lespraktijk-urental gepubliceerd.\n"
           },
@@ -2819,7 +2959,17 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "computed",
+              "value": 147,
+              "working": "onze telling: 21× 10:00–17:00. Ten hoogste — contacturen zijn nooit meer dan de ingeroosterde tijd, en alleen de opgegeven pauzes zijn afgetrokken."
+            },
+            "hours_disconnect": {
+              "kind": "computed",
+              "value": 53,
+              "working": "de school claimt 200 uur; het gepubliceerde rooster beslaat ten hoogste 147 uur, dus ten minste 53 uur valt buiten het rooster (zelfstudie, en wat verder niet is ingeroosterd)."
+            }
           }
         }
       ],
@@ -2939,7 +3089,7 @@
           "id": "site-intensive-2026-06",
           "type": "website",
           "url": "https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/",
-          "archived_url": null,
+          "archived_url": "https://web.archive.org/web/20260716133943/https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/",
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/site-intensive-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Vinyasa Teacher Training Intensive (EN): 3,5 weken immersion, prijs, certificering."
@@ -2980,6 +3130,15 @@
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Zoekrecept: tik \"Nieuwe Yogaschool\" in het Naam-veld → 1 treffer \"De Nieuwe Yogaschool Online B.V., Amsterdam\". Register zonder permalink; bewijs is de gefilterde snapshot; Wayback overgeslagen voor crkbo.nl/Register/*.\n"
+        },
+        {
+          "id": "boekenlijst-2026-07",
+          "type": "website",
+          "url": "https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/",
+          "archived_url": "https://web.archive.org/web/20260716134020/https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/",
+          "local_snapshot": "data/archives/de-nieuwe-yogaschool/boekenlijst-2026-07-2026-07-16.pdf",
+          "captured": "2026-07-16",
+          "note": "Los gepubliceerde boekenlijst — de \"boekenlijst apart gepubliceerd\" waarnaar price.excludes van de Yin- en Vinyasa-opleiding verwijst. Bevat per opleiding een \"Verplichte boekenlijst\" én een \"Aanbevolen\" lijst. LET OP: staat op het /en/-pad maar de inhoud is Nederlandstalig (paginatitel \"Yoga Teacher Trainingen Boekenlijst\") en dekt alleen de NL Yin- en Vinyasa-200u — NIET de Engelstalige Vinyasa Teacher Training Intensive.\n"
         }
       ],
       "depth": "listed",
@@ -3137,7 +3296,15 @@
               "working": "onze berekening: 360 contacturen ÷ 600 uur totaal. onze optelling: 360 contacturen + 240 zelfstudie-uren. De aanbieder publiceert deze twee getallen apart en noemt hun som niet."
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -3239,7 +3406,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -3552,7 +3727,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -3802,7 +3985,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -4073,7 +4264,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -4336,7 +4535,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -4434,7 +4641,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -4652,7 +4867,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -4885,7 +5108,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -4969,7 +5200,15 @@
               "working": "onze berekening: 200 contacturen ÷ 350 uur totaal."
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -5188,7 +5427,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -5395,7 +5642,15 @@
               "working": "onze berekening: 180 contacturen ÷ 200 uur totaal."
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -5624,7 +5879,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -5732,7 +5995,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -5966,7 +6237,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -6072,7 +6351,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -6314,7 +6601,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -6593,7 +6888,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -6908,7 +7211,15 @@
               "working": "onze berekening: 200 contacturen ÷ 200 uur totaal."
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -7208,7 +7519,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -7308,7 +7627,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -7407,7 +7734,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -7511,7 +7846,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -7764,7 +8107,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -7996,7 +8347,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -8088,7 +8447,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -8181,7 +8548,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -8519,7 +8894,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -8635,7 +9018,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -8849,7 +9240,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -9110,7 +9509,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -9402,7 +9809,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -9527,7 +9942,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -9657,7 +10080,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -9980,7 +10411,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -10105,7 +10544,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -10383,7 +10830,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -10481,7 +10936,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -10580,7 +11043,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -10672,7 +11143,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -11027,7 +11506,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -11126,7 +11613,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -11360,7 +11855,15 @@
               "value": null
             },
             "bundle_delta": -775,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -11671,7 +12174,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -11789,7 +12300,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -12096,7 +12615,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -12197,7 +12724,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -12537,7 +13072,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -12691,7 +13234,15 @@
               "working": "onze berekening: 245 contacturen ÷ 300 uur totaal."
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -12810,7 +13361,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -13115,7 +13674,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -13216,7 +13783,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -13474,7 +14049,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -13739,7 +14322,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -14009,7 +14600,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -14248,7 +14847,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -14511,7 +15118,15 @@
               "value": null
             },
             "bundle_delta": -363,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -14770,7 +15385,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -15015,7 +15638,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": false
+            "multistyle": false,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -15224,7 +15855,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         },
         {
@@ -15316,7 +15955,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],
@@ -15595,7 +16242,15 @@
               "value": null
             },
             "bundle_delta": null,
-            "multistyle": true
+            "multistyle": true,
+            "scheduled_hours_ceiling": {
+              "kind": "no_schedule",
+              "value": null
+            },
+            "hours_disconnect": {
+              "kind": "no_comparison",
+              "value": null
+            }
           }
         }
       ],

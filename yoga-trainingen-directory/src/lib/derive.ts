@@ -390,6 +390,98 @@ export function totalHours(program: Program): TotalHours {
 }
 
 /**
+ * A CEILING ON CONTACT HOURS, FROM THE PUBLISHED SCHEDULE — OURS ON EVERY PROGRAMME
+ * (spec §6, v0.12). Like €/contactuur and the contact ratio, there is no `published`
+ * variant: no school publishes this bound.
+ *
+ * Contact time can only ever be ≤ time in the room, so the raw clock sum is a strict UPPER
+ * BOUND: "at most 147 u". We never guess the break — a STATED `pause_min` only lowers the
+ * bound (a stronger, still-true statement), and an unstated one leaves it where it is,
+ * conservative against our own critique. The block times are theirs (cited via
+ * `schedule.source`); this SUM is ours, and the working shows it.
+ */
+export type ScheduledHoursCeiling =
+  | Computed
+  | { kind: "no_schedule"; value: null };
+
+/** Minutes since midnight. The time is schema-validated HH:MM (Time), so this cannot NaN
+ *  on a real record; a bad one would have failed `validate` by record and field.
+ *  Mirror of schema/index.ts `hhmm` — kept separate across the node-free boundary; keep in sync. */
+function minutesOfDay(t: string): number {
+  const [h, m] = t.split(":");
+  return Number(h) * 60 + Number(m);
+}
+
+export function scheduledHoursCeiling(program: Program): ScheduledHoursCeiling {
+  const schedule = program.hours_claimed.schedule;
+  if (!schedule) return { kind: "no_schedule", value: null };
+  const parts: string[] = [];
+  let minutes = 0;
+  for (const b of schedule.blocks) {
+    minutes += b.count * (minutesOfDay(b.end) - minutesOfDay(b.start) - (b.pause_min ?? 0));
+    parts.push(`${b.count}× ${b.start}–${b.end}${b.pause_min ? ` (−${b.pause_min} min pauze)` : ""}`);
+  }
+  return {
+    kind: "computed",
+    value: Math.round((minutes / 60) * 100) / 100,
+    working: nl.scheduleCeilingWorking(parts),
+  };
+}
+
+/**
+ * THE CLAIM MINUS THE CEILING — how much of the claimed total the timetable cannot account
+ * for (spec §6, v0.12). Consumes the DERIVED total (`totalHours`), never the raw field.
+ *
+ * Because the ceiling is an UPPER bound, this gap is a LOWER bound: "at least 53 u are not
+ * scheduled contact time" (self-study, and whatever else is not on the timetable). OURS.
+ *
+ * THREE NO-VALUE OUTCOMES, and they are different absences:
+ *
+ *   - `no_comparison` — there is no schedule, or the total is anything but the school's own
+ *     PUBLISHED figure. `totalHours()` returns `published` (the school's own figure) or
+ *     `computed` (OUR sum of contact + self_study, which the school never stated); the
+ *     working says "de school claimt X uur", and over our own sum that sentence is the exact
+ *     misattribution the published/computed split exists to prevent. Against an
+ *     already-decomposed total the gap would also double-count the self-study.
+ *   - `no_shortfall` — the published total is AT OR BELOW the ceiling, so there is no gap to
+ *     report (see the `value <= 0` branch below).
+ *
+ * Only when the total is published AND exceeds the ceiling is this a real, positive
+ * shortfall — `computed`.
+ */
+export type HoursDisconnect =
+  | Computed
+  | { kind: "no_comparison"; value: null }
+  | { kind: "no_shortfall"; value: null };
+
+export function hoursDisconnect(program: Program): HoursDisconnect {
+  const total = totalHours(program);
+  const ceiling = scheduledHoursCeiling(program);
+  // Only a PUBLISHED total is a CLAIM to disconnect from. A `computed` total is OUR sum of
+  // contact + self_study (the school stated no total) — and the working says "de school claimt
+  // {total} uur", which over our own sum is the exact misattribution the published/computed
+  // split exists to prevent. Against an already-decomposed total the gap would also
+  // double-count the self-study. So: a published total only.
+  if (total.kind !== "published" || ceiling.kind !== "computed") {
+    return { kind: "no_comparison", value: null };
+  }
+  const value = Math.round((total.value - ceiling.value) * 100) / 100;
+  // A non-positive gap is not a shortfall: the school's published total is at or below our
+  // contact-hours CEILING (itself an upper bound), so the timetable does not under-account
+  // for the claim — there is nothing to report as "unscheduled". Decided HERE, not in the
+  // presenter, so the record page and the JSON API cannot disagree (one dataset, one rule):
+  // shipping value<=0 as a `computed` figure would publish "minstens -X uur" about a named
+  // business. (Whether total<ceiling is itself an anomaly worth surfacing is a separate,
+  // deferred editorial question.)
+  if (value <= 0) return { kind: "no_shortfall", value: null };
+  return {
+    kind: "computed",
+    value,
+    working: nl.hoursDisconnectWorking(total.value, ceiling.value),
+  };
+}
+
+/**
  * €/CONTACTUUR — PRICE ÷ CONTACT HOURS, AND IT IS OURS ON EVERY SINGLE PROGRAMME.
  *
  * There is no `published` variant here, and that absence is the correction (spec §6, and
