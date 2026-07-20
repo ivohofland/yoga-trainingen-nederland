@@ -31,10 +31,12 @@ import {
   evidencesAmount,
   evidencesHours,
   evidencesPrice,
+  evidencesScheduleTimes,
   evidencesVat,
   FINDING_TIER,
   pdftotextAvailable,
   providerProvenance,
+  scheduleTimeRe,
   visibleText,
   type ProvenanceReason,
 } from "./provenance";
@@ -262,6 +264,33 @@ test("VAT: a registration number is not a treatment, and 'including' is not 'inc
   assert.ok(!evidencesVat("Yogaweekend € 335,- incl. 1 x ontbijt, 2 x lunch", "incl"));
 });
 
+/* ---------- the schedule block times (spec v0.12) ---------- */
+
+test("SCHEDULE: a colon time matches its colon, dot and 'u' spellings", () => {
+  // The DNYS capture: "Daily schedule 10:00 – 17:00" — colon is the unambiguous form.
+  assert.ok(scheduleTimeRe("10:00").test("10:00"));
+  assert.ok(scheduleTimeRe("10:00").test("10.00"), "Dutch dot-time — 'vanaf 10.00 uur'");
+  assert.ok(scheduleTimeRe("10:00").test("10u00"), "Dutch informal — '10u00'");
+});
+
+test("SCHEDULE: a single-digit hour may drop its leading zero on the page", () => {
+  assert.ok(scheduleTimeRe("09:00").test("9:00"));
+  assert.ok(scheduleTimeRe("09:00").test("09:00"));
+});
+
+test("SCHEDULE: digit boundaries — not a substring of a bigger number, not a bare digit run", () => {
+  assert.ok(!scheduleTimeRe("10:00").test("110:00"), "must not match inside a bigger number");
+  assert.ok(!scheduleTimeRe("10:00").test("1000"), "a bare digit run is not a time — separator required");
+});
+
+test("SCHEDULE: evidencesScheduleTimes requires EVERY time, not just one", () => {
+  assert.ok(evidencesScheduleTimes("Daily schedule\n10:00 – 17:00", ["10:00", "17:00"]));
+  assert.ok(
+    !evidencesScheduleTimes("Daily schedule\n10:00 – 17:00", ["10:00", "18:00"]),
+    "one block's end time is missing from the page — the claim is not fully evidenced",
+  );
+});
+
 /* ---------- an artifact we cannot read is not evidence of absence ---------- */
 
 test("an artifact that extracts to NOTHING is `unreadable`, never `no_evidence`", () => {
@@ -367,6 +396,80 @@ test("PREREQUISITE: an UNPRICED gate asserts no amount, and is not asked for one
   assert.equal(report.claims, 0, "an unpriced gate is not a price claim, and must not be counted as one");
 });
 
+/* ---------- the schedule (spec v0.12) ---------- */
+
+test("SCHEDULE: a cited page missing a block time produces a `no_evidence` finding", () => {
+  // The ceiling/disconnect rest on the block times, so the cited page must print them —
+  // held to the same standard as price and hours. Here the page states the start time
+  // and never the end time, which is exactly the shape a real miscitation would take.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-schedule-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/site-2026-01.html"),
+    "<body>Daily schedule<br>Starts 10:00</body>\n",
+  );
+
+  const provider = {
+    id: "testco",
+    name: "Test Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: null, period: "total", vat: "unknown", published: "not_published" },
+        hours_claimed: {
+          total: null,
+          breakdown_published: "not_published",
+          contact_published: "not_published",
+          schedule: {
+            source: "site",
+            blocks: [{ count: 21, start: "10:00", end: "17:00", label: "lesdag" }],
+          },
+        },
+      },
+    ],
+    sources: [{ id: "site", local_snapshot: "data/archives/testco/site-2026-01.html" }],
+  } as unknown as Provider;
+
+  const { findings } = providerProvenance(provider, dir);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].check, "schedule");
+  assert.equal(findings[0].reason, "no_evidence");
+  assert.equal(findings[0].granularity, "fact", "the schedule claim is never held to the weaker page tier");
+  assert.match(findings[0].message, /roostertijden/);
+});
+
+test("SCHEDULE: a cited page printing every block time produces no finding", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-schedule-ok-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/site-2026-01.html"),
+    "<body>Daily schedule<br>10:00 &ndash; 17:00</body>\n",
+  );
+
+  const provider = {
+    id: "testco",
+    name: "Test Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: null, period: "total", vat: "unknown", published: "not_published" },
+        hours_claimed: {
+          total: null,
+          breakdown_published: "not_published",
+          contact_published: "not_published",
+          schedule: {
+            source: "site",
+            blocks: [{ count: 21, start: "10:00", end: "17:00", label: "lesdag" }],
+          },
+        },
+      },
+    ],
+    sources: [{ id: "site", local_snapshot: "data/archives/testco/site-2026-01.html" }],
+  } as unknown as Provider;
+
+  assert.deepEqual(providerProvenance(provider, dir).findings, []);
+});
+
 /* ---------- the corpus ---------- */
 
 test("every cited source evidences the claim it is cited for — or the finding is triaged", () => {
@@ -445,16 +548,18 @@ function expectedFindings(): string[] {
 
 test("the corpus holds claims for the check to be about", () => {
   // A check whose subject set is empty passes forever. The subject set is every published
-  // price, every stored hours total, every asserted VAT treatment — and, since v0.9, every
-  // PRICED GATE: a training you are forced to buy first is an addend in a figure we publish
+  // price, every stored hours total, every asserted VAT treatment, every PRICED GATE (v0.9:
+  // a training you are forced to buy first is an addend in a figure we publish
   // (`total_path_cost`), so its amount is a price claim about a named business like any
-  // other, and it is held to the same page-must-print-it question.
+  // other, and it is held to the same page-must-print-it question) — and, since v0.12, every
+  // published SCHEDULE, whose block times ground `scheduled_hours_ceiling`/`hours_disconnect`.
   const programs = providers.flatMap((p) => p.programs);
   const claims =
     programs.filter((pr) => pr.price.published === "yes").length +
     programs.filter((pr) => pr.hours_claimed.total != null).length +
     programs.filter((pr) => ["incl", "excl", "exempt_crkbo"].includes(pr.price.vat)).length +
-    programs.flatMap((pr) => pr.prerequisite ?? []).filter((pre) => pre.cost_eur != null).length;
+    programs.flatMap((pr) => pr.prerequisite ?? []).filter((pre) => pre.cost_eur != null).length +
+    programs.filter((pr) => pr.hours_claimed.schedule != null).length;
   assert.ok(claims > 60, `expected the corpus to hold sourced claims, found ${claims}`);
   assert.equal(report.claims, claims, "the report must count every claim it had a subject for");
   // Every claim reaches exactly one outcome: EXAMINED (we opened the artifacts and
