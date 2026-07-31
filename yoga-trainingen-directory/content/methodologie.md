@@ -1,6 +1,6 @@
 # Methodologie
 
-**Versie 0.1 (concept, juni 2026).** Elke beoordeling op deze site vermeldt onder welke versie van deze methodologie ze is gemaakt. Wijzigt de methodologie, dan blijft zichtbaar welke regels golden toen het oordeel werd gegeven.
+**Versie 0.2 (concept, juli 2026).** Elke beoordeling op deze site vermeldt onder welke versie van deze methodologie ze is gemaakt. Wijzigt de methodologie, dan blijft zichtbaar welke regels golden toen het oordeel werd gegeven.
 
 ## Wat dit is
 
@@ -36,6 +36,22 @@ Bij gegevens die een school wel of niet publiceert, gebruikt deze site vier waar
 
 **Ja** en **nee** betekenen: de school zegt het zelf, of het is in een register gecontroleerd. **Niet gepubliceerd** betekent: ik heb gekeken, en de school vermeldt het niet. Dat is een bevinding, geen gat in mijn onderzoek; als een opleiding van €3.000 nergens vermeldt hoeveel uur begeleide lespraktijk je krijgt, is dát informatie. **Nog niet onderzocht** betekent: dit heb ik (nog) niet bekeken. Dat is wél een gat in mijn onderzoek, en wordt nooit als bevinding gepresenteerd.
 
+## Welke getallen van de school zijn, en welke van mij
+
+Verreweg de meeste cijfers op deze site zijn van de school zelf: geciteerd, met bron en datum. Een enkel getal is van mij. Niet omdat ik het beter weet, maar omdat de school het niet publiceert terwijl het rechtstreeks volgt uit wat ze wél publiceert. Wie een vierjarige opleiding aanbiedt voor een bedrag per studiejaar, publiceert geen totaalprijs, en zonder die vermenigvuldiging staat zo'n opleiding onvergelijkbaar goedkoop in een lijst. Wie contacturen en zelfstudie apart noemt maar nooit optelt, publiceert geen totaal. Prijs per contactuur publiceert geen enkele school.
+
+Die getallen zijn te zien als de mijne. Ze staan er gedempt en cursief bij, in een ander lettertype, met een label dat met "onze" begint: "onze berekening", "onze optelling", "onze telling". De som staat er altijd bij ("onze berekening: 4 × € 1.290"). En het belangrijkste: er staat **geen bron bij**. Bij een cijfer van de school staat een bron, want er is een pagina waar het staat. Bij een cijfer van mij staat er geen, want die pagina bestaat niet; wat er in plaats daarvan staat is mijn rekensom, zodat je hem kunt narekenen en er iets van kunt vinden. Een getal in de opmaak van de school, met bron, is een bewering van de school. Een getal in mijn opmaak, met som en zonder bron, is een bewering van mij. Dat verschil hoort zichtbaar te zijn en niet in de kleine lettertjes te verdwijnen.
+
+## De roostertelling: wat het gepubliceerde rooster verantwoordt
+
+Sommige scholen publiceren hun lestijden. Dat maakt één ding controleerbaar dat anders onzichtbaar blijft, want lesuren kunnen nooit méér zijn dan de tijd dat de zaal open is. Tel de gepubliceerde blokken op en je hebt een **bovengrens**: ten hoogste zoveel uur. Zet die naast het geclaimde totaal en je ziet hoeveel uur het gepubliceerde rooster níét verantwoordt. Beide getallen zijn van mij, en staan er zo bij.
+
+Ik lees zo'n rooster zo ruim als de pagina toelaat, want een bovengrens hoort ruim te zijn. Genoemde maaltijden knippen de dag in blokken en tellen niet mee. Een onderdeel zonder eindtijd, of met een uitweg erin ("satsang of vrije avond"), tel ik niet mee, en dat zeg ik erbij. Juist die keuze maakt de grens krapper en het verschil dus groter: ze valt uit in het nadeel van de school.
+
+**Belangrijker is wat dat verschil niet betekent.** Het is geen beschuldiging dat een school minder levert dan ze belooft. Uren mogen buiten een rooster vallen: zelfstudie, opdrachten, voorbereiding. Maar uren buiten het rooster zijn ook niet automatisch opleidingsuren, en dat bepaalt niet de school en niet ik, maar het register waar de opleiding onder valt. De huidige Yoga Alliance-standaard voor een 200-uursopleiding eist dat alle uren "classroom hours" zijn en sluit *het volgen van openbare lessen* uitdrukkelijk uit, ongeacht waar die plaatsvinden. Tegelijk worden *het observeren van een andere docent* en *assisteren terwijl een ander lesgeeft* juist met zoveel woorden als praktijkonderdeel genoemd. Een school die naar haar eigen studiolessen wijst, dicht het gat daarmee dus niet; observeren en assisteren zijn wel verdedigbaar.
+
+Ik lees het verschil daarom als "buiten het gepubliceerde rooster": niet als "wordt niet gegeven", maar evenmin als "wordt elders wel gegeven". De redenering staat bij het getal, inclusief de plek waar een stap van mij is en niet van het register. En dit alles geldt alleen waar een school tijden publiceert: publiceert ze die niet, dan staat er niets. Geen rooster, geen bewering.
+
 ## Diepteniveaus en actualiteit
 
 Niet elke vermelding is even diep onderzocht, en dat staat er eerlijk bij. **Basisvermelding** = feiten van de eigen site en uit registers. **Onderzocht** = aangevuld met signalen over samenstelling en inschrijfvoorwaarden. **Beoordeeld** = volledige analyse, met deelscores en wederhoor. Elke vermelding draagt een datum "laatst gecontroleerd"; verouderde gegevens zijn aan die datum te herkennen.
@@ -51,6 +67,8 @@ Waarom geen sterren of recensies? Tevredenheid en onderwijskwaliteit lopen bij o
 ## Bronnen en bewijs
 
 Elk gegeven heeft een bron, en elke geciteerde pagina wordt op het moment van vastlegging dubbel bewaard: in een publiek webarchief (Wayback Machine of archive.today) én als eigen kopie. Die twee dekken elkaars zwakte af. Het publieke archief is onafhankelijk, maar een site-eigenaar kan zijn domein laten uitsluiten, en dan verdwijnen ook alle historische snapshots. De eigen kopie kan niemand intrekken, maar is minder onafhankelijk; de versiegeschiedenis van deze site legt vast wanneer ze is gemaakt. Past een school haar pagina aan, dan blijft zo hoe dan ook controleerbaar wat er stond toen het werd genoteerd. Waar een domein uit publieke webarchieven blijkt te zijn verwijderd, staat dat bij de vermelding, want ook *dat de geschiedenis niet publiek te controleren is*, is relevante informatie.
+
+Bij sommige pagina's lukt die dubbele bewaring niet, en ook dat hoort er eerlijk bij te staan. Registerpagina's en helpdesk-artikelen worden tegenwoordig volledig door de browser opgebouwd; een publiek webarchief bewaart daarvan alleen het omhulsel: kop, menu, voettekst, en geen letter van de inhoud. Zo'n snapshot vastleggen zou bewijs suggereren dat er niet is. In die gevallen blijft de publieke helft dus bewust leeg en is de eigen, in een browser gerenderde kopie het bewijs; bij de vermelding staat dan "publiek — · lokaal ✓" in plaats van een vinkje dat nergens op slaat.
 
 ## Wederhoor en correcties
 
@@ -88,4 +106,4 @@ Opgenomen worden docentenopleidingen die in Nederland worden aangeboden onder de
 
 ---
 
-*Wijzigingsgeschiedenis: v0.1 (juni 2026): eerste concept.*
+*Wijzigingsgeschiedenis: v0.1 (juni 2026): eerste concept. — v0.2 (juli 2026): twee onderwerpen toegevoegd die de site al toepaste maar hier niet verantwoordde. "Welke getallen van de school zijn, en welke van mij" beschrijft de afgeleide cijfers (totaalprijs uit een jaarbedrag, urentotaal, prijs per contactuur) en waaraan je ze herkent: eigen opmaak, de som erbij, en geen bronvermelding. "De roostertelling" beschrijft de bovengrens die uit gepubliceerde lestijden volgt, het verschil met het geclaimde urentotaal, en vooral wat dat verschil niet betekent, inclusief de regel dat uren buiten het rooster niet vanzelf opleidingsuren zijn, omdat het register bepaalt wat meetelt. Daarnaast is bij "Bronnen en bewijs" vastgelegd hoe wordt omgegaan met pagina's die publiek niet te archiveren zijn.*
