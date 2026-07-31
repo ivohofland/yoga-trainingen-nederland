@@ -107,7 +107,7 @@ export function integrityErrors(
       errors.push(
         `${file}: source '${s.id}' claims a Wayback archive of ${s.url} — but Wayback cannot evidence it ` +
           `(${waybackPointlessReason(s.url)}). The local capture is the evidence; set archived_url: null so ` +
-          `the record says "publiek —", which is true, instead of "publiek ✓", which is not.`,
+          `the record says "publiek n.v.t. (niet vast te leggen)", which is true, instead of "publiek ✓", which is not.`,
       );
     }
   }
@@ -322,9 +322,9 @@ export function loadReferences(cwd: string = process.cwd()): ReferenceLoadResult
     // documented in CLAUDE.md and split into tiers in provenance.ts: what is provable from
     // the record plus the committed sidecars binds EVERYWHERE; what needs the body can only
     // be checked where the body is. The sidecar is the better check anyway. It is committed,
-    // so it binds in CI, and it catches the typo case strictly harder: a mistyped path has
-    // no matching sidecar either, and it additionally proves the capture was really hashed
-    // rather than merely named.
+    // so it binds in CI, and it catches the typo case strictly harder: a mistyped path has no
+    // sidecar that LISTS it, and it additionally proves the capture was really hashed rather
+    // than merely named. ("No sidecar" would be false — see the extension case below.)
     if (ref.local_snapshot) {
       if (!ref.local_snapshot.startsWith("data/archives/_references/"))
         errors.push(

@@ -339,8 +339,8 @@ programs:
           publiek/besloten. Die 6 lessen zijn dus verdedigbaar als
           opleidingsuren; de 16 andere niet.
 
-          GEVOLG VOOR DE LEZING VAN HET GAT: van de 22 lessen kan hooguit een
-          kwart meetellen, dus het gat van ±42 u tussen de geclaimde 200 u en
+          GEVOLG VOOR DE LEZING VAN HET GAT: van de 22 lessen kunnen er hooguit zes
+          meetellen (ruim een kwart), dus het gat van ±42 u tussen de geclaimde 200 u en
           deze telling wordt er niet door verklaard. Lees het verschil als
           "buiten het gepubliceerde rooster" — niet als "niet gegeven", maar
           evenmin als "elders wel geleverd".
@@ -447,7 +447,7 @@ programs:
         zes bij naam genoemde afgestudeerden toe (Lisa, Jaime, Dorith, Ana,
         Olivia, Loes), van wie er vier een "WATCH HER TESTIMONIAL"-videolink
         krijgen (Lisa p2, Jaime p4, Dorith p12, Ana p13); Olivia (p14) en Loes
-        (p16) staan er alleen als tekstcitaat. Bevestigt dat er edities gedraaid
+        (p17) staan er alleen als tekstcitaat. Bevestigt dat er edities gedraaid
         hebben, maar geen van die testimonials is aan een datum of cohort te
         koppelen, dus `last_confirmed_cohort` blijft leeg (§8).
     cohorts:

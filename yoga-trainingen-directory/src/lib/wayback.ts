@@ -6,21 +6,28 @@
  * weakness — a public archive is independent but can be withdrawn by the site owner; a
  * local copy cannot be withdrawn but is less independent.
  *
- * For two kinds of page, the public half is not merely weak — it is EMPTY, and recording
+ * For three kinds of page, the public half is not merely weak — it is EMPTY, and recording
  * it is worse than recording nothing, because the record then claims an evidentiary
  * backing it does not have and the site renders "publiek ✓" over it:
  *
  *   - **Yoga Alliance registers** (app.yogaalliance.org) are Salesforce-rendered. Wayback
  *     stores the JS shell: header, footer, and no register data at all. The registration
  *     we cite is not in the snapshot.
+ *   - **The YA Help Center** (help.yogaalliance.org) is the same Salesforce shell as the
+ *     register. Measured, not assumed — see the entry in the list below.
  *   - **The CRKBO register** (crkbo.nl/Register/…) is a SEARCH interface with no permalink
  *     per row. Wayback captures page 1 of the register; it never captures the searched
  *     row — and for a CRKBO check the finding is usually a NEGATIVE ("0 hits for this
  *     school"), which no snapshot of page 1 can evidence either way.
  *
- * In both cases the browser-rendered local copy — filtered, if the page was a search — is
+ * In every case the browser-rendered local copy — filtered, if the page was a search — is
  * the evidence, and the public half is honestly absent (`archived_url: null`). The record
- * then says "publiek — · lokaal ✓", which is true, instead of "publiek ✓", which is not.
+ * then says "publiek n.v.t. (niet vast te leggen) · lokaal ✓" — NOT "publiek — · lokaal ✓",
+ * which this comment claimed for a while. That distinction is the quad rule again: "—"
+ * (`archiveAbsent`) means WE HAVE NOT DONE IT, a gap; "n.v.t." (`archiveNotApplicable`)
+ * means IT CANNOT BE DONE, a finding. Printing the gap over a correct decision of ours
+ * mis-reported twelve sources as holes in the research, which is why `strings.ts` has two
+ * separate values for it.
  *
  * THE ARCHIVER HAS SKIPPED THESE DOMAINS FOR A WHILE; NOTHING STOPPED A RECORD FROM
  * CARRYING THE URL ANYWAY. Twelve did — captured before the rule existed, and left behind
@@ -36,8 +43,10 @@
 export const WAYBACK_POINTLESS: readonly RegExp[] = [
   /app\.yogaalliance\.org/i,
   // The YA HELP CENTER is the same Salesforce shell as the register, and it was measured,
-  // not assumed: the Wayback snapshot of the electives article is 526 KB of JavaScript
-  // containing EIGHTY characters of visible text — "Yoga Alliance | Help Center --> Loading
+  // not assumed: the Wayback snapshot of the electives article (web.archive.org/web/
+  // 20260731195006/, measured 2026-07-31 — recorded here because `archived_url` is null by
+  // design, so nothing else in the repo names the capture) is 525.967 bytes of JavaScript
+  // containing 78 characters of visible text — "Yoga Alliance | Help Center --> Loading
   // × Sorry to interrupt CSS Error Refresh". Not a word of the article. The Playwright
   // local capture renders it in full, so the local copy is the evidence and the public half
   // is honestly absent. (WebFetch hit the same wall, which is what sent us to check.)
