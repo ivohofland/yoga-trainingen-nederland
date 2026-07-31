@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../reference.schema.json
+id: ya-electives-2026-07
+title: "What topics can be considered as electives within an RYS curriculum?"
+publisher: "Yoga Alliance (Verenigde Staten) — Help Center"
+type: website
+url: https://help.yogaalliance.org/s/article/What-topics-can-be-considered-as-electives-within-an-RYS-curriculum
+captured: "2026-07"
+archived_url: null
+applies_to: [ "RYS 200", "RYS 300", "RYS 500", "RCYS", "RPYS" ]
+note: >
+  GEEN PUBLIEK ARCHIEF MOGELIJK — Salesforce-shell, net als het YA-register.
+  Gemeten, niet aangenomen: de Wayback-snapshot van deze URL is 526 kB
+  JavaScript met TACHTIG tekens zichtbare tekst ("Yoga Alliance | Help Center
+  --> Loading × Sorry to interrupt CSS Error Refresh") en geen woord van het
+  artikel. De browser-gerenderde lokale kopie bevat het wel volledig; die is
+  hier het bewijs. Domein staat daarom in WAYBACK_POINTLESS (src/lib/wayback.ts).
+
+  DE REGEL. "Yoga Alliance honors and respects all disciplines and traditions
+  related to yoga, but all required hours for each designation (i.e., 200 hours
+  of the RYS 200) must be directly related to the Educational Categories and
+  cannot contain information that does not directly relate to yoga." Dit is de
+  Help Center-uitwerking van #5 Subjects of Study uit ya-standards-2026-07, en
+  het is het enige stuk waar YA het abstracte "directly related" invult met
+  concrete onderwerpen.
+
+  WEL AANVAARD, "topics that can count towards RYS required hours" — Techniques,
+  Training, and Practice: Acro Yoga, Aerial Yoga, Sacred Sound, Stand Up
+  Paddleboard. Yoga Humanities: Ayurveda, Jyotish, Yantra.
+
+  NIET AANVAARD: Acupressure, Acupuncture, Chinese Medicine, Craniosacral
+  Therapy, Creative Arts & Crafts, Crystals, Essential Oils, Herbalism,
+  Nutrition, Organic Farming, QiGong, Reiki, Shamanism, Substance Related Yoga*,
+  Tai Chi, Tapping Therapy, Thai Massage, Western Astrology. (* verwijst naar de
+  Code of Conduct.) De pagina verwijst verder naar de Scope of Practice.
+
+  LET OP DE REIKWIJDTE: dit gaat over ONDERWERPEN (waar de uren inhoudelijk
+  over mogen gaan), niet over ACTIVITEITSVORMEN (of het volgen, observeren of
+  assisteren van lessen als classroom hour telt). Die vraag beantwoordt deze
+  pagina niet; zie ya-application-guide-2026-07 voor de positieve definitie en
+  ya-hours-per-day-2026-07 voor de uitsluitingslijst.
+local_snapshot: data/archives/_references/ya-electives-2026-07-2026-07-31.pdf

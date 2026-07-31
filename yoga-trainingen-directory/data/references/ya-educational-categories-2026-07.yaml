@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=../reference.schema.json
+id: ya-educational-categories-2026-07
+title: "What are the Educational Categories for Registered Yoga Schools?"
+publisher: "Yoga Alliance (Verenigde Staten) — Help Center"
+type: website
+url: https://help.yogaalliance.org/s/article/What-are-the-Educational-Categories-for-Registered-Yoga-Schools
+archived_url: null
+captured: "2026-07"
+applies_to: [ "RYS 200", "RYS 300", "RYS 500", "RCYS", "RPYS" ]
+note: >
+  Salesforce-shell, dus geen publiek archief mogelijk (zie ya-electives-2026-07);
+  de browser-gerenderde lokale kopie is het bewijs.
+
+  LET OP — DE PAGINA SOMT ZEVEN CATEGORIEËN OP, en dat is een VERENIGING over
+  alle credentials, geen lijst van één opleiding. Teaching Methodology (2), Yoga
+  Philosophy Lifestyle and Ethics (4) en Practicum (7) horen bij de
+  vijf-categorieënstandaard (RYS 300/500 en niet-ge-up-levelde RYS 200); Yoga
+  Humanities (5) en Professional Essentials (6) horen bij de Elevated RYS 200,
+  waarin Teaching Methodology én Practicum juist zijn opgegaan. Geen enkele
+  opleiding heeft zeven categorieën.
+
+  "OBSERVEREN" STAAT ER TWEE KEER EN BETEKENT TWEE VERSCHILLENDE DINGEN. Niet
+  hetzelfde begrip op twee niveaus — twee begrippen die toevallig één woord
+  delen. Wie ze door elkaar haalt, telt de verkeerde uren.
+
+  Teaching Methodology — "Topics in this category could include, but are not
+  limited to, communication skills, time management, ... principles of
+  demonstration, observation, assisting and correcting, teaching styles, and the
+  business aspects of teaching yoga." Kijk naar het rijtje waarin het staat:
+  demonstreren, observeren, assisteren, corrigeren. Dat zijn alle vier dingen
+  die een DOCENT doet met de EIGEN klas — je studenten aankijken en daarnaar
+  handelen. Het is een docentvaardigheid, en "principles of" maakt het lesstof:
+  je leert er hoe het moet.
+
+  Practicum — "Topics in this category could include, but are not limited to,
+  practice teaching, receiving, and giving feedback, observing others teaching,
+  and assisting students while someone else is teaching." Hier is het
+  onderwerp een ANDER: je kijkt bij iemand anders' les, je assisteert terwijl
+  een ander lesgeeft. Geen vaardigheid om te leren, maar een bezigheid waar de
+  cursist tijd in stopt.
+
+  Voor de urenvraag telt alleen die tweede. En daar staat het onomwonden als
+  practicumonderdeel: uren kunnen eraan toegerekend worden. Die conclusie hangt
+  niet aan het contrast met Teaching Methodology — de practicumlijst zegt het
+  zelfstandig.
+
+  VOOR EEN ELEVATED RYS 200 LOOPT DAT VIA EEN SCHAKEL, en die moet erbij. Deze
+  pagina beschrijft Practicum als losse categorie (7) — en dat is een categorie
+  van de VIJF-categorieënstandaard. De Elevated RYS 200 kent geen zelfstandig
+  Practicum: het is opgegaan in Professional Essentials, en het
+  practicum-subblok dáár noemt alleen de competenties "Knowledge, skills,
+  experience across 12 key competencies" en "Mentorship component, incl.
+  apprenticeship, feedback" (ya-standards-2026-07). De opsomming "observing
+  others teaching / assisting students while someone else is teaching" staat
+  NIET in het Elevated RYS 200-hoofdstuk zelf.
+
+  De redenering is dus: deze Help Center-pagina omschrijft wat YA generiek onder
+  practicum verstaat → onder Elevated zit dat practicum binnen Professional
+  Essentials → "apprenticeship" in dat subblok wijst op dezelfde bezigheid.
+  Sluitend genoeg om op te bouwen, maar het is een keten van drie stappen en
+  geen enkele YA-bron zegt het in één zin. Wie dit publiceert, publiceert de
+  keten erbij.
+
+  WAT DIT NIET OPHEFT: de uitsluitingslijst van ya-hours-per-day-2026-07 sluit
+  "public classes" uit, ongeacht locatie. Zelf als deelnemer een openbare les
+  volgen valt daar dus onder. Observeren en assisteren zijn iets anders — je
+  bent er niet als leerling — en YA kwalificeert die twee nergens met
+  publiek/besloten. Dat onderscheid is van de gids, niet van YA: de bronnen
+  zeggen het niet met zoveel woorden.
+local_snapshot: data/archives/_references/ya-educational-categories-2026-07-2026-07-31.pdf

@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../reference.schema.json
+id: ya-hours-per-day-2026-07
+title: "RYS Hours Per Day"
+publisher: "Yoga Alliance (Verenigde Staten)"
+type: website
+url: https://yogaalliance.org/policies-priorities-progress/rys-hours-per-day/
+captured: "2026-07"
+applies_to: [ "RYS 200" ]
+note: >
+  DE ENIGE PLEK WAAR YA ZEGT WAT NIET MEETELT. Het standaardendocument
+  (ya-standards-2026-07) geeft de urenverdeling maar definieert nergens wat een
+  "classroom hour" is. Deze pagina doet dat — met een insluit- én een
+  uitsluitlijst, waarbij alleen de tweede over ACTIVITEITEN gaat; de eerste gaat
+  louter over levervorm:
+
+  "Instructional hours include: All 200 hours being delivered via classroom
+  hours (versus the distinction between contact and non-contact hours); and An
+  option of 40 of the 200 hours being delivered via online classroom hours."
+
+  "Instructional hours under the new RYS 200 credential do not include: Other
+  activities such as homework, reading assignments, personal/private practice,
+  volunteer work/Seva, and public classes, regardless of the location where such
+  activities take place."
+
+  Wat een activiteit WEL tot classroom hour maakt, staat op deze pagina niet;
+  zij grenst alleen af wat het niet is. De positieve definitie ("time your
+  students spend actively learning with a trainer") staat in
+  ya-application-guide-2026-07. Verder: "Regardless of which RYS credential
+  a yoga program holds, Yoga Alliance allows for no more than 14 hours per day
+  of instructional hours." En het contact/non-contact-onderscheid blijft
+  uitdrukkelijk bestaan voor de andere credentials: "RYSs with these
+  credentials, in addition to current RYS 200 programs that have not yet
+  up-leveled to the new RYS 200 credential, allocate hours according to five
+  Educational Categories and distinguish between contact and non-contact
+  hours."
+
+  DEELS ACHTERHAALD — NIET CITEREN VOOR DE LEVERVORM. De pagina draagt "Last
+  Updated: February 27, 2020" en houdt nog de oude online-limiet aan: maximaal
+  40 van de 200 uur online, waarvan ten hoogste 20 in Anatomy & Physiology en 20
+  in Yoga Humanities. Het actuele standaardendocument staat juist "100%
+  in-person, 100% distance learning, or a mix of both" toe met een
+  synchroon-minimum van 15%. Voor levervorm geldt ya-standards-2026-07; deze
+  pagina blijft gezaghebbend voor de uitsluitingslijst en het dagmaximum van 14
+  uur.
+local_snapshot: data/archives/_references/ya-hours-per-day-2026-07-2026-07-31.pdf
+archived_url: https://web.archive.org/web/20260731193408/https://yogaalliance.org/policies-priorities-progress/rys-hours-per-day/
