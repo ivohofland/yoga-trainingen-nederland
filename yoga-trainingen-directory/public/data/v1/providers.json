@@ -9626,7 +9626,7 @@
         },
         {
           "city": null,
-          "note": "Retreatlocaties: Yogabee (Domburg) voor de 200u Vinyasa; Laurettehoeve (Tiengemeten) voor de 200u Yin; Boda Retreat Centre (Durbuy, Ardennen, BE) en Yonshala (Morcenx, FR) voor de 300u.\n"
+          "note": "Retreatlocaties: Yogabee (Bijenkotsweg 1, 4357 NN Domburg) voor de 200u Vinyasa; Laurettehoeve (Tiengemeten) voor de 200u Yin; Boda Retreat Centre (Durbuy, Ardennen, BE) en Yonshala (Morcenx, FR) voor de 300u. De curriculumbrochure noemt Yogabee bij naam en adres (p. 10), terwijl diezelfde brochure op p. 15 zegt \"Location announced to enrolled trainees\" — het adres is dus wel degelijk vooraf bekend.\n"
         }
       ],
       "crkbo": {
@@ -9645,7 +9645,7 @@
           "first_registered": "2023-10",
           "verified_in_register": "yes",
           "source": "ya-register-2026-06",
-          "note": "RYS 200 geverifieerd op het live YA-profiel (registrant \"Tribes dance & yoga\", merk \"Tribes Academy\"; Doezastraat 2A, Leiden; rating 4.75/2 reviews; First Registered October 2023; bevestigd 2026-06-27). Teaching staff Willemieke Verweij + Fanny Alavoine, beiden E-RYT 500, YACEP — lead trainers voldoen aan de elevated lead-eis. 0 training dates op YA (cohorten via de site).\n"
+          "note": "RYS 200 geverifieerd op het live YA-profiel (registrant \"Tribes dance & yoga\", merk \"Tribes Academy\"; Doezastraat 2A, Leiden; rating 4.75/2 reviews; First Registered October 2023; bevestigd 2026-06-27). Teaching staff Willemieke Verweij + Fanny Alavoine, beiden E-RYT 500, YACEP — lead trainers voldoen aan de elevated lead-eis. 0 training dates op YA (cohorten via de site).\nREGIME: ELEVATED RYS 200. First Registered okt 2023 ligt na 27 feb 2020, dus geldt de Elevated-standaard: vier Educational Categories en alle 200 uur als \"classroom hours\". Contact/non-contact bestaat hier niet — dat loopt alleen nog bij RYS 300/500/RCYS/RPYS. Bronnen: ya-standards-2026-07, ya-hours-per-day-2026-07.\n"
         },
         {
           "body": "yoga_alliance",
@@ -9681,7 +9681,7 @@
           "name": "200-hour Modern Vinyasa Teacher Training",
           "url": "https://www.tribesacademy.nl/200-hour-modern-vinyasa",
           "format_label": "200",
-          "style_claimed": "Modern Vinyasa: functionele & embodied anatomie, alignment-based asana-studie (asana's gegroepeerd in families: backbends, forward bends, etc. + compensatie/ modificatie), veilige & intelligente sequencing (action-based blueprints), moderne perspectieven op traditionele filosofie (historische context, geen voorgeschreven leefstijl), authentiek lesgeven & presence.\n",
+          "style_claimed": "Modern Vinyasa: functionele & embodied anatomie, alignment-based asana-studie (asana's gegroepeerd in families: backbends, forward bends, etc. + compensatie/ modificatie), veilige & intelligente sequencing (action-based blueprints), moderne perspectieven op traditionele filosofie (historische context, geen voorgeschreven leefstijl), authentiek lesgeven & presence. De curriculumbrochure vult dit aan met vijf expliciete \"Modern Vinyasa\"-principes (cyclisch ritme, natuurlijke intelligentie, intentionele evolutie, onderlinge verbondenheid, zelfbalancerende flow) en een oplopende filosofielijn over de zeven hoofdstukken: vogelvlucht over de yogatradities → vroege wortels → Upanishads → Bhagavad Gita → Yoga Sutra's.\n",
           "styles": [
             "vinyasa"
           ],
@@ -9733,8 +9733,61 @@
             "supervised_teaching_practice": null,
             "breakdown_published": "not_published",
             "contact_published": "not_published",
+            "schedule": {
+              "source": "site-vinyasa200-2026-06",
+              "note": "DE MEEST GENEREUZE LEZING van wat de school publiceert (decision #14) — een bovengrens moet ruim zijn, niet zuinig. Weekenden: harde tijden (vr 18:00-20:00, za 12:00-20:00, zo 10:00-18:00), waarbij het afsluitende blok 20-21 mrt een za+zo is zonder vrijdagavond, dus 5 vrijdagen tegen 6 zaterdagen en 6 zondagen = ten hoogste 106 u.\nRetreatweek (1-7 mrt, 7 dagen): de school publiceert geen rooster maar een \"Example of a retreat day\" met het voorbehoud \"The daily schedule may vary depending on the flow of the group and logistical considerations\": 08:00 movement meditation, 09:30 flow practice, 12:30 lunch, 14:30 theory & teaching lab, 18:00 dinner, 19:30 satsang or free evening. Daaruit twee lesblokken per dag — 08:00-12:30 en 14:30-18:00 — met lunch en diner erbuiten. De randen volgen de pagina: de retreat \"starts on Mar. 1th 2027 at 10:00\" (dus 1× 10:00-12:30) en eindigt om 16:00 (dus 1× 14:30-16:00 op de vertrekdag). Retreat = 52 u, totaal 158 u.\nÉÉN DING DRUKT DEZE BOVENGRENS OMLAAG, en blaast daarmee de afgeleide `hours_disconnect` op: het satsang van 19:30 is niet meegeteld. Er staat geen eindtijd bij en het is \"satsang OR free evening\" — geen gegarandeerd programma, dus niet telbaar, ook al zou meetellen de grens juist ruimer (en dus veiliger) maken.\nDE 22 LESSEN BUITEN HET ROOSTER VULLEN HET GAT NIET. Ze staan per definitie niet op dit rooster (16 volgen, 2 assisteren, 4 observeren), maar dat maakt ze nog geen opleidingsuren. Tribes is RYS sinds okt 2023 en valt dus onder de Elevated RYS 200-standaard, en die kent geen contacturen — alle 200 uur moeten \"classroom hours\" zijn: \"time your students spend actively learning with a trainer\" (ya-application-guide-2026-07). Daarbij sluit YA uitdrukkelijk uit: \"public classes, regardless of the location where such activities take place\" (ya-hours-per-day-2026-07). De 16 te vólgen lessen zijn precies dat — de cursist zit er als leerling in een openbare studioles — en tellen dus niet mee, ook al geeft een van de leads ze.\nObserveren en assisteren liggen anders: YA noemt \"observing others teaching\" en \"assisting students while someone else is teaching\" uitdrukkelijk als practicumonderdelen (ya-educational-categories-2026-07), en kwalificeert ze nergens met publiek/besloten. Die 6 lessen zijn dus verdedigbaar als opleidingsuren; de 16 andere niet.\nGEVOLG VOOR DE LEZING VAN HET GAT: van de 22 lessen kan hooguit een kwart meetellen, dus het gat van ±42 u tussen de geclaimde 200 u en deze telling wordt er niet door verklaard. Lees het verschil als \"buiten het gepubliceerde rooster\" — niet als \"niet gegeven\", maar evenmin als \"elders wel geleverd\".\nTWEE STAPPEN HIERIN ZIJN VAN DE GIDS, NIET VAN YA. (a) Dat de practicum-omschrijving uit de vijf-categorieënstandaard doorwerkt in de Elevated RYS 200, waar practicum in Professional Essentials is opgegaan en alleen \"apprenticeship\" genoemd wordt. (b) Dat observeren en assisteren buiten de public-classes-uitsluiting vallen omdat de cursist er niet als leerling zit. Geen YA-bron zegt die twee met zoveel woorden; zie de notities bij de referenties.\n",
+              "blocks": [
+                {
+                  "count": 5,
+                  "start": "18:00",
+                  "end": "20:00",
+                  "label": "weekend, vrijdagavond"
+                },
+                {
+                  "count": 6,
+                  "start": "12:00",
+                  "end": "20:00",
+                  "label": "weekend, zaterdag"
+                },
+                {
+                  "count": 6,
+                  "start": "10:00",
+                  "end": "18:00",
+                  "label": "weekend, zondag"
+                },
+                {
+                  "count": 1,
+                  "start": "10:00",
+                  "end": "12:30",
+                  "label": "retreat, aankomstdag (start 10:00)"
+                },
+                {
+                  "count": 6,
+                  "start": "08:00",
+                  "end": "12:30",
+                  "label": "retreat, ochtendblok"
+                },
+                {
+                  "count": 6,
+                  "start": "14:30",
+                  "end": "18:00",
+                  "label": "retreat, middagblok"
+                },
+                {
+                  "count": 1,
+                  "start": "14:30",
+                  "end": "16:00",
+                  "label": "retreat, vertrekdag (eind 16:00)"
+                }
+              ]
+            },
             "source": "site-vinyasa200-2026-06",
-            "note": "6 weekenden (vr 18:00-20:00, za 12:00-20:00, zo 10:00-18:00) + retreatweek. Hands-on: 16 lessen volgen, 2 assisteren, 4 observeren bij Studio Tribes. Eindtoets: open-book essay (thuis) + groeps-lesexamen. Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\n"
+            "note": "Format volgens de curriculumbrochure (brochure-curriculum-2026-07): \"5 weekends + 1 retreat week + 1 closing weekend\" — vr 18:00-20:00, za 12:00-20:00, zo 10:00-18:00. Het afsluitende blok (20-21 mrt 2027) is een za+zo zonder vrijdagavond, dus over de hele run: 5 vrijdagavonden, 6 zaterdagen, 6 zondagen.\nHANDS-ON — de twee bronnen tellen anders. De site (site-vinyasa200-2026-06): \"you'll attend 16 classes, assist in 2, and observe 4 with the trainers\" = 22 lessen. De brochure (brochure-curriculum-2026-07) zet onder \"Between weekends\" alleen \"16 classes to attend with the trainers from the day you sign up\" en \"4 real classes to observe through the training\" = 20 lessen; het assisteren komt er niet in voor. Beide zijn gearchiveerd. Deze lessen zitten in geen van beide lezingen in de ceiling — ze staan per definitie buiten het rooster — en de `schedule`-note houdt de 22 van de site aan: het hogere aantal, en dus de lezing die het meest in het voordeel van de school uitvalt.\nNIET ALLE 22 KUNNEN OPLEIDINGSUREN ZIJN. Onder de Elevated RYS 200-standaard waar Tribes onder valt moeten alle 200 uur \"classroom hours\" zijn en sluit YA \"public classes\" uitdrukkelijk uit, ongeacht locatie. De 16 te vólgen lessen zijn openbare studiolessen waarin de cursist als leerling zit: die tellen niet mee, ook niet omdat een lead ze geeft. Het assisteren (2) en observeren (4) zijn wél als practicumonderdelen benoemd en zijn dus verdedigbaar. Zie de `schedule`-note voor wat dat met het gat doet, en de referenties ya-application-guide-2026-07, ya-hours-per-day-2026-07 en ya-educational-categories-2026-07 voor de bronnen.\nEindtoets: open-book essay (thuis) + groeps-lesexamen, lesgeven in een groepje van 3 à 4. Geen geïsoleerd contact-/lespraktijk-urental gepubliceerd.\nDe roostertelling staat in `schedule`.\n"
+          },
+          "group_size_claimed": {
+            "max": 14,
+            "source": "brochure-curriculum-2026-07",
+            "note": "\"Maximum 14 trainees\" (Practical details) en \"Up to fourteen people\" (The community). Staat NIET op de publieke 200u-pagina: de gearchiveerde site-capture van 2026-06-28 noemt nergens een maximum of minimum. Alleen de brochure geeft dit — een van de weinige feiten hier die buiten het gated document niet te vinden is. Geen minimum gepubliceerd.\n"
           },
           "composition": {
             "type": "single_program"
@@ -9753,10 +9806,18 @@
             "final": "yes",
             "quote": "The final assessment includes a short open-book essay (done at home) and a group teaching exam"
           },
+          "transparency": {
+            "syllabus_published": "yes",
+            "hours_breakdown_published": "not_published",
+            "assessment_criteria_published": "not_published",
+            "reading_list_published": "not_published",
+            "teacher_bios_published": "yes",
+            "source": "brochure-curriculum-2026-07"
+          },
           "track_record": {
             "first_seen_year": 2023,
             "source": "ya-register-2026-06",
-            "note": "RYS sinds okt 2023; meerdere eerdere cohorten via testimonials (o.a. Olivia, ook YA-review sep 2025)."
+            "note": "RYS sinds okt 2023; meerdere eerdere cohorten via testimonials (o.a. Olivia, ook YA-review sep 2025). De curriculumbrochure (2026-07) voegt zes bij naam genoemde afgestudeerden toe (Lisa, Jaime, Dorith, Ana, Olivia, Loes), van wie er vier een \"WATCH HER TESTIMONIAL\"-videolink krijgen (Lisa p2, Jaime p4, Dorith p12, Ana p13); Olivia (p14) en Loes (p16) staan er alleen als tekstcitaat. Bevestigt dat er edities gedraaid hebben, maar geen van die testimonials is aan een datum of cohort te koppelen, dus `last_confirmed_cohort` blijft leeg (§8).\n"
           },
           "cohorts": [
             {
@@ -9770,7 +9831,7 @@
                 "fanny-alavoine"
               ],
               "language": "en",
-              "note": "9-11 okt, 13-15 nov, 11-13 dec 2026, 8-10 jan, 5-7 feb 2027, retreat 1-7 mrt 2027 (Yogabee, Domburg), afsluiting 20-21 mrt 2027. (De pagina is intern inconsistent over de retreat-einddatum: 'Mar 1-7' vs 'ends Mar 20'.)\n"
+              "note": "Weekenden in Leiden: 9-11 okt, 13-15 nov, 11-13 dec 2026, 8-10 jan, 5-7 feb 2027. Retreatweek 1-7 mrt 2027 (Yogabee, Bijenkotsweg 1, 4357 NN Domburg, Zeeland), van 1 mrt 10:00 tot 7 mrt 16:00. Afsluitende dagen 20-21 mrt 2027 in Leiden.\nDe brochure benoemt de zeven hoofdstukken met datum: The Blueprint (9-11 okt), Roots & Foundations (13-15 nov), Broadening Perspective (11-13 dec), Flowing from Center (8-10 jan), Holding Space (5-7 feb), Living the Practice (1-7 mrt, retreat), Closure & Continuity (20-21 mrt).\nDe retreattijden staan in de roosterkolom van de site, onder het kopje \"Retreat:\": \"Starts on Mar. 1th 2027 at 10:00 / Ends on Mar. 20th 2027 at 16:00\". Die kolom noemt 20 mrt als einddatum, terwijl de datumlijst op dezelfde pagina (\"Mar. 1-7, 2027 (Retreat)\" / \"Mar. 20-21, 2027\") en de brochure (\"IMMERSIVE WEEK — Living the Practice — March 1–7, 2027\" / \"CLOSING DAYS — Closure & Continuity — March 20–21, 2027\") de retreat op 1-7 mrt zetten en 20-21 mrt de afsluiting maken. Gelezen als: retreat 1-7 mrt, met 10:00 en 16:00 als de gepubliceerde randen — de lezing die `hours_claimed.schedule` gebruikt.\n"
             }
           ],
           "teachers": [
@@ -9811,12 +9872,14 @@
             "bundle_delta": null,
             "multistyle": false,
             "scheduled_hours_ceiling": {
-              "kind": "no_schedule",
-              "value": null
+              "kind": "computed",
+              "value": 158,
+              "working": "onze telling: 5× 18:00–20:00 + 6× 12:00–20:00 + 6× 10:00–18:00 + 1× 10:00–12:30 + 6× 08:00–12:30 + 6× 14:30–18:00 + 1× 14:30–16:00. Ten hoogste — contacturen zijn nooit meer dan de ingeroosterde tijd, en alleen de opgegeven pauzes zijn afgetrokken."
             },
             "hours_disconnect": {
-              "kind": "no_comparison",
-              "value": null
+              "kind": "computed",
+              "value": 42,
+              "working": "de school claimt 200 uur; het gepubliceerde rooster beslaat ten hoogste 158 uur, dus ten minste 42 uur valt buiten het rooster (zelfstudie, en wat verder niet is ingeroosterd)."
             }
           }
         },
@@ -10193,6 +10256,14 @@
           "local_snapshot": "data/archives/tribes-academy/site-yogindra-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Eigen marketingpagina van Indra Paternotte voor dezelfde 200u Yin-TT: de \"Enroll\" / \"How to Join\"-knoppen verwijzen naar tribesacademy.nl/training/200-hour-yin-yoga; \"All modules take place at the Tribes studio in Leiden\"; toont RYS-200- + YACEP-badges; deelnemers moeten 5 lessen bij Indra volgen (met 20% Tribes-korting). Documenteert de host/teacher-relatie (decision #9): Indra markt op eigen site, Tribes is de boekings- + certificeringsbrand.\n"
+        },
+        {
+          "id": "brochure-curriculum-2026-07",
+          "type": "brochure",
+          "archived_url": null,
+          "local_snapshot": "data/archives/tribes-academy/brochure-curriculum-2026-07-2026-07-31.pdf",
+          "captured": "2026-07",
+          "note": "\"200-hour Modern Vinyasa Teacher Training — Full Curriculum\" (PDF, 17 pagina's, bestandsversie V3, omslag \"October 2026 → March 2027\"). NIET vrij op de site gepubliceerd: het stuk komt achter het downloadformulier bij tribesacademy.nl/200 vandaan en vergt afgifte van een e-mailadres. Daarom geen `url` en geen Wayback-capture — er is geen publieke, reproduceerbare URL; het bewijs is de gedateerde lokale kopie (sha256 vastgelegd 2026-07-31). Inhoud: de hoofdstuk-voor-hoofdstukopbouw (7 hoofdstukken, elk met datum, plaats en \"key content\"), de vijf Modern-Vinyasa-principes, de losse weekenddata, de sessietijden, het groepsmaximum (14), het retreatadres, en bio's van beide leads. Verkregen en vastgelegd door de maker van de gids; zie `disclosure`.\n"
         },
         {
           "id": "ya-register-2026-06",
