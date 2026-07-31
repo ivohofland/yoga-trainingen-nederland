@@ -292,13 +292,14 @@ function isDelimited(quote: string): boolean {
  *
  * A missing directory is not an error — the store is optional, unlike data/providers/.
  */
-export function loadReferences(): ReferenceLoadResult {
+export function loadReferences(cwd: string = process.cwd()): ReferenceLoadResult {
   const references: Reference[] = [];
   const errors: string[] = [];
-  if (!fs.existsSync(REFERENCE_DIR)) return { references, errors };
+  const dir = path.join(cwd, "data", "references");
+  if (!fs.existsSync(dir)) return { references, errors };
 
-  for (const file of fs.readdirSync(REFERENCE_DIR).filter((f) => f.endsWith(".yaml"))) {
-    const raw = parse(fs.readFileSync(path.join(REFERENCE_DIR, file), "utf8"));
+  for (const file of fs.readdirSync(dir).filter((f) => f.endsWith(".yaml"))) {
+    const raw = parse(fs.readFileSync(path.join(dir, file), "utf8"));
     const result = Reference.safeParse(raw);
     if (!result.success) {
       for (const issue of result.error.issues) {
@@ -307,6 +308,7 @@ export function loadReferences(): ReferenceLoadResult {
       continue;
     }
     const ref = result.data;
+    const before = errors.length;
     if (ref.id !== file.replace(/\.yaml$/, ""))
       errors.push(`references/${file}: reference id '${ref.id}' does not match filename`);
 
@@ -328,13 +330,43 @@ export function loadReferences(): ReferenceLoadResult {
         errors.push(
           `references/${file}: local_snapshot must live under data/archives/_references/ (§4.1b)`,
         );
+      // A SNAPSHOT IS A CAPTURE OF THEIR DOCUMENT, NEVER TEXT WE WROTE. The provider records
+      // carry this rule because five of them once pointed `local_snapshot` at our own `.md`
+      // reading notes, and the provenance gate duly certified seven claims about four named
+      // businesses against our own homework. References carry the longest hand-written notes
+      // in the corpus, so the temptation here is strictly higher, not lower.
+      else if (/\.(md|txt)$/i.test(ref.local_snapshot))
+        errors.push(
+          `references/${file}: local_snapshot is een ${path.extname(ref.local_snapshot)}-bestand — ` +
+            `een snapshot is een capture van HUN document, nooit tekst die wij schreven`,
+        );
       else {
+        // THE SIDECAR MUST LIST THIS EXACT FILENAME, not merely exist. Asserting only that
+        // the file is there passes on an extension typo, because one sidecar covers every
+        // artifact of a capture: `<id>-<date>.sha256` is the receipt for BOTH `<id>-<date>.pdf`
+        // and `<id>-<date>.html`, so a `local_snapshot` naming the `.html` of a capture that
+        // only ever produced a `.pdf` resolves to a sidecar that exists and never mentions it.
+        // That is exactly the pair this project keeps two of on purpose (the JS-rendered-price
+        // trap), so it is the typo most likely to be made and the one least likely to be seen.
         const sidecar = ref.local_snapshot.replace(/\.[a-z0-9]+$/i, ".sha256");
-        if (!fs.existsSync(path.join(process.cwd(), sidecar)))
+        const sidecarPath = path.join(cwd, sidecar);
+        if (!fs.existsSync(sidecarPath))
           errors.push(
             `references/${file}: geen vastgelegde hash voor local_snapshot — ${sidecar} ontbreekt ` +
               `(de body is gitignored; de .sha256 is het gepubliceerde bewijs dat de capture bestaat)`,
           );
+        else {
+          const listed = fs
+            .readFileSync(sidecarPath, "utf8")
+            .split("\n")
+            .map((l) => l.trim().split(/\s+/)[1])
+            .filter((name): name is string => !!name);
+          if (!listed.includes(path.basename(ref.local_snapshot)))
+            errors.push(
+              `references/${file}: ${sidecar} noemt ${path.basename(ref.local_snapshot)} niet ` +
+                `(wel: ${listed.join(", ") || "niets"}) — de hash dekt dit bestand dus niet`,
+            );
+        }
       }
     }
 
@@ -342,14 +374,42 @@ export function loadReferences(): ReferenceLoadResult {
     // SCRIPT once and twelve provider records kept a Wayback URL the script would never
     // have written — one of them 404ing for weeks. A reference store that skipped the check
     // would reintroduce exactly that gap, on documents the whole corpus cites.
-    if (ref.url && ref.archived_url && waybackIsPointless(ref.url))
+    //
+    // The `web.archive.org` half is not decoration and this check shipped without it: these
+    // domains are WAYBACK-pointless, not archive-pointless. archive.today renders the page
+    // before storing it, so it captures what Wayback cannot — it is the documented fallback
+    // and a provider record already relies on it. Without this clause the rule rejects the
+    // one public archive that would actually work, while claiming to be the provider rule.
+    if (
+      ref.url &&
+      ref.archived_url &&
+      waybackIsPointless(ref.url) &&
+      /web\.archive\.org/i.test(ref.archived_url)
+    )
       errors.push(
         `references/${file}: archived_url op een Wayback-zinloze bron — ` +
           `${waybackPointlessReason(ref.url)}; gebruik archived_url: null + de lokale kopie`,
       );
 
-    references.push(ref);
+    // A RECORD THAT FAILED ITS OWN CHECKS IS NOT A LOADED RECORD. Returning it alongside the
+    // errors invites a consumer that reads `references` and ignores `errors` — the lazy path
+    // being the wrong one, which is the shape this project designs against everywhere else.
+    if (errors.length === before) references.push(ref);
   }
+
+  // LINEAGE MUST RESOLVE. `supersedes`/`superseded_by` exist because publishers reissue
+  // without version numbers, so the chain is pinned by hand — and a hand-typed slug with
+  // nothing checking it silently breaks the only lineage record there is. Same class as the
+  // `source:` refs `integrityErrors` resolves; cheapest to add now, while no record uses it.
+  // A second pass, because the target may be loaded after the record naming it.
+  const ids = new Set(references.map((r) => r.id));
+  for (const r of references)
+    for (const key of ["supersedes", "superseded_by"] as const) {
+      const target = r[key];
+      if (target && !ids.has(target))
+        errors.push(`references/${r.id}.yaml: ${key} '${target}' verwijst naar geen bestaande referentie`);
+    }
+
   return { references, errors };
 }
 

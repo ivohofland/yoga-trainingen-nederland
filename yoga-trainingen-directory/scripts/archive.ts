@@ -12,7 +12,9 @@
  *
  * Gebruik:
  *   npm run archive -- <provider-id> [...meer ids]
- *   npm run archive -- --all              # alle providers
+ *   npm run archive -- _references        # de hele gedeelde referentiestore (spec §4.1b)
+ *   npm run archive -- <referentie-id>    # één referentie
+ *   npm run archive -- --all              # alle providers ÉN de referentiestore
  *   npm run archive -- --all --force      # ook bronnen die al een kopie hebben
  *   npm run archive -- --all --skip-wayback
  *   npm run archive -- --sync-only       # alleen de bodies naar de private archiefrepo
@@ -269,7 +271,14 @@ async function captureNode(
 ): Promise<boolean> {
   const sourceId = node.get("id") as string;
   const url = node.get("url") as string | undefined;
-  if (!url) return false;
+  // SAY SO. A source with no url is one the archiver structurally cannot handle (a gated
+  // brochure, a hand-placed body), and silence makes it indistinguishable from one that was
+  // captured fine — every other source scrolls past with `ok`. The Wayback-exclusion and
+  // Wayback-pointless branches already announce themselves; this one did not.
+  if (!url) {
+    console.log(`  ${sourceId}: overgeslagen (geen url — handmatig vastleggen en hashen)`);
+    return false;
+  }
   const note = (node.get("note") as string | undefined) ?? "";
   const query = node.get("query") as string | undefined;
   const excluded = /wayback-exclusie/i.test(note);
@@ -277,6 +286,10 @@ async function captureNode(
 
   // 1. lokale kopie. "Al gearchiveerd" = het local_snapshot-pad is niet
   //    alleen gedeclareerd in de YAML, maar het bestand bestaat ook echt.
+  //    Zo vult een gewone run pre-ingevulde-maar-ontbrekende kopieën aan
+  //    (zonder --force), terwijl bestaande snapshots overgeslagen blijven.
+  //    Dat verschil is de reden voor de bestandstest; een test op alleen het
+  //    gedeclareerde pad zou beide gevallen als "klaar" lezen.
   const declaredLocal = node.get("local_snapshot") as string | undefined;
   const hasLocal = !!declaredLocal && fs.existsSync(path.join(process.cwd(), declaredLocal));
   if (!hasLocal || FORCE) {
@@ -287,7 +300,14 @@ async function captureNode(
       changed = true;
       console.log("ok");
     } catch (e) {
-      console.log(`MISLUKT (${(e as Error).message})`);
+      // LOG, CONTINUE — BUT REMEMBER. Continuing is right: one unreachable host must not
+      // abandon the other 49 providers. Exiting 0 afterwards is not. A --all run prints
+      // hundreds of lines with 10-30s Wayback pauses between them, so nobody is watching
+      // when one scrolls past; the run then ends on "Klaar" and the researcher commits a
+      // source that has no capture at all. stderr + a tally + a non-zero exit, so the
+      // failure survives the scrollback.
+      console.error(`MISLUKT (${(e as Error).message})`);
+      failedCaptures.push(sourceId);
     }
   }
 
@@ -321,12 +341,26 @@ async function captureNode(
  * a normative document belongs to no school, and filing it under the one school that
  * prompted reading it is what this store exists to stop.
  */
-async function archiveReferences(browser: import("playwright").Browser): Promise<void> {
-  if (!fs.existsSync(REFERENCE_DIR)) return;
-  const files = fs
+/** Sources whose local capture threw this run. A run that ends green over one of these is a
+ *  record shipping with no capture behind it. */
+const failedCaptures: string[] = [];
+
+/** Which reference files this run selects. ONE definition: the emptiness guard in main() and
+ *  the capture loop must agree, or the run aborts on "nothing selected" while a reference was
+ *  in fact selected — or worse, the reverse. It was written out twice, with `"_references"`
+ *  spelled literally in one and via the constant in the other. */
+function selectedReferenceFiles(): string[] {
+  if (!fs.existsSync(REFERENCE_DIR)) return [];
+  return fs
     .readdirSync(REFERENCE_DIR)
     .filter((f) => f.endsWith(".yaml"))
-    .filter((f) => ALL || ids.includes(f.replace(/\.yaml$/, "")) || ids.includes("_references"));
+    .filter(
+      (f) => ALL || ids.includes(f.replace(/\.yaml$/, "")) || ids.includes(REFERENCE_DIR_NAME),
+    );
+}
+
+async function archiveReferences(browser: import("playwright").Browser): Promise<void> {
+  const files = selectedReferenceFiles();
   if (files.length === 0) return;
 
   console.log("\n_references");
@@ -356,17 +390,29 @@ async function main() {
   // A references-only run (`npm run archive -- _references`) selects zero PROVIDERS and is
   // perfectly valid, so "nothing selected" can only be judged after the reference store has
   // had its say — otherwise the store is unreachable except via --all.
-  const referenceFiles = fs.existsSync(REFERENCE_DIR)
-    ? fs
-        .readdirSync(REFERENCE_DIR)
-        .filter((f) => f.endsWith(".yaml"))
-        .filter((f) => ALL || ids.includes(f.replace(/\.yaml$/, "")) || ids.includes(REFERENCE_DIR_NAME))
-    : [];
+  const referenceFiles = selectedReferenceFiles();
   if (files.length === 0 && referenceFiles.length === 0) {
     console.error(
       "Niets geselecteerd. Gebruik: npm run archive -- <provider-id> | _references | <referentie-id> | --all",
     );
     process.exit(1);
+  }
+
+  // EVERY ID MUST MATCH SOMETHING. Widening the guard to "nothing at all matched" opened a
+  // hole it did not have before: `npm run archive -- ya-standards-2026-07 tribes-acadmy`
+  // (typo) matches the reference, so the guard stays quiet, the typo is never mentioned, and
+  // the run exits 0 while the author believes a provider was re-archived.
+  if (!ALL) {
+    const matched = new Set([
+      ...files.map((f) => f.replace(/\.yaml$/, "")),
+      ...referenceFiles.map((f) => f.replace(/\.yaml$/, "")),
+      ...(referenceFiles.length ? [REFERENCE_DIR_NAME] : []),
+    ]);
+    const unknown = ids.filter((id) => !matched.has(id));
+    if (unknown.length) {
+      console.error(`Onbekende id('s): ${unknown.join(", ")} — geen provider en geen referentie.`);
+      process.exit(1);
+    }
   }
 
   for (const file of files) {
@@ -396,6 +442,15 @@ async function main() {
   // publiceren is pas iets waard zolang de body ergens bestaat, en "ergens" was tot nu
   // toe één laptop. Zie scripts/sync-archive.ts.
   if (!NO_SYNC) syncArchive();
+
+  if (failedCaptures.length) {
+    console.error(
+      `\n✗ ${failedCaptures.length} lokale capture(s) MISLUKT: ${failedCaptures.join(", ")}`,
+    );
+    console.error("  Die bronnen hebben GEEN kopie. Draai ze opnieuw voordat je commit.");
+    process.exitCode = 1;
+    return;
+  }
 
   console.log("\nKlaar. Draai `npm run validate` en commit data/ in git (dateert de hashes).");
 }

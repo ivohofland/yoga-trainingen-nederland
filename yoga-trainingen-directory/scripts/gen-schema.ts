@@ -14,9 +14,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import { zodToJsonSchema } from "zod-to-json-schema";
-import { Provider } from "../src/schema";
+import { Provider, Reference } from "../src/schema";
 
-const schema = zodToJsonSchema(Provider, { name: "Provider", target: "jsonSchema7" });
-const out = path.join(process.cwd(), "data", "provider.schema.json");
-fs.writeFileSync(out, JSON.stringify(schema, null, 2) + "\n");
-console.log(`wrote ${path.relative(process.cwd(), out)}`);
+/** Every data file that names a $schema must have one generated for it. The reference store
+ *  shipped with `# yaml-language-server: $schema=../reference.schema.json` on all five records
+ *  and nothing emitting that file — a header promising editor validation that silently did
+ *  nothing, which is worse than no header at all. */
+for (const [name, zod, file] of [
+  ["Provider", Provider, "provider.schema.json"],
+  ["Reference", Reference, "reference.schema.json"],
+] as const) {
+  const schema = zodToJsonSchema(zod, { name, target: "jsonSchema7" });
+  const out = path.join(process.cwd(), "data", file);
+  fs.writeFileSync(out, JSON.stringify(schema, null, 2) + "\n");
+  console.log(`wrote ${path.relative(process.cwd(), out)}`);
+}
