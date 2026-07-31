@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../reference.schema.json
+id: ya-standards-2026-07
+title: "Standards for Registered Yoga Schools"
+publisher: "Yoga Alliance (Verenigde Staten)"
+type: other
+url: https://yogaalliance.org/wp-content/uploads/2025/05/Standards-for-RYS-Credentials_NB22my-.pdf
+archived_url: https://web.archive.org/web/20260731190125/https://yogaalliance.org/wp-content/uploads/2025/05/Standards-for-RYS-Credentials_NB22my-.pdf
+local_snapshot: data/archives/_references/ya-standards-2026-07-2026-07-31.pdf
+captured: "2026-07"
+applies_to: [ "RYS 200", "RYS 300", "RYS 500", "RCYS", "RPYS" ]
+note: >
+  40 pagina's. LET OP — HET DOCUMENT BEVAT VIJF VERSCHILLENDE
+  CREDENTIALSTANDAARDEN NAAST ELKAAR: RYS 200 (p. 13-20), RYS 300 (p. 22-26),
+  RYS 500 (p. 27-30), RCYS (p. 32-34), RPYS (p. 36-38), plus algemene Standards
+  Guidelines (p. 4-8). Ze spreken elkaar op punten tegen. Citeer nooit een regel
+  uit het ene hoofdstuk voor een opleiding onder het andere — dat is hier bij de
+  eerste lezing precies misgegaan: de RYS 300-practicumregels werden aangehaald
+  bij een 200-uursopleiding.
+
+  RYS 200 — DE ELEVATED-STANDAARD. "New standards underlying the RYS 200
+  credential took effect for newly registered schools starting February 27,
+  2020." Vier Educational Categories: Techniques, Training, Practice (75 u),
+  Anatomy & Physiology (30 u), Yoga Humanities (30 u), Professional Essentials
+  (50 u; daarin zitten Teaching Methodology, Professional Development én
+  Practicum samen) = 185 van de 200. Het hoofdstuk benoemt de resterende 15 u
+  NIET en kent — anders dan de andere vier credentials — geen sectie "Remaining
+  Contact Hours and Elective Hours". De veelgeciteerde "15 elective hours" is
+  dus een rekenkundig restant, geen gepubliceerde toewijzing.
+
+  Het RYS 200-hoofdstuk is een COMPETENTIEKADER, geen urenboekhouding: per
+  rubriek staan core competencies met een vraag aan de school ("What
+  opportunities are trainees given to show understanding of all competencies
+  covered?"). Praktijk komt er alleen voor als competentie — "Mentorship
+  component, incl. apprenticeship, feedback" — ZONDER urenminimum. Binnen
+  Professional Essentials (50 u) legt YA geen ondergrens per onderdeel op, dus
+  een school mag het practicum klein houden en voldoet nog steeds. De enige
+  ondergrens op subniveau komt uit het aanvraagsysteem: "a minimum of 0.5 hours
+  per sub-competency". In het HELE RYS 200-hoofdstuk komt "contact hour" niet
+  voor en staat geen enkele "MINIMUM CONTACT HOURS"-regel: het onderscheid
+  contact/non-contact bestaat daar niet.
+
+  RYS 300 EN RYS 500 — DE VIJF-CATEGORIEËNSTANDAARD, mét contact- en
+  non-contacturen. Practicum is daar een eigen rubriek (RYS 300: 30 u, min. 15
+  contact; RYS 500: 40 u) en de opsomming luidt: "Practice teaching (does not
+  include assisting, observing or giving feedback). / Receiving and giving
+  feedback. / Observing others teaching. / Assisting students while someone else
+  is teaching." Observeren en assisteren zijn daar dus WÉL practicumonderdelen.
+  De uitsluiting geldt uitsluitend een deelminimum: "Each trainee must spend a
+  minimum of 5 Contact Hours actively practice teaching as the lead instructor.
+  ... Time spent assisting, observing others teaching, or giving feedback to
+  others is excluded from these hours" — uitgesloten van DIE VIJF, niet van het
+  practicum. Verder: "Non-Contact Hours are the number of hours of learning that
+  occur without a faculty member present. Examples of allowable Non-Contact
+  hours may include: reading, written assignments, or attending yoga classes
+  outside of the program", en bij "Observing others teaching": "Evaluation or
+  observation of yoga classes outside of the RYS Teacher Training constitute as
+  Non-Contact Hours." Non-contacturen zijn daar géén niet-tellende uren: ze
+  hebben een eigen budget (RYS 300: 270 van de 300 moeten contacturen zijn).
+
+  ALGEMENE GUIDELINES (over alle credentials). #5 Subjects of Study: "all
+  required hours for each designation (IE: 200 hours of the RYS 200) must be
+  directly related to the Educational Categories and cannot contain information
+  that does not related directly to yoga" [sic]. #6 Distance Learning:
+  trainingen mogen "100% in-person, 100% distance learning, or a mix of both"
+  zijn, met voor RYS 200 minimaal 30 u synchroon (15%). #4: voor RYS 200 moet
+  "150 of 200 hours" gegeven worden door een Lead Trainer met E-RYT 500; 1 tot 5
+  Lead Trainers per school.
+
+  WAT HIER NIET IN STAAT: de oude (Legacy) RYS 200-standaard zelf. Het document
+  verwijst er alleen naar — "current RYS 200 programs that have not yet
+  up-leveled to the new RYS 200 credential" — zonder die regels af te drukken.
+  Wie zich op de pre-2020 RYS 200-eisen beroept, heeft daar een aparte
+  (Wayback-)capture voor nodig; zie de openstaande taak in project-decisions.md.
+
+  YA herziet deze documenten zonder versienummers of changelog. Anker een
+  citaat daarom aan de bestands-URL én de datum: het pad codeert de
+  uploadmaand (/2025/05/).
