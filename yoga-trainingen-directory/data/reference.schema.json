@@ -1,0 +1,79 @@
+{
+  "$ref": "#/definitions/Reference",
+  "definitions": {
+    "Reference": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "publisher": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "website",
+            "wayback",
+            "brochure",
+            "register",
+            "inquiry_response",
+            "reader_report",
+            "email",
+            "other"
+          ]
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "archived_url": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "uri"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "local_snapshot": {
+          "type": "string"
+        },
+        "captured": {
+          "type": "string",
+          "pattern": "^\\d{4}-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?$"
+        },
+        "applies_to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "supersedes": {
+          "$ref": "#/definitions/Reference/properties/id"
+        },
+        "superseded_by": {
+          "$ref": "#/definitions/Reference/properties/id"
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "publisher",
+        "type",
+        "captured"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

@@ -59,7 +59,9 @@ and `unknown` (a gap) must never render identically. `src/components/Quad.tsx`
 is the only place a quad value becomes pixels — keep it that way.
 
 Archive script flags: `npm run archive -- <provider-id> [...ids]`,
-`--all`, `--force` (re-archive sources that already have a copy),
+`_references` or a single `<referentie-id>` for the shared reference store (spec
+§4.1b), `--all` (providers **and** the reference store), `--force` (re-archive
+sources that already have a copy),
 `--skip-wayback`, `--sync-only` (push bodies, capture nothing), `--no-sync`.
 Wayback API keys (`WAYBACK_ACCESS_KEY`/`WAYBACK_SECRET_KEY`, or via `.env`) make
 submissions reliable; without them it falls back to the rate-limited public save URL.

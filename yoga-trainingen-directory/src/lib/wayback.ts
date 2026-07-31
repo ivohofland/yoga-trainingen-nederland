@@ -50,9 +50,16 @@ export function waybackIsPointless(url: string): boolean {
   return WAYBACK_POINTLESS.some((re) => re.test(url));
 }
 
-/** Why, in Dutch, for the record and the reader. */
+/** Why, in Dutch, for the record and the reader.
+ *
+ *  Per domain, not one catch-all: the Salesforce branch used to say "zonder registergegevens"
+ *  for every non-CRKBO hit, which is true of the YA register and false of the YA Help Center —
+ *  a help article has no register data to lose. A reason that misdescribes the page it explains
+ *  is worse than none, because it is the sentence a reader is given for an absent archive. */
 export function waybackPointlessReason(url: string): string {
-  return /crkbo/i.test(url)
-    ? "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
-    : "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens";
+  if (/crkbo/i.test(url))
+    return "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij";
+  if (/help\.yogaalliance\.org/i.test(url))
+    return "JS-shell (Salesforce): Wayback bewaart alleen het omhulsel, geen letter van het artikel";
+  return "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens";
 }

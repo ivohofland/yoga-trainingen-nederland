@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { integrityErrors, loadDataset, loadReferences } from "./loader";
 import {
@@ -30,31 +31,113 @@ test("the committed dataset is valid — zero schema or integrity errors", () =>
 });
 
 /**
- * THE REFERENCE STORE MUST VALIDATE WITHOUT THE ARCHIVE BODIES (spec §4.1b, v0.13).
+ * THE REFERENCE STORE (spec §4.1b, v0.13).
  *
- * This exists because the first version of the `local_snapshot` check asserted that the
- * BODY was on disk. Bodies are gitignored, so that is green on the machine that captured
- * them and red in every fresh clone: CI failed on all five reference records, and nothing
- * runnable locally could have caught it — the same "passes here, fails on a clone" disease
- * that `test:ci` and the provenance tiers exist for.
- *
- * This test IS the guard, because CI runs it in a checkout that has the sidecars and none
- * of the bodies. If someone reintroduces a body-existence check, this goes red there.
+ * The `local_snapshot` check first asserted the BODY was on disk. Bodies are gitignored, so
+ * that is green on the machine that captured them and red in every fresh clone: CI failed on
+ * all five records. `test:ci` did NOT catch it and cannot — `PROVENANCE_WITHHOLD_BODIES` is
+ * read in exactly one place, `provenance.ts`, and the loader never consults it. So the real
+ * guard is not "CI runs this in a bodiless checkout"; it is the fixture below, which builds
+ * a store with a sidecar and no body and asserts that loads clean, right here, on any machine.
  */
-test("REFERENCES: the shared store validates from the committed sidecars alone — no bodies", () => {
+const REF_SHA = "a".repeat(64);
+
+/** Build a throwaway reference store on disk and load it. Never touches data/. */
+function refFixture(
+  yaml: string,
+  files: Record<string, string> = {},
+): ReturnType<typeof loadReferences> {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "refstore-"));
+  fs.mkdirSync(path.join(root, "data", "references"), { recursive: true });
+  fs.mkdirSync(path.join(root, "data", "archives", "_references"), { recursive: true });
+  fs.writeFileSync(path.join(root, "data", "references", "x-2026-07.yaml"), yaml);
+  for (const [rel, body] of Object.entries(files))
+    fs.writeFileSync(path.join(root, rel), body);
+  return loadReferences(root);
+}
+
+const REF_BASE = `id: x-2026-07
+title: "T"
+publisher: "P"
+type: other
+captured: "2026-07"
+`;
+
+test("REFERENCES: the committed store is valid", () => {
   const { references, errors } = loadReferences();
   assert.deepEqual(errors, [], `reference store invalid:\n${errors.join("\n")}`);
-  assert.ok(references.length > 0, "expected at least one reference");
-  // Every declared snapshot must be evidenced by a COMMITTED hash, which is what makes the
-  // claim checkable by anyone who clones this repo rather than only by its author.
-  for (const r of references) {
-    if (!r.local_snapshot) continue;
-    const sidecar = r.local_snapshot.replace(/\.[a-z0-9]+$/i, ".sha256");
-    assert.ok(
-      fs.existsSync(path.join(process.cwd(), sidecar)),
-      `${r.id}: local_snapshot declared but ${sidecar} is not committed`,
-    );
-  }
+  assert.ok(references.length >= 5, `expected the 5 shipped references, got ${references.length}`);
+});
+
+test("REFERENCES: a sidecar with no BODY loads clean — the CI regression, pinned locally", () => {
+  const { references, errors } = refFixture(
+    `${REF_BASE}local_snapshot: data/archives/_references/x-2026-07-2026-07-31.pdf\n`,
+    { "data/archives/_references/x-2026-07-2026-07-31.sha256": `${REF_SHA}  x-2026-07-2026-07-31.pdf\n` },
+  );
+  assert.deepEqual(errors, [], "a missing body must not be an error — the hash is the evidence");
+  assert.equal(references.length, 1);
+});
+
+test("REFERENCES: a local_snapshot with no committed hash fails", () => {
+  const { errors } = refFixture(
+    `${REF_BASE}local_snapshot: data/archives/_references/x-2026-07-2026-07-31.pdf\n`,
+  );
+  assert.match(errors.join("\n"), /geen vastgelegde hash/);
+});
+
+test("REFERENCES: an extension typo fails — one sidecar covers .pdf AND .html", () => {
+  // The sidecar EXISTS (it is the .pdf's) and never mentions the .html. Checking only that
+  // the file is there passes this; checking the listed filenames is what catches it.
+  const { errors } = refFixture(
+    `${REF_BASE}local_snapshot: data/archives/_references/x-2026-07-2026-07-31.html\n`,
+    { "data/archives/_references/x-2026-07-2026-07-31.sha256": `${REF_SHA}  x-2026-07-2026-07-31.pdf\n` },
+  );
+  assert.match(errors.join("\n"), /noemt x-2026-07-2026-07-31\.html niet/);
+});
+
+test("REFERENCES: a snapshot pointing at the .sha256 itself cannot certify itself", () => {
+  const { errors } = refFixture(
+    `${REF_BASE}local_snapshot: data/archives/_references/x-2026-07-2026-07-31.sha256\n`,
+    { "data/archives/_references/x-2026-07-2026-07-31.sha256": `${REF_SHA}  x-2026-07-2026-07-31.pdf\n` },
+  );
+  assert.ok(errors.length > 0, "the receipt must not stand in for the body it receipts");
+});
+
+test("REFERENCES: a snapshot must be a capture, never a .md we wrote ourselves", () => {
+  const { errors } = refFixture(
+    `${REF_BASE}local_snapshot: data/archives/_references/x-2026-07-2026-07-31.md\n`,
+    { "data/archives/_references/x-2026-07-2026-07-31.sha256": `${REF_SHA}  x-2026-07-2026-07-31.md\n` },
+  );
+  assert.match(errors.join("\n"), /capture van HUN document/);
+});
+
+test("REFERENCES: a snapshot filed under a provider fails — a rulebook belongs to no school", () => {
+  const { errors } = refFixture(
+    `${REF_BASE}local_snapshot: data/archives/tribes-academy/x-2026-07-2026-07-31.pdf\n`,
+  );
+  assert.match(errors.join("\n"), /_references/);
+});
+
+test("REFERENCES: id and filename must agree, as they must for a provider record", () => {
+  const { errors, references } = refFixture(REF_BASE.replace("x-2026-07", "y-2026-07"));
+  assert.match(errors.join("\n"), /does not match filename/);
+  assert.equal(references.length, 0, "a record that failed its checks is not a loaded record");
+});
+
+test("REFERENCES: a Wayback URL on a JS shell fails — but archive.today does NOT", () => {
+  const shell = "url: https://help.yogaalliance.org/s/article/x\n";
+  const viaWayback = refFixture(
+    `${REF_BASE}${shell}archived_url: https://web.archive.org/web/20260731/https://help.yogaalliance.org/s/article/x\n`,
+  );
+  assert.match(viaWayback.errors.join("\n"), /Wayback-zinloze bron/);
+
+  // archive.today RENDERS before storing, so it captures what Wayback cannot. These domains
+  // are Wayback-pointless, not archive-pointless; rejecting the one fallback that works was
+  // a real divergence from the provider rule this claims to mirror.
+  const viaArchiveToday = refFixture(
+    `${REF_BASE}${shell}archived_url: https://archive.ph/abcde\n`,
+  );
+  assert.deepEqual(viaArchiveToday.errors, [], "archive.today must remain allowed");
 });
 
 test("every provider id matches its filename slug", () => {

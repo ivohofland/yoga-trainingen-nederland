@@ -118,9 +118,30 @@ if (referenceErrors.length > 0) {
   process.exit(1);
 }
 
+// A FLOOR, FOR THE SAME REASON MIN_PROVIDERS HAS ONE. `loadReferences()` treats an empty
+// directory — or a MISSING one — as a perfectly valid zero-record result, so a bad `mv`, a
+// half-finished rebase, or a rename to `data/reference/` prints "+ 0 gedeelde referentie(s)"
+// and exits 0, while the records and the published methodology go on citing documents the
+// repo no longer holds. Spec v0.13 says this store is "floor-checked like the corpus"; until
+// this existed, that sentence was false.
+const MIN_REFERENCES = 5;
+if (references.length < MIN_REFERENCES) {
+  console.error(
+    `\n✗ only ${references.length} shared reference(s) loaded (expected ≥${MIN_REFERENCES}).\n` +
+      `  Zero validation errors does not mean the store is intact — a missing or emptied\n` +
+      `  data/references/ validates trivially, and provider notes still cite it.\n`,
+  );
+  process.exit(1);
+}
+
 // Conclusie onderaan: bij een lange lijst blijft de uitkomst zo in beeld
 // zonder terugscrollen.
+// SAY WHAT WAS PROVEN, NOT MORE. The reference half checks the schema, the id, and that a
+// committed hash covers the declared snapshot. NO gate ever opens a reference artifact —
+// `allProvenance()` iterates providers only — so the verbatim quotations in those notes are
+// untested, and they are load-bearing in published prose. Borrowing provenance.ts's own
+// idiom rather than letting one green tick imply two different standards.
 console.log(
   `\n✓ ${providers.length} provider record(s) valid` +
-    ` + ${references.length} gedeelde referentie(s)\n`,
+    ` + ${references.length} gedeelde referentie(s) (schema + hash; INHOUD NIET GETOETST)\n`,
 );
