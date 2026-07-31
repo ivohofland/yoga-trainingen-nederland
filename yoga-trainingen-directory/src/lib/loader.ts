@@ -310,16 +310,32 @@ export function loadReferences(): ReferenceLoadResult {
     if (ref.id !== file.replace(/\.yaml$/, ""))
       errors.push(`references/${file}: reference id '${ref.id}' does not match filename`);
 
-    // A DECLARED SNAPSHOT THAT IS NOT THERE IS THE ONE FAILURE THAT LOOKS LIKE SUCCESS.
-    // The body is gitignored, so a path typo reads as "archived" in the YAML forever while
-    // the archive holds nothing. Same reason provider records get their paths checked.
+    // A DECLARED SNAPSHOT THAT IS NOT THERE IS THE ONE FAILURE THAT LOOKS LIKE SUCCESS:
+    // the body is gitignored, so a path typo reads as "archived" in the YAML forever while
+    // the archive holds nothing.
+    //
+    // CHECK THE COMMITTED .sha256, NOT THE BODY. The first version of this asserted the
+    // BODY existed, which is green on the machine that captured it and red in every fresh
+    // clone — CI failed on all five records for exactly that reason. It is the disease
+    // documented in CLAUDE.md and split into tiers in provenance.ts: what is provable from
+    // the record plus the committed sidecars binds EVERYWHERE; what needs the body can only
+    // be checked where the body is. The sidecar is the better check anyway. It is committed,
+    // so it binds in CI, and it catches the typo case strictly harder: a mistyped path has
+    // no matching sidecar either, and it additionally proves the capture was really hashed
+    // rather than merely named.
     if (ref.local_snapshot) {
       if (!ref.local_snapshot.startsWith("data/archives/_references/"))
         errors.push(
           `references/${file}: local_snapshot must live under data/archives/_references/ (§4.1b)`,
         );
-      else if (!fs.existsSync(path.join(process.cwd(), ref.local_snapshot)))
-        errors.push(`references/${file}: local_snapshot not found: ${ref.local_snapshot}`);
+      else {
+        const sidecar = ref.local_snapshot.replace(/\.[a-z0-9]+$/i, ".sha256");
+        if (!fs.existsSync(path.join(process.cwd(), sidecar)))
+          errors.push(
+            `references/${file}: geen vastgelegde hash voor local_snapshot — ${sidecar} ontbreekt ` +
+              `(de body is gitignored; de .sha256 is het gepubliceerde bewijs dat de capture bestaat)`,
+          );
+      }
     }
 
     // THE SAME RULE THE PROVIDER RECORDS ARE HELD TO (wayback.ts). It lived in the archive

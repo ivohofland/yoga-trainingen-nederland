@@ -1,6 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { integrityErrors, loadDataset } from "./loader";
+import fs from "node:fs";
+import path from "node:path";
+import { integrityErrors, loadDataset, loadReferences } from "./loader";
 import {
   bundleDelta,
   contactRatio,
@@ -25,6 +27,34 @@ test("the committed dataset is valid — zero schema or integrity errors", () =>
   const { providers, errors } = loadDataset();
   assert.deepEqual(errors, [], `dataset invalid:\n${errors.join("\n")}`);
   assert.ok(providers.length > 0, "expected at least one provider");
+});
+
+/**
+ * THE REFERENCE STORE MUST VALIDATE WITHOUT THE ARCHIVE BODIES (spec §4.1b, v0.13).
+ *
+ * This exists because the first version of the `local_snapshot` check asserted that the
+ * BODY was on disk. Bodies are gitignored, so that is green on the machine that captured
+ * them and red in every fresh clone: CI failed on all five reference records, and nothing
+ * runnable locally could have caught it — the same "passes here, fails on a clone" disease
+ * that `test:ci` and the provenance tiers exist for.
+ *
+ * This test IS the guard, because CI runs it in a checkout that has the sidecars and none
+ * of the bodies. If someone reintroduces a body-existence check, this goes red there.
+ */
+test("REFERENCES: the shared store validates from the committed sidecars alone — no bodies", () => {
+  const { references, errors } = loadReferences();
+  assert.deepEqual(errors, [], `reference store invalid:\n${errors.join("\n")}`);
+  assert.ok(references.length > 0, "expected at least one reference");
+  // Every declared snapshot must be evidenced by a COMMITTED hash, which is what makes the
+  // claim checkable by anyone who clones this repo rather than only by its author.
+  for (const r of references) {
+    if (!r.local_snapshot) continue;
+    const sidecar = r.local_snapshot.replace(/\.[a-z0-9]+$/i, ".sha256");
+    assert.ok(
+      fs.existsSync(path.join(process.cwd(), sidecar)),
+      `${r.id}: local_snapshot declared but ${sidecar} is not committed`,
+    );
+  }
 });
 
 test("every provider id matches its filename slug", () => {
