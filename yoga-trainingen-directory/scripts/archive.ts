@@ -43,6 +43,10 @@ if (fs.existsSync(envFile)) {
 }
 
 const DATA_DIR = path.join(process.cwd(), "data", "providers");
+/** The shared reference store + the archive subdir its bodies live in (spec §4.1b, v0.13).
+ *  `_references` is deliberately not a valid provider slug, so it can never collide. */
+const REFERENCE_DIR = path.join(process.cwd(), "data", "references");
+const REFERENCE_DIR_NAME = "_references";
 const ARCHIVE_DIR = path.join(process.cwd(), "data", "archives");
 const args = process.argv.slice(2);
 const ALL = args.includes("--all");
@@ -246,6 +250,96 @@ async function trySubmitWayback(url: string): Promise<string | null> {
   return null;
 }
 
+/**
+ * Capture ONE source-like node into `data/archives/<dir>/`: local copy + Wayback.
+ *
+ * Extracted so the shared reference store (spec §4.1b) goes through the EXACT same path
+ * as a provider's `sources[]` entry — same naming, same .sha256 sidecar, same
+ * Wayback-pointless rule. A second, parallel capture routine for references would drift,
+ * and the thing it would drift on is the sidecar that the whole evidentiary chain rests on.
+ * The shapes differ only in where the node sits: a provider's is an item in `sources[]`,
+ * a reference's IS the document root.
+ *
+ * Returns true if the node was modified and its file needs writing.
+ */
+async function captureNode(
+  browser: import("playwright").Browser,
+  dir: string,
+  node: import("yaml").YAMLMap,
+): Promise<boolean> {
+  const sourceId = node.get("id") as string;
+  const url = node.get("url") as string | undefined;
+  if (!url) return false;
+  const note = (node.get("note") as string | undefined) ?? "";
+  const query = node.get("query") as string | undefined;
+  const excluded = /wayback-exclusie/i.test(note);
+  let changed = false;
+
+  // 1. lokale kopie. "Al gearchiveerd" = het local_snapshot-pad is niet
+  //    alleen gedeclareerd in de YAML, maar het bestand bestaat ook echt.
+  const declaredLocal = node.get("local_snapshot") as string | undefined;
+  const hasLocal = !!declaredLocal && fs.existsSync(path.join(process.cwd(), declaredLocal));
+  if (!hasLocal || FORCE) {
+    process.stdout.write(`  ${sourceId}: lokale kopie${query ? ` (filter: "${query}")` : ""}… `);
+    try {
+      const rel = await saveLocalCopy(browser, dir, sourceId, url, query);
+      node.set("local_snapshot", rel);
+      changed = true;
+      console.log("ok");
+    } catch (e) {
+      console.log(`MISLUKT (${(e as Error).message})`);
+    }
+  }
+
+  // 2. publiek archief
+  const archived = node.get("archived_url") as string | null | undefined;
+  const needsWayback = archived == null || FORCE;
+  if (excluded) {
+    if (needsWayback) console.log(`  ${sourceId}: Wayback-exclusie — handmatig via archive.today`);
+  } else if (WAYBACK_POINTLESS.some((re) => re.test(url))) {
+    if (needsWayback)
+      console.log(`  ${sourceId}: Wayback overgeslagen (JS-shell zonder bewijswaarde) — lokale kopie is het bewijs`);
+  } else if (!SKIP_WAYBACK && needsWayback) {
+    process.stdout.write(`  ${sourceId}: wayback… `);
+    const snapshot = await trySubmitWayback(url);
+    if (snapshot) {
+      node.set("archived_url", snapshot);
+      changed = true;
+      console.log("ok");
+    } else console.log("geen snapshot");
+    // Zonder API-sleutels throttlet archive.org agressief; ruim pauzeren.
+    const pause = process.env.WAYBACK_ACCESS_KEY ? 10_000 : 30_000;
+    await new Promise((r) => setTimeout(r, pause));
+  }
+
+  return changed;
+}
+
+/**
+ * The shared reference store (spec §4.1b, v0.13). Each file is ONE document, so the root
+ * node is the source. Bodies land in `data/archives/_references/`, never under a provider —
+ * a normative document belongs to no school, and filing it under the one school that
+ * prompted reading it is what this store exists to stop.
+ */
+async function archiveReferences(browser: import("playwright").Browser): Promise<void> {
+  if (!fs.existsSync(REFERENCE_DIR)) return;
+  const files = fs
+    .readdirSync(REFERENCE_DIR)
+    .filter((f) => f.endsWith(".yaml"))
+    .filter((f) => ALL || ids.includes(f.replace(/\.yaml$/, "")) || ids.includes("_references"));
+  if (files.length === 0) return;
+
+  console.log("\n_references");
+  for (const file of files) {
+    const filePath = path.join(REFERENCE_DIR, file);
+    const doc = parseDocument(fs.readFileSync(filePath, "utf8"));
+    if (await captureNode(browser, REFERENCE_DIR_NAME, doc.contents as import("yaml").YAMLMap)) {
+      fs.writeFileSync(filePath, doc.toString());
+      console.log(`  → references/${file} bijgewerkt`);
+    }
+  }
+}
+
 async function main() {
   console.log(
     process.env.WAYBACK_ACCESS_KEY
@@ -259,8 +353,19 @@ async function main() {
     .readdirSync(DATA_DIR)
     .filter((f) => f.endsWith(".yaml"))
     .filter((f) => ALL || ids.includes(f.replace(/\.yaml$/, "")));
-  if (files.length === 0) {
-    console.error("Geen providers geselecteerd. Gebruik: npm run archive -- <id> | --all");
+  // A references-only run (`npm run archive -- _references`) selects zero PROVIDERS and is
+  // perfectly valid, so "nothing selected" can only be judged after the reference store has
+  // had its say — otherwise the store is unreachable except via --all.
+  const referenceFiles = fs.existsSync(REFERENCE_DIR)
+    ? fs
+        .readdirSync(REFERENCE_DIR)
+        .filter((f) => f.endsWith(".yaml"))
+        .filter((f) => ALL || ids.includes(f.replace(/\.yaml$/, "")) || ids.includes(REFERENCE_DIR_NAME))
+    : [];
+  if (files.length === 0 && referenceFiles.length === 0) {
+    console.error(
+      "Niets geselecteerd. Gebruik: npm run archive -- <provider-id> | _references | <referentie-id> | --all",
+    );
     process.exit(1);
   }
 
@@ -274,52 +379,7 @@ async function main() {
     let changed = false;
 
     for (const item of sources.items as import("yaml").YAMLMap[]) {
-      const sourceId = item.get("id") as string;
-      const url = item.get("url") as string | undefined;
-      if (!url) continue;
-      const note = (item.get("note") as string | undefined) ?? "";
-      const query = item.get("query") as string | undefined;
-      const excluded = /wayback-exclusie/i.test(note);
-
-      // 1. lokale kopie. "Al gearchiveerd" = het local_snapshot-pad is niet
-      //    alleen gedeclareerd in de YAML, maar het bestand bestaat ook echt.
-      //    Zo vult een gewone run pre-ingevulde-maar-ontbrekende kopieën aan
-      //    (zonder --force), terwijl bestaande snapshots overgeslagen blijven.
-      const declaredLocal = item.get("local_snapshot") as string | undefined;
-      const hasLocal = !!declaredLocal && fs.existsSync(path.join(process.cwd(), declaredLocal));
-      if (!hasLocal || FORCE) {
-        process.stdout.write(`  ${sourceId}: lokale kopie${query ? ` (filter: "${query}")` : ""}… `);
-        try {
-          const rel = await saveLocalCopy(browser, providerId, sourceId, url, query);
-          item.set("local_snapshot", rel);
-          changed = true;
-          console.log("ok");
-        } catch (e) {
-          console.log(`MISLUKT (${(e as Error).message})`);
-        }
-      }
-
-      // 2. publiek archief
-      const archived = item.get("archived_url") as string | null | undefined;
-      const needsWayback = archived == null || FORCE;
-      if (excluded) {
-        if (needsWayback) console.log(`  ${sourceId}: Wayback-exclusie — handmatig via archive.today`);
-      } else if (WAYBACK_POINTLESS.some((re) => re.test(url))) {
-        if (needsWayback)
-          console.log(`  ${sourceId}: Wayback overgeslagen (JS-shell zonder bewijswaarde) — lokale kopie is het bewijs`);
-      } else if (!SKIP_WAYBACK && needsWayback) {
-        process.stdout.write(`  ${sourceId}: wayback… `);
-        const snapshot = await trySubmitWayback(url);
-        if (snapshot) {
-          item.set("archived_url", snapshot);
-          changed = true;
-          console.log("ok");
-        } else console.log("geen snapshot");
-        // Zonder API-sleutels throttlet archive.org agressief; ruim pauzeren.
-        const pause = process.env.WAYBACK_ACCESS_KEY ? 10_000 : 30_000;
-        await new Promise((r) => setTimeout(r, pause));
-      }
-
+      if (await captureNode(browser, providerId, item)) changed = true;
       // Direct opslaan na elke bron: een crash verderop gooit zo nooit
       // reeds behaald resultaat weg.
       if (changed) fs.writeFileSync(filePath, doc.toString());
@@ -327,6 +387,8 @@ async function main() {
 
     if (changed) console.log(`  → ${file} bijgewerkt`);
   }
+
+  await archiveReferences(browser);
 
   await browser.close();
 

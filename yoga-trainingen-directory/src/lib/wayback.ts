@@ -35,6 +35,13 @@
 /** Domains where a Wayback snapshot cannot evidence the thing we cite the page for. */
 export const WAYBACK_POINTLESS: readonly RegExp[] = [
   /app\.yogaalliance\.org/i,
+  // The YA HELP CENTER is the same Salesforce shell as the register, and it was measured,
+  // not assumed: the Wayback snapshot of the electives article is 526 KB of JavaScript
+  // containing EIGHTY characters of visible text — "Yoga Alliance | Help Center --> Loading
+  // × Sorry to interrupt CSS Error Refresh". Not a word of the article. The Playwright
+  // local capture renders it in full, so the local copy is the evidence and the public half
+  // is honestly absent. (WebFetch hit the same wall, which is what sent us to check.)
+  /help\.yogaalliance\.org/i,
   /crkbo\.nl\/Register\//i,
 ];
 
