@@ -13,13 +13,19 @@
 import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
-import { Provider } from "../schema";
+import { Provider, Reference } from "../schema";
 import { waybackIsPointless, waybackPointlessReason } from "./wayback";
 
 const DATA_DIR = path.join(process.cwd(), "data", "providers");
+const REFERENCE_DIR = path.join(process.cwd(), "data", "references");
 
 export interface LoadResult {
   providers: Provider[];
+  errors: string[];
+}
+
+export interface ReferenceLoadResult {
+  references: Reference[];
   errors: string[];
 }
 
@@ -275,6 +281,60 @@ function isDelimited(quote: string): boolean {
   // `"` from reporting itself as its own opening and closing mark.
   if (text.length < 2) return false;
   return QUOTE_MARKS.includes(text[0]) && QUOTE_MARKS.includes(text[text.length - 1]);
+}
+
+/**
+ * The SHARED REFERENCE STORE (spec §4.1b, v0.13) — normative documents belonging to no
+ * single provider. Loaded separately from the corpus and never merged into it: a
+ * reference is evidence about a RULE, and `integrityErrors` / the provenance gate both
+ * key on "the page that states THIS provider's fact". Keeping the two apart is what stops
+ * a rulebook being cited as a school's price page.
+ *
+ * A missing directory is not an error — the store is optional, unlike data/providers/.
+ */
+export function loadReferences(): ReferenceLoadResult {
+  const references: Reference[] = [];
+  const errors: string[] = [];
+  if (!fs.existsSync(REFERENCE_DIR)) return { references, errors };
+
+  for (const file of fs.readdirSync(REFERENCE_DIR).filter((f) => f.endsWith(".yaml"))) {
+    const raw = parse(fs.readFileSync(path.join(REFERENCE_DIR, file), "utf8"));
+    const result = Reference.safeParse(raw);
+    if (!result.success) {
+      for (const issue of result.error.issues) {
+        errors.push(`references/${file}: ${issue.path.join(".")} — ${issue.message}`);
+      }
+      continue;
+    }
+    const ref = result.data;
+    if (ref.id !== file.replace(/\.yaml$/, ""))
+      errors.push(`references/${file}: reference id '${ref.id}' does not match filename`);
+
+    // A DECLARED SNAPSHOT THAT IS NOT THERE IS THE ONE FAILURE THAT LOOKS LIKE SUCCESS.
+    // The body is gitignored, so a path typo reads as "archived" in the YAML forever while
+    // the archive holds nothing. Same reason provider records get their paths checked.
+    if (ref.local_snapshot) {
+      if (!ref.local_snapshot.startsWith("data/archives/_references/"))
+        errors.push(
+          `references/${file}: local_snapshot must live under data/archives/_references/ (§4.1b)`,
+        );
+      else if (!fs.existsSync(path.join(process.cwd(), ref.local_snapshot)))
+        errors.push(`references/${file}: local_snapshot not found: ${ref.local_snapshot}`);
+    }
+
+    // THE SAME RULE THE PROVIDER RECORDS ARE HELD TO (wayback.ts). It lived in the archive
+    // SCRIPT once and twelve provider records kept a Wayback URL the script would never
+    // have written — one of them 404ing for weeks. A reference store that skipped the check
+    // would reintroduce exactly that gap, on documents the whole corpus cites.
+    if (ref.url && ref.archived_url && waybackIsPointless(ref.url))
+      errors.push(
+        `references/${file}: archived_url op een Wayback-zinloze bron — ` +
+          `${waybackPointlessReason(ref.url)}; gebruik archived_url: null + de lokale kopie`,
+      );
+
+    references.push(ref);
+  }
+  return { references, errors };
 }
 
 export function loadDataset(): LoadResult {

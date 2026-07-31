@@ -2,6 +2,8 @@
 
 *Follow-up to `yoga-opleidingen-directory-overwegingen.md`. This document makes the deferred decisions concrete: storage/stack, the flat-vs-entity question, the full schema with layer markings, and two example records.*
 
+**v0.13 (2026-07-31)** — `data/references/` : a **shared reference store** for normative documents that belong to no single provider. A source lived on exactly one provider record, which is right for *their* price page and wrong for a rule that governs the whole corpus. The Yoga Alliance RYS standards were duly filed under `tribes-academy/` — the one school that happened to prompt reading them — so the next 47 records would each need their own copy of the same PDF, each with its own hash, and a reader comparing two schools against "the standard" would be comparing two archives. Worse, the document turned out to contain **five different credential standards** (RYS 200/300/500/RCYS/RPYS) whose rules contradict each other if cross-cited: the RYS 300 practicum rules were quoted at a 200-hour training on the first reading of it. A reference is therefore stored once, archived once under `data/archives/_references/`, and **cited in prose** (§4.1b) — deliberately NOT resolvable from a `source:` field, because provider integrity (`integrityErrors`) and the provenance gate both key on "this programme's own cited page", and a normative document is evidence about the *rule*, never about the school. Validated and floor-checked like the corpus; synced to the private archive repo by the same append-only path.
+
 **v0.12 (2026-07-18)** — `hours_claimed.schedule` + two derived values (`scheduled_hours_ceiling`, `hours_disconnect`). A programme claims a round total (200 uur) and often publishes no contact-hour figure, so the total stands unexamined — while the *schedule* is published (the DNYS Intensive: 21 dagen, 10:00–17:00). Contact time can only ever be ≤ time in the room, so the raw clock sum is a strict **upper bound** on contact hours: at most 147 u, ≥ 53 u short of the claimed 200. The figure is OURS (derived ink, working shown, `contact_published` untouched — *they* didn't publish it, *we* bounded it); a published break (`pause_min`) tightens the ceiling downward but never makes it a precise claim, because we can only subtract the breaks they state. `schedule.blocks[]` model irregular timetables (Friday evening + full Saturday + half Sunday = three blocks). Silent without a schedule; no new finding axis.
 
 **v0.11 (2026-07-14)** — `inquiries[].respond_by` + `response: awaiting`, and the right of reply is **rendered**. Principle 8 promises that *"invited to correct on date X, no response"* becomes a displayable, defensible fact — a strong sentence to print about a real company. Two things had to be true for it to be defensible and the model could express neither. **The window was never in the data**, so "no reply within the stated window" was unfalsifiable: a reader could not tell whether we waited a month or an afternoon. And **`response` was required with `none` as its only silent value**, so logging a correction request on the day you sent it forced you to publish the school's silence before they had had a single day to break it — a gap in OUR process, rendered as a FINDING about them. That is the quad's `unknown`-vs-`not_published` error, in the one place where it is defamatory. `awaiting` is now the honest state while the window is open, `integrityErrors` refuses `none` before `respond_by` has passed, and the record page renders all three states through `<Quad>` — so the finding-vs-gap ink rule holds here too. Also: `inquiries[]` had existed since v0.1 and **no surface had ever rendered one**, which is the same as not having it. Seven providers carry published findings; none had ever been asked.
@@ -125,6 +127,40 @@ Provenance anchor; everything contested points at one of these.
 | `query` | string? | reproducible search term for a **no-permalink register** (CRKBO, the Salesforce-rendered YA grids): the exact text typed into the register's name filter to isolate the entry. These registers have no per-entry URL and no API, and a plain fetch/Wayback only ever captures page 1 — so the archive script types `query` into the filter, waits for the server callback, and snapshots the *filtered* result; that dated local snapshot is the evidence. Operationalizes §4.11's "record the searched names so the finding is falsifiable" |
 | `captured` | date | when you saw it |
 | `note` | string? | |
+
+### 4.1b Reference (shared, v0.13)
+
+A **normative or contextual document that belongs to no single provider** — a registry's
+standards, a regulator's price-display rule, a sector code. Stored once in
+`data/references/<id>.yaml`, body archived once under `data/archives/_references/`.
+
+| Field | Type | Notes |
+|---|---|---|
+| `id` | slug | e.g. `ya-standards-2026-07`; must match the filename |
+| `title` | string | the document's own title, verbatim |
+| `publisher` | string | the issuing body — **the exact legal entity**. Yoga Alliance (US) is not Yoga Alliance Professionals, not Yoga Alliance India, not the Yoga Alliance European Registry; they are separate organisations publishing similar-looking standards |
+| `type` | enum | same enum as `Source.type` (§4.1) |
+| `url` | url? | |
+| `archived_url` | url? | |
+| `local_snapshot` | path? | under `data/archives/_references/` |
+| `captured` | YearMonth | |
+| `applies_to` | string[]? | which credentials/scopes the document governs, when it governs several that differ (`["RYS 200"]`). **A document covering several regimes must say so** — see below |
+| `supersedes` / `superseded_by` | slug? | when a publisher reissues without version numbers |
+| `note` | string? | |
+
+**Cited in prose, never by `source:`.** A provider field's `source` must remain the page
+that states *that provider's* fact — that is what `integrityErrors` checks and what the
+provenance gate opens. A standards document states a **rule**, not a fact about a school,
+so pointing `hours_claimed.source` at it would make the gate look for a price in a rulebook.
+Provider notes cite a reference by its `id` in the prose ("valt onder de Elevated RYS
+200-standaard, zie referentie `ya-standards-2026-07`").
+
+**One document, several regimes — record the boundary.** The Yoga Alliance standards PDF
+carries RYS 200, 300, 500, RCYS and RPYS side by side, and their rules genuinely conflict:
+observing and assisting are listed Practicum topics under RYS 300/500, while the Elevated
+RYS 200 has no practicum hours and no contact/non-contact distinction at all. Quoting across
+that boundary produces a confident sentence about a school under a rule that does not bind
+it. `applies_to` and the `note` must make the boundary explicit, with page ranges.
 
 ### 4.2 Provider
 
