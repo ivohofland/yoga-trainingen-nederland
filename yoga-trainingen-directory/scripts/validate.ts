@@ -13,7 +13,7 @@
  * means the page mentions it somewhere, not that the page attributes it to this
  * programme. The line says what the check does, no more.
  */
-import { loadDataset } from "../src/lib/loader";
+import { loadDataset, loadReferences } from "../src/lib/loader";
 import { pricePerContactHour, contactRatio, bundleDelta, completeness } from "../src/lib/derive";
 import { allProvenance, PdftotextMissing } from "../src/lib/provenance";
 
@@ -108,6 +108,19 @@ try {
   else throw e;
 }
 
+// THE SHARED REFERENCE STORE (spec §4.1b, v0.13). Validated as a build gate like the
+// corpus: a reference whose `local_snapshot` points at nothing is the failure that reads
+// as success, because the body is gitignored and the YAML keeps saying "archived" forever.
+const { references, errors: referenceErrors } = loadReferences();
+if (referenceErrors.length > 0) {
+  console.error(`\n✗ ${referenceErrors.length} reference validation error(s):\n`);
+  for (const e of referenceErrors) console.error(`  - ${e}`);
+  process.exit(1);
+}
+
 // Conclusie onderaan: bij een lange lijst blijft de uitkomst zo in beeld
 // zonder terugscrollen.
-console.log(`\n✓ ${providers.length} provider record(s) valid\n`);
+console.log(
+  `\n✓ ${providers.length} provider record(s) valid` +
+    ` + ${references.length} gedeelde referentie(s)\n`,
+);

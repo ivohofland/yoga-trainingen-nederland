@@ -95,6 +95,46 @@ export const Source = strictObject({
 });
 export type Source = z.infer<typeof Source>;
 
+/* ---------- Reference (shared normative document, spec §4.1b, v0.13) ---------- */
+
+/**
+ * A normative or contextual document that belongs to NO SINGLE PROVIDER — a registry's
+ * standards, a regulator's price rule. Stored once in `data/references/`, archived once
+ * under `data/archives/_references/`.
+ *
+ * NOT a `Source`, and deliberately not reachable from a `source:` field. A provider
+ * field's source must stay the page that states THAT PROVIDER'S fact — that is what
+ * `integrityErrors` resolves and what the provenance gate opens and searches. A standards
+ * document states a RULE, not a fact about a school; pointing `hours_claimed.source` at
+ * one would send the gate hunting for an hours figure inside a rulebook. References are
+ * cited by `id` in prose (§4.1b).
+ */
+export const Reference = strictObject({
+  id: slug,
+  /** The document's own title, verbatim. */
+  title: z.string(),
+  /** The issuing body, as the EXACT legal entity. Yoga Alliance (US) is not Yoga Alliance
+   *  Professionals, not Yoga Alliance India, not the Yoga Alliance European Registry —
+   *  separate organisations publishing similar-looking standards (§4.1b). */
+  publisher: z.string(),
+  type: Source.shape.type,
+  url: z.string().url().optional(),
+  archived_url: z.string().url().nullable().optional(),
+  local_snapshot: z.string().optional(),
+  captured: YearMonth,
+  /** Which credentials/scopes the document governs, where it governs several that DIFFER.
+   *  The YA PDF carries RYS 200/300/500/RCYS/RPYS side by side and their rules conflict:
+   *  observing/assisting are Practicum topics under RYS 300/500, while Elevated RYS 200
+   *  has no practicum hours and no contact/non-contact split at all. Quoting across that
+   *  boundary yields a confident sentence under a rule that does not bind the school. */
+  applies_to: z.array(z.string()).optional(),
+  /** Publishers reissue without version numbers; pin the lineage by hand. */
+  supersedes: slug.optional(),
+  superseded_by: slug.optional(),
+  note: z.string().optional(),
+});
+export type Reference = z.infer<typeof Reference>;
+
 /* ---------- shared sub-objects ---------- */
 
 /** WHAT ONE AMOUNT BUYS (spec v0.5). Shared, because a PREREQUISITE's price buys a
