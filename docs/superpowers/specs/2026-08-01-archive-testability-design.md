@@ -83,8 +83,21 @@ Every test uses a fake `capture` and a fake `submitWayback`. No browser, no netw
 | 3 | `--force` re-captures anyway | the escape hatch must actually escape |
 | 4 | a Wayback-pointless URL never gets `archived_url` written | the rule twelve records once disagreed with |
 | 5 | `--skip-wayback` suppresses submission | |
-| 6 | a provider id and `_references` run the identical *code* path — same decisions, same writes, differing only in the directory | the extraction's entire claim |
+| 6 | `dir` reaches `deps.capture()` and the written `local_snapshot`, for both a provider node and a reference node — not hardcoded to one directory | a provider source and a reference document must actually write to their own directory, not silently share one |
 | 7 | wiring: both loops call `captureNode` | mirrors `sync-archive.test.ts`'s wiring test |
+
+**Correction, post-review (2026-08-01).** Test 6 originally shipped with an added
+`assert.deepEqual({changed, failed}, {changed, failed})` across the two invocations, and this
+table described it (as it still did until this correction) as pinning that "a provider id and
+`_references` run the identical *code* path — same decisions, same writes… the extraction's
+entire claim." Review found that assertion tautological: `dir` drives none of `captureNode`'s
+branching (`hasLocal`, `WAYBACK_POINTLESS`, `excluded`, `skipWayback`, `force` are all
+`dir`-independent) — only the `deps.capture()` call and `node.set` depend on it. With identical
+node content and deps, both invocations were guaranteed equal for any two `dir` values; the
+assertion could not go red. It was dropped in commit 2b939f0, and the test renamed and
+re-commented to say what it actually pins (row 6 above) — `dir` is threaded through rather than
+hardcoded — and what it does not: end-to-end agreement between `main()`'s provider loop and
+`archiveReferences()` remains untested by design, checked only at the grep level, by test 7.
 
 **Deliberately not here: #6's bug tests.** A test for a bug must go red before it goes green, and #10 must ship green. They belong in #6's PR, where they will be red on arrival — and where the seam built here is what lets them exist at all.
 
