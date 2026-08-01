@@ -149,25 +149,27 @@ test("CAPTURE: --skip-wayback suppresses submission", async () => {
   assert.equal(node.get("archived_url"), undefined);
 });
 
-test("CAPTURE: a provider source and a reference document take the identical path", async () => {
-  // A provider's node is an item in sources[]; a reference's IS the document root.
-  // Same decisions, same writes — only the directory differs. That equivalence is the
-  // entire claim of the extraction, and nothing asserted it.
+test("CAPTURE: `dir` is threaded through, not hardcoded — a provider source and a reference document write to their own directory", async () => {
+  // A provider's node is an item in sources[]; a reference's IS the document root — both are
+  // handed to captureNode as a plain YAMLMap, and `dir` is the only thing that tells it which
+  // one it has. Every decision inside captureNode (hasLocal, WAYBACK_POINTLESS, excluded,
+  // skipWayback, force) is independent of `dir`, so this cannot pin "the two paths behave the
+  // same" — with identical input they behave the same by construction, for any `dir`. What it
+  // CAN pin, and does: `dir` actually reaches `deps.capture()` and the written `local_snapshot`,
+  // rather than one of the two being hardcoded. Whether the two real call sites — main()'s
+  // provider loop and archiveReferences() — agree with each other end to end (write timing,
+  // how archiveReferences reads doc.contents) is untested here; that is the wiring test below,
+  // and only at the grep level.
   const yaml = "id: doc\nurl: https://example.com/x\n";
 
   const provider = nodeFrom(yaml);
   const pCapture = fakeCapture();
-  const p = await captureNode(provider, "tribes-academy", deps({ capture: pCapture }));
+  await captureNode(provider, "tribes-academy", deps({ capture: pCapture }));
 
   const reference = nodeFrom(yaml);
   const rCapture = fakeCapture();
-  const r = await captureNode(reference, "_references", deps({ capture: rCapture }));
+  await captureNode(reference, "_references", deps({ capture: rCapture }));
 
-  assert.deepEqual(
-    { changed: p.changed, failed: p.failedCapture },
-    { changed: r.changed, failed: r.failedCapture },
-    "the two paths must reach the same outcome",
-  );
   assert.equal(pCapture.calls[0], "tribes-academy/doc");
   assert.equal(rCapture.calls[0], "_references/doc");
   assert.equal(provider.get("local_snapshot"), "data/archives/tribes-academy/doc-2026-08-01.pdf");
