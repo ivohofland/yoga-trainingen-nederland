@@ -268,6 +268,15 @@ export interface CaptureDeps {
   pauseMs: number;
 }
 
+export interface CaptureResult {
+  /** The node was modified and its file needs writing. */
+  changed: boolean;
+  /** The source id whose LOCAL capture threw this run, or null. Returned rather than
+   *  pushed into module state: a hidden global is neither assertable nor visible to a
+   *  reader of this function's signature. */
+  failedCapture: string | null;
+}
+
 /**
  * Capture ONE source-like node into `data/archives/<dir>/`: local copy + Wayback.
  *
@@ -278,13 +287,14 @@ export interface CaptureDeps {
  * The shapes differ only in where the node sits: a provider's is an item in `sources[]`,
  * a reference's IS the document root.
  *
- * Returns true if the node was modified and its file needs writing.
+ * Returns a CaptureResult: `.changed` is true if the node was modified and its file
+ * needs writing; `.failedCapture` is the source id if its local capture threw, else null.
  */
 export async function captureNode(
   node: import("yaml").YAMLMap,
   dir: string,
   deps: CaptureDeps,
-): Promise<boolean> {
+): Promise<CaptureResult> {
   const sourceId = node.get("id") as string;
   const url = node.get("url") as string | undefined;
   // SAY SO. A source with no url is one the archiver structurally cannot handle (a gated
@@ -293,12 +303,13 @@ export async function captureNode(
   // Wayback-pointless branches already announce themselves; this one did not.
   if (!url) {
     console.log(`  ${sourceId}: overgeslagen (geen url — handmatig vastleggen en hashen)`);
-    return false;
+    return { changed: false, failedCapture: null };
   }
   const note = (node.get("note") as string | undefined) ?? "";
   const query = node.get("query") as string | undefined;
   const excluded = /wayback-exclusie/i.test(note);
   let changed = false;
+  let failedCapture: string | null = null;
 
   // 1. lokale kopie. "Al gearchiveerd" = het local_snapshot-pad is niet
   //    alleen gedeclareerd in de YAML, maar het bestand bestaat ook echt.
@@ -323,7 +334,7 @@ export async function captureNode(
       // source that has no capture at all. stderr + a tally + a non-zero exit, so the
       // failure survives the scrollback.
       console.error(`MISLUKT (${(e as Error).message})`);
-      failedCaptures.push(sourceId);
+      failedCapture = sourceId;
     }
   }
 
@@ -347,12 +358,8 @@ export async function captureNode(
     await new Promise((r) => setTimeout(r, deps.pauseMs));
   }
 
-  return changed;
+  return { changed, failedCapture };
 }
-
-/** Sources whose local capture threw this run. A run that ends green over one of these is a
- *  record shipping with no capture behind it. */
-const failedCaptures: string[] = [];
 
 /** Which reference files this run selects. ONE definition: the emptiness guard in main() and
  *  the capture loop must agree, or the run aborts on "nothing selected" while a reference was
@@ -374,22 +381,32 @@ function selectedReferenceFiles(): string[] {
  * a normative document belongs to no school, and filing it under the one school that
  * prompted reading it is what this store exists to stop.
  */
-async function archiveReferences(deps: CaptureDeps): Promise<void> {
+async function archiveReferences(deps: CaptureDeps): Promise<string[]> {
+  const failed: string[] = [];
   const files = selectedReferenceFiles();
-  if (files.length === 0) return;
+  if (files.length === 0) return failed;
 
   console.log("\n_references");
   for (const file of files) {
     const filePath = path.join(REFERENCE_DIR, file);
     const doc = parseDocument(fs.readFileSync(filePath, "utf8"));
-    if (await captureNode(doc.contents as import("yaml").YAMLMap, REFERENCE_DIR_NAME, deps)) {
+    const { changed, failedCapture } = await captureNode(
+      doc.contents as import("yaml").YAMLMap, REFERENCE_DIR_NAME, deps,
+    );
+    if (failedCapture) failed.push(failedCapture);
+    if (changed) {
       fs.writeFileSync(filePath, doc.toString());
       console.log(`  → references/${file} bijgewerkt`);
     }
   }
+  return failed;
 }
 
 async function main() {
+  /** Sources whose local capture threw this run. A run that ends green over one of these
+   *  is a record shipping with no capture behind it. */
+  const failedCaptures: string[] = [];
+
   console.log(
     process.env.WAYBACK_ACCESS_KEY
       ? "Wayback: API-sleutels geladen (SPN2-route)"
@@ -449,7 +466,9 @@ async function main() {
     let changed = false;
 
     for (const item of sources.items as import("yaml").YAMLMap[]) {
-      if (await captureNode(item, providerId, deps)) changed = true;
+      const { changed: nodeChanged, failedCapture } = await captureNode(item, providerId, deps);
+      if (nodeChanged) changed = true;
+      if (failedCapture) failedCaptures.push(failedCapture);
       // Direct opslaan na elke bron: een crash verderop gooit zo nooit
       // reeds behaald resultaat weg.
       if (changed) fs.writeFileSync(filePath, doc.toString());
@@ -458,7 +477,7 @@ async function main() {
     if (changed) console.log(`  → ${file} bijgewerkt`);
   }
 
-  await archiveReferences(deps);
+  failedCaptures.push(...(await archiveReferences(deps)));
 
   await browser.close();
 
