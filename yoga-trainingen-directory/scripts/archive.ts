@@ -252,6 +252,22 @@ async function trySubmitWayback(url: string): Promise<string | null> {
   return null;
 }
 
+/** What actually writes the local copy. Injected so a test can drive captureNode without
+ *  a browser — and, in #6, make the capture fail on demand. Playwright stays inside the
+ *  default, so it is an implementation detail of one function rather than a parameter
+ *  threaded through the module. */
+export type Capture = (dir: string, sourceId: string, url: string, query?: string) => Promise<string>;
+
+export interface CaptureDeps {
+  capture: Capture;
+  submitWayback: (url: string) => Promise<string | null>;
+  force: boolean;
+  skipWayback: boolean;
+  /** Throttle pause in ms after a Wayback submission. Injected because archive.org
+   *  throttles hard and the real value is 10-30s — a test must not sleep for it. */
+  pauseMs: number;
+}
+
 /**
  * Capture ONE source-like node into `data/archives/<dir>/`: local copy + Wayback.
  *
@@ -264,10 +280,10 @@ async function trySubmitWayback(url: string): Promise<string | null> {
  *
  * Returns true if the node was modified and its file needs writing.
  */
-async function captureNode(
-  browser: import("playwright").Browser,
-  dir: string,
+export async function captureNode(
   node: import("yaml").YAMLMap,
+  dir: string,
+  deps: CaptureDeps,
 ): Promise<boolean> {
   const sourceId = node.get("id") as string;
   const url = node.get("url") as string | undefined;
@@ -292,10 +308,10 @@ async function captureNode(
   //    gedeclareerde pad zou beide gevallen als "klaar" lezen.
   const declaredLocal = node.get("local_snapshot") as string | undefined;
   const hasLocal = !!declaredLocal && fs.existsSync(path.join(process.cwd(), declaredLocal));
-  if (!hasLocal || FORCE) {
+  if (!hasLocal || deps.force) {
     process.stdout.write(`  ${sourceId}: lokale kopie${query ? ` (filter: "${query}")` : ""}… `);
     try {
-      const rel = await saveLocalCopy(browser, dir, sourceId, url, query);
+      const rel = await deps.capture(dir, sourceId, url, query);
       node.set("local_snapshot", rel);
       changed = true;
       console.log("ok");
@@ -313,34 +329,27 @@ async function captureNode(
 
   // 2. publiek archief
   const archived = node.get("archived_url") as string | null | undefined;
-  const needsWayback = archived == null || FORCE;
+  const needsWayback = archived == null || deps.force;
   if (excluded) {
     if (needsWayback) console.log(`  ${sourceId}: Wayback-exclusie — handmatig via archive.today`);
   } else if (WAYBACK_POINTLESS.some((re) => re.test(url))) {
     if (needsWayback)
       console.log(`  ${sourceId}: Wayback overgeslagen (JS-shell zonder bewijswaarde) — lokale kopie is het bewijs`);
-  } else if (!SKIP_WAYBACK && needsWayback) {
+  } else if (!deps.skipWayback && needsWayback) {
     process.stdout.write(`  ${sourceId}: wayback… `);
-    const snapshot = await trySubmitWayback(url);
+    const snapshot = await deps.submitWayback(url);
     if (snapshot) {
       node.set("archived_url", snapshot);
       changed = true;
       console.log("ok");
     } else console.log("geen snapshot");
     // Zonder API-sleutels throttlet archive.org agressief; ruim pauzeren.
-    const pause = process.env.WAYBACK_ACCESS_KEY ? 10_000 : 30_000;
-    await new Promise((r) => setTimeout(r, pause));
+    await new Promise((r) => setTimeout(r, deps.pauseMs));
   }
 
   return changed;
 }
 
-/**
- * The shared reference store (spec §4.1b, v0.13). Each file is ONE document, so the root
- * node is the source. Bodies land in `data/archives/_references/`, never under a provider —
- * a normative document belongs to no school, and filing it under the one school that
- * prompted reading it is what this store exists to stop.
- */
 /** Sources whose local capture threw this run. A run that ends green over one of these is a
  *  record shipping with no capture behind it. */
 const failedCaptures: string[] = [];
@@ -359,7 +368,13 @@ function selectedReferenceFiles(): string[] {
     );
 }
 
-async function archiveReferences(browser: import("playwright").Browser): Promise<void> {
+/**
+ * The shared reference store (spec §4.1b, v0.13). Each file is ONE document, so the root
+ * node is the source. Bodies land in `data/archives/_references/`, never under a provider —
+ * a normative document belongs to no school, and filing it under the one school that
+ * prompted reading it is what this store exists to stop.
+ */
+async function archiveReferences(deps: CaptureDeps): Promise<void> {
   const files = selectedReferenceFiles();
   if (files.length === 0) return;
 
@@ -367,7 +382,7 @@ async function archiveReferences(browser: import("playwright").Browser): Promise
   for (const file of files) {
     const filePath = path.join(REFERENCE_DIR, file);
     const doc = parseDocument(fs.readFileSync(filePath, "utf8"));
-    if (await captureNode(browser, REFERENCE_DIR_NAME, doc.contents as import("yaml").YAMLMap)) {
+    if (await captureNode(doc.contents as import("yaml").YAMLMap, REFERENCE_DIR_NAME, deps)) {
       fs.writeFileSync(filePath, doc.toString());
       console.log(`  → references/${file} bijgewerkt`);
     }
@@ -382,6 +397,15 @@ async function main() {
   );
   const { chromium } = await import("playwright");
   const browser = await chromium.launch();
+
+  // Playwright is closed over here and nowhere else.
+  const deps: CaptureDeps = {
+    capture: (dir, sourceId, url, query) => saveLocalCopy(browser, dir, sourceId, url, query),
+    submitWayback: trySubmitWayback,
+    force: FORCE,
+    skipWayback: SKIP_WAYBACK,
+    pauseMs: process.env.WAYBACK_ACCESS_KEY ? 10_000 : 30_000,
+  };
 
   const files = fs
     .readdirSync(DATA_DIR)
@@ -425,7 +449,7 @@ async function main() {
     let changed = false;
 
     for (const item of sources.items as import("yaml").YAMLMap[]) {
-      if (await captureNode(browser, providerId, item)) changed = true;
+      if (await captureNode(item, providerId, deps)) changed = true;
       // Direct opslaan na elke bron: een crash verderop gooit zo nooit
       // reeds behaald resultaat weg.
       if (changed) fs.writeFileSync(filePath, doc.toString());
@@ -434,7 +458,7 @@ async function main() {
     if (changed) console.log(`  → ${file} bijgewerkt`);
   }
 
-  await archiveReferences(browser);
+  await archiveReferences(deps);
 
   await browser.close();
 
@@ -455,11 +479,16 @@ async function main() {
   console.log("\nKlaar. Draai `npm run validate` en commit data/ in git (dateert de hashes).");
 }
 
-if (SYNC_ONLY) {
-  syncArchive();
-} else {
-  main().catch((e) => {
-    console.error(e);
-    process.exit(1);
-  });
+// Importing this module must not archive anything. `main()` at module scope means any
+// test that imports captureNode launches Chromium and starts hitting the network —
+// which is why this file had no tests. Same guard sync-archive.ts already uses.
+if (process.argv[1] && path.resolve(process.argv[1]).endsWith("archive.ts")) {
+  if (SYNC_ONLY) {
+    syncArchive();
+  } else {
+    main().catch((e) => {
+      console.error(e);
+      process.exit(1);
+    });
+  }
 }
