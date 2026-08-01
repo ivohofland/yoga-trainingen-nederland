@@ -34,6 +34,11 @@ import { WAYBACK_POINTLESS as WAYBACK_POINTLESS_DOMAINS } from "../src/lib/wayba
 import { syncArchive } from "./sync-archive";
 
 // Minimale .env-loader (geen dependency): KEY=VALUE per regel, # = commentaar.
+// Runs at MODULE scope, unlike main() — the entrypoint guard below does not stop this.
+// Merely importing this file mutates process.env when a .env is present. Harmless today
+// (no test reads WAYBACK_ACCESS_KEY/WAYBACK_SECRET_KEY), but machine-dependent: a fresh
+// clone has no .env, so a future test asserting on the keyed-vs-keyless Wayback route
+// would be green locally and red in CI. Tests must not depend on these keys.
 const envFile = path.join(process.cwd(), ".env");
 if (fs.existsSync(envFile)) {
   for (const line of fs.readFileSync(envFile, "utf8").split("\n")) {
@@ -253,9 +258,10 @@ async function trySubmitWayback(url: string): Promise<string | null> {
 }
 
 /** What actually writes the local copy. Injected so a test can drive captureNode without
- *  a browser — and, in #6, make the capture fail on demand. Playwright stays inside the
- *  default, so it is an implementation detail of one function rather than a parameter
- *  threaded through the module. */
+ *  a browser — and, in #6, make the capture fail on demand. `capture` is REQUIRED, not
+ *  defaulted: Playwright stays inside main()'s closure over saveLocalCopy, its one
+ *  production call site, so it is an implementation detail of one function rather than
+ *  a parameter threaded through the module. */
 export type Capture = (dir: string, sourceId: string, url: string, query?: string) => Promise<string>;
 
 export interface CaptureDeps {
@@ -501,7 +507,10 @@ async function main() {
 // Importing this module must not archive anything. `main()` at module scope means any
 // test that imports captureNode launches Chromium and starts hitting the network —
 // which is why this file had no tests. Same guard sync-archive.ts already uses.
-if (process.argv[1] && path.resolve(process.argv[1]).endsWith("archive.ts")) {
+// path.sep + "archive.ts", not just "archive.ts": the bare suffix also matches
+// sync-archive.ts (and any my-archive.ts) — latent there, but this module is now
+// importable, so the collision is reachable here.
+if (process.argv[1] && path.resolve(process.argv[1]).endsWith(path.sep + "archive.ts")) {
   if (SYNC_ONLY) {
     syncArchive();
   } else {

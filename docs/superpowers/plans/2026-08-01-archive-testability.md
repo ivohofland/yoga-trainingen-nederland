@@ -4,7 +4,7 @@
 
 **Goal:** Make `captureNode` in `scripts/archive.ts` importable and testable by injecting its capture function, so issue #6's fixes can be written test-first.
 
-**Architecture:** `captureNode` takes its dependencies explicitly (`capture`, `submitWayback`, `force`, `skipWayback`, `pauseMs`) instead of reading module-scope constants and calling Playwright directly. The `browser` parameter disappears — it exists only to reach `saveLocalCopy`, so once capture is injected Playwright is closed over by the default. An entrypoint guard stops `main()` from running on import. Seven tests pin behaviour that is correct today.
+**Architecture:** `captureNode` takes its dependencies explicitly (`capture`, `submitWayback`, `force`, `skipWayback`, `pauseMs`) instead of reading module-scope constants and calling Playwright directly. The `browser` parameter disappears — it exists only to reach `saveLocalCopy`, so once capture is injected Playwright is closed over by the default. An entrypoint guard stops `main()` from running on import. Eight tests pin behaviour that is correct today.
 
 **Tech Stack:** TypeScript, `node:test` via `tsx --test`, `yaml` (`parseDocument`/`YAMLMap`), Playwright (only inside the default capture).
 
@@ -519,26 +519,42 @@ test red."
 
 Append to `src/lib/archive.test.ts`:
 
+> **Correction, post-review (2026-08-01).** The block below is what shipped, not what this
+> plan originally proposed. The original draft's first test asserted
+> `assert.deepEqual({changed: p.changed, failed: p.failedCapture}, {changed: r.changed, failed:
+> r.failedCapture})` and was titled "a provider source and a reference document take the
+> identical path." Review found that assertion tautological — `dir` drives none of
+> `captureNode`'s branching (`hasLocal`, `WAYBACK_POINTLESS`, `excluded`, `skipWayback`, `force`
+> are all `dir`-independent), so with identical node content and deps the two invocations were
+> guaranteed equal for any two `dir` values, and the assertion could not go red. It was dropped
+> in commit 2b939f0; the test was renamed and re-commented to say what it actually pins (`dir`
+> reaches `deps.capture()` and the written `local_snapshot` — not end-to-end agreement between
+> `main()`'s provider loop and `archiveReferences()`, which stays untested by design, checked
+> only at the grep level by the wiring test). A later fix round also added an assertion to the
+> wiring test pinning the entrypoint guard itself (finding I1) — included below.
+
 ```ts
-test("CAPTURE: a provider source and a reference document take the identical path", async () => {
-  // A provider's node is an item in sources[]; a reference's IS the document root.
-  // Same decisions, same writes — only the directory differs. That equivalence is the
-  // entire claim of the extraction, and nothing asserted it.
+test("CAPTURE: `dir` is threaded through, not hardcoded — a provider source and a reference document write to their own directory", async () => {
+  // A provider's node is an item in sources[]; a reference's IS the document root — both are
+  // handed to captureNode as a plain YAMLMap, and `dir` is the only thing that tells it which
+  // one it has. Every decision inside captureNode (hasLocal, WAYBACK_POINTLESS, excluded,
+  // skipWayback, force) is independent of `dir`, so this cannot pin "the two paths behave the
+  // same" — with identical input they behave the same by construction, for any `dir`. What it
+  // CAN pin, and does: `dir` actually reaches `deps.capture()` and the written `local_snapshot`,
+  // rather than one of the two being hardcoded. Whether the two real call sites — main()'s
+  // provider loop and archiveReferences() — agree with each other end to end (write timing,
+  // how archiveReferences reads doc.contents) is untested here; that is the wiring test below,
+  // and only at the grep level.
   const yaml = "id: doc\nurl: https://example.com/x\n";
 
   const provider = nodeFrom(yaml);
   const pCapture = fakeCapture();
-  const p = await captureNode(provider, "tribes-academy", deps({ capture: pCapture }));
+  await captureNode(provider, "tribes-academy", deps({ capture: pCapture }));
 
   const reference = nodeFrom(yaml);
   const rCapture = fakeCapture();
-  const r = await captureNode(reference, "_references", deps({ capture: rCapture }));
+  await captureNode(reference, "_references", deps({ capture: rCapture }));
 
-  assert.deepEqual(
-    { changed: p.changed, failed: p.failedCapture },
-    { changed: r.changed, failed: r.failedCapture },
-    "the two paths must reach the same outcome",
-  );
   assert.equal(pCapture.calls[0], "tribes-academy/doc");
   assert.equal(rCapture.calls[0], "_references/doc");
   assert.equal(provider.get("local_snapshot"), "data/archives/tribes-academy/doc-2026-08-01.pdf");
@@ -559,6 +575,17 @@ test("CAPTURE: it is WIRED IN — both loops go through captureNode", () => {
     /captureNode\(\s*doc\.contents as import\("yaml"\)\.YAMLMap,\s*REFERENCE_DIR_NAME,\s*deps,?\s*\)/,
     "reference loop must use captureNode",
   );
+  // The entrypoint guard is the single point of failure for the two assertions above: it is
+  // what makes main() — and therefore both loops — run at all when `npm run archive` executes.
+  // Nothing else pins it. If the filename check stops matching this file (a rename, a typo),
+  // `npm run archive` becomes a SILENT NO-OP that exits 0 while the suite stays green, because
+  // every other test drives captureNode directly and never goes through the guard. In this repo
+  // that means a researcher believing evidence was captured when none was.
+  assert.match(
+    src,
+    /endsWith\(path\.sep \+ "archive\.ts"\)/,
+    "the entrypoint guard must name this file, or npm run archive silently does nothing",
+  );
 });
 ```
 
@@ -572,7 +599,7 @@ Expected: both PASS. If the wiring test fails, the call sites in Task 1 Step 5 w
 
 Run: `cd yoga-trainingen-directory && npm run build`
 
-Expected: exit 0. `validate` 48 providers + 5 references, `provenance` 165/165, `npm test` and `npm run test:ci` both 292 passing / 0 failing (285 before + 7 new), `next build` ✓, `verify-export` ✓.
+Expected: exit 0. `validate` 48 providers + 5 references, `provenance` 165/165, `npm test` and `npm run test:ci` both 293 passing / 0 failing (285 before + 8 new), `next build` ✓, `verify-export` ✓.
 
 - [ ] **Step 4: Smoke-test the real archiver — it must capture nothing**
 
@@ -613,3 +640,15 @@ captures nothing and leaves the tree clean."
 **Not in this plan, by design.** #6's bug tests (they must go red first, and this ships green), `selectedReferenceFiles` coverage (#14), `main()` under test, and any change to `saveLocalCopy` (#6) or artifact classification (#13).
 
 **Type consistency.** `Capture` is `(dir, sourceId, url, query?) => Promise<string>` in Tasks 1-4 and matches `saveLocalCopy(browser, providerId, sourceId, url, query?)` with the browser closed over. `captureNode(node, dir, deps)` keeps that argument order in every task and both call sites. `CaptureResult.failedCapture` is `string | null` — never `undefined` — and is read as such in Tasks 2-4.
+
+**One assertion removed after review, post-merge (2026-08-01).** Task 4's first test shipped
+with an `assert.deepEqual` across the provider and reference invocations' `{changed,
+failedCapture}`, framed by this plan (and the design spec) as pinning "the identical path." A
+final review round found it tautological: `dir` drives none of `captureNode`'s branching, so the
+two invocations were guaranteed equal for any two `dir` values and the assertion could not fail.
+Dropped in commit 2b939f0, with the test renamed and re-commented to state what it actually pins
+— `dir` reaches `deps.capture()` and the written `local_snapshot`, not end-to-end caller
+equivalence — and eight tests shipped, not seven, once "a failed capture is REPORTED" (Task 2)
+is counted alongside the seven originally enumerated in the design spec's table. `npm test` and
+`npm run test:ci` are 293 passing, not 292 (285 before + 8 new). Task 4's Step 1 code block above
+reflects what shipped.

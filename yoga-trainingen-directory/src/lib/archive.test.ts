@@ -34,13 +34,18 @@ function deps(over: Partial<CaptureDeps> = {}): CaptureDeps {
   };
 }
 
-/** Capture console.log so "it announced itself" is assertable. */
-function withLog<T>(fn: () => T): { logs: string[]; value: T } {
+/** Capture console.log so "it announced itself" is assertable. Async, and restores
+ *  console.log only once fn's promise settles — a sync version restores it as soon as
+ *  fn() returns, which for an async fn means "as soon as the first await suspends it",
+ *  so any log emitted after that point leaks to the real console uncaptured. That failure
+ *  is silent: `logs` just comes back empty, indistinguishable from "nothing was logged". */
+async function withLog<T>(fn: () => Promise<T>): Promise<{ logs: string[]; value: T }> {
   const logs: string[] = [];
   const orig = console.log;
   console.log = (...a: unknown[]) => void logs.push(a.map(String).join(" "));
   try {
-    return { logs, value: fn() };
+    const value = await fn();
+    return { logs, value };
   } finally {
     console.log = orig;
   }
@@ -49,8 +54,7 @@ function withLog<T>(fn: () => T): { logs: string[]; value: T } {
 test("CAPTURE: a source with no url is skipped, and never silently", async () => {
   const capture = fakeCapture();
   const node = nodeFrom("id: gated-brochure\n");
-  const { logs, value } = withLog(() => captureNode(node, "demo", deps({ capture })));
-  const result = await value;
+  const { logs, value: result } = await withLog(() => captureNode(node, "demo", deps({ capture })));
 
   assert.equal(result.changed, false);
   assert.equal(capture.calls.length, 0, "must not attempt a capture without a url");
@@ -87,6 +91,10 @@ function withSnapshotOnDisk(rel: string): string {
   return root;
 }
 
+// This test and the next both process.chdir() for their duration and restore it in a
+// `finally`. That is safe only because node:test runs a file's top-level tests
+// sequentially, not concurrently — do not add `{ concurrency: true }` to this file
+// without giving these two their own isolated cwd first.
 test("CAPTURE: an existing snapshot ON DISK is skipped without --force", async () => {
   const rel = "data/archives/demo/s-2026-08-01.pdf";
   const root = withSnapshotOnDisk(rel);
@@ -189,5 +197,16 @@ test("CAPTURE: it is WIRED IN — both loops go through captureNode", () => {
     src,
     /captureNode\(\s*doc\.contents as import\("yaml"\)\.YAMLMap,\s*REFERENCE_DIR_NAME,\s*deps,?\s*\)/,
     "reference loop must use captureNode",
+  );
+  // The entrypoint guard is the single point of failure for the two assertions above: it is
+  // what makes main() — and therefore both loops — run at all when `npm run archive` executes.
+  // Nothing else pins it. If the filename check stops matching this file (a rename, a typo),
+  // `npm run archive` becomes a SILENT NO-OP that exits 0 while the suite stays green, because
+  // every other test drives captureNode directly and never goes through the guard. In this repo
+  // that means a researcher believing evidence was captured when none was.
+  assert.match(
+    src,
+    /endsWith\(path\.sep \+ "archive\.ts"\)/,
+    "the entrypoint guard must name this file, or npm run archive silently does nothing",
   );
 });
