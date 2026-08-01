@@ -91,7 +91,7 @@ Every test uses a fake `capture` and a fake `submitWayback`. No browser, no netw
 ## Non-goals
 
 - No `ArchiveOptions` object and no `defaultOptions()`. `sync-archive.ts` needs one because `syncArchive()` is called from two places with different settings; `captureNode` has one caller shape. Adding it here is ceremony.
-- `main()`, `archiveReferences()` and `selectedReferenceFiles()` stay untested. `selectedReferenceFiles` carried a real bug (a mistyped provider id running green alongside a matched reference, fixed unpinned in PR #5) and deserves pinning — but as its own change, not smuggled into a testability refactor.
+- `main()`, `archiveReferences()` and `selectedReferenceFiles()` stay untested. `selectedReferenceFiles` carried a real bug — a mistyped provider id running green alongside a matched reference — fixed unpinned in PR #5 and tracked as **#14**. It deserves pinning, but as its own change: smuggling a second guard's coverage into a testability refactor blurs what this change is.
 - `saveLocalCopy` is untouched. Its return value lies about which artifact it wrote; that is #6.
 - No OCR, no new artifact formats. That is #13.
 
