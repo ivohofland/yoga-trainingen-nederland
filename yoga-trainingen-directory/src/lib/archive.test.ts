@@ -148,3 +148,44 @@ test("CAPTURE: --skip-wayback suppresses submission", async () => {
   );
   assert.equal(node.get("archived_url"), undefined);
 });
+
+test("CAPTURE: a provider source and a reference document take the identical path", async () => {
+  // A provider's node is an item in sources[]; a reference's IS the document root.
+  // Same decisions, same writes — only the directory differs. That equivalence is the
+  // entire claim of the extraction, and nothing asserted it.
+  const yaml = "id: doc\nurl: https://example.com/x\n";
+
+  const provider = nodeFrom(yaml);
+  const pCapture = fakeCapture();
+  const p = await captureNode(provider, "tribes-academy", deps({ capture: pCapture }));
+
+  const reference = nodeFrom(yaml);
+  const rCapture = fakeCapture();
+  const r = await captureNode(reference, "_references", deps({ capture: rCapture }));
+
+  assert.deepEqual(
+    { changed: p.changed, failed: p.failedCapture },
+    { changed: r.changed, failed: r.failedCapture },
+    "the two paths must reach the same outcome",
+  );
+  assert.equal(pCapture.calls[0], "tribes-academy/doc");
+  assert.equal(rCapture.calls[0], "_references/doc");
+  assert.equal(provider.get("local_snapshot"), "data/archives/tribes-academy/doc-2026-08-01.pdf");
+  assert.equal(reference.get("local_snapshot"), "data/archives/_references/doc-2026-08-01.pdf");
+});
+
+test("CAPTURE: it is WIRED IN — both loops go through captureNode", () => {
+  // Mirrors sync-archive.test.ts's wiring test. One shared routine is the whole point;
+  // a second, parallel capture path would drift on the .sha256 sidecar, which is what
+  // the evidentiary chain reads.
+  const src = fs.readFileSync(
+    path.join(process.cwd(), "scripts", "archive.ts"),
+    "utf8",
+  );
+  assert.match(src, /captureNode\(item, providerId, deps\)/, "provider loop must use captureNode");
+  assert.match(
+    src,
+    /captureNode\(\s*doc\.contents as import\("yaml"\)\.YAMLMap,\s*REFERENCE_DIR_NAME,\s*deps,?\s*\)/,
+    "reference loop must use captureNode",
+  );
+});
