@@ -77,3 +77,74 @@ test("CAPTURE: a failed capture is REPORTED, not silently swallowed", async () =
     "a record must never declare a snapshot the capture did not produce",
   );
 });
+
+/** A temp dir with a real file on disk, so "already archived" can be tested honestly:
+ *  the check is that the FILE exists, not that the YAML declares a path. */
+function withSnapshotOnDisk(rel: string): string {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "archive-"));
+  fs.mkdirSync(path.join(root, path.dirname(rel)), { recursive: true });
+  fs.writeFileSync(path.join(root, rel), "body");
+  return root;
+}
+
+test("CAPTURE: an existing snapshot ON DISK is skipped without --force", async () => {
+  const rel = "data/archives/demo/s-2026-08-01.pdf";
+  const root = withSnapshotOnDisk(rel);
+  const cwd = process.cwd();
+  process.chdir(root);
+  try {
+    const capture = fakeCapture();
+    const node = nodeFrom(`id: s\nurl: https://example.com/x\nlocal_snapshot: ${rel}\n`);
+    const r = await captureNode(node, "demo", deps({ capture }));
+    assert.equal(capture.calls.length, 0, "the file exists — do not re-capture");
+    assert.equal(r.changed, false);
+  } finally {
+    process.chdir(cwd);
+  }
+});
+
+test("CAPTURE: --force re-captures even when the snapshot exists", async () => {
+  const rel = "data/archives/demo/s-2026-08-01.pdf";
+  const root = withSnapshotOnDisk(rel);
+  const cwd = process.cwd();
+  process.chdir(root);
+  try {
+    const capture = fakeCapture();
+    const node = nodeFrom(`id: s\nurl: https://example.com/x\nlocal_snapshot: ${rel}\n`);
+    await captureNode(node, "demo", deps({ capture, force: true }));
+    assert.equal(capture.calls.length, 1, "--force must actually escape the skip");
+  } finally {
+    process.chdir(cwd);
+  }
+});
+
+test("CAPTURE: a Wayback-pointless URL never gets an archived_url written", async () => {
+  const node = nodeFrom("id: ya\nurl: https://app.yogaalliance.org/schoolpublicprofile?id=1\n");
+  const r = await captureNode(
+    node,
+    "demo",
+    deps({
+      skipWayback: false,
+      submitWayback: async () => {
+        throw new Error("must not submit a JS shell to Wayback");
+      },
+    }),
+  );
+  assert.equal(node.get("archived_url"), undefined);
+  assert.equal(r.failedCapture, null);
+});
+
+test("CAPTURE: --skip-wayback suppresses submission", async () => {
+  const node = nodeFrom("id: s\nurl: https://example.com/x\n");
+  await captureNode(
+    node,
+    "demo",
+    deps({
+      skipWayback: true,
+      submitWayback: async () => {
+        throw new Error("must not submit when --skip-wayback is set");
+      },
+    }),
+  );
+  assert.equal(node.get("archived_url"), undefined);
+});
