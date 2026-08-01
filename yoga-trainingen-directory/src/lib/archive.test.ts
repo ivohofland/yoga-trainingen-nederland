@@ -50,14 +50,30 @@ test("CAPTURE: a source with no url is skipped, and never silently", async () =>
   const capture = fakeCapture();
   const node = nodeFrom("id: gated-brochure\n");
   const { logs, value } = withLog(() => captureNode(node, "demo", deps({ capture })));
-  const changed = await value;
+  const result = await value;
 
-  assert.equal(changed, false);
+  assert.equal(result.changed, false);
   assert.equal(capture.calls.length, 0, "must not attempt a capture without a url");
   assert.equal(node.get("local_snapshot"), undefined);
   assert.match(
     logs.join("\n"),
     /gated-brochure: overgeslagen \(geen url/,
     "a source the archiver cannot handle must say so — silence makes it look captured",
+  );
+});
+
+test("CAPTURE: a failed capture is REPORTED, not silently swallowed", async () => {
+  const boom: Capture = async () => {
+    throw new Error("net::ERR_NAME_NOT_RESOLVED");
+  };
+  const node = nodeFrom("id: unreachable\nurl: https://example.invalid/x\n");
+  const result = await captureNode(node, "demo", deps({ capture: boom }));
+
+  assert.equal(result.failedCapture, "unreachable", "the failing source id must come back");
+  assert.equal(result.changed, false, "a failed capture changed nothing");
+  assert.equal(
+    node.get("local_snapshot"),
+    undefined,
+    "a record must never declare a snapshot the capture did not produce",
   );
 });
