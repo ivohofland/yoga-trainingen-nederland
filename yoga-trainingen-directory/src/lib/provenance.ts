@@ -673,11 +673,14 @@ export interface ProvenanceReport {
   /** Claims whose cited source's body is not in this checkout (gitignored). Not a
    *  finding — an honest limit of where the check is running. */
   skipped: number;
-  /** Every claim the check had a subject for: examined + skipped + the ones that never
-   *  reached a search (no source, no snapshot, nothing captured, nothing readable). */
+  /** Every claim the check had a subject for: examined + skipped + opaque + the ones
+   *  that never reached a search (no source, no snapshot, nothing captured, nothing
+   *  readable). */
   claims: number;
-  /** examined / claims. It is 1 ONLY where the whole archive is on disk. In CI it is
-   *  ~0.05, and a consumer that prints a green tick over 0.05 is lying for us. */
+  /** examined / claims. It is 1 ONLY where the whole archive is on disk AND nothing
+   *  cited is opaque (held, but with no text extraction available — an image, a .docx):
+   *  a fully present archive with one such claim still reads below 1, honestly. In CI
+   *  it is ~0.05, and a consumer that prints a green tick over 0.05 is lying for us. */
   coverage: number;
   /** The WEAKEST question any examined claim was held to (see Granularity): `fact` only
    *  when every single one was held to the value in the record. */
