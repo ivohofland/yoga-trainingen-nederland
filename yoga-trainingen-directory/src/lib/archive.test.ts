@@ -157,6 +157,49 @@ test("CAPTURE: --skip-wayback suppresses submission", async () => {
   assert.equal(node.get("archived_url"), undefined);
 });
 
+test("CAPTURE: an already-captured source STILL gets its public half", async () => {
+  // Every archived_url assertion above this line asserts undefined, and deps()'s default
+  // (skipWayback: true, submitWayback: async () => null) means none of them can tell "the
+  // guard correctly did not fire" from "nothing would have written archived_url anyway". The
+  // MOST COMMON node on an --all run is exactly this one — a local copy already on disk, so
+  // section 1 is skipped and `changed` is still false when the no-half-record guard is
+  // reached. A guard misread as `if (!changed) return { changed, failedCapture }` — plausible
+  // under "nothing was captured, nothing to do" — would silently stop Wayback submissions for
+  // every such source, with 307/307 staying green because nothing here asserted the OTHER
+  // direction. This test drives a real, non-pointless url through a SUCCESSFUL submission on
+  // an already-captured node and asserts the write happens.
+  const rel = "data/archives/demo/s-2026-08-01.pdf";
+  const root = withSnapshotOnDisk(rel);
+  const cwd = process.cwd();
+  process.chdir(root);
+  try {
+    const capture = fakeCapture();
+    const node = nodeFrom(`id: s\nurl: https://example.com/x\nlocal_snapshot: ${rel}\n`);
+    let submitted = 0;
+    const r = await captureNode(
+      node,
+      "demo",
+      deps({
+        capture,
+        skipWayback: false,
+        submitWayback: async () => {
+          submitted++;
+          return "https://web.archive.org/web/20260802000000/https://example.com/x";
+        },
+      }),
+    );
+    assert.equal(capture.calls.length, 0, "the file exists — local capture must still be skipped");
+    assert.equal(submitted, 1, "the no-half-record guard must not fire on an already-captured source");
+    assert.equal(
+      node.get("archived_url"),
+      "https://web.archive.org/web/20260802000000/https://example.com/x",
+    );
+    assert.equal(r.changed, true);
+  } finally {
+    process.chdir(cwd);
+  }
+});
+
 test("CAPTURE: `dir` is threaded through, not hardcoded — a provider source and a reference document write to their own directory", async () => {
   // A provider's node is an item in sources[]; a reference's IS the document root — both are
   // handed to captureNode as a plain YAMLMap, and `dir` is the only thing that tells it which
@@ -219,11 +262,16 @@ function captureWith(...exts: string[]): { base: string; dir: string } {
   return { base, dir };
 }
 
-test("FINISH: with a .pdf present, the record names the .pdf", () => {
-  const { base } = captureWith(".html", ".pdf");
+test("FINISH: with a .pdf present, the record names the .pdf — even when a .png also exists", () => {
+  // BOTH present is the precedence case: an earlier --force re-capture can leave a stale
+  // .png beside a fresh .pdf, and no test asserted which one wins on the RETURN (a sibling
+  // test below checks the sidecar with all three present, but not this). A ternary swap
+  // (.png checked first) would pass every other FINISH test unnoticed.
+  const { base } = captureWith(".html", ".pdf", ".png");
   const rel = finishCapture(base, "body.html");
   assert.match(rel, /site-2026-08-02\.pdf$/);
   assert.ok(fs.existsSync(path.resolve(rel)), "the returned path must exist on disk");
+  assert.ok(!path.isAbsolute(rel), "local_snapshot must be repo-relative, or it is wrong on every other clone");
 });
 
 test("FINISH: with only a .png, the record names the .png — not a .pdf we never wrote", () => {
@@ -234,6 +282,7 @@ test("FINISH: with only a .png, the record names the .png — not a .pdf we neve
   const rel = finishCapture(base, "body.html");
   assert.match(rel, /site-2026-08-02\.png$/);
   assert.ok(fs.existsSync(path.resolve(rel)), "the returned path must exist on disk");
+  assert.ok(!path.isAbsolute(rel), "local_snapshot must be repo-relative, or it is wrong on every other clone");
 });
 
 test("FINISH: with neither rendering, the record names the .html and it is hashed", () => {
@@ -274,16 +323,26 @@ test("ORPHAN: the .png fallback failing must not abort before the sidecar", () =
   // different bytes WITH a sidecar, tripping the append-only rule and refusing the entire
   // push for every provider.
   //
-  // This test pins the SOURCE-level guarantee: the screenshot call is defended by its own
-  // .catch, so nothing between the .html write and finishCapture can throw past it.
+  // This test pins the SOURCE-level guarantee: the pdf+screenshot pair sits inside an outer
+  // try/catch, so nothing between the .html write and finishCapture can throw past it — not a
+  // REJECTION (the inner .catch covers that) and not a SYNCHRONOUS throw from page.pdf or
+  // page.screenshot (a .catch alone never sees those; only the outer try does).
   const src = fs.readFileSync(path.join(process.cwd(), "scripts", "archive.ts"), "utf8");
-  const block = src.slice(src.indexOf("await page.pdf("), src.indexOf("return finishCapture("));
+  const block = src.slice(
+    src.indexOf("const html = await page.content()"),
+    src.indexOf("return finishCapture("),
+  );
   assert.match(
     block,
-    /page\.screenshot\([\s\S]*?\)\s*\.catch\(/,
-    "page.screenshot must have its own .catch, or a failed rendering orphans the body",
+    /try\s*\{[\s\S]*?await page\.pdf\([\s\S]*?\.catch\([\s\S]*?await page\.screenshot\([\s\S]*?\}\s*catch \(e\) \{/,
+    "page.pdf/page.screenshot must sit inside an outer try, or a synchronous throw orphans the body",
   );
   assert.match(block, /alleen HTML/, "and it must say so — a silent degraded capture reads as a full one");
+  assert.match(
+    block,
+    /String\(e\)/,
+    "(e as Error).message throws on a nullish rejection — the very thing this catch exists to survive",
+  );
 });
 
 test("HALF-RECORD: a failed capture must not let Wayback write alone", () => {
