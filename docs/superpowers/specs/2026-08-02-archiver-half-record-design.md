@@ -51,7 +51,16 @@ try {
   // Elke faalroute eindigt HIER, vóór finishCapture. Een synchrone throw uit page.pdf of
   // page.screenshot gaat langs .catch heen, en `(e as Error).message` faalt zelf op een
   // niet-Error-rejectie: beide lieten het lichaam ongehasht achter (#7). String(e) niet.
-  console.warn(`\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${String(e)})`);
+  // Maar zelfs String(e) kan zelf gooien — op een object zonder prototype, of met een
+  // toString/Symbol.toPrimitive die gooit — dus de formattering zelf is hieronder
+  // afgeschermd: de waarschuwingstekst is nooit de hash van het lichaam waard.
+  let detail: string;
+  try {
+    detail = String(e);
+  } catch {
+    detail = "onbekende fout";
+  }
+  console.warn(`\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${detail})`);
 }
 ```
 
@@ -59,13 +68,13 @@ try {
 
 Consequence: every body that reaches disk now gets hashed, which removes #7's orphan trigger entirely.
 
-**Correction, post-review (2026-08-02).** The nested-`.catch` version above is not what shipped, and the difference is not cosmetic: it left two escape hatches back into the orphan hole this fix exists to close.
+**Correction, post-review (2026-08-02).** This design originally proposed wrapping only the `.png` fallback in its own `.catch`, with the catch body reading `(e as Error).message`. That nested-`.catch` form is not what shipped — the block above has since been replaced with the shipped version — and the difference is not cosmetic: it left two escape hatches back into the orphan hole this fix exists to close.
 
 (a) `(e as Error).message` throws its own `TypeError` when the rejection value is nullish (Playwright can reject with something other than an `Error`). That `TypeError` propagates out of the whole `await page.pdf(...).catch(...)` expression — past `finishCapture` — leaving the `.html` on disk with no `.sha256`. The inner `.catch` is a promise handler; it cannot catch a throw raised *inside itself*.
 
 (b) A **synchronous** throw from `page.pdf` or `page.screenshot` — as opposed to a rejected promise — never reaches a `.catch` at all, for the same reason a `try` is needed around a synchronous call that might throw. `.catch` only ever sees rejections.
 
-Both routes end at the same place: an unhashed `.html` on disk, which is exactly issue #7's deadlock trigger. The fix is the outer `try`/`catch` shown above, not the nested `.catch`: it wraps the *whole* `page.pdf(...).catch(...)` expression, so a synchronous throw from either call is caught, and the catch body uses `String(e)` — not `(e as Error).message` — so a nullish rejection cannot itself throw past the guard. The "removes #7's orphan trigger entirely" sentence two paragraphs up is true of this version; it was not true, as written, of the nested-`.catch` version.
+Both routes end at the same place: an unhashed `.html` on disk, which is exactly issue #7's deadlock trigger. The fix is the outer `try`/`catch` shown above, not the nested `.catch`: it wraps the *whole* `page.pdf(...).catch(...)` expression, so a synchronous throw from either call is caught, and the catch body uses `String(e)` — not `(e as Error).message` — so a nullish rejection cannot itself throw past the guard. The consequence sentence above ("removes #7's orphan trigger entirely") is true of this version; it was not true, as written, of the nested-`.catch` version this note describes.
 
 **2 — no half-record.** In `captureNode`, immediately after the capture `catch`:
 
