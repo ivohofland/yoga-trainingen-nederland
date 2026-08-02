@@ -31,6 +31,11 @@
  * structurally gated and says so in as many words, rather than implying it verified a
  * corpus it could not read. If you ever find yourself deleting that banner to tidy
  * the output, you are removing the one sentence that keeps the tick honest.
+ *
+ * A FOURTH OUTCOME, OPAQUE, IS ALSO NOT A FINDING: an artifact we hold but have no text
+ * extraction for (an image, a `.docx`) is neither missing nor broken, so it does not
+ * fail the build — but it was not verified either, so `opaque > 0` also withholds the
+ * `✓`. A run can therefore be finding-free and still print no tick.
  */
 import { loadDataset } from "../src/lib/loader";
 import { allProvenance, FINDING_TIER, type ProvenanceFinding } from "../src/lib/provenance";
@@ -84,7 +89,11 @@ if (skipped > 0) {
       `checkout (gitignored; alleen de hash is publiek).`,
   );
   console.log("  Wél afgedwongen: de structurele toets — elk geciteerd feit verwijst naar een vastgelegd artefact.");
-  console.log(`  Inhoudelijk onderzocht: ${examined}/${claims}. Over de overige ${skipped} zegt deze run NIETS.`);
+  console.log(
+    `  Inhoudelijk onderzocht: ${examined}/${claims}. Over de overige ${skipped + opaque}` +
+      `${opaque > 0 ? ` (${opaque} daarvan hierboven al genoemd als onleesbaar)` : ""} ` +
+      `zegt deze run inhoudelijk NIETS.`,
+  );
   console.log("  Draai dit lokaal, mét de archieven, voor de volledige toets.");
 } else if (findings.length === 0 && opaque === 0) {
   console.log(

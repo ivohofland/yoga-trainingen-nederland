@@ -58,6 +58,14 @@ bodyWithheld   = hashed.some((name) => !held.includes(name));
 
 This also closes a latent bug: `readable` currently probes `base + ext` rather than the sidecar's **listed filenames**, so a capture named off-pattern is invisible to the gate even when hashed and present.
 
+**Correction, post-review (2026-08-02).** The `held` line above is not what shipped, and the difference is not cosmetic.
+
+(a) The shipped code (`src/lib/provenance.ts:641-655`, commit 3f3c499) does not filter the sidecar's listed names down to what exists on disk. It reads the directory itself (`fs.readdirSync(artifactDir)`) and keeps every entry whose OWN extension-stripped name matches the source's stripped basename EXACTLY (`f.replace(/\.[a-z0-9]+$/i, "") === path.basename(base)`) — tightened, same day, from an initial prefix match (commit d3cd555) after the prefix version absorbed a sibling capture's artifact.
+
+(b) Why a directory scan rather than the sidecar filter drafted above: `hashed.filter((name) => fs.existsSync(...))` treats "held" as a subset of "listed in the sidecar" — so a body written to disk before its `.sha256` line exists (the crash-between-writes case named at `provenance.ts:606-610`, issue #7) would filter to nothing and report `nothingCaptured`, false about a file actually on disk. A directory scan finds that orphan; a sidecar filter structurally cannot. And the scan has to match EXACTLY, never by prefix, because source ids nest — a prefix match pulls in a sibling capture whose own stripped name happens to extend ours (`abc-2026-06-06.extra.pdf` beside `abc-2026-06-06.pdf`), letting one page's price vouch for another page's citation, which `provenance.ts:576-592` names in as many words as the one thing this keying exists to prevent.
+
+(c) Which makes the "closes a latent bug" sentence above FALSE of what shipped, and it should be read struck. It is true of the `hashed.filter` version: that version resolves names straight off the sidecar's own listing, so a capture whose on-disk name diverges from the probed `base + ext` is still found. The shipped scan does not do that — it matches directory entries by comparing THEIR OWN stripped basename to `base`, the same constraint the original bug had, now applied to a directory listing instead of two literal probes. A capture whose sidecar entry names a file that does not itself strip to `base` — genuinely off-pattern — is exactly as invisible under the shipped code as under the code this design set out to replace, and it still reports `bodyWithheld: true`.
+
 ## The new state
 
 **Not a `ProvenanceReason`.** Those are findings, and `scripts/provenance.ts` ends with `if (findings.length > 0) process.exit(1)` — so making image evidence a finding would break the build for adding a certificate photo, punishing exactly the evidence this design exists to admit.

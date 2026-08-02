@@ -129,6 +129,31 @@ interface Artifacts {
 
 - [ ] **Step 4: Derive presence from the disk**
 
+> **Correction, post-review (2026-08-02).** The code block below is not what shipped. It
+> looked equivalent to a directory scan but is not: `hashed.filter((name) =>
+> fs.existsSync(...))` treats "held" as a subset of "listed in the sidecar", so a body
+> written to disk before its `.sha256` line exists — the crash-between-writes case issue
+> #7 names, and `provenance.ts:606-610` documents — would filter to nothing and report
+> `nothingCaptured`, false about a file actually on disk. The shipped code
+> (`provenance.ts:641-655`, commit 3f3c499) reads the directory instead
+> (`fs.readdirSync(artifactDir)`), keeping every entry whose OWN extension-stripped name
+> matches the source's stripped basename EXACTLY. A same-day follow-up (commit d3cd555)
+> tightened an initial prefix match to that exact match after the prefix version absorbed
+> a sibling capture's artifact — source ids nest, and a prefix match pulled in a sibling
+> whose own stripped name happened to extend ours (`abc-2026-06-06.extra.pdf` beside
+> `abc-2026-06-06.pdf`), letting one page's price vouch for another page's citation, which
+> `provenance.ts:576-592` names as the one thing this keying exists to prevent. `hashed`
+> is consulted only afterward, to decide `bodyWithheld` — whether something the sidecar
+> lists is missing from the directory. The same "sidecar's listed filenames" framing
+> recurs twice more in this plan — the Architecture line at the top ("Derive presence
+> from the sidecar's listed filenames that actually exist on disk") and the proposed
+> commit message at the end of this task ("Presence now comes from the sidecar's listed
+> filenames … closes a latent bug: readable probed base+ext rather than the names the
+> sidecar lists") — and both should be read the same way: true of the code drafted here,
+> not of what shipped. The shipped scan still requires an on-disk entry's OWN stripped
+> name to equal `base`, so a capture whose sidecar entry names a file that does not
+> itself strip to `base` remains invisible, exactly as before.
+
 Replace the body of `artifactsFor()` in `src/lib/provenance.ts`:
 
 ```ts
@@ -540,3 +565,7 @@ not verifiable with this tool, which is a different sentence."
 **Type consistency.** `Artifacts.opaque` is `string[]` (absolute paths) in Tasks 1-2. `ProvenanceReport.opaque` is `number` and `.opaqueFiles` is `string[]` (basenames) in Tasks 2-3 — the two `opaque` names live on different types, which is why Task 2 destructures the artifact one as `opaqueHeld`. `artifactsFor(source, cwd?)` and `providerProvenance(p, cwd)` keep their existing signatures throughout.
 
 **One risk the plan carries deliberately.** Task 1 changes `nothingCaptured` from `readable.length === 0 && hashed.length === 0` to `held.length === 0 && hashed.length === 0`. These agree whenever `hashed` is empty (both reduce to the same thing), and when `hashed` is non-empty both are false. The existing `no_artifact` tests cover it; if either goes red, that equivalence is wrong and the task should stop rather than adjust the test.
+
+**Correction, post-review (2026-08-02).** The equivalence claimed above does not hold. `readable.length === 0` and `held.length === 0` reduce to the same thing only when `readable` and `held` denote the same set, and they do not: `held` (the shipped code, `provenance.ts:641-655`) is a directory scan that admits ANY extension matching the source's stripped basename, while `readable` was restricted to `.pdf`/`.html`. They diverge exactly where an artifact is held, has no sidecar entry (`hashed` empty), and is not `.pdf`/`.html` — a hand-placed `.png` with no `.sha256` yet. There, `held.length === 0` is false (the scan finds it) while `readable.length === 0` is true (nothing readable was ever probed for a `.png`), so the old reduction reported `nothingCaptured: true` (a `no_artifact` finding) and the new one reports `opaque` — a real change in outcome, not an equivalent one.
+
+The delta is deliberate, but it is not environment-neutral. `held` is forced to `[]` under `withheldBodies(cwd)`, so in a real CI run this same claim still reports `nothingCaptured`/`no_artifact` — red, exactly as before — while locally it now reports `opaque` — green. That local-green/CI-red split already exists on `main` for the unhashed-orphan-body case (`provenance.ts:635-640` names it and cites issue #7); this task adds a second, adjacent instance of the same class rather than avoiding it. The `no_artifact` tests referenced above cover the CI-forced path, not the local one, so they would not have caught a wrong reduction here — Task 1's own `WITHHOLD_BODIES` test is what actually pins the CI side.
