@@ -1054,13 +1054,31 @@ test("a held .docx is opaque and named — the signal that would earn a category
   assert.ok(r.opaqueFiles.some((f) => f.endsWith("tarieven-2026-08.docx")));
 });
 
-test("REPORT: both runners print the opaque count — a silent state is a passed state", () => {
+test("REPORT: both runners print opaqueFiles AND gate their tick line on opaque === 0", () => {
   // If the run does not say these claims were unverifiable, a green tick over them reads
-  // as "checked". The whole reason opaque is not a finding is that it is reported instead.
+  // as "checked". The whole reason opaque is not a finding is that it is reported instead —
+  // and the tick must not print over an opaque claim, or the report is exactly the untruth
+  // it exists to prevent.
   const prov = fs.readFileSync(path.join(process.cwd(), "scripts", "provenance.ts"), "utf8");
   const val = fs.readFileSync(path.join(process.cwd(), "scripts", "validate.ts"), "utf8");
   for (const [name, src] of [["provenance.ts", prov], ["validate.ts", val]] as const) {
-    assert.match(src, /\bopaque\b/, `${name} must read the opaque count`);
-    assert.match(src, /opaqueFiles/, `${name} must name the unreadable artifacts`);
+    // opaqueFiles must be PRINTED, not merely destructured or mentioned in a comment: it
+    // has to sit inside a console.log(...) call. A source-only `\bopaque\b` match stays
+    // green even if the identifier is never reported, which is the gap this closes.
+    assert.match(
+      src,
+      /console\.log\(\s*[\s\S]{0,400}?opaqueFiles/,
+      `${name} must print opaqueFiles inside a console.log call`,
+    );
+    // The "elk gedekt" tick line must be conditioned on opaque === 0 close by — otherwise a
+    // run with zero findings, zero skipped and one opaque claim prints "✓ ... elk gedekt"
+    // directly over a claim it just said it could not read. Searched FORWARD from the
+    // condition (not backward from the phrase) because both files also use "elk gedekt" in
+    // prose comments that precede the real gate — a backward search would match those.
+    assert.match(
+      src,
+      /opaque === 0[\s\S]{0,200}?elk gedekt/,
+      `${name} must gate the tick line on opaque === 0`,
+    );
   }
 });
