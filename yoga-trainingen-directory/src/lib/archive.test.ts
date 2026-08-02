@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { parseDocument } from "yaml";
-import { captureNode, type CaptureDeps, type Capture } from "../../scripts/archive";
+import { captureNode, finishCapture, type CaptureDeps, type Capture } from "../../scripts/archive";
 
 /** A source-like node from YAML text. A provider's is an item in `sources[]`;
  *  a reference's IS the document root — both are a YAMLMap, which is the point. */
@@ -209,4 +209,59 @@ test("CAPTURE: it is WIRED IN — both loops go through captureNode", () => {
     /endsWith\(path\.sep \+ "archive\.ts"\)/,
     "the entrypoint guard must name this file, or npm run archive silently does nothing",
   );
+});
+
+/** A capture base inside a temp dir, with the given extensions present on disk. */
+function captureWith(...exts: string[]): { base: string; dir: string } {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "capture-"));
+  const base = path.join(dir, "site-2026-08-02");
+  for (const ext of exts) fs.writeFileSync(`${base}${ext}`, `body${ext}`);
+  return { base, dir };
+}
+
+test("FINISH: with a .pdf present, the record names the .pdf", () => {
+  const { base } = captureWith(".html", ".pdf");
+  const rel = finishCapture(base, "body.html");
+  assert.match(rel, /site-2026-08-02\.pdf$/);
+  assert.ok(fs.existsSync(path.resolve(rel)), "the returned path must exist on disk");
+});
+
+test("FINISH: with only a .png, the record names the .png — not a .pdf we never wrote", () => {
+  // THE BUG. page.pdf() fails on non-headless chromium and the fallback writes a .png,
+  // but saveLocalCopy returned `${base}.pdf` unconditionally — so local_snapshot named a
+  // file that does not exist, in a project whose whole basis is that cited evidence does.
+  const { base } = captureWith(".html", ".png");
+  const rel = finishCapture(base, "body.html");
+  assert.match(rel, /site-2026-08-02\.png$/);
+  assert.ok(fs.existsSync(path.resolve(rel)), "the returned path must exist on disk");
+});
+
+test("FINISH: with neither rendering, the record names the .html and it is hashed", () => {
+  // An html-only capture is a DEGRADED SUCCESS, not a failure: page.content() is what we
+  // actually fetched, and 7 providers' prices exist only in the HTML. It must be hashed —
+  // an unhashed body is pushed unverified and later deadlocks the whole sync (issue #7).
+  const { base } = captureWith(".html");
+  const rel = finishCapture(base, "body.html");
+  assert.match(rel, /site-2026-08-02\.html$/);
+  assert.ok(fs.existsSync(path.resolve(rel)));
+
+  const sidecar = fs.readFileSync(`${base}.sha256`, "utf8").trim().split("\n");
+  assert.equal(sidecar.length, 1, "exactly one artifact was captured, so one line");
+  assert.match(sidecar[0], /site-2026-08-02\.html$/);
+});
+
+test("FINISH: the sidecar lists every artifact present, and only those", () => {
+  const { base } = captureWith(".html", ".pdf", ".png");
+  finishCapture(base, "body.html");
+  const listed = fs
+    .readFileSync(`${base}.sha256`, "utf8")
+    .trim()
+    .split("\n")
+    .map((l) => l.trim().split(/\s+/)[1])
+    .sort();
+  assert.deepEqual(listed, [
+    "site-2026-08-02.html",
+    "site-2026-08-02.pdf",
+    "site-2026-08-02.png",
+  ]);
 });
