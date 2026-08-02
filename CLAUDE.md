@@ -280,7 +280,10 @@ them silently corrupts the dataset's credibility.
   ours, not theirs: an artifact we hold but could not extract a character from is a
   hole in our extractor, and reporting it as "the page states no price" is the
   `strings` disaster that put a false sentence about SanaYou into the dataset. Never
-  collapse it into `content`.
+  collapse it into `content`. A fourth disposition, **`opaque`**, sits outside
+  `FINDING_TIER` entirely — an artifact we hold but have no text extraction for at all
+  (an image, a `.docx`) is not a finding, so it never fails the build, but it was not
+  verified either, so it still withholds the run's `✓`.
 - **The JS-rendered-price trap: search BOTH artifacts.** Each source is captured as
   `<id>-<date>.html` (raw DOM) *and* `<id>-<date>.pdf` (browser-rendered). Neither
   alone is evidence: 3 providers' prices exist ONLY in the PDF (injected by a JS

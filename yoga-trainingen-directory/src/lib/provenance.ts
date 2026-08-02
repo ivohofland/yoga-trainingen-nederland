@@ -692,7 +692,10 @@ export interface ProvenanceReport {
    *  claims were verified. */
   opaque: number;
   /** Basenames of those artifacts, so the report can name them. A `.png` line reads as
-   *  expected; a `.docx` line reads as a prompt to add extraction support. */
+   *  expected; a `.docx` line reads as a prompt to add extraction support. NOT a set:
+   *  one entry is pushed per CLAIM, so one image backing price, hours and VAT for the
+   *  same programme appears three times. Both printers (`scripts/provenance.ts`,
+   *  `scripts/validate.ts`) dedupe with `new Set(...)` before printing. */
   opaqueFiles: string[];
 }
 

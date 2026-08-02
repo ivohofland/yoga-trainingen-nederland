@@ -984,6 +984,11 @@ test("a claim whose only artifact is a held image is OPAQUE — counted, never a
   assert.deepEqual(r.findings, [], "a format with no text layer is not a defect");
   assert.equal(r.opaque, 1, "it must be counted, not silently passed");
   assert.equal(r.skipped, 0, "and NOT filed as a body missing from this checkout");
+  // The real corpus holds zero opaque artifacts, so the accounting invariant asserted
+  // against it (`examined + skipped + opaque + unsearched === claims`) never exercises
+  // the `+ opaque` term. Pin it here instead, where opaque is actually nonzero: one
+  // claim, held opaque, none examined.
+  assert.equal(r.examined + r.skipped + r.opaque, r.claims);
   assert.ok(
     r.opaqueFiles.some((f) => f.endsWith("tarieven-2026-08.png")),
     "the report names the file, so a .docx line reads as a prompt to add support",
