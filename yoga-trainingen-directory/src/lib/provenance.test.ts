@@ -918,3 +918,23 @@ test("WITHHOLD_BODIES still blanks everything — the CI simulation is unchanged
     else process.env.PROVENANCE_WITHHOLD_BODIES = before;
   }
 });
+
+test("a SIBLING capture whose stripped name extends ours is never absorbed — one source's citation must never be able to cite another source's capture", () => {
+  // `held` is now a directory scan (needed to catch an orphan body the sidecar doesn't
+  // list yet), and a directory scan that matched by PREFIX would pull in a neighbour
+  // whose own stripped basename happens to extend ours: `abc-2026-06-06.extra.pdf` starts
+  // with `abc-2026-06-06.`, so a prefix match would report it as OUR artifact even though
+  // it is a different capture, entirely. That would let one page's price vouch for
+  // another page's citation — exactly what keying off `local_snapshot` was meant to
+  // prevent. The match must be EXACT on the stripped basename.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-"));
+  fs.mkdirSync(path.join(dir, "data/archives/demo"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "data/archives/demo/abc-2026-06-06.pdf"), "%PDF-1.4\n");
+  fs.writeFileSync(path.join(dir, "data/archives/demo/abc-2026-06-06.extra.pdf"), "%PDF-1.4\n");
+
+  const source = { id: "abc", local_snapshot: "data/archives/demo/abc-2026-06-06.pdf" } as never;
+  const a = artifactsFor(source, dir);
+
+  assert.equal(a.readable.length, 1, "only OUR capture is held — the sibling is not absorbed");
+  assert.match(a.readable[0], /abc-2026-06-06\.pdf$/);
+});

@@ -576,11 +576,15 @@ interface Artifacts {
 /**
  * Every artifact captured for one source, and what we can read of it here.
  *
- * Keyed off the record's own `local_snapshot` (its base name, extension swapped),
- * NOT off a directory scan for files starting with the source id: source ids nest,
- * and a scan that picked up a SIBLING source's capture would let one page's price
- * vouch for another page's citation. The record says which file it stands on; we
- * read that file and the twin the archiver wrote beside it.
+ * Keyed off the record's own `local_snapshot` (its base name, extension swapped): we
+ * list the directory it lives in, but we do NOT accept everything in that listing. A
+ * file counts only if stripping its own last extension yields EXACTLY that base name —
+ * not "starts with" it. Source ids nest, and a PREFIX match would let a sibling capture
+ * whose stripped name happens to extend ours (`abc-2026-06-06.extra.pdf` sitting next to
+ * `abc-2026-06-06.pdf`) get pulled in as if it were a twin of our own file, letting one
+ * page's price vouch for another page's citation. The exact-match keeps the directory
+ * scan honest: it can find an orphan body the sidecar doesn't know about yet (see
+ * `held`, below), but it can never absorb a different source's evidence.
  *
  * The `.sha256` sidecar is the receipt for a body we may not hold: the archiver
  * writes one line per captured file, so its very existence proves a snapshot was
@@ -640,7 +644,15 @@ export function artifactsFor(source: Source, cwd = process.cwd()): Artifacts {
       ? [] // the bodies are gitignored away, as in a fresh clone — see withheldBodies()
       : fs
           .readdirSync(artifactDir)
-          .filter((f) => f.startsWith(`${path.basename(base)}.`) && !f.endsWith(".sha256"));
+          // EXACT match on the stripped basename, never a prefix: a prefix match would
+          // also pull in a SIBLING capture whose own stripped name happens to extend ours
+          // (`abc-2026-06-06.extra.pdf` beside `abc-2026-06-06.pdf`), letting one page's
+          // price vouch for another page's citation. The `.sha256` guard stays because the
+          // sidecar itself strips to the same base and would otherwise match its own scan.
+          .filter(
+            (f) =>
+              f.replace(/\.[a-z0-9]+$/i, "") === path.basename(base) && !f.endsWith(".sha256"),
+          );
 
   const isReadable = (name: string) =>
     READABLE.some((ext) => name.toLowerCase().endsWith(ext));
