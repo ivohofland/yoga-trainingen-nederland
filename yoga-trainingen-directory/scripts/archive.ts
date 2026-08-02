@@ -369,6 +369,14 @@ export async function captureNode(
     }
   }
 
+  // NO HALF-RECORD. CLAUDE.md: "ALWAYS both" — a public archive AND a dated local copy.
+  // Writing `archived_url` here, with the local capture just failed, produces a record
+  // claiming a public archive it holds no local copy for: the exact inverse of what
+  // methodologie.md publishes. Returning also skips a pointless submission and its 10-30s
+  // throttle pause on a run that has already failed. The run still exits non-zero and
+  // names this source; the next run retries both halves together.
+  if (failedCapture) return { changed, failedCapture };
+
   // 2. publiek archief
   const archived = node.get("archived_url") as string | null | undefined;
   const needsWayback = archived == null || deps.force;

@@ -133,7 +133,7 @@ interface Artifacts {
 > looked equivalent to a directory scan but is not: `hashed.filter((name) =>
 > fs.existsSync(...))` treats "held" as a subset of "listed in the sidecar", so a body
 > written to disk before its `.sha256` line exists — the crash-between-writes case issue
-> #7 names, and `provenance.ts:606-610` documents — would filter to nothing and report
+> #7 names, and `provenance.ts:635-640` documents — would filter to nothing and report
 > `nothingCaptured`, false about a file actually on disk. The shipped code
 > (`provenance.ts:641-655`, commit 3f3c499) reads the directory instead
 > (`fs.readdirSync(artifactDir)`), keeping every entry whose OWN extension-stripped name
