@@ -561,6 +561,11 @@ function artifactText(file: string): string {
 interface Artifacts {
   /** Artifact files we can actually open here. */
   readable: string[];
+  /** Artifact files we ARE holding but have no text extraction for: an image with no
+   *  text layer, or a format we simply do not read (.docx, .zip). Held, so not
+   *  `bodyWithheld`; unextractable, so never `readable`. The distinction matters because
+   *  "we do not have it" excuses us and "we have it and cannot read it" does not. */
+  opaque: string[];
   /** True when the archiver captured a file for this source that is NOT in this
    *  checkout — i.e. a gitignored body. Its `.sha256` is the receipt. */
   bodyWithheld: boolean;
@@ -609,11 +614,11 @@ interface Artifacts {
 const withheldBodies = (cwd: string) =>
   process.env.PROVENANCE_WITHHOLD_BODIES === "1" && cwd === process.cwd();
 export function artifactsFor(source: Source, cwd = process.cwd()): Artifacts {
-  if (!source.local_snapshot) return { readable: [], bodyWithheld: false, nothingCaptured: true };
+  if (!source.local_snapshot)
+    return { readable: [], opaque: [], bodyWithheld: false, nothingCaptured: true };
   const base = source.local_snapshot.replace(/\.[a-z0-9]+$/i, "");
-  const readable = withheldBodies(cwd)
-    ? [] // the bodies are gitignored away, as in a fresh clone — see withheldBodies()
-    : READABLE.map((ext) => path.join(cwd, base + ext)).filter((f) => fs.existsSync(f));
+  const dir = path.dirname(source.local_snapshot);
+
   const hashFile = path.join(cwd, `${base}.sha256`);
   const hashed = fs.existsSync(hashFile)
     ? fs
@@ -622,11 +627,29 @@ export function artifactsFor(source: Source, cwd = process.cwd()): Artifacts {
         .map((line) => line.trim().split(/\s+/)[1])
         .filter((name): name is string => !!name)
     : [];
-  const present = new Set(readable.map((f) => path.basename(f)));
+
+  // ASK THE DISK, NOT THE SIDECAR AND NOT THE EXTENSION. The sidecar says what was
+  // captured; the directory says what is actually here, and those differ in both
+  // directions — a gitignored body is hashed but absent, and an orphan body (a crash
+  // between the body write and the sidecar write, see issue #7) is present but unhashed.
+  // Deriving `held` from `hashed` would report that orphan as "nooit vastgelegd", which
+  // is false about a file we are holding.
+  const artifactDir = path.join(cwd, dir);
+  const held =
+    withheldBodies(cwd) || !fs.existsSync(artifactDir)
+      ? [] // the bodies are gitignored away, as in a fresh clone — see withheldBodies()
+      : fs
+          .readdirSync(artifactDir)
+          .filter((f) => f.startsWith(`${path.basename(base)}.`) && !f.endsWith(".sha256"));
+
+  const isReadable = (name: string) =>
+    READABLE.some((ext) => name.toLowerCase().endsWith(ext));
+
   return {
-    readable,
-    bodyWithheld: hashed.some((name) => !present.has(name)),
-    nothingCaptured: readable.length === 0 && hashed.length === 0,
+    readable: held.filter(isReadable).map((name) => path.join(cwd, dir, name)),
+    opaque: held.filter((name) => !isReadable(name)).map((name) => path.join(cwd, dir, name)),
+    bodyWithheld: hashed.some((name) => !held.includes(name)),
+    nothingCaptured: held.length === 0 && hashed.length === 0,
   };
 }
 

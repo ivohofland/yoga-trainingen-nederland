@@ -856,3 +856,65 @@ test("GATE: a citation with NO archived artifact at all still fails, body or no 
     "this must be enforceable WITHOUT the bodies — otherwise CI gates nothing at all",
   );
 });
+
+test("a held .png is PRESENT — presence is a fact about the disk, not about the extension", () => {
+  // The bug: `present` was derived from READABLE, so any artifact that was not .pdf/.html
+  // could never be present, and the run said "snapshot-body niet in deze checkout" about a
+  // file it was holding. That sentence blames the ENVIRONMENT for evidence we have.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "data/archives/testco/cert-2026-08.png"), "\x89PNG\r\n");
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/cert-2026-08.sha256"),
+    "aaa  cert-2026-08.png\n",
+  );
+
+  const source = { id: "cert", local_snapshot: "data/archives/testco/cert-2026-08.png" } as never;
+  const a = artifactsFor(source, dir);
+
+  assert.equal(a.bodyWithheld, false, "we are holding it — it is not withheld");
+  assert.equal(a.nothingCaptured, false);
+  assert.equal(a.readable.length, 0, "a .png yields no text extraction");
+  assert.equal(a.opaque.length, 1, "but it IS held, and must be reported as such");
+  assert.match(a.opaque[0], /cert-2026-08\.png$/);
+});
+
+test("a held .png beside a MISSING .html is still withheld — one absent body is not masked", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "data/archives/testco/site-2026-08.png"), "\x89PNG\r\n");
+  // The sidecar lists BOTH; only the .png is on disk.
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/site-2026-08.sha256"),
+    "aaa  site-2026-08.png\nbbb  site-2026-08.html\n",
+  );
+
+  const source = { id: "site", local_snapshot: "data/archives/testco/site-2026-08.png" } as never;
+  const a = artifactsFor(source, dir);
+
+  assert.equal(a.bodyWithheld, true, "the .html was captured and is not here — that is still withheld");
+  assert.equal(a.opaque.length, 1, "the .png we DO hold is still reported as held");
+});
+
+test("WITHHOLD_BODIES still blanks everything — the CI simulation is unchanged", () => {
+  // `withheldBodies()` only fires when the cwd IS process.cwd(), so this must run against
+  // the real corpus rather than a temp dir. tribes-academy's site capture is committed as
+  // a .sha256 listing both a .html and a .pdf; with bodies withheld we must hold NEITHER,
+  // and opaque must not become a back door that reports artifacts as held in CI.
+  const source = {
+    id: "site-vinyasa200-2026-06",
+    local_snapshot: "data/archives/tribes-academy/site-vinyasa200-2026-06-2026-06-28.pdf",
+  } as never;
+
+  const before = process.env.PROVENANCE_WITHHOLD_BODIES;
+  try {
+    process.env.PROVENANCE_WITHHOLD_BODIES = "1";
+    const a = artifactsFor(source, process.cwd());
+    assert.equal(a.readable.length, 0, "bodies are withheld — nothing is readable");
+    assert.equal(a.opaque.length, 0, "withheld means we hold nothing, opaque included");
+    assert.equal(a.bodyWithheld, true, "and the claim must still be SKIPPED, never passed");
+  } finally {
+    if (before === undefined) delete process.env.PROVENANCE_WITHHOLD_BODIES;
+    else process.env.PROVENANCE_WITHHOLD_BODIES = before;
+  }
+});
