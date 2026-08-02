@@ -82,7 +82,7 @@ for (const p of providers) {
  * hoogste wat we mogen zeggen "⚠ x/y onderzocht".
  */
 try {
-  const { findings, examined, skipped, claims, granularity } = allProvenance(providers);
+  const { findings, examined, skipped, claims, granularity, opaque, opaqueFiles } = allProvenance(providers);
   if (findings.length > 0) {
     console.warn(`⚠ ${findings.length} claim(s) citeren een bron die het niet stelt:\n`);
     for (const f of findings) console.warn(`  - [${f.check}/${f.reason}] ${f.message}`);
@@ -98,6 +98,12 @@ try {
     );
   else if (findings.length > 0) console.log(`  provenance: ${dekking} — zie de ${findings.length} bevinding(en) hierboven`);
   else console.log(`✓ provenance: ${dekking} — elk gedekt door een gearchiveerd artefact dat de claim STELT`);
+  if (opaque > 0) {
+    console.log(
+      `• ${opaque} claim(s) op bewijs dat wij niet kunnen uitlezen (wél in ons bezit): ` +
+        `${[...new Set(opaqueFiles)].sort().join(", ")} — niet machinaal getoetst.`,
+    );
+  }
 } catch (e) {
   // Ontbrekende pdftotext is een gat in de GEREEDSCHAPSKIST, geen bevinding over een
   // aanbieder: melden en doorgaan — nooit stilzwijgend "geen bevindingen" rapporteren.
