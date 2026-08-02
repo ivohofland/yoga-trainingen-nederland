@@ -682,6 +682,15 @@ export interface ProvenanceReport {
   /** The WEAKEST question any examined claim was held to (see Granularity): `fact` only
    *  when every single one was held to the value in the record. */
   granularity: Granularity;
+  /** Claims whose only held artifacts have no text extraction available — an image with
+   *  no text layer, a .docx we do not read. NOT a finding: nothing is broken, and
+   *  `scripts/provenance.ts` exits non-zero on findings, so this would break the build
+   *  for adding a photograph. Counted and named instead, so the run never implies these
+   *  claims were verified. */
+  opaque: number;
+  /** Basenames of those artifacts, so the report can name them. A `.png` line reads as
+   *  expected; a `.docx` line reads as a prompt to add extraction support. */
+  opaqueFiles: string[];
 }
 
 /**
@@ -838,6 +847,8 @@ export function providerProvenance(p: Provider, cwd = process.cwd()): Provenance
   let skipped = 0;
   let claims = 0;
   let pageTierExamined = 0;
+  let opaque = 0;
+  const opaqueFiles: string[] = [];
 
   for (const program of p.programs) {
     for (const c of claimsOf(program)) {
@@ -861,7 +872,7 @@ export function providerProvenance(p: Provider, cwd = process.cwd()): Provenance
         continue;
       }
 
-      const { readable, bodyWithheld, nothingCaptured } = artifactsFor(source, cwd);
+      const { readable, opaque: opaqueHeld, bodyWithheld, nothingCaptured } = artifactsFor(source, cwd);
 
       if (nothingCaptured) {
         findings.push({
@@ -903,6 +914,15 @@ export function providerProvenance(p: Provider, cwd = process.cwd()): Provenance
         continue;
       }
 
+      // HELD, BUT NOT EXTRACTABLE. `readable.length === 0` is the guard that keeps this
+      // from swallowing a broken capture: if any format we promised to read is present,
+      // the claim stays on the finding path below, where an empty extraction is our bug.
+      if (readable.length === 0 && opaqueHeld.length > 0) {
+        opaque++;
+        for (const f of opaqueHeld) opaqueFiles.push(path.basename(f));
+        continue;
+      }
+
       if (texts.length === 0) {
         findings.push({
           ...base, sourceId: source.id, reason: "unreadable",
@@ -933,6 +953,8 @@ export function providerProvenance(p: Provider, cwd = process.cwd()): Provenance
     claims,
     coverage: claims === 0 ? 1 : examined / claims,
     granularity: pageTierExamined > 0 ? "page" : "fact",
+    opaque,
+    opaqueFiles,
   };
 }
 
@@ -957,5 +979,7 @@ export function allProvenance(providers: Provider[], cwd = process.cwd()): Prove
     // The weakest question asked anywhere in the corpus is the strongest thing the
     // corpus-wide report may claim.
     granularity: reports.some((r) => r.granularity === "page") ? "page" : "fact",
+    opaque: sum((r) => r.opaque),
+    opaqueFiles: reports.flatMap((r) => r.opaqueFiles),
   };
 }

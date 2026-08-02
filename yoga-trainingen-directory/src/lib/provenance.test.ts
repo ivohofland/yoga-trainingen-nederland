@@ -938,3 +938,97 @@ test("a SIBLING capture whose stripped name extends ours is never absorbed — o
   assert.equal(a.readable.length, 1, "only OUR capture is held — the sibling is not absorbed");
   assert.match(a.readable[0], /abc-2026-06-06\.pdf$/);
 });
+
+test("a claim whose only artifact is a held image is OPAQUE — counted, never a finding", () => {
+  // A photo of a certificate is legitimate evidence. The gate cannot read it, but nothing
+  // is broken: a .png has no text layer. Making it a finding would exit non-zero and break
+  // the build for adding a photograph — punishing the evidence this state exists to admit.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "data/archives/testco/tarieven-2026-08.png"), "\x89PNG\r\n");
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/tarieven-2026-08.sha256"),
+    "aaa  tarieven-2026-08.png\n",
+  );
+
+  const p = {
+    id: "testco",
+    name: "Test Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: 1234, period: "total", vat: "unknown", published: "yes", source: "tarieven" },
+        hours_claimed: { total: null, breakdown_published: "unknown", contact_published: "unknown" },
+      },
+    ],
+    sources: [{ id: "tarieven", local_snapshot: "data/archives/testco/tarieven-2026-08.png" }],
+  } as unknown as Provider;
+
+  const r = providerProvenance(p, dir);
+  assert.deepEqual(r.findings, [], "a format with no text layer is not a defect");
+  assert.equal(r.opaque, 1, "it must be counted, not silently passed");
+  assert.equal(r.skipped, 0, "and NOT filed as a body missing from this checkout");
+  assert.ok(
+    r.opaqueFiles.some((f) => f.endsWith("tarieven-2026-08.png")),
+    "the report names the file, so a .docx line reads as a prompt to add support",
+  );
+});
+
+test("a shell .pdf beside a held .png is STILL an unreadable finding", () => {
+  // The opaque state must not swallow a broken capture. A format we promised to read and
+  // could not is our failure; a format with no text layer is not.
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "data/archives/testco/site-2026-08.html"), "   \n  \n");
+  fs.writeFileSync(path.join(dir, "data/archives/testco/site-2026-08.png"), "\x89PNG\r\n");
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/site-2026-08.sha256"),
+    "aaa  site-2026-08.html\nbbb  site-2026-08.png\n",
+  );
+
+  const p = {
+    id: "testco",
+    name: "Test Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: 1234, period: "total", vat: "unknown", published: "yes", source: "site" },
+        hours_claimed: { total: null, breakdown_published: "unknown", contact_published: "unknown" },
+      },
+    ],
+    sources: [{ id: "site", local_snapshot: "data/archives/testco/site-2026-08.html" }],
+  } as unknown as Provider;
+
+  const r = providerProvenance(p, dir);
+  assert.equal(r.findings.length, 1, "the empty .html is still broken");
+  assert.equal(r.findings[0].reason, "unreadable");
+  assert.equal(r.opaque, 0, "the image must not mask it");
+});
+
+test("a held .docx is opaque and named — the signal that would earn a category", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "prov-"));
+  fs.mkdirSync(path.join(dir, "data/archives/testco"), { recursive: true });
+  fs.writeFileSync(path.join(dir, "data/archives/testco/tarieven-2026-08.docx"), "PK\x03\x04");
+  fs.writeFileSync(
+    path.join(dir, "data/archives/testco/tarieven-2026-08.sha256"),
+    "aaa  tarieven-2026-08.docx\n",
+  );
+
+  const p = {
+    id: "testco",
+    name: "Test Co",
+    programs: [
+      {
+        id: "200-test",
+        price: { amount_eur: 1234, period: "total", vat: "unknown", published: "yes", source: "tarieven" },
+        hours_claimed: { total: null, breakdown_published: "unknown", contact_published: "unknown" },
+      },
+    ],
+    sources: [{ id: "tarieven", local_snapshot: "data/archives/testco/tarieven-2026-08.docx" }],
+  } as unknown as Provider;
+
+  const r = providerProvenance(p, dir);
+  assert.deepEqual(r.findings, []);
+  assert.equal(r.opaque, 1);
+  assert.ok(r.opaqueFiles.some((f) => f.endsWith("tarieven-2026-08.docx")));
+});
