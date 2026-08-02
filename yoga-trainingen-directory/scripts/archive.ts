@@ -135,6 +135,29 @@ async function applyRegisterFilter(
   return true;
 }
 
+/**
+ * Hash whatever this capture actually produced, and return the artifact the record should
+ * name. Split out of `saveLocalCopy` so it is testable without a browser — the same move
+ * #10 made for `captureNode`: the decision comes out, the Playwright IO stays in the caller.
+ *
+ * IT RETURNS WHAT EXISTS, NOT WHAT WE HOPED FOR. `saveLocalCopy` used to return
+ * `${base}.pdf` unconditionally, so when `page.pdf()` failed and the fallback wrote a
+ * `.png`, `local_snapshot` named a file that had never been written — a pointer to nothing,
+ * in a project whose entire basis is that cited evidence exists.
+ */
+export function finishCapture(base: string, html: string): string {
+  const name = path.basename(base);
+  const hashes = [
+    `${sha256(html)}  ${name}.html`,
+    fs.existsSync(`${base}.pdf`) ? `${sha256(fs.readFileSync(`${base}.pdf`))}  ${name}.pdf` : null,
+    fs.existsSync(`${base}.png`) ? `${sha256(fs.readFileSync(`${base}.png`))}  ${name}.png` : null,
+  ].filter(Boolean);
+  fs.writeFileSync(`${base}.sha256`, hashes.join("\n") + "\n");
+
+  const ext = fs.existsSync(`${base}.pdf`) ? ".pdf" : fs.existsSync(`${base}.png`) ? ".png" : ".html";
+  return path.relative(process.cwd(), `${base}${ext}`).replaceAll("\\", "/");
+}
+
 async function saveLocalCopy(
   browser: import("playwright").Browser,
   providerId: string,
@@ -180,14 +203,7 @@ async function saveLocalCopy(
       await page.screenshot({ path: `${base}.png`, fullPage: true });
     });
 
-    const hashes = [
-      `${sha256(html)}  ${path.basename(base)}.html`,
-      fs.existsSync(`${base}.pdf`) ? `${sha256(fs.readFileSync(`${base}.pdf`))}  ${path.basename(base)}.pdf` : null,
-      fs.existsSync(`${base}.png`) ? `${sha256(fs.readFileSync(`${base}.png`))}  ${path.basename(base)}.png` : null,
-    ].filter(Boolean);
-    fs.writeFileSync(`${base}.sha256`, hashes.join("\n") + "\n");
-
-    return path.relative(process.cwd(), `${base}.pdf`).replaceAll("\\", "/");
+    return finishCapture(base, html);
   } finally {
     await page.close();
   }
