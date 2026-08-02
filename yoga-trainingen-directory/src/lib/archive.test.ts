@@ -91,10 +91,10 @@ function withSnapshotOnDisk(rel: string): string {
   return root;
 }
 
-// This test and the next both process.chdir() for their duration and restore it in a
-// `finally`. That is safe only because node:test runs a file's top-level tests
+// Every test in this file that process.chdir()s does so for its duration and restores it
+// in a `finally`. That is safe only because node:test runs a file's top-level tests
 // sequentially, not concurrently — do not add `{ concurrency: true }` to this file
-// without giving these two their own isolated cwd first.
+// without giving each chdir'ing test its own isolated cwd first.
 test("CAPTURE: an existing snapshot ON DISK is skipped without --force", async () => {
   const rel = "data/archives/demo/s-2026-08-01.pdf";
   const root = withSnapshotOnDisk(rel);
@@ -198,6 +198,46 @@ test("CAPTURE: an already-captured source STILL gets its public half", async () 
   } finally {
     process.chdir(cwd);
   }
+});
+
+test("CAPTURE: a FRESH successful capture also reaches Wayback and records archived_url", async () => {
+  // The test above only exercises hasLocal === true: the local capture is skipped, `changed`
+  // starts false, and the no-half-record guard must NOT fire. It says nothing about the more
+  // common case — a brand-new source, where the local capture SUCCEEDS and sets `changed =
+  // true` before the `if (failedCapture) return` guard is even reached. Two plausible-looking
+  // mutations
+  // both silently stop every fresh capture from ever reaching Wayback, and neither is caught
+  // by the test above (there `changed` never becomes true):
+  //   - misreading the guard as `if (failedCapture || changed) return { changed, failedCapture }`
+  //     ("something changed, stop and let the caller decide") fires on every fresh capture;
+  //   - `return { changed, failedCapture };` inserted right after the capture's
+  //     `console.log("ok")` — "we captured, nothing left to do" — returns before the guard,
+  //     the Wayback branch, or anything after it ever runs.
+  // No process.chdir() needed: fakeCapture() never touches the filesystem, so there is
+  // nothing on disk for hasLocal to find, which is exactly what makes this capture "fresh".
+  const capture = fakeCapture();
+  const node = nodeFrom("id: s\nurl: https://example.com/x\n");
+  let submitted = 0;
+  const r = await captureNode(
+    node,
+    "demo",
+    deps({
+      capture,
+      skipWayback: false,
+      submitWayback: async () => {
+        submitted++;
+        return "https://web.archive.org/web/20260802000000/https://example.com/x";
+      },
+    }),
+  );
+  assert.equal(capture.calls.length, 1, "no existing snapshot — the local capture must run");
+  assert.equal(submitted, 1, "a fresh successful capture must still reach Wayback");
+  assert.equal(
+    node.get("archived_url"),
+    "https://web.archive.org/web/20260802000000/https://example.com/x",
+  );
+  assert.equal(r.changed, true);
+  assert.equal(r.failedCapture, null);
 });
 
 test("CAPTURE: `dir` is threaded through, not hardcoded — a provider source and a reference document write to their own directory", async () => {
