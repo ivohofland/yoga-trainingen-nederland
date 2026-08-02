@@ -212,7 +212,16 @@ async function saveLocalCopy(
       // Elke faalroute eindigt HIER, vóór finishCapture. Een synchrone throw uit page.pdf of
       // page.screenshot gaat langs .catch heen, en `(e as Error).message` faalt zelf op een
       // niet-Error-rejectie: beide lieten het lichaam ongehasht achter (#7). String(e) niet.
-      console.warn(`\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${String(e)})`);
+      // Maar zelfs String(e) kan zelf gooien — op een object zonder prototype, of met een
+      // toString/Symbol.toPrimitive die gooit — dus de formattering zelf is hieronder
+      // afgeschermd: de waarschuwingstekst is nooit de hash van het lichaam waard.
+      let detail: string;
+      try {
+        detail = String(e);
+      } catch {
+        detail = "onbekende fout";
+      }
+      console.warn(`\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${detail})`);
     }
 
     return finishCapture(base, html);
