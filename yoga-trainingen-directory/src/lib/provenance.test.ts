@@ -564,14 +564,16 @@ test("the corpus holds claims for the check to be about", () => {
   assert.equal(report.claims, claims, "the report must count every claim it had a subject for");
   // Every claim reaches exactly one outcome: EXAMINED (we opened the artifacts and
   // searched them — whether or not the search then produced a `no_evidence` finding),
-  // SKIPPED (the body is not in this checkout), or never searched at all (no source, no
-  // snapshot, nothing captured, nothing readable — each already a finding). A claim that
-  // fell out of the loop altogether would be one nobody checked and nobody missed.
+  // SKIPPED (the body is not in this checkout), OPAQUE (we hold the artifacts but have
+  // no text extraction for them — an image, a .docx), or never searched at all (no
+  // source, no snapshot, nothing captured, nothing readable — each already a finding).
+  // A claim that fell out of the loop altogether would be one nobody checked and nobody
+  // missed.
   const unsearched = report.findings.filter((f) => f.reason !== "no_evidence").length;
   assert.equal(
-    report.examined + report.skipped + unsearched,
+    report.examined + report.skipped + report.opaque + unsearched,
     claims,
-    "every claim must be accounted for: examined, skipped, or never searched",
+    "every claim must be accounted for: examined, skipped, opaque, or never searched",
   );
 });
 
@@ -581,7 +583,13 @@ test("the report states its own coverage, so no consumer can overstate the check
   // `coverage` is what makes that impossible to summarise away.
   assert.equal(report.coverage, report.claims === 0 ? 1 : report.examined / report.claims);
   assert.ok(report.coverage <= 1);
-  assert.equal(report.skipped > 0, report.coverage < 1, "coverage < 1 exactly when something was skipped");
+  // OPAQUE claims also leave `examined` short of `claims` — they are held, just not
+  // extractable — so coverage can dip below 1 with nothing skipped at all.
+  assert.equal(
+    report.skipped > 0 || report.opaque > 0,
+    report.coverage < 1,
+    "coverage < 1 exactly when something was skipped or held opaque",
+  );
   // AND IT SAYS WHICH QUESTION IT ASKED. `granularity` is the WEAKEST question any examined
   // claim was held to, and the corpus is `page` exactly when some claim fell back to "does
   // this page print *a* price at all" — a `published: yes` with no `amount_eur`.
@@ -723,7 +731,15 @@ test("where the snapshot bodies are present, the check is not vacuously green", 
     report.examined > 60,
     `expected the archived artifacts to have been searched, examined only ${report.examined}`,
   );
-  assert.equal(report.coverage, 1, "full checkout: every claim's evidence was actually opened");
+  // Full checkout: every claim's evidence was either opened (EXAMINED) or held with
+  // nothing to extract (OPAQUE — an image, a .docx). `coverage` alone can't say that —
+  // it is examined/claims, so an opaque claim would read as "not really opened" on a
+  // checkout that in fact holds everything.
+  assert.equal(
+    report.examined + report.opaque,
+    report.claims,
+    "full checkout: every claim's evidence was actually opened or held opaque",
+  );
 });
 
 /* ---------- THE GATE (2026-07-14) ----------
@@ -971,6 +987,11 @@ test("a claim whose only artifact is a held image is OPAQUE — counted, never a
   assert.ok(
     r.opaqueFiles.some((f) => f.endsWith("tarieven-2026-08.png")),
     "the report names the file, so a .docx line reads as a prompt to add support",
+  );
+  assert.equal(
+    r.opaqueFiles[0],
+    path.basename(r.opaqueFiles[0]),
+    "opaqueFiles must hold basenames — a full path would leak the temp-dir into the report",
   );
 });
 
