@@ -265,3 +265,23 @@ test("FINISH: the sidecar lists every artifact present, and only those", () => {
     "site-2026-08-02.png",
   ]);
 });
+
+test("ORPHAN: the .png fallback failing must not abort before the sidecar", () => {
+  // If page.pdf() fails AND page.screenshot() then throws, the error used to propagate
+  // out of saveLocalCopy before finishCapture ran — leaving the .html on disk with no
+  // .sha256. That orphan is one of issue #7's two deadlock triggers: sync pushes it
+  // unverified (no sidecar => no hash to check), then the next successful capture writes
+  // different bytes WITH a sidecar, tripping the append-only rule and refusing the entire
+  // push for every provider.
+  //
+  // This test pins the SOURCE-level guarantee: the screenshot call is defended by its own
+  // .catch, so nothing between the .html write and finishCapture can throw past it.
+  const src = fs.readFileSync(path.join(process.cwd(), "scripts", "archive.ts"), "utf8");
+  const block = src.slice(src.indexOf("await page.pdf("), src.indexOf("return finishCapture("));
+  assert.match(
+    block,
+    /page\.screenshot\([\s\S]*?\)\s*\.catch\(/,
+    "page.screenshot must have its own .catch, or a failed rendering orphans the body",
+  );
+  assert.match(block, /alleen HTML/, "and it must say so — a silent degraded capture reads as a full one");
+});
