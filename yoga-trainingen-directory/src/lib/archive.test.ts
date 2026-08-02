@@ -285,3 +285,33 @@ test("ORPHAN: the .png fallback failing must not abort before the sidecar", () =
   );
   assert.match(block, /alleen HTML/, "and it must say so — a silent degraded capture reads as a full one");
 });
+
+test("HALF-RECORD: a failed capture must not let Wayback write alone", () => {
+  // CLAUDE.md: "ALWAYS both" — a public archive AND a dated local copy. If the local
+  // capture threw and the Wayback submission then succeeded, the node got an archived_url
+  // with no local_snapshot: a record claiming a public archive it holds no local copy for,
+  // which is the exact inverse of what methodologie.md publishes.
+  //
+  // submitWayback THROWS here, so "never submitted" is enforced rather than merely
+  // observed after the fact.
+  const boom: Capture = async () => {
+    throw new Error("net::ERR_NAME_NOT_RESOLVED");
+  };
+  const node = nodeFrom("id: unreachable\nurl: https://example.invalid/x\n");
+  return captureNode(
+    node,
+    "demo",
+    deps({
+      capture: boom,
+      skipWayback: false,
+      submitWayback: async () => {
+        throw new Error("must not submit when the local capture failed");
+      },
+    }),
+  ).then((r) => {
+    assert.equal(r.failedCapture, "unreachable");
+    assert.equal(node.get("archived_url"), undefined, "no public archive without a local copy");
+    assert.equal(node.get("local_snapshot"), undefined);
+    assert.equal(r.changed, false, "nothing was written, so nothing needs saving");
+  });
+});
