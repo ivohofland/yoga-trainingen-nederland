@@ -49,7 +49,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-const { findings, examined, skipped, claims, granularity } = allProvenance(providers);
+const { findings, examined, skipped, claims, granularity, opaque, opaqueFiles } = allProvenance(providers);
 
 const inTier = (tier: keyof typeof HEADING) => findings.filter((f: ProvenanceFinding) => FINDING_TIER[f.reason] === tier);
 
@@ -64,6 +64,16 @@ const niveau =
   granularity === "fact"
     ? "de waarde in het record"
     : "paginaniveau (zwakste vraag: staat er ÍETS van dien aard?)";
+
+if (opaque > 0) {
+  // Geen bevinding: er is niets stuk. Maar ook geen vinkje — deze claims zijn niet
+  // getoetst, alleen niet toetsbaar met dit gereedschap. Dat verschil moet in de run staan.
+  console.log(
+    `\n• ${opaque} claim(s) rusten op bewijs dat wij niet kunnen uitlezen (wél in ons bezit):`,
+  );
+  for (const f of [...new Set(opaqueFiles)].sort()) console.log(`    ${f}`);
+  console.log("  Geen tekstlaag of geen extractie voor dit formaat — niet machinaal getoetst.");
+}
 
 if (skipped > 0) {
   // Geen vinkje, geen groen, geen "gedekt". De bodies zijn hier niet, dus de

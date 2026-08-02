@@ -1053,3 +1053,14 @@ test("a held .docx is opaque and named — the signal that would earn a category
   assert.equal(r.opaque, 1);
   assert.ok(r.opaqueFiles.some((f) => f.endsWith("tarieven-2026-08.docx")));
 });
+
+test("REPORT: both runners print the opaque count — a silent state is a passed state", () => {
+  // If the run does not say these claims were unverifiable, a green tick over them reads
+  // as "checked". The whole reason opaque is not a finding is that it is reported instead.
+  const prov = fs.readFileSync(path.join(process.cwd(), "scripts", "provenance.ts"), "utf8");
+  const val = fs.readFileSync(path.join(process.cwd(), "scripts", "validate.ts"), "utf8");
+  for (const [name, src] of [["provenance.ts", prov], ["validate.ts", val]] as const) {
+    assert.match(src, /\bopaque\b/, `${name} must read the opaque count`);
+    assert.match(src, /opaqueFiles/, `${name} must name the unreadable artifacts`);
+  }
+});
