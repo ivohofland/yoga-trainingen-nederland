@@ -86,9 +86,18 @@ if (skipped > 0) {
   console.log("  Wél afgedwongen: de structurele toets — elk geciteerd feit verwijst naar een vastgelegd artefact.");
   console.log(`  Inhoudelijk onderzocht: ${examined}/${claims}. Over de overige ${skipped} zegt deze run NIETS.`);
   console.log("  Draai dit lokaal, mét de archieven, voor de volledige toets.");
-} else if (findings.length === 0) {
+} else if (findings.length === 0 && opaque === 0) {
   console.log(
     `\n✓ ${examined}/${claims} claim(s) (prijs/uren/btw/vooropleiding/rooster) — elk gedekt door een gearchiveerd artefact dat het STELT`,
+  );
+  console.log(`  Getoetst op: ${niveau}.`);
+} else if (findings.length === 0) {
+  // opaque > 0, niets overgeslagen: geen bevinding, maar ook geen "elk gedekt" — de
+  // ${opaque} claim(s) hierboven zijn niet gedekt, ze zijn onleesbaar gebleven. Dat
+  // verschil mag niet onder een vinkje verdwijnen.
+  console.log(
+    `\n${examined}/${claims} claim(s) (prijs/uren/btw/vooropleiding/rooster) gedekt door een gearchiveerd artefact ` +
+      `dat het STELT — de resterende ${opaque} staan hierboven en tellen niet mee.`,
   );
   console.log(`  Getoetst op: ${niveau}.`);
 }

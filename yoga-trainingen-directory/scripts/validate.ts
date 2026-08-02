@@ -97,7 +97,11 @@ try {
         `Deze run zegt niets over die ${skipped}.`,
     );
   else if (findings.length > 0) console.log(`  provenance: ${dekking} — zie de ${findings.length} bevinding(en) hierboven`);
-  else console.log(`✓ provenance: ${dekking} — elk gedekt door een gearchiveerd artefact dat de claim STELT`);
+  else if (opaque === 0) console.log(`✓ provenance: ${dekking} — elk gedekt door een gearchiveerd artefact dat de claim STELT`);
+  else
+    // opaque > 0, niets overgeslagen, geen bevinding: geen vinkje en geen "elk gedekt" — die
+    // claim(s) zijn niet gedekt, ze zijn onleesbaar gebleven. Zie de regel hieronder.
+    console.log(`  provenance: ${dekking} — geen bevindingen, maar ${opaque} claim(s) niet gedekt: zie de regel hieronder.`);
   if (opaque > 0) {
     console.log(
       `• ${opaque} claim(s) op bewijs dat wij niet kunnen uitlezen (wél in ons bezit): ` +
