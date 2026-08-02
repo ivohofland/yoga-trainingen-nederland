@@ -39,19 +39,33 @@ It writes `${base}.sha256` listing whichever of `.html`/`.pdf`/`.png` exist (tha
 
 **1 — name what you wrote.** `finishCapture`'s return replaces the unconditional `return path.relative(process.cwd(), \`${base}.pdf\`)`.
 
-**3 — never orphan a body.** The `.png` fallback gets its own `.catch`, so a screenshot failure no longer propagates past the sidecar write:
+**3 — never orphan a body.** The `.pdf` attempt and its `.png` fallback sit inside an outer `try`/`catch`, so nothing between the `.html` write and `finishCapture` can propagate past the sidecar:
 
 ```ts
-await page.pdf({ path: `${base}.pdf`, fullPage: true } as never).catch(async () => {
-  await page.screenshot({ path: `${base}.png`, fullPage: true }).catch((e) => {
-    console.warn(`\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${(e as Error).message})`);
+try {
+  await page.pdf({ path: `${base}.pdf`, fullPage: true } as never).catch(async () => {
+    // page.pdf werkt alleen headless-chromium; fallback: full-page screenshot
+    await page.screenshot({ path: `${base}.png`, fullPage: true });
   });
-});
+} catch (e) {
+  // Elke faalroute eindigt HIER, vóór finishCapture. Een synchrone throw uit page.pdf of
+  // page.screenshot gaat langs .catch heen, en `(e as Error).message` faalt zelf op een
+  // niet-Error-rejectie: beide lieten het lichaam ongehasht achter (#7). String(e) niet.
+  console.warn(`\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${String(e)})`);
+}
 ```
 
 **An html-only capture is a degraded success, loudly flagged.** `page.content()` is what we actually fetched; the `.pdf` is a rendering of it. Discarding a real fetch because a rendering failed would destroy evidence, and this repo's archiver never deletes. The warning is the signal to re-run — deliberately not a failure, because the html frequently *is* where the fact lives (the JS-rendered-price trap cuts both ways: 7 providers' prices exist only in the HTML).
 
 Consequence: every body that reaches disk now gets hashed, which removes #7's orphan trigger entirely.
+
+**Correction, post-review (2026-08-02).** The nested-`.catch` version above is not what shipped, and the difference is not cosmetic: it left two escape hatches back into the orphan hole this fix exists to close.
+
+(a) `(e as Error).message` throws its own `TypeError` when the rejection value is nullish (Playwright can reject with something other than an `Error`). That `TypeError` propagates out of the whole `await page.pdf(...).catch(...)` expression — past `finishCapture` — leaving the `.html` on disk with no `.sha256`. The inner `.catch` is a promise handler; it cannot catch a throw raised *inside itself*.
+
+(b) A **synchronous** throw from `page.pdf` or `page.screenshot` — as opposed to a rejected promise — never reaches a `.catch` at all, for the same reason a `try` is needed around a synchronous call that might throw. `.catch` only ever sees rejections.
+
+Both routes end at the same place: an unhashed `.html` on disk, which is exactly issue #7's deadlock trigger. The fix is the outer `try`/`catch` shown above, not the nested `.catch`: it wraps the *whole* `page.pdf(...).catch(...)` expression, so a synchronous throw from either call is caught, and the catch body uses `String(e)` — not `(e as Error).message` — so a nullish rejection cannot itself throw past the guard. The "removes #7's orphan trigger entirely" sentence two paragraphs up is true of this version; it was not true, as written, of the nested-`.catch` version.
 
 **2 — no half-record.** In `captureNode`, immediately after the capture `catch`:
 
@@ -62,6 +76,8 @@ Consequence: every body that reaches disk now gets hashed, which removes #7's or
 // names the source; the next run retries both halves together.
 if (failedCapture) return { changed, failedCapture };
 ```
+
+Behaviour change this implies: on a `--force` re-capture, a source whose local re-capture fails no longer has its `archived_url` refreshed — the guard returns before section 2 runs, so the record simply keeps the `local_snapshot`/`archived_url` pair it already had, rather than gaining a fresh public archive paired with a local copy that has just failed.
 
 ## What #13 already handles
 
@@ -96,7 +112,7 @@ Fix 2 goes through the `captureNode` seam from #10:
 
 ## Folded in
 
-The parked citation error from #13's final review: both correction notes cite `provenance.ts:606-610` for issue #7's crash-between-writes reference, which is the unrelated *"never move the author's files"* paragraph. The correct span is ~637-638. Two characters in each of the spec and the plan.
+The parked citation error from #13's final review: both correction notes cite `provenance.ts:606-610` for issue #7's crash-between-writes reference, which is the unrelated *"never move the author's files"* paragraph. The correct span is 635-640. Two characters in each of the spec and the plan.
 
 ## Risk
 
