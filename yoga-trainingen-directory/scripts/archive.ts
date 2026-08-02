@@ -203,14 +203,17 @@ async function saveLocalCopy(
     // exist only in the HTML. So a failed rendering is a DEGRADED capture, never a reason
     // to discard the fetch — and never a reason to skip the hash: an unhashed body is
     // pushed unverified and then deadlocks the whole sync (issue #7).
-    await page.pdf({ path: `${base}.pdf`, fullPage: true } as never).catch(async () => {
-      // page.pdf werkt alleen headless-chromium; fallback: full-page screenshot
-      await page.screenshot({ path: `${base}.png`, fullPage: true }).catch((e) => {
-        console.warn(
-          `\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${(e as Error).message})`,
-        );
+    try {
+      await page.pdf({ path: `${base}.pdf`, fullPage: true } as never).catch(async () => {
+        // page.pdf werkt alleen headless-chromium; fallback: full-page screenshot
+        await page.screenshot({ path: `${base}.png`, fullPage: true });
       });
-    });
+    } catch (e) {
+      // Elke faalroute eindigt HIER, vóór finishCapture. Een synchrone throw uit page.pdf of
+      // page.screenshot gaat langs .catch heen, en `(e as Error).message` faalt zelf op een
+      // niet-Error-rejectie: beide lieten het lichaam ongehasht achter (#7). String(e) niet.
+      console.warn(`\n    let op: alleen HTML vastgelegd — pdf én png mislukt (${String(e)})`);
+    }
 
     return finishCapture(base, html);
   } finally {
