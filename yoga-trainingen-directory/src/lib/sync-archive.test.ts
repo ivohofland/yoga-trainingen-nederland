@@ -45,6 +45,35 @@ function archiveWith(body: string, hashOverride?: string): string {
   return dir;
 }
 
+/** An archive dir holding a body and NO receipt for it. This is the hand-placed case — a
+ *  source with no `url` is never touched by the archiver, so its body is placed by hand —
+ *  and it is also what a Ctrl-C between the body write and the sidecar write leaves behind. */
+function archiveWithoutReceipt(): string {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "sync-src-"));
+  const provider = path.join(dir, "testco");
+  fs.mkdirSync(provider, { recursive: true });
+  fs.writeFileSync(path.join(provider, "site-2026-07.pdf"), "een body die niemand hashte");
+  return dir;
+}
+
+/** Adds a second, unhashed body under its own provider, beside an already-hashed capture. */
+function addUnhashedBody(dir: string): string {
+  const rel = path.join("otherco", "brochure-2026-08.pdf");
+  fs.mkdirSync(path.join(dir, "otherco"), { recursive: true });
+  fs.writeFileSync(path.join(dir, rel), "een body die niemand hashte");
+  return rel;
+}
+
+/** Adds an artifact BESIDE a hashed capture, sharing its base name, listed nowhere in that
+ *  capture's sidecar. publishedHash() strips the extension to find the sidecar, so the file
+ *  IS found — and then no line inside it names this artifact. That is the second null route,
+ *  and the one a fix keyed on `fs.existsSync(sidecar)` sails straight past. */
+function addUnlistedArtifact(dir: string): string {
+  const rel = path.join("testco", "site-2026-07.png");
+  fs.writeFileSync(path.join(dir, rel), "een screenshot die in geen enkele .sha256 staat");
+  return rel;
+}
+
 /** A git repo standing in for the private archive, with a real `origin` to push to. */
 function archiveRepo(): string {
   const bare = fs.mkdtempSync(path.join(os.tmpdir(), "sync-origin-"));
@@ -69,6 +98,7 @@ test("SYNC: a body that matches its published hash is copied, with its receipt",
   const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
 
   assert.deepEqual(r.refused, []);
+  assert.deepEqual(r.skipped, [], "a fully-hashed corpus must skip NOTHING — this is the backup");
   assert.deepEqual(r.added, [path.join("testco", "site-2026-07.pdf")]);
   const dest = path.join(repoPath, DEST_SUBDIR, "testco");
   assert.ok(fs.existsSync(path.join(dest, "site-2026-07.pdf")), "the body must reach the archive");
@@ -142,4 +172,45 @@ test("SYNC: it is WIRED into `npm run archive` — a backup nobody runs is not a
   assert.match(archive, /import \{ syncArchive \}/, "archive.ts does not import the sync");
   assert.match(archive, /if \(!NO_SYNC\) syncArchive\(\)/, "archiving no longer syncs by default");
   assert.match(archive, /--sync-only/, "there must be a way to push bodies without re-capturing");
+});
+
+test("SYNC: a body with NO published hash is SKIPPED — not pushed, and not a refusal", () => {
+  // No hash means nothing to verify against, which means it is not ours to attest to. But it
+  // is a GAP, not a contradiction: unlike a failed hash, nothing here says the evidence
+  // changed, so it must not stop every other provider's backup.
+  const archiveDir = archiveWith("de pagina zoals een lezer hem zag");
+  const orphan = addUnhashedBody(archiveDir);
+  const repoPath = archiveRepo();
+
+  const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+
+  assert.deepEqual(r.skipped, [orphan], "a body with no receipt must be NAMED, not silently dropped");
+  assert.deepEqual(r.refused, [], "no receipt is a gap, not a contradiction — it must not stop the push");
+  assert.deepEqual(
+    r.added,
+    [path.join("testco", "site-2026-07.pdf")],
+    "the verified body still goes — one forgotten sidecar may not block everyone else",
+  );
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, orphan)),
+    "an unverifiable body must not reach the archive at all",
+  );
+  process.exitCode = 0;
+});
+
+test("SYNC: a sidecar that exists but does not LIST this file is also no published hash", () => {
+  // publishedHash() returns null down two paths, and only one of them is "no sidecar".
+  // A fix written as `!fs.existsSync(sidecar)` passes the test above and still pushes this.
+  const archiveDir = archiveWith("de pagina");
+  const unlisted = addUnlistedArtifact(archiveDir);
+  const repoPath = archiveRepo();
+
+  const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+
+  assert.deepEqual(r.skipped, [unlisted], "the sidecar exists, but names no line for this file");
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, unlisted)),
+    "unverifiable is unverifiable, whether or not a sidecar happens to sit beside it",
+  );
+  process.exitCode = 0;
 });
