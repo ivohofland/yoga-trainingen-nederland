@@ -93,7 +93,7 @@ The fixtures are the deliverable here as much as the assertions.
 |---|---|---|
 | 1 | Rule 1: a verifying body sorted **before** a mismatching one is **absent** from the destination | the defect. Fails against today's code |
 | 2 | Rule 2: a verifying body sorted **before** an already-archived-different one is likewise absent | the half a hash-only fix would miss. Fails against today's code |
-| 3 | the restored full assertions — a refusal writes nothing, **including bodies that passed** | #7 softened these because they were vacuous; they become true here |
+| 3 | #7's two `WHAT THIS DOES NOT PROVE` disclaimers retired, each message left accurate to its own fixture, each test pointing at the one that covers the rest | the claim becomes true of the *code* — but those two fixtures still hold no body that verifies ahead of the failure, so restoring the sweeping message there would be exactly as vacuous as before |
 | 4 | a dirty archive clone: the run refuses, names the uncommitted paths, exits non-zero, copies nothing | the last route to a false `up-to-date` |
 | 5 | a clean multi-body run still copies every body **and** every sidecar | the fix must not trade the bug for a worse one |
 | 6 | the `unchanged` / `up-to-date` path is unaffected on a clean clone | the two-pass split does not disturb the no-op run |
