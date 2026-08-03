@@ -151,6 +151,38 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     return empty;
   }
 
+  // `unchanged` is decided by presence in the destination WORKING TREE, never by presence in
+  // the history — so a body sitting there uncommitted reads as "already archived", and the
+  // run reports up-to-date over something that is backed up nowhere. The sync commits
+  // everything it copies, so a dirty tree here is a state nobody can account for: refuse it
+  // rather than sync on top of it. Scoped to the archive subdirectory on purpose — an edited
+  // README is not a threat to the evidence chain, an unaccounted-for body is.
+  // --ignored is deliberate: this repo carries no .gitignore today, but `git add --force`
+  // below exists precisely because it COULD inherit the public repo's one, and without
+  // --ignored this check would silently pass exactly when it was needed most.
+  // --untracked-files=all is also deliberate: git's default collapses an untracked directory
+  // into a single "??  <dir>/" line, which would name a folder, not the body inside it — and
+  // a refusal a human cannot act on is not a refusal. A pathspec that matches nothing (a fresh
+  // clone with no archive subdirectory yet) still returns empty either way, so this does not
+  // reopen the clean-clone risk above.
+  const dirty = git(o.repoPath, [
+    "status",
+    "--porcelain",
+    "--ignored",
+    "--untracked-files=all",
+    "--",
+    DEST_SUBDIR,
+  ]).trim();
+  if (dirty) {
+    console.error("\n✗ archief: de archiefrepo heeft niet-vastgelegde bestanden:");
+    for (const line of dirty.split("\n")) console.error(`    ${line.trim()}`);
+    console.error("  Er is NIETS gesynchroniseerd. Een body die daar ongecommit staat telt");
+    console.error("  hier als 'al vastgelegd', terwijl hij nergens geback-upt is.");
+    console.error("  Leg ze vast of zoek uit waar ze vandaan komen, en draai daarna opnieuw.");
+    process.exitCode = 1;
+    return empty;
+  }
+
   const dest = path.join(o.repoPath, DEST_SUBDIR);
   const added: string[] = [];
   const refused: string[] = [];
