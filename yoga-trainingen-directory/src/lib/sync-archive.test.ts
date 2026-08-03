@@ -107,6 +107,16 @@ function archiveRepo(): string {
   return work;
 }
 
+/** Commits whatever is currently sitting in the destination working tree, standing in for a
+ *  prior, successful sync. Task 3's dirty-tree gate means "a body already archived" now has to
+ *  be one the destination repo actually committed — an uncommitted one reads as an interrupted
+ *  run and is refused before Rule 2 (append-only) is ever reached, so fixtures for Rule 2 must
+ *  commit their setup or they are testing a state the gate no longer lets through. */
+function commitPriorSync(repoPath: string): void {
+  execFileSync("git", ["add", "-A"], { cwd: repoPath, stdio: "ignore" });
+  execFileSync("git", ["commit", "--quiet", "-m", "eerdere sync"], { cwd: repoPath, stdio: "ignore" });
+}
+
 // This file's tests share two pieces of process-global state: captureLog() below swaps
 // console.log/console.error out from under the whole process, and several tests read (and
 // must reset) the process.exitCode that syncArchive() sets on a skip or a refusal. Both are
@@ -182,6 +192,7 @@ test("SYNC: APPEND-ONLY — a body already archived is never overwritten with ne
   const dest = path.join(repoPath, DEST_SUBDIR, "testco");
   fs.mkdirSync(dest, { recursive: true });
   fs.writeFileSync(path.join(dest, "site-2026-07.pdf"), "de ORIGINELE capture");
+  commitPriorSync(repoPath);
 
   // …and the laptop now holds something different under the same name.
   const archiveDir = archiveWith("een ANDERE capture, zelfde naam");
@@ -396,6 +407,7 @@ test("SYNC: an APPEND-ONLY refusal leaves nothing behind either — Rule 2 leake
   const archived = path.join(repoPath, DEST_SUBDIR, "testco");
   fs.mkdirSync(archived, { recursive: true });
   fs.writeFileSync(path.join(archived, "site-2026-07.pdf"), "de ORIGINELE capture");
+  commitPriorSync(repoPath);
 
   const archiveDir = archiveWith("een ANDERE capture, zelfde naam");
   const earlier = addVerifiedBodyBefore(archiveDir);
@@ -438,4 +450,32 @@ test("SYNC: a clean multi-body run still copies every body AND every receipt", (
   for (const rel of ["aaaco/eerder-2026-07.sha256", "testco/site-2026-07.sha256"]) {
     assert.ok(fs.existsSync(path.join(repoPath, DEST_SUBDIR, rel)), `receipt missing: ${rel}`);
   }
+});
+
+test("SYNC: a clone with uncommitted bodies is refused — `unchanged` means committed, not merely present", () => {
+  // The loop decides `unchanged` by whether a file EXISTS in the destination working tree,
+  // never by whether it was committed. So an uncommitted body there reads as "already
+  // archived" and the run reports up-to-date over something backed up nowhere. After the
+  // two-pass split this code cannot create such a file — but one written by the old code on
+  // another machine, or an interrupted run, still can.
+  const archiveDir = archiveWith("de pagina");
+  const repoPath = archiveRepo();
+  const stray = path.join(repoPath, DEST_SUBDIR, "aaaco");
+  fs.mkdirSync(stray, { recursive: true });
+  fs.writeFileSync(path.join(stray, "leftover-2026-07.pdf"), "iets wat nooit is vastgelegd");
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  const log = captureLog(() => {
+    r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+  });
+
+  assert.match(log, /niet-vastgelegde/, "the refusal must say what is wrong");
+  assert.match(log, /leftover-2026-07\.pdf/, "and NAME the uncommitted path, or it is unactionable");
+  assert.deepEqual(r!.added, [], "nothing may be synced on top of a tree nobody can account for");
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")),
+    "not even the bodies that would have verified fine",
+  );
+  assert.equal(process.exitCode, 1);
+  process.exitCode = 0;
 });
