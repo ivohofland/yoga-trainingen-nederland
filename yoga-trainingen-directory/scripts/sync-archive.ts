@@ -97,13 +97,23 @@ function localBodies(archiveDir: string): string[] {
   return out.sort();
 }
 
+/** The receipt's path for a body, relative to the archive root. A capture's `.sha256` is
+ *  named after the body with its extension stripped — and that derivation is needed in two
+ *  places: publishedHash() reads the hash out of it, and the copy pass ships it alongside
+ *  the body. Deriving it twice is how the two quietly stop agreeing about which file is
+ *  which. (Issue #12 tracks the same duplication across other files; this closes only the
+ *  two sites inside this one.) */
+function sidecarFor(rel: string): string {
+  const base = path.basename(rel).replace(/\.[a-z0-9]+$/i, "");
+  return path.join(path.dirname(rel), `${base}.sha256`);
+}
+
 /**
  * The hash the PUBLIC repo publishes for this body, or null if it publishes none.
  * The sidecar lists one `<hash>  <filename>` line per file captured for that source.
  */
 function publishedHash(archiveDir: string, rel: string): string | null {
-  const base = path.basename(rel).replace(/\.[a-z0-9]+$/i, "");
-  const sidecar = path.join(archiveDir, path.dirname(rel), `${base}.sha256`);
+  const sidecar = path.join(archiveDir, sidecarFor(rel));
   if (!fs.existsSync(sidecar)) return null;
   for (const line of fs.readFileSync(sidecar, "utf8").split("\n")) {
     const [hash, name] = line.trim().split(/\s+/);
@@ -187,8 +197,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     fs.mkdirSync(path.dirname(dst), { recursive: true });
     fs.writeFileSync(dst, buf);
     // the receipt travels with the body, so the private repo is self-contained
-    const base = path.basename(rel).replace(/\.[a-z0-9]+$/i, "");
-    const sidecar = path.join(path.dirname(rel), `${base}.sha256`);
+    const sidecar = sidecarFor(rel);
     const sidecarSrc = path.join(o.archiveDir, sidecar);
     // No existence check: we reach this line only because publishedHash() just read a hash
     // for this body OUT OF that sidecar, so it is there. A conditional would describe a
