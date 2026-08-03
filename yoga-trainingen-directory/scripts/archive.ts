@@ -546,7 +546,14 @@ async function main() {
     return;
   }
 
-  console.log("\nKlaar. Draai `npm run validate` en commit data/ in git (dateert de hashes).");
+  // "Klaar" is a completeness claim, same as the two sentences Task 3 already stopped the
+  // sync itself from making (see scripts/sync-archive.ts). syncArchive() can leave work
+  // behind — a skipped or refused body — without throwing: it signals that only through
+  // process.exitCode. A run that set it has not finished clean, so the outermost, most
+  // widely read sentence in this script must not claim otherwise.
+  if (!process.exitCode) {
+    console.log("\nKlaar. Draai `npm run validate` en commit data/ in git (dateert de hashes).");
+  }
 }
 
 // Importing this module must not archive anything. `main()` at module scope means any
