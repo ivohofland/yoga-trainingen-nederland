@@ -81,6 +81,20 @@ export interface SyncResult {
  *  not captures (see data/archives/README.md), and they are already public. */
 const isBody = (f: string) => !/\.(sha256|md)$/i.test(f);
 
+/** OS junk is never a capture. Excluded by NAME rather than by pattern: an unrecognised
+ *  file under the archive tree must still halt the run — the gate's value is that it stops
+ *  for anything it cannot account for, and a pattern would quietly grow to cover things
+ *  that matter. Note `isBody(".DS_Store") === true` — this is a SEPARATE exclusion, not a
+ *  narrowing of `isBody`, and it is applied only to the dirty-clone gate below, never to
+ *  what gets copied, verified or pushed. */
+const IGNORABLE_JUNK = new Set([".DS_Store", "Thumbs.db", "desktop.ini"]);
+
+/** The path out of one `git status --porcelain` line: a two-character status, a space, then
+ *  the path (e.g. `?? yoga-trainingen-directory/data/archives/testco/.DS_Store`). Matching
+ *  the raw line — or taking its basename directly — would test the status code and any
+ *  leading directories along with it, so junk sitting two levels deep would never match. */
+const pathFromPorcelainLine = (line: string) => line.slice(3);
+
 const sha256 = (buf: Buffer) => crypto.createHash("sha256").update(buf).digest("hex");
 
 const git = (cwd: string, args: string[]) =>
@@ -173,12 +187,21 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     "--",
     DEST_SUBDIR,
   ]).trim();
-  if (dirty) {
+  // OS junk (.DS_Store et al.) is excluded from the dirty check by name, not by pattern — see
+  // IGNORABLE_JUNK above. It is filtered out of the lines that decide the refusal; it is never
+  // touched on disk, and a run that finds only junk proceeds exactly as if the tree were clean.
+  const dirtyLines = dirty.length
+    ? dirty
+        .split("\n")
+        .filter((line) => !IGNORABLE_JUNK.has(path.basename(pathFromPorcelainLine(line))))
+    : [];
+  if (dirtyLines.length) {
     console.error("\n✗ archief: de archiefrepo heeft niet-vastgelegde bestanden:");
-    for (const line of dirty.split("\n")) console.error(`    ${line.trim()}`);
+    for (const line of dirtyLines) console.error(`    ${line.trim()}`);
     console.error("  Er is NIETS gesynchroniseerd. Een body die daar ongecommit staat telt");
     console.error("  hier als 'al vastgelegd', terwijl hij nergens geback-upt is.");
-    console.error("  Leg ze vast of zoek uit waar ze vandaan komen, en draai daarna opnieuw.");
+    console.error("  Verwijder wat hier niet hoort, leg vast wat er wél hoort, en draai daarna");
+    console.error("  opnieuw.");
     process.exitCode = 1;
     return empty;
   }
@@ -260,16 +283,18 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
 
   // PASS 2 — WRITE. This pass decides NOTHING; every body here was classified in pass 1 and
   // the run is already known to be refusal-free. copyFileSync rather than writeFileSync(buf):
-  // the kernel copies the file, so no body is ever held in memory here — the corpus is 386 MB
-  // across 466 bodies, one of them 60 MB. The cost is that these bytes are re-read rather
-  // than being the ones pass 1 hashed; the design doc records why that window is accepted.
+  // the kernel copies the file, so no body is ever held in memory here — the corpus is
+  // ≈403 MB decimal (402,748,291 bytes) across 465 bodies, the largest ≈60 MB decimal
+  // (60,444,725 bytes). The cost is that these bytes are re-read rather than being the ones
+  // pass 1 hashed; the design doc records why that window is accepted.
   for (const rel of toCopy) {
     const dst = path.join(dest, rel);
     fs.mkdirSync(path.dirname(dst), { recursive: true });
     fs.copyFileSync(path.join(o.archiveDir, rel), dst);
     // The receipt travels with the body, so the private repo is self-contained. No existence
     // check: this body is here only because publishedHash() read a hash for it OUT OF that
-    // sidecar, so it is there.
+    // sidecar, so it is there. A conditional would describe a state the skip above has made
+    // unreachable — and a dead branch is how the next reader learns the wrong invariant.
     const sidecar = sidecarFor(rel);
     fs.copyFileSync(path.join(o.archiveDir, sidecar), path.join(dest, sidecar));
     added.push(rel);
@@ -300,6 +325,9 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   // every body in this commit really was verified, so the sentence is true as written. The
   // extra line exists so the archive's own history cannot read as a complete backup when it
   // was not; it counts what stayed behind without naming files this repo does not contain.
+  // (Verified against the bytes pass 1 read, not the bytes pass 2 wrote: a source body edited
+  // in that window would ship unverified, but Rule 1 or Rule 2 catches the mismatch on the
+  // NEXT run — see the design doc's "cost this accepts" section.)
   const body =
     "De bodies horend bij de hashes die in de publieke repo staan.\n\n" +
     added.map((r) => `  ${r}`).join("\n") +
