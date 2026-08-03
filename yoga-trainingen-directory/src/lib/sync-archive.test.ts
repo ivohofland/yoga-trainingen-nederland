@@ -421,6 +421,10 @@ test("SYNC: an APPEND-ONLY refusal leaves nothing behind either — Rule 2 leake
     !fs.existsSync(path.join(repoPath, DEST_SUBDIR, earlier)),
     "the append-only refusal came after the earlier body had already been written",
   );
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, "aaaco", "eerder-2026-07.sha256")),
+    "and its receipt was never written either",
+  );
   assert.equal(
     fs.readFileSync(path.join(archived, "site-2026-07.pdf"), "utf8"),
     "de ORIGINELE capture",
@@ -475,6 +479,74 @@ test("SYNC: a clone with uncommitted bodies is refused — `unchanged` means com
   assert.ok(
     !fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")),
     "not even the bodies that would have verified fine",
+  );
+  assert.equal(process.exitCode, 1);
+  // The gate REFUSES — it never removes. This script deletes nothing, ever, and the leftover
+  // that triggered the refusal must still be exactly what it was: a future "helpful" cleanup
+  // inside this gate must fail here, not sail through with the rest of the suite green.
+  assert.ok(
+    fs.existsSync(path.join(stray, "leftover-2026-07.pdf")),
+    "the leftover that caused the refusal must still exist",
+  );
+  assert.equal(
+    fs.readFileSync(path.join(stray, "leftover-2026-07.pdf"), "utf8"),
+    "iets wat nooit is vastgelegd",
+    "and its content must be unchanged",
+  );
+  process.exitCode = 0;
+});
+
+test("SYNC: a stray .DS_Store under the archive tree does not halt the run — bodies still get copied", () => {
+  // Finder writes .DS_Store into any directory it has ever displayed, committed or not — the
+  // author's real archive clone already carries committed .DS_Store files elsewhere in the
+  // tree, so this is not hypothetical. `isBody(".DS_Store") === true`, so narrowing the dirty
+  // check with `isBody` would not exclude it; IGNORABLE_JUNK is a separate, name-based list
+  // for exactly this reason. A .DS_Store can never read as "already archived" — it poses none
+  // of the threat the gate exists to catch — so it must not stop every provider's backup.
+  const archiveDir = archiveWith("de pagina");
+  const repoPath = archiveRepo();
+  const junkDir = path.join(repoPath, DEST_SUBDIR, "testco");
+  fs.mkdirSync(junkDir, { recursive: true });
+  fs.writeFileSync(path.join(junkDir, ".DS_Store"), "finder junk");
+
+  const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+
+  assert.deepEqual(r.refused, [], "a .DS_Store must never be read as an unaccounted-for body");
+  assert.deepEqual(
+    r.added,
+    [path.join("testco", "site-2026-07.pdf")],
+    "the gate must not halt the whole backup over OS junk",
+  );
+  assert.ok(
+    fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")),
+    "the body must still reach the archive",
+  );
+  // The gate IGNORES junk for the purpose of the dirty check — it never removes it.
+  assert.ok(
+    fs.existsSync(path.join(junkDir, ".DS_Store")),
+    "the .DS_Store itself must be left exactly where it was",
+  );
+});
+
+test("SYNC: a stray non-junk file alongside a .DS_Store still halts the run", () => {
+  // The junk exclusion must not widen into "ignore anything sitting near a .DS_Store" — a
+  // real unaccounted-for body beside one must still refuse, named, same as ever.
+  const archiveDir = archiveWith("de pagina");
+  const repoPath = archiveRepo();
+  const stray = path.join(repoPath, DEST_SUBDIR, "aaaco");
+  fs.mkdirSync(stray, { recursive: true });
+  fs.writeFileSync(path.join(stray, ".DS_Store"), "finder junk");
+  fs.writeFileSync(path.join(stray, "leftover-2026-07.pdf"), "iets wat nooit is vastgelegd");
+
+  const log = captureLog(() => {
+    syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+  });
+
+  assert.match(log, /leftover-2026-07\.pdf/, "the real leftover must still be named");
+  assert.doesNotMatch(log, /\.DS_Store/, "junk is filtered OUT of the report — it is not the problem");
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")),
+    "the run must still refuse — one real leftover is enough, junk or no junk",
   );
   assert.equal(process.exitCode, 1);
   process.exitCode = 0;
