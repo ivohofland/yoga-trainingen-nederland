@@ -159,7 +159,8 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     // file — and both mean the same thing here, which is why this keys on its return value
     // rather than on the sidecar's existence. Never generate the missing hash: hashing
     // whatever is on disk now attests to nothing, and a receipt counts only once the PUBLIC
-    // repo commits it. See the design doc for why this skips rather than refusing.
+    // repo commits it. See docs/superpowers/specs/2026-08-02-sync-unverifiable-bodies-design.md
+    // for why this skips rather than refusing.
     const want = publishedHash(o.archiveDir, rel);
     if (want === null) {
       skipped.push(rel);

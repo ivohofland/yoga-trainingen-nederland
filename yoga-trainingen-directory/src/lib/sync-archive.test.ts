@@ -91,6 +91,13 @@ function archiveRepo(): string {
   return work;
 }
 
+// This file's tests share two pieces of process-global state: captureLog() below swaps
+// console.log/console.error out from under the whole process, and several tests read (and
+// must reset) the process.exitCode that syncArchive() sets on a skip or a refusal. Both are
+// safe to mutate per-test only because node:test runs a file's top-level tests
+// sequentially, not concurrently — do not add `{ concurrency: true }` to this file without
+// first giving each test its own isolated capture and its own way to observe the exit code.
+
 /** Runs `fn` with console.log/console.error captured, and returns everything they printed.
  *  The sync reports through the console, so what it SAYS is part of its behaviour: a skip
  *  nobody is told about is the silent-backup-failure this whole file exists to prevent. */
@@ -131,6 +138,13 @@ test("SYNC: a body that FAILS its published hash is refused, and NOTHING is push
   // disk is not that file, one of two things is true and both need a human: the capture
   // was altered, or the hash is wrong. Pushing it anyway would mean the one artefact we
   // offer as proof — the hash — no longer matches the thing it proves.
+  //
+  // WHAT THIS DOES NOT PROVE: this fixture holds exactly one body, the failing one, so the
+  // assertion below only shows that a body which never verified is never written. Bodies are
+  // written into the destination AS THEY VERIFY, and a refusal is only decided once the whole
+  // loop finishes — so a body that verified and was copied EARLIER in the same run, ahead of
+  // this one's mismatch, is not covered here. That leak is real, pre-existing (reproduces on
+  // the merge base too), and tracked as its own issue — not fixed or asserted here.
   const archiveDir = archiveWith("de pagina", sha256("een ANDERE pagina"));
   const repoPath = archiveRepo();
 
@@ -142,7 +156,7 @@ test("SYNC: a body that FAILS its published hash is refused, and NOTHING is push
   assert.equal(r.pushed, false);
   assert.ok(
     !fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")),
-    "nothing may be written when a hash fails — not even the bodies that passed",
+    "the mismatching body itself is never written to the destination",
   );
   process.exitCode = 0; // the script signals failure this way; don't fail the suite with it
 });
@@ -261,6 +275,15 @@ test("SYNC: a skip NAMES the body and exits non-zero — but the verified bodies
 test("SYNC: a mismatch still pushes nothing, even when a skip is present too", () => {
   // The two dispositions must not contaminate each other. A skip is the milder one; it must
   // never downgrade a refusal, which is the emergency.
+  //
+  // WHAT THIS DOES NOT PROVE: localBodies() sorts, so "otherco" (the skip) is examined
+  // before "testco" (the mismatch). Neither body is ever a body that gets COPIED first: the
+  // orphan is skipped without a write, and testco fails its own hash check before it would
+  // reach one. So the two assertions below only show that the refused body and the skipped
+  // body are each, individually, never copied — not that a body which HAD already verified
+  // and been copied earlier in the loop survives sitting in the destination once a later
+  // body's mismatch triggers the refusal. That leak is real, pre-existing, and tracked as
+  // its own issue — not fixed, and not asserted here.
   const archiveDir = archiveWith("de pagina", sha256("een ANDERE pagina"));
   const orphan = addUnhashedBody(archiveDir);
   const repoPath = archiveRepo();
@@ -269,9 +292,15 @@ test("SYNC: a mismatch still pushes nothing, even when a skip is present too", (
 
   assert.equal(r.refused.length, 1, "the mismatch is still a refusal");
   assert.deepEqual(r.skipped, [orphan], "and the skip is still reported alongside it");
-  assert.deepEqual(r.added, [], "a refusal means NOTHING is pushed — the skip does not soften that");
-  assert.ok(!fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")));
-  assert.ok(!fs.existsSync(path.join(repoPath, DEST_SUBDIR, orphan)));
+  assert.deepEqual(r.added, [], "a refusal means NOTHING is reported as pushed — the skip does not soften that");
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")),
+    "the mismatching body itself is never copied",
+  );
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, orphan)),
+    "the skipped body itself is never copied",
+  );
   process.exitCode = 0;
 });
 
@@ -295,6 +324,12 @@ test("SYNC: a clean run's COMMIT MESSAGE does not — a complete run must not ap
   const cleanRepo = archiveRepo();
   captureLog(() => void syncArchive({ archiveDir: cleanDir, repoPath: cleanRepo, repoUrl: "unused", push: false }));
   const cleanMsg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: cleanRepo, encoding: "utf8" });
+  // If the sync never committed at all, `git log -1` falls back to archiveRepo()'s own
+  // `init` commit — which also does not match /NIET meegestuurd/ below, so that assertion
+  // alone would pass for the wrong reason (no commit, rather than a commit with no apology).
+  // Pin the message to the sync's own commit first, so the negative assertion is about the
+  // right commit.
+  assert.match(cleanMsg, /^Archief: 1 snapshot/, "this must be the sync's own commit, not the fixture's init commit");
   assert.doesNotMatch(cleanMsg, /NIET meegestuurd/, "a complete run must not apologise for nothing");
 });
 
