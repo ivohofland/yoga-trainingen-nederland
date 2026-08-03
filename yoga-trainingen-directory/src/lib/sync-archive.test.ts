@@ -274,3 +274,41 @@ test("SYNC: a mismatch still pushes nothing, even when a skip is present too", (
   assert.ok(!fs.existsSync(path.join(repoPath, DEST_SUBDIR, orphan)));
   process.exitCode = 0;
 });
+
+test("SYNC: a partial run's COMMIT MESSAGE says bodies were left behind; a clean run's does not", () => {
+  // The private repo's history is the record of what it holds. A commit asserting every body
+  // was verified, on a run that skipped some, makes that history read as a complete backup
+  // when it was not.
+  const archiveDir = archiveWith("de pagina");
+  addUnhashedBody(archiveDir);
+  const repoPath = archiveRepo();
+  captureLog(() => void syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false }));
+  const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
+  assert.match(msg, /NIET meegestuurd/, "the archive's own history must record that this run was partial");
+  process.exitCode = 0;
+
+  const cleanDir = archiveWith("een andere pagina");
+  const cleanRepo = archiveRepo();
+  captureLog(() => void syncArchive({ archiveDir: cleanDir, repoPath: cleanRepo, repoUrl: "unused", push: false }));
+  const cleanMsg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: cleanRepo, encoding: "utf8" });
+  assert.doesNotMatch(cleanMsg, /NIET meegestuurd/, "a complete run must not apologise for nothing");
+});
+
+test("SYNC: a run where EVERY new body was skipped must not report 'up-to-date'", () => {
+  // With nothing added, the early return prints a completeness claim. On a run that left work
+  // behind that sentence is false in exactly the way this change exists to stop — and it is
+  // easy to miss, because the obvious fix touches the commit message and never looks here.
+  const archiveDir = archiveWithoutReceipt();
+  const repoPath = archiveRepo();
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  const log = captureLog(() => {
+    r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+  });
+
+  assert.equal(r!.added.length, 0);
+  assert.equal(r!.skipped.length, 1);
+  assert.doesNotMatch(log, /up-to-date/, "a run that left work behind reported completion");
+  assert.equal(process.exitCode, 1);
+  process.exitCode = 0;
+});
