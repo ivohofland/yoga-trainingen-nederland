@@ -74,6 +74,22 @@ function addUnlistedArtifact(dir: string): string {
   return rel;
 }
 
+/** Adds a body that VERIFIES, under a provider sorting BEFORE `testco`. localBodies() sorts,
+ *  so this body is classified — and, before this fix, COPIED — before testco's problem is
+ *  reached. Every fixture in this file lacked that shape, which is exactly why a leak three
+ *  tests claim to cover survived for as long as the file has existed. */
+function addVerifiedBodyBefore(dir: string): string {
+  const rel = path.join("aaaco", "eerder-2026-07.pdf");
+  const body = "een body die WEL klopt";
+  fs.mkdirSync(path.join(dir, "aaaco"), { recursive: true });
+  fs.writeFileSync(path.join(dir, rel), body);
+  fs.writeFileSync(
+    path.join(dir, "aaaco", "eerder-2026-07.sha256"),
+    `${sha256(body)}  eerder-2026-07.pdf\n`,
+  );
+  return rel;
+}
+
 /** A git repo standing in for the private archive, with a real `origin` to push to. */
 function archiveRepo(): string {
   const bare = fs.mkdtempSync(path.join(os.tmpdir(), "sync-origin-"));
@@ -139,12 +155,10 @@ test("SYNC: a body that FAILS its published hash is refused, and NOTHING is push
   // was altered, or the hash is wrong. Pushing it anyway would mean the one artefact we
   // offer as proof — the hash — no longer matches the thing it proves.
   //
-  // WHAT THIS DOES NOT PROVE: this fixture holds exactly one body, the failing one, so the
-  // assertion below only shows that a body which never verified is never written. Bodies are
-  // written into the destination AS THEY VERIFY, and a refusal is only decided once the whole
-  // loop finishes — so a body that verified and was copied EARLIER in the same run, ahead of
-  // this one's mismatch, is not covered here. That leak is real, pre-existing (reproduces on
-  // the merge base too), and tracked as its own issue — not fixed or asserted here.
+  // This fixture holds exactly one body, the failing one, so the assertion below only shows
+  // that a body which never verified is never written. The "a body that verified earlier in
+  // the same run" case is covered by "SYNC: a hash refusal leaves NOTHING behind — not even
+  // a body that already verified".
   const archiveDir = archiveWith("de pagina", sha256("een ANDERE pagina"));
   const repoPath = archiveRepo();
 
@@ -276,14 +290,13 @@ test("SYNC: a mismatch still pushes nothing, even when a skip is present too", (
   // The two dispositions must not contaminate each other. A skip is the milder one; it must
   // never downgrade a refusal, which is the emergency.
   //
-  // WHAT THIS DOES NOT PROVE: localBodies() sorts, so "otherco" (the skip) is examined
-  // before "testco" (the mismatch). Neither body is ever a body that gets COPIED first: the
-  // orphan is skipped without a write, and testco fails its own hash check before it would
-  // reach one. So the two assertions below only show that the refused body and the skipped
-  // body are each, individually, never copied — not that a body which HAD already verified
-  // and been copied earlier in the loop survives sitting in the destination once a later
-  // body's mismatch triggers the refusal. That leak is real, pre-existing, and tracked as
-  // its own issue — not fixed, and not asserted here.
+  // localBodies() sorts, so "otherco" (the skip) is examined before "testco" (the mismatch).
+  // Neither body is ever a body that gets COPIED first: the orphan is skipped without a
+  // write, and testco fails its own hash check before it would reach one. So the two
+  // assertions below only show that the refused body and the skipped body are each,
+  // individually, never copied. The "a body that verified earlier in the same run" case is
+  // covered by "SYNC: a hash refusal leaves NOTHING behind — not even a body that already
+  // verified".
   const archiveDir = archiveWith("de pagina", sha256("een ANDERE pagina"));
   const orphan = addUnhashedBody(archiveDir);
   const repoPath = archiveRepo();
@@ -350,4 +363,79 @@ test("SYNC: a run where EVERY new body was skipped must not report 'up-to-date'"
   assert.doesNotMatch(log, /up-to-date/, "a run that left work behind reported completion");
   assert.equal(process.exitCode, 1);
   process.exitCode = 0;
+});
+
+test("SYNC: a hash refusal leaves NOTHING behind — not even a body that already verified", () => {
+  // The leak this fixture exists to catch: bodies were copied as they verified, and the
+  // refusal was decided only after the whole loop. "aaaco" sorts before "testco", so it was
+  // already sitting in the destination when testco's mismatch stopped the run.
+  const archiveDir = archiveWith("de pagina", sha256("een ANDERE pagina"));
+  const earlier = addVerifiedBodyBefore(archiveDir);
+  const repoPath = archiveRepo();
+
+  const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+
+  assert.equal(r.refused.length, 1, "testco still fails its published hash");
+  assert.deepEqual(r.added, [], "and a refusal still reports that nothing was pushed");
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, earlier)),
+    "a body that verified BEFORE the mismatch was written anyway — the refusal came too late",
+  );
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, "aaaco", "eerder-2026-07.sha256")),
+    "and its receipt was written with it",
+  );
+  process.exitCode = 0;
+});
+
+test("SYNC: an APPEND-ONLY refusal leaves nothing behind either — Rule 2 leaked exactly as Rule 1 did", () => {
+  // Rule 2 is also decided inside the loop, after earlier bodies may already have been
+  // copied. A fix that moved only the hash check would pass the test above and leave this
+  // half of the defect standing.
+  const repoPath = archiveRepo();
+  const archived = path.join(repoPath, DEST_SUBDIR, "testco");
+  fs.mkdirSync(archived, { recursive: true });
+  fs.writeFileSync(path.join(archived, "site-2026-07.pdf"), "de ORIGINELE capture");
+
+  const archiveDir = archiveWith("een ANDERE capture, zelfde naam");
+  const earlier = addVerifiedBodyBefore(archiveDir);
+
+  const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+
+  assert.equal(r.refused.length, 1);
+  assert.match(r.refused[0], /ANDERE inhoud/);
+  assert.deepEqual(r.added, []);
+  assert.ok(
+    !fs.existsSync(path.join(repoPath, DEST_SUBDIR, earlier)),
+    "the append-only refusal came after the earlier body had already been written",
+  );
+  assert.equal(
+    fs.readFileSync(path.join(archived, "site-2026-07.pdf"), "utf8"),
+    "de ORIGINELE capture",
+    "and the archived body must still be untouched",
+  );
+  process.exitCode = 0;
+});
+
+test("SYNC: a clean multi-body run still copies every body AND every receipt", () => {
+  // The opposite failure to the one above, and the worse one: a fix that wrote too little
+  // would stop backing evidence up, which is how 32 captures came to exist on one laptop.
+  const archiveDir = archiveWith("de pagina");
+  const earlier = addVerifiedBodyBefore(archiveDir);
+  const repoPath = archiveRepo();
+
+  const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+
+  assert.deepEqual(r.refused, []);
+  assert.deepEqual(
+    r.added,
+    [earlier, path.join("testco", "site-2026-07.pdf")],
+    "localBodies() sorts, so aaaco is added before testco",
+  );
+  for (const rel of [earlier, path.join("testco", "site-2026-07.pdf")]) {
+    assert.ok(fs.existsSync(path.join(repoPath, DEST_SUBDIR, rel)), `body missing: ${rel}`);
+  }
+  for (const rel of ["aaaco/eerder-2026-07.sha256", "testco/site-2026-07.sha256"]) {
+    assert.ok(fs.existsSync(path.join(repoPath, DEST_SUBDIR, rel)), `receipt missing: ${rel}`);
+  }
 });

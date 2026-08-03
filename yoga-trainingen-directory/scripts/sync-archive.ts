@@ -155,11 +155,16 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   const added: string[] = [];
   const refused: string[] = [];
   const skipped: string[] = [];
+  const toCopy: string[] = [];
   let unchanged = 0;
 
+  // PASS 1 — DECIDE. This pass writes NOTHING. Bodies used to be copied as they verified
+  // while the refusal was decided only after the loop, so a body that passed ahead of a
+  // failing one sat in the destination while the run reported "Er is NIETS gepusht" — and
+  // being byte-identical, it counted as `unchanged` on the next run, which then reported
+  // up-to-date and exited 0. See docs/superpowers/specs/2026-08-03-sync-verify-before-write-design.md
   for (const rel of localBodies(o.archiveDir)) {
-    const src = path.join(o.archiveDir, rel);
-    const buf = fs.readFileSync(src);
+    const buf = fs.readFileSync(path.join(o.archiveDir, rel));
 
     // RULE 1 — THE BODY MUST MATCH THE HASH WE PUBLISHED FOR IT. The public repo commits a
     // .sha256 asserting that these exact bytes existed on this date. A body that fails its
@@ -189,22 +194,14 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
       }
       // RULE 2 — APPEND-ONLY. A capture is named by its date, so a body already in the
       // archive with DIFFERENT content should be impossible. Never silently overwrite
-      // dated evidence; make a human look.
+      // dated evidence; make a human look. This is decided HERE, in pass 1, for the same
+      // reason Rule 1 is: it is a refusal, and a refusal must be known before anything
+      // is written.
       refused.push(`${rel} — staat al in het archief met ANDERE inhoud (niet overschreven)`);
       continue;
     }
 
-    fs.mkdirSync(path.dirname(dst), { recursive: true });
-    fs.writeFileSync(dst, buf);
-    // the receipt travels with the body, so the private repo is self-contained
-    const sidecar = sidecarFor(rel);
-    const sidecarSrc = path.join(o.archiveDir, sidecar);
-    // No existence check: we reach this line only because publishedHash() just read a hash
-    // for this body OUT OF that sidecar, so it is there. A conditional would describe a
-    // state the skip above has made unreachable — and a dead branch is how the next reader
-    // learns the wrong invariant.
-    fs.copyFileSync(sidecarSrc, path.join(dest, sidecar));
-    added.push(rel);
+    toCopy.push(rel);
   }
 
   // BEFORE the refused block, so a skip is reported on a refused run too — both are things
@@ -227,6 +224,23 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     console.error("  hash de file niet opnieuw, zoek uit waaróm hij veranderd is.");
     process.exitCode = 1;
     return { added: [], unchanged, refused, skipped, pushed: false };
+  }
+
+  // PASS 2 — WRITE. This pass decides NOTHING; every body here was classified in pass 1 and
+  // the run is already known to be refusal-free. copyFileSync rather than writeFileSync(buf):
+  // the kernel copies the file, so no body is ever held in memory here — the corpus is 386 MB
+  // across 466 bodies, one of them 60 MB. The cost is that these bytes are re-read rather
+  // than being the ones pass 1 hashed; the design doc records why that window is accepted.
+  for (const rel of toCopy) {
+    const dst = path.join(dest, rel);
+    fs.mkdirSync(path.dirname(dst), { recursive: true });
+    fs.copyFileSync(path.join(o.archiveDir, rel), dst);
+    // The receipt travels with the body, so the private repo is self-contained. No existence
+    // check: this body is here only because publishedHash() read a hash for it OUT OF that
+    // sidecar, so it is there.
+    const sidecar = sidecarFor(rel);
+    fs.copyFileSync(path.join(o.archiveDir, sidecar), path.join(dest, sidecar));
+    added.push(rel);
   }
 
   if (!added.length) {
