@@ -71,6 +71,10 @@ This design accepts that window rather than engineering it away:
 
 `fs.copyFileSync` is used rather than `writeFileSync(dst, buf)`, so pass 2 never holds a body in memory at all.
 
+**Correction, post-review (2026-08-03).** The bullet above names the wrong mechanism. A body copied in pass 2 is committed within the *same run* — so by the time the dirty-clone check could next run, the working tree it would inspect is already clean, and it never sees the mismatch. The check named here cannot be what bounds this residual, because the state it exists to catch (an uncommitted body) is not the state a TOCTOU-drifted body leaves behind.
+
+The residual is still bounded — that conclusion holds — but by different machinery: **Rule 1** and **Rule 2**, on the *next* run. If the source file drifted after pass 1 hashed it, the committed (now-wrong) body still carries whatever hash pass 1 read, and the next sync's pass 1 re-hashes the *current* source against that same published hash and refuses it under Rule 1. If the source was instead re-captured under the same name with a fresh sidecar, the next run's Rule 2 finds a destination body that already exists with different content and refuses that. Both reproduce by execution. Neither is the dirty-clone check.
+
 ## The dirty-clone route
 
 The two-pass split stops this code from creating a leftover. It does not change the belief that made the leftover harmful: **`unchanged` is decided by presence in the destination working tree, not by whether anything was ever committed.** Any uncommitted body in that clone reads as "already archived".
@@ -78,6 +82,10 @@ The two-pass split stops this code from creating a leftover. It does not change 
 After this fix that is the only remaining route to a false `up-to-date`, and it is reachable — a leftover written by the old code on another machine, an interrupted run, a hand-copied file. `ensureClone` runs `fetch`, `checkout` and `merge --ff-only`, none of which fail on a dirty working tree.
 
 So: immediately after `ensureClone`, run `git status --porcelain` on the archive repo. If it is non-empty, stop — name the paths, explain, set a non-zero exit, return. A clean tree is the norm, because the sync commits everything it copies; a dirty one is a state nobody can account for, and syncing on top of it is how an unexplained file becomes permanent.
+
+**Correction, post-review (2026-08-03).** "The only remaining route" is false; a second, independent route to a false `up-to-date` + exit 0 exists, reachable with `fetch` working and `push` rejected (a read-only token, or push protection on the remote). Sequence: run 1 syncs and pushes cleanly. A new capture arrives; the remote now rejects pushes. Run 2 copies the body, commits it locally, and **throws** on `git push` — loud and correct, as designed. That leaves the local clone one commit ahead of `origin/main`, with a **clean working tree** — the dirty-clone check above sees nothing wrong, because there is nothing uncommitted to see. Run 3 finds the clean tree, reports `up-to-date`, and exits 0, while `origin` still holds nothing: `added.length === 0` short-circuits at the early return before the push is ever attempted, so the unpushed commit is never retried. Reproduced by execution, with `origin` confirmed not to hold the body.
+
+This route is **pre-existing** (not introduced by this branch) and **out of scope for #20** — closing it means comparing the local branch to `origin/main`, or pushing whenever the local branch is ahead even with `added` empty, and that belongs in its own issue. What this note corrects is the claim, not the code: the dirty-clone check closes the *leftover-working-tree* route, not *every* route to a false `up-to-date`.
 
 ## One small extraction
 
