@@ -197,6 +197,19 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     added.push(rel);
   }
 
+  // BEFORE the refused block, so a skip is reported on a refused run too — both are things
+  // the author has to fix, and hiding one behind the other loses it.
+  if (skipped.length) {
+    console.error(`\n✗ archief: ${skipped.length} body/bodies zonder gepubliceerde hash — NIET meegestuurd:`);
+    for (const s of skipped) console.error(`    ${s}`);
+    console.error("  Een body zonder .sha256 kan niet geverifieerd worden, en wat wij niet");
+    console.error("  kunnen verifiëren sturen wij niet mee als bewijs.");
+    console.error("  Draai `npm run archive` opnieuw, of hash hem, en push daarna.");
+    // Non-zero, but NOT an early return: the bodies that DID verify still go. A missing
+    // receipt is a gap in one record, not a reason to stop backing up everyone else.
+    process.exitCode = 1;
+  }
+
   if (refused.length) {
     console.error(`\n✗ archief: ${refused.length} body/bodies geweigerd:`);
     for (const c of refused) console.error(`    ${c}`);

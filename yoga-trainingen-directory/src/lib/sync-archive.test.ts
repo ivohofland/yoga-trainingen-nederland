@@ -91,6 +91,24 @@ function archiveRepo(): string {
   return work;
 }
 
+/** Runs `fn` with console.log/console.error captured, and returns everything they printed.
+ *  The sync reports through the console, so what it SAYS is part of its behaviour: a skip
+ *  nobody is told about is the silent-backup-failure this whole file exists to prevent. */
+function captureLog(fn: () => void): string {
+  const lines: string[] = [];
+  const origLog = console.log;
+  const origErr = console.error;
+  console.log = (...a: unknown[]) => void lines.push(a.join(" "));
+  console.error = (...a: unknown[]) => void lines.push(a.join(" "));
+  try {
+    fn();
+  } finally {
+    console.log = origLog;
+    console.error = origErr;
+  }
+  return lines.join("\n");
+}
+
 test("SYNC: a body that matches its published hash is copied, with its receipt", () => {
   const archiveDir = archiveWith("de pagina zoals een lezer hem zag");
   const repoPath = archiveRepo();
@@ -212,5 +230,47 @@ test("SYNC: a sidecar that exists but does not LIST this file is also no publish
     !fs.existsSync(path.join(repoPath, DEST_SUBDIR, unlisted)),
     "unverifiable is unverifiable, whether or not a sidecar happens to sit beside it",
   );
+  process.exitCode = 0;
+});
+
+test("SYNC: a skip NAMES the body and exits non-zero — but the verified bodies still went", () => {
+  // This is the one structural difference from a refusal: `refused` returns before the push,
+  // a skip does not. Copying the refused block wholesale would silently stop backing
+  // everything up the moment one sidecar went missing.
+  const archiveDir = archiveWith("de pagina");
+  const orphan = addUnhashedBody(archiveDir);
+  const repoPath = archiveRepo();
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  const log = captureLog(() => {
+    r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+  });
+
+  assert.match(log, /brochure-2026-08\.pdf/, "the skipped body must be named — a silent skip is the bug");
+  assert.match(log, /geen gepubliceerde hash|zonder gepubliceerde hash/, "and the report must say why");
+  assert.equal(process.exitCode, 1, "a run that left work behind must not exit 0");
+  assert.deepEqual(r!.added, [path.join("testco", "site-2026-07.pdf")], "the verified body still went");
+  assert.ok(
+    fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")),
+    "a skip must not behave like a refusal and hold back the bodies that verified fine",
+  );
+  assert.ok(!fs.existsSync(path.join(repoPath, DEST_SUBDIR, orphan)));
+  process.exitCode = 0;
+});
+
+test("SYNC: a mismatch still pushes nothing, even when a skip is present too", () => {
+  // The two dispositions must not contaminate each other. A skip is the milder one; it must
+  // never downgrade a refusal, which is the emergency.
+  const archiveDir = archiveWith("de pagina", sha256("een ANDERE pagina"));
+  const orphan = addUnhashedBody(archiveDir);
+  const repoPath = archiveRepo();
+
+  const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+
+  assert.equal(r.refused.length, 1, "the mismatch is still a refusal");
+  assert.deepEqual(r.skipped, [orphan], "and the skip is still reported alongside it");
+  assert.deepEqual(r.added, [], "a refusal means NOTHING is pushed — the skip does not soften that");
+  assert.ok(!fs.existsSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf")));
+  assert.ok(!fs.existsSync(path.join(repoPath, DEST_SUBDIR, orphan)));
   process.exitCode = 0;
 });
