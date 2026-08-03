@@ -220,7 +220,9 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   }
 
   if (!added.length) {
-    console.log(`archief: up-to-date (${unchanged} bodies al vastgelegd).`);
+    // "up-to-date" is a claim of COMPLETENESS. A run that skipped something is not entitled
+    // to it; the skip report and its non-zero exit have already fired above.
+    if (!skipped.length) console.log(`archief: up-to-date (${unchanged} bodies al vastgelegd).`);
     return { added, unchanged, refused, skipped, pushed: false };
   }
 
@@ -238,11 +240,18 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
 
   const providers = [...new Set(added.map((r) => r.split(path.sep)[0]))].sort();
   const subject = `Archief: ${added.length} snapshot(s) — ${providers.join(", ")}`.slice(0, 72);
+  // The attestation is not deleted — it is EARNED. Now that unverifiable bodies are skipped,
+  // every body in this commit really was verified, so the sentence is true as written. The
+  // extra line exists so the archive's own history cannot read as a complete backup when it
+  // was not; it counts what stayed behind without naming files this repo does not contain.
   const body =
     "De bodies horend bij de hashes die in de publieke repo staan.\n\n" +
     added.map((r) => `  ${r}`).join("\n") +
     "\n\nGeschreven door `npm run archive` (scripts/sync-archive.ts). Append-only;\n" +
-    "elke body is geverifieerd tegen de .sha256 die publiek gepubliceerd is.\n";
+    "elke body is geverifieerd tegen de .sha256 die publiek gepubliceerd is.\n" +
+    (skipped.length
+      ? `\n${skipped.length} body/bodies zijn NIET meegestuurd: geen gepubliceerde hash.\n`
+      : "");
   git(o.repoPath, ["commit", "--quiet", "-m", subject, "-m", body]);
 
   if (!o.push) return { added, unchanged, refused, skipped, pushed: false };
