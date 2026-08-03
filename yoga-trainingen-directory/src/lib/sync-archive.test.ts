@@ -275,7 +275,7 @@ test("SYNC: a mismatch still pushes nothing, even when a skip is present too", (
   process.exitCode = 0;
 });
 
-test("SYNC: a partial run's COMMIT MESSAGE says bodies were left behind; a clean run's does not", () => {
+test("SYNC: a partial run's COMMIT MESSAGE says bodies were left behind", () => {
   // The private repo's history is the record of what it holds. A commit asserting every body
   // was verified, on a run that skipped some, makes that history read as a complete backup
   // when it was not.
@@ -286,7 +286,11 @@ test("SYNC: a partial run's COMMIT MESSAGE says bodies were left behind; a clean
   const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
   assert.match(msg, /NIET meegestuurd/, "the archive's own history must record that this run was partial");
   process.exitCode = 0;
+});
 
+test("SYNC: a clean run's COMMIT MESSAGE does not — a complete run must not apologise for nothing", () => {
+  // The other half of the pair above, kept as its own test() so a failure in the partial-run
+  // assertion can never leave a stale process.exitCode that makes THIS test's outcome ambiguous.
   const cleanDir = archiveWith("een andere pagina");
   const cleanRepo = archiveRepo();
   captureLog(() => void syncArchive({ archiveDir: cleanDir, repoPath: cleanRepo, repoUrl: "unused", push: false }));
