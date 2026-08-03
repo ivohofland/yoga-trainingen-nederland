@@ -64,7 +64,8 @@ Today the destination is written from the exact buffer that was hashed. Splittin
 
 This design accepts that window rather than engineering it away:
 
-- The passes run back-to-back in one process, against a local directory the author is not editing concurrently. The threat this project actually faces is a body that was already wrong before the run started, and pass 1 catches that.
+- The passes run back-to-back in one process, against a local directory the author is not editing concurrently. The only writer to `data/archives/` during a sync is the capture phase, which has already finished by the time `syncArchive()` runs — so the window is not "a process races us", it is "the author hand-edits the archive directory in the seconds between the two passes". The threat this project actually faces is a body that was already wrong before the run started, and pass 1 catches that.
+- **And the residual is bounded, not silent.** If the source did change between the passes, the destination receives an unverified body — and the dirty-clone check below, landing in this same branch, makes the **next run refuse to proceed and name it**. The two changes reinforce each other.
 - Holding the verified buffers instead would mean **386 MB across 466 bodies**, with a single body as large as 60 MB. That is worse.
 - Re-verifying inside pass 2 would reintroduce a refusal *after* writes have begun — the exact shape being removed here.
 
