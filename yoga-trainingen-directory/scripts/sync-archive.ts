@@ -68,6 +68,12 @@ export interface SyncResult {
   /** Bodies that FAILED their published hash, or already exist with different content.
    *  Non-empty means NOTHING was pushed. */
   refused: string[];
+  /** Bodies with NO published hash: nothing to verify against, so not pushed and not
+   *  attested to. Distinct from `refused` on purpose — a refusal says a body CONTRADICTS
+   *  its receipt and stops the whole push; this says a body HAS no receipt, so only it is
+   *  left behind. Collapsing the two would either let one forgotten sidecar block every
+   *  provider's backup, or stop a genuine mismatch being an emergency. */
+  skipped: string[];
   pushed: boolean;
 }
 
@@ -122,7 +128,7 @@ function ensureClone(o: SyncOptions): void {
 
 export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   const o: SyncOptions = { ...defaultOptions(), ...opts };
-  const empty: SyncResult = { added: [], unchanged: 0, refused: [], pushed: false };
+  const empty: SyncResult = { added: [], unchanged: 0, refused: [], skipped: [], pushed: false };
   if (!fs.existsSync(o.archiveDir)) return empty;
 
   try {
@@ -138,6 +144,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   const dest = path.join(o.repoPath, DEST_SUBDIR);
   const added: string[] = [];
   const refused: string[] = [];
+  const skipped: string[] = [];
   let unchanged = 0;
 
   for (const rel of localBodies(o.archiveDir)) {
@@ -147,8 +154,18 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     // RULE 1 — THE BODY MUST MATCH THE HASH WE PUBLISHED FOR IT. The public repo commits a
     // .sha256 asserting that these exact bytes existed on this date. A body that fails its
     // own receipt must never be pushed as though it satisfied it.
+    // NO PUBLISHED HASH ⇒ NOTHING TO VERIFY AGAINST ⇒ NOT OURS TO ATTEST TO. publishedHash()
+    // returns null down two paths — no sidecar at all, and a sidecar holding no line for THIS
+    // file — and both mean the same thing here, which is why this keys on its return value
+    // rather than on the sidecar's existence. Never generate the missing hash: hashing
+    // whatever is on disk now attests to nothing, and a receipt counts only once the PUBLIC
+    // repo commits it. See the design doc for why this skips rather than refusing.
     const want = publishedHash(o.archiveDir, rel);
-    if (want && sha256(buf) !== want) {
+    if (want === null) {
+      skipped.push(rel);
+      continue;
+    }
+    if (sha256(buf) !== want) {
       refused.push(`${rel} — komt niet overeen met de gepubliceerde hash`);
       continue;
     }
@@ -172,7 +189,11 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     const base = path.basename(rel).replace(/\.[a-z0-9]+$/i, "");
     const sidecar = path.join(path.dirname(rel), `${base}.sha256`);
     const sidecarSrc = path.join(o.archiveDir, sidecar);
-    if (fs.existsSync(sidecarSrc)) fs.copyFileSync(sidecarSrc, path.join(dest, sidecar));
+    // No existence check: we reach this line only because publishedHash() just read a hash
+    // for this body OUT OF that sidecar, so it is there. A conditional would describe a
+    // state the skip above has made unreachable — and a dead branch is how the next reader
+    // learns the wrong invariant.
+    fs.copyFileSync(sidecarSrc, path.join(dest, sidecar));
     added.push(rel);
   }
 
@@ -182,12 +203,12 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     console.error("  Er is NIETS gepusht. Een hash is een bewering over precies deze bytes —");
     console.error("  hash de file niet opnieuw, zoek uit waaróm hij veranderd is.");
     process.exitCode = 1;
-    return { added: [], unchanged, refused, pushed: false };
+    return { added: [], unchanged, refused, skipped, pushed: false };
   }
 
   if (!added.length) {
     console.log(`archief: up-to-date (${unchanged} bodies al vastgelegd).`);
-    return { added, unchanged, refused, pushed: false };
+    return { added, unchanged, refused, skipped, pushed: false };
   }
 
   // --force ON PURPOSE. The private repo is a copy of the project, so it can inherit the
@@ -199,7 +220,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   if (!git(o.repoPath, ["diff", "--cached", "--name-only"]).trim()) {
     console.error("✗ archief: bodies gekopieerd, maar git stagede niets — negeert de archiefrepo ze?");
     process.exitCode = 1;
-    return { added, unchanged, refused, pushed: false };
+    return { added, unchanged, refused, skipped, pushed: false };
   }
 
   const providers = [...new Set(added.map((r) => r.split(path.sep)[0]))].sort();
@@ -211,13 +232,13 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     "elke body is geverifieerd tegen de .sha256 die publiek gepubliceerd is.\n";
   git(o.repoPath, ["commit", "--quiet", "-m", subject, "-m", body]);
 
-  if (!o.push) return { added, unchanged, refused, pushed: false };
+  if (!o.push) return { added, unchanged, refused, skipped, pushed: false };
 
   process.stdout.write(`archief: ${added.length} nieuwe body/bodies — pushen… `);
   git(o.repoPath, ["push", "--quiet", "origin", "main"]);
   console.log("ok");
   console.log(`  ${providers.length} aanbieder(s): ${providers.join(", ")}`);
-  return { added, unchanged, refused, pushed: true };
+  return { added, unchanged, refused, skipped, pushed: true };
 }
 
 // Direct aanroepbaar: `npx tsx scripts/sync-archive.ts`
