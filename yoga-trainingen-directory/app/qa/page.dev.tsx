@@ -205,12 +205,14 @@ export default function Qa() {
                         <Lnk href={s.url} label="live" missing="geen url" />
                       </td>
                       <td style={{ paddingRight: 12, verticalAlign: "top" }}>
-                        {s.archived_url ? (
-                          <Lnk href={s.archived_url} label="archief" />
-                        ) : s.url ? (
-                          <span style={{ color: "#b00" }}>niet gearchiveerd</span>
+                        {s.public_archive.kind === "archived" ? (
+                          <Lnk href={s.public_archive.url} label="archief" />
+                        ) : s.public_archive.kind === "impossible" ? (
+                          <span style={{ color: "#999" }} title={s.public_archive.reason}>
+                            n.v.t.
+                          </span>
                         ) : (
-                          <span style={{ color: "#999" }}>n.v.t.</span>
+                          <span style={{ color: "#b00" }}>niet gearchiveerd</span>
                         )}
                       </td>
                       <td style={{ color: "#555", verticalAlign: "top" }}>

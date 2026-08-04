@@ -26,7 +26,6 @@ import {
   type PriceBand,
 } from "./rules";
 import { nl } from "./strings";
-import { waybackIsPointless } from "./wayback";
 import type { Claim, Cohort, Inquiry, Program, Provider, Quad, Source } from "../schema";
 
 /**
@@ -826,7 +825,7 @@ export interface SourceView {
    * This is the ONLY archive state on the view. It used to sit beside two
    * booleans (`archivePublic` / `archiveLocal`) that no surface read — the page
    * branches on this string — and two spellings of one fact can only ever drift
-   * apart. Whoever needs the halves separately reads the record's `archived_url`
+   * apart. Whoever needs the halves separately reads the record's `public_archive`
    * and `local_snapshot`, which are the fact itself.
    *
    * Not a quad, and deliberately not phrased as one: this is a fact about OUR
@@ -1377,17 +1376,19 @@ function domainOf(url: string): string {
  * correct decision as a hole in our research. Twelve sources read that way.
  *
  * So it says "n.v.t." with the reason, and the two are never spelled the same.
- * The predicate is `waybackIsPointless` — the SAME one the archiver skips on and
- * `integrityErrors` rejects a Wayback URL on, so the page cannot claim a thing is
- * impossible while the script cheerfully archives it.
+ * This reads the record's OWN finding (`public_archive.kind`) rather than
+ * re-deriving it from the URL — the judgement is the record's, this only
+ * renders it. That also covers cases no URL-based predicate could reach, like a
+ * gated PDF that carries no public URL at all but is still `impossible` for a
+ * stated reason.
  */
 function archiveSlots(s: Source): string | null {
-  if (s.archived_url == null && s.local_snapshot == null) return null;
+  if (s.public_archive.kind === "not_yet" && s.local_snapshot == null) return null;
   const mark = (present: boolean) => (present ? nl.archivePresent : nl.archiveAbsent);
   const publicHalf =
-    s.archived_url == null && s.url != null && waybackIsPointless(s.url)
+    s.public_archive.kind === "impossible"
       ? `${nl.archivePublic} ${nl.archiveNotApplicable}`
-      : `${nl.archivePublic} ${mark(s.archived_url != null)}`;
+      : `${nl.archivePublic} ${mark(s.public_archive.kind === "archived")}`;
   return [publicHalf, `${nl.archiveLocal} ${mark(s.local_snapshot != null)}`].join(" · ");
 }
 
@@ -1472,7 +1473,7 @@ export function toProviderView(p: Provider): ProviderView {
       note: s.note ?? null,
       archiveSlots: archiveSlots(s),
     })),
-    sourcesArchivedPublic: p.sources.filter((s) => s.archived_url != null).length,
+    sourcesArchivedPublic: p.sources.filter((s) => s.public_archive.kind === "archived").length,
     sourcesArchivedLocal: p.sources.filter((s) => s.local_snapshot != null).length,
     inquiries: (p.inquiries ?? []).map(toInquiryView),
   };

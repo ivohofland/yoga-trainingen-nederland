@@ -730,7 +730,11 @@ export function providerQa(p: Provider, now = new Date(), provenance: Provenance
     if (!program.delivery.language) gaps.push(`${tag}: voertaal ontbreekt`);
   }
 
-  const unarchivedSources = p.sources.filter((s) => s.archived_url == null).length;
+  // A GAP, never a FINDING. This counted every absent archive, including the ones that can
+  // never exist — so /qa showed a red ✗ on 46 of 48 providers, for Salesforce-rendered
+  // registers Wayback genuinely cannot capture. A signal that is red for everything is not
+  // a signal; what remains is a work list.
+  const unarchivedSources = p.sources.filter((s) => s.public_archive.kind === "not_yet").length;
 
   const m = /^(\d{4})-(\d{2})/.exec(p.last_verified);
   const ageMonths = m
