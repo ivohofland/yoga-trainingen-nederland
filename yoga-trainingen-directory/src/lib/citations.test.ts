@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { CITATION_RE, collectCitations, parseCitations } from "./citations";
-import { loadDataset } from "./loader";
+import { loadDataset, loadReferences } from "./loader";
 
 test("CITE: a marker becomes a ref segment, the rest stays text", () => {
   const segs = parseCitations('gelden ([[ref:ya-application-guide-2026-07]]). Daarbij');
@@ -73,7 +73,14 @@ test("CITE: no note in the corpus renders a raw marker", () => {
   // THE failure this design introduces. A marker that survives to the page shows a
   // reader literal `[[ref:…]]`. Runs over the REAL corpus, not a fixture, so a citation
   // added to any note anywhere is covered the day it lands.
+  //
+  // Walks BOTH stores: provider notes cite references, and a reference's own note can
+  // in principle cite another reference (cross-references between the five YA documents
+  // already exist there today, by bare id — see app/referenties/page.tsx). A walk scoped
+  // to loadDataset() alone would miss a marker landing in data/references/*.yaml entirely,
+  // catching it in neither this count nor the corpus-wide guarantee above.
   const { providers } = loadDataset();
+  const { references } = loadReferences();
   let markers = 0;
   const walk = (node: unknown): void => {
     if (typeof node === "string") {
@@ -87,7 +94,12 @@ test("CITE: no note in the corpus renders a raw marker", () => {
     if (node && typeof node === "object") return Object.values(node).forEach(walk);
   };
   walk(providers);
-  assert.equal(markers, 8, "the corpus should hold exactly the 8 known citations");
+  walk(references);
+  // This is a TRIPWIRE, not a ceiling: bump it deliberately, in the same commit that adds
+  // the citation, when new sourced prose earns one. What it must never do silently is DROP
+  // — a lower count than last commit means a citation that used to resolve no longer does,
+  // which is the exact regression parseCitations exists to make impossible to ship quietly.
+  assert.equal(markers, 8, "citation count changed — 8 is not a ceiling, but a drop means one was lost; bump deliberately when a citation is added");
 });
 
 test("CITE: every note interpolation on the record page goes through <Cite>", () => {
@@ -103,9 +115,21 @@ test("CITE: every note interpolation on the record page goes through <Cite>", ()
   // which would make this test unsatisfiable by any correct implementation. A note
   // rendered directly as JSX CHILD content (the actual bug: `{x.note}` with nothing
   // consuming it) is never preceded by `=` and is still caught.
+  //
+  // `[a-z][\w.]*[Nn]ote` — not just `[a-z]+\.note` — covers all THREE shapes real note
+  // sites use, not only the single-level `{r.note}` one: `{claim.analysis.note}` and
+  // `{v.crkbo.note}` are multi-segment paths (a lone `[a-z]+` before the dot cannot
+  // match past the first dot), and `{prog.contractNote}` has no dot before "Note" at
+  // all — it is a camelCase-suffixed field, not a `.note` property access. A pattern
+  // requiring a literal `.` immediately before "note" misses that last shape entirely.
+  // The `(?!nl\.)` exclusion is the mirror image of the `=` lookbehind: `nl.secCoherenceNote`
+  // and `nl.claimsNote` are static Dutch UI labels from strings.ts, never provider data,
+  // and would otherwise false-positive under the widened suffix match — `nl` is never used
+  // as a loop/record variable on this page, so excluding that one prefix cannot hide a
+  // real data note.
   const src = fs.readFileSync(
     path.join(process.cwd(), "app", "aanbieder", "[id]", "page.tsx"), "utf8");
-  const bare = [...src.matchAll(/(?<!=)\{[a-z]+\.note\}/g)].map((m) => m[0]);
+  const bare = [...src.matchAll(/(?<!=)\{(?!nl\.)[a-z][\w.]*[Nn]ote\}/g)].map((m) => m[0]);
   assert.deepEqual(bare, [], `note rendered without <Cite>: ${bare.join(", ")}`);
 });
 
