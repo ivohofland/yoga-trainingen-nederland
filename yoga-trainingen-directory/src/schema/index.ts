@@ -73,10 +73,17 @@ const slug = z.string().regex(/^[a-z0-9][a-z0-9-]*$/, "expected kebab-case slug"
  *  Variants carry DIFFERENT KEY SETS, so "impossible with no reason" and "archived with no
  *  url" do not compile and a consumer that reads `url` when present is right by
  *  construction. Spec §4.1, v0.14. */
+/** Members are STRICT, not `z.object` — a plain `z.object` strips unknown keys instead
+ *  of rejecting them, and `Source`/`Reference` being strict does not help: strictness
+ *  does not recurse into a nested object. Without this, `{kind: "not_yet", url: "…"}`
+ *  silently parsed as `{kind: "not_yet"}` (a real Wayback URL DELETED from the loaded
+ *  dataset, rendered as a gap) and `{kind: "not_yet", reason: "…"}` silently parsed the
+ *  same way (a finding silently downgraded to a gap) — the exact conflation this task
+ *  exists to prevent, one level down from where the union's own key sets stop it. */
 export const PublicArchive = z.discriminatedUnion("kind", [
-  z.object({ kind: z.literal("archived"), url: z.string().url() }),
-  z.object({ kind: z.literal("impossible"), reason: z.string().min(1) }),
-  z.object({ kind: z.literal("not_yet") }),
+  z.strictObject({ kind: z.literal("archived"), url: z.string().url() }),
+  z.strictObject({ kind: z.literal("impossible"), reason: z.string().min(1) }),
+  z.strictObject({ kind: z.literal("not_yet") }),
 ]);
 export type PublicArchive = z.infer<typeof PublicArchive>;
 

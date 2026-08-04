@@ -1391,14 +1391,56 @@
                 "type": "string",
                 "format": "uri"
               },
-              "archived_url": {
+              "public_archive": {
                 "anyOf": [
                   {
-                    "type": "string",
-                    "format": "uri"
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "archived"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "url"
+                    ],
+                    "additionalProperties": false
                   },
                   {
-                    "type": "null"
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "impossible"
+                      },
+                      "reason": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "kind",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "const": "not_yet"
+                      }
+                    },
+                    "required": [
+                      "kind"
+                    ],
+                    "additionalProperties": false
                   }
                 ]
               },
@@ -1418,6 +1460,7 @@
             "required": [
               "id",
               "type",
+              "public_archive",
               "captured"
             ],
             "additionalProperties": false
