@@ -99,7 +99,7 @@ export default function Qa() {
       <h1>QA / review — interne werklijst</h1>
       <p style={{ color: "#555" }}>
         Alleen-lezen overzicht (niet gepubliceerd). {providers.length} records ·{" "}
-        {totalGaps} open punten · {totalUnarchived} bronnen zonder publiek archief ·{" "}
+        {totalGaps} open punten · {totalUnarchived} bronnen nog niet publiek gearchiveerd ·{" "}
         <span style={{ color: totalDefects > 0 ? "#b00" : "#070" }}>
           {totalDefects} claim(s) (prijs/uren/btw) die de geciteerde bron NIET stelt
         </span>{" "}
@@ -114,8 +114,16 @@ export default function Qa() {
             <h2 style={{ margin: 0, fontSize: "1.1rem" }}>
               {p.name}{" "}
               <span style={{ fontWeight: 400, color: "#777", fontSize: "0.9rem" }}>
+                {/* The honest three-way split, not a "X/Y ✓" ratio: `archief:` used to read
+                    `totalSources - unarchivedSources` as "archived", which counted an
+                    `impossible` finding (we looked; no public archive can evidence this
+                    page) as met — the exact conflation this branch exists to remove, one
+                    line above the code that already fixed it. Publiek + n.v.t. + nog niet
+                    always sums to totalSources, so no separate total needs printing. */}
                 · diepte: {p.depth} · compleetheid: {qa.completeness}% · archief:{" "}
-                {qa.totalSources - qa.unarchivedSources}/{qa.totalSources}{" "}
+                {p.sources.filter((s) => s.public_archive.kind === "archived").length} publiek ·{" "}
+                {p.sources.filter((s) => s.public_archive.kind === "impossible").length} n.v.t. ·{" "}
+                {qa.unarchivedSources} nog niet{" "}
                 <span style={{ color: qa.unarchivedSources > 0 ? "#b00" : "#070" }}>
                   {qa.unarchivedSources > 0 ? "✗" : "✓"}
                 </span>{" "}
