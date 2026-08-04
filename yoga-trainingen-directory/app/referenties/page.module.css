@@ -67,12 +67,20 @@
   color: var(--muted);
 }
 
-/* The three public_archive states (spec §4.1b) — three DIFFERENT inks, borrowed
-   from the quad vocabulary (globals.css) because the shape is the same one this
-   project already names: `archived` is established fact, `impossible` is a
-   finding about the evidence itself, `not_yet` is a gap in our own archiving
-   work. Not routed through <Quad> — that component owns the Quad TYPE, and
-   PublicArchive is a different union — but the ink means the same thing. */
+/*
+ * The three public_archive states (spec §4.1b) — distinct, and NOT via --finding
+ * or --gap. Those are quad tokens and belong to Quad.module.css alone (see the
+ * docblock in Quad.tsx): amber means exactly one thing on this site — "we
+ * looked; the PROVIDER does not publish it" — and grey-italic means exactly one
+ * thing — "not yet researched". Neither claim is what public_archive states.
+ * `impossible` is a finding about OUR ability to archive a normative document,
+ * not about a named business; `not_yet` is a gap in OUR archiving work, not a
+ * gap in research about a school. Reusing the tokens made amber (and
+ * muted-italic) mean two different things at once — the same collision
+ * ProgrammeTable.module.css already records for the disclosure stamp ("It used
+ * to use --finding, which made amber mean two different things at once"). So:
+ * ink weight and colour VALUE carry the distinction here, never the quad tokens.
+ */
 .archiveArchived {
   font-family: var(--mono);
   font-size: 12.5px;
@@ -83,17 +91,20 @@
 .archiveArchived a {
   color: var(--ink);
 }
+/* A stated determination, not a quiet fact — bold, not amber. */
 .archiveImpossible {
   font-family: var(--mono);
   font-size: 12.5px;
-  color: var(--finding);
+  font-weight: 600;
+  color: var(--ink-2);
   margin: 0 0 4px;
 }
+/* The quietest of the three, deliberately not muted-italic (that pixel-for-pixel
+   combination is --gap's own recipe in Quad.module.css). Plain --muted, upright. */
 .archiveNotYet {
   font-family: var(--mono);
   font-size: 12.5px;
-  color: var(--gap);
-  font-style: italic;
+  color: var(--muted);
   margin: 0 0 4px;
 }
 
