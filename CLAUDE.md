@@ -84,7 +84,7 @@ never overwrites dated evidence.
 
 ## Architecture
 
-**The spec is the source of truth.** `data-model-spec.md` (currently v0.13)
+**The spec is the source of truth.** `data-model-spec.md` (currently v0.14)
 defines the model; `src/schema/index.ts` (Zod) mirrors it. **Change the spec
 first, then the schema.** The schema's inline comments cite the spec sections
 (`§N`) and explain *why* each field exists — read them before changing a field.
@@ -302,5 +302,8 @@ them silently corrupts the dataset's credibility.
   `data/archives/README.md`. Commit new bodies to the private repo so git keeps
   dating them — that dating is what gives them their weight.
 - `depth` (`listed | reviewed | assessed`) states honestly how far a record has
-  been taken; `archived_url: null` means a source is consciously not yet
-  archived, and such records do not meet the publication bar.
+  been taken; a missing public archive is either a FINDING
+  (`public_archive: {kind: impossible, reason}` — no public archive can
+  evidence this page, e.g. a JS-shell register) or a GAP (`{kind: not_yet}`),
+  never collapsed into one — only `not_yet` records fall below the
+  publication bar (spec §4.1, v0.14).

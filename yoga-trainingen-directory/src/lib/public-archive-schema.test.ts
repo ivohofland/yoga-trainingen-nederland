@@ -8,7 +8,7 @@
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { PublicArchive } from "../schema";
+import { PublicArchive, Source, Reference } from "../schema";
 
 test("SCHEMA: public_archive variants carry different key sets", () => {
   // The guarantee is structural: a consumer reading `url` when present is right by
@@ -21,4 +21,42 @@ test("SCHEMA: public_archive variants carry different key sets", () => {
   assert.ok(!PublicArchive.safeParse({ kind: "impossible", reason: "" }).success, "empty reason is no reason");
   assert.ok(!PublicArchive.safeParse({ kind: "archived" }).success, "archived needs a url");
   assert.ok(!PublicArchive.safeParse({ kind: "not_archived" }).success, "unknown kind");
+});
+
+test("SCHEMA: a member does not silently strip a foreign key from another member", () => {
+  // A plain `z.object` strips keys it doesn't declare instead of rejecting them, and
+  // `Source`/`Reference` being strict does not help — strictness does not recurse into
+  // a nested plain object. Undetected, this deletes a real archive URL from the loaded
+  // dataset ("not_yet" + "url") or silently downgrades a published finding to a gap
+  // ("not_yet" + "reason") — the exact conflation this task exists to prevent, one
+  // level down from where the union's distinct key sets stop it.
+  assert.ok(
+    !PublicArchive.safeParse({ kind: "not_yet", url: "https://web.archive.org/web/2026/x" }).success,
+    "a Wayback url under not_yet must be rejected, not silently dropped",
+  );
+  assert.ok(
+    !PublicArchive.safeParse({ kind: "not_yet", reason: "no public archive can evidence this" }).success,
+    "a reason under not_yet must be rejected, not silently dropped",
+  );
+  assert.ok(
+    !PublicArchive.safeParse({ kind: "archived", url: "https://web.archive.org/x", reason: "bogus" }).success,
+    "a reason alongside an archived url must be rejected, not silently dropped",
+  );
+});
+
+test("SCHEMA: public_archive is REQUIRED on Source and on Reference", () => {
+  // Nothing else pins this. Re-adding `.optional()` to either field would leave this
+  // suite — and `npm run validate` — green today, because every record in the corpus
+  // happens to carry the field.
+  const minimalSource = { id: "s", type: "website", captured: "2026-01" };
+  assert.ok(!Source.safeParse(minimalSource).success, "Source without public_archive must not parse");
+
+  const minimalReference = {
+    id: "ref-id",
+    title: "t",
+    publisher: "p",
+    type: "other",
+    captured: "2026-01",
+  };
+  assert.ok(!Reference.safeParse(minimalReference).success, "Reference without public_archive must not parse");
 });
