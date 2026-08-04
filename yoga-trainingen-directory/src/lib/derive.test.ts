@@ -1,7 +1,8 @@
 /**
  * derive.ts — the computed values, pinned against the loaded corpus and the
  * public-archive fixture. See CLAUDE.md: derive.ts must import nothing from
- * `node:*`, so `providerQa`'s `provenance` argument is always injected here as `[]`.
+ * `node:*`, so this file calls `providerQa(provider)` with no `provenance` argument
+ * at all and relies on its `[]` default, rather than importing provenance.ts to build one.
  */
 import { test } from "node:test";
 import assert from "node:assert/strict";

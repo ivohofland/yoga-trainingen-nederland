@@ -121,8 +121,24 @@ export function integrityErrors(
     if (s.url && s.public_archive.kind === "impossible" && waybackIsPointless(s.url) &&
         s.public_archive.reason !== waybackPointlessReason(s.url)) {
       errors.push(
-        `${file}: source '${s.id}' geeft een andere reden dan waybackPointlessReason(${s.url}) — ` +
-          `verwacht "${waybackPointlessReason(s.url)}". Pas de reden aan, of de functie als die verouderd is.`,
+        `${file}: source '${s.id}' gives a different reason than waybackPointlessReason(${s.url}) — ` +
+          `expected "${waybackPointlessReason(s.url)}". Update the reason, or the function if it is out of date.`,
+      );
+    }
+
+    // A WAYBACK-POINTLESS URL LEFT AS `not_yet` IS THE SAME MISTAKE THE TWO CHECKS ABOVE
+    // GUARD AGAINST, ONE STEP EARLIER. The archiver already knows this URL is pointless — it
+    // prints "Wayback overgeslagen" for it — but it leaves `kind` exactly as it found it, so
+    // a fresh register source lands in `not_yet` and stays there: nobody types
+    // waybackPointlessReason's exact sentence from memory on the first pass. Left alone, the
+    // record renders "publiek — · lokaal ✓" (a GAP — "we have not done it") where the truth
+    // is "publiek n.v.t." (a FINDING — "it cannot be done").
+    if (s.url && s.public_archive.kind === "not_yet" && waybackIsPointless(s.url)) {
+      errors.push(
+        `${file}: source '${s.id}' cites ${s.url} — Wayback cannot evidence it ` +
+          `(${waybackPointlessReason(s.url)}). Do not leave this as public_archive: {kind: not_yet}; write ` +
+          `public_archive: {kind: impossible, reason: "${waybackPointlessReason(s.url)}"} so the record says ` +
+          `"publiek n.v.t. (niet vast te leggen)", which is true, instead of "publiek —", which is not.`,
       );
     }
   }
@@ -418,6 +434,19 @@ export function loadReferences(cwd: string = process.cwd()): ReferenceLoadResult
       errors.push(
         `references/${file}: geeft een andere reden dan waybackPointlessReason(${ref.url}) — ` +
           `verwacht "${waybackPointlessReason(ref.url)}". Pas de reden aan, of de functie als die verouderd is.`,
+      );
+
+    // EEN WAYBACK-ZINLOZE URL DIE OP `not_yet` BLIJFT STAAN IS DEZELFDE FOUT ALS HIERBOVEN,
+    // ÉÉN STAP EERDER. De archiver kent deze URL al als zinloos — hij print "Wayback
+    // overgeslagen" — maar laat `kind` ongemoeid, dus een nieuwe registerbron belandt in
+    // `not_yet` en blijft daar: niemand typt waybackPointlessReason's exacte zin uit het
+    // hoofd. Het record toont dan "publiek — · lokaal ✓" (een GAP) waar de waarheid
+    // "publiek n.v.t." (een BEVINDING) is.
+    if (ref.url && ref.public_archive.kind === "not_yet" && waybackIsPointless(ref.url))
+      errors.push(
+        `references/${file}: public_archive staat nog op not_yet op een Wayback-zinloze bron — ` +
+          `${waybackPointlessReason(ref.url)}; gebruik public_archive: {kind: impossible, reason: ` +
+          `"${waybackPointlessReason(ref.url)}"} + de lokale kopie`,
       );
 
     // A RECORD THAT FAILED ITS OWN CHECKS IS NOT A LOADED RECORD. Returning it alongside the
