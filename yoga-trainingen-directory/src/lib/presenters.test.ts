@@ -18,10 +18,10 @@ import { pphQuad, priceAmountIsOurGap, priceQuad } from "./rules";
 // total. See blockerOf and rowBacking.
 import { ourWorking, totalPrice, type TotalHours, type TotalPrice } from "./derive";
 import { priceGapProvider } from "./price-gap.fixture";
+import { threeStateProvider } from "./public-archive.fixture";
 import { toInquiryView } from "./presenters";
 import { inkFor, quadClass, saysNotPublished } from "./quad";
 import { nl } from "./strings";
-import { waybackIsPointless } from "./wayback";
 import { quadForInquiry } from "./quad";
 // The SCHEMA, as a value — the contract test walks its shape rather than
 // hard-coding the key list it is supposed to be guarding. See SCHEMA_CONTRACT_KEYS.
@@ -1220,7 +1220,9 @@ test("RECORD: a source with no public archive is marked, not hidden", () => {
     const view = toProviderView(p);
     assert.equal(view.sources.length, p.sources.length, `${p.id} dropped a source`);
     for (const [i, s] of p.sources.entries()) {
-      const archived = s.archived_url != null || s.local_snapshot != null;
+      // A gap (`not_yet`) with no local copy either is the ONLY shape that hides the
+      // row; a FINDING (`impossible`/`archived`) always shows, even with no local copy.
+      const archived = s.public_archive.kind !== "not_yet" || s.local_snapshot != null;
       assert.equal(view.sources[i].archiveSlots != null, archived,
         `${p.id}/${s.id}: the archive slots do not match the record`);
     }
@@ -1524,7 +1526,7 @@ test("RECORD: every source shows BOTH halves of the publication bar", () => {
   // standard it does not meet, on the page whose job is to be honest about that.
   // Both slots, always; a missing half is a "—", never silence.
   //
-  // Every assertion reads the RECORD (`archived_url`, `local_snapshot`) and holds
+  // Every assertion reads the RECORD (`public_archive`, `local_snapshot`) and holds
   // the rendered string to it. The view carries no second copy of those two facts
   // to check against — that is the point: one spelling, and the test compares it
   // to the YAML rather than to itself.
@@ -1533,11 +1535,11 @@ test("RECORD: every source shows BOTH halves of the publication bar", () => {
     const view = toProviderView(p);
     for (const [i, rec] of p.sources.entries()) {
       const s = view.sources[i];
-      const hasPublic = rec.archived_url != null;
+      const kind = rec.public_archive.kind;
       const hasLocal = rec.local_snapshot != null;
-      if (!hasPublic && !hasLocal) {
+      if (kind === "not_yet" && !hasLocal) {
         assert.equal(s.archiveSlots, null, `${p.id}/${s.id}: nothing archived, yet it prints a slot line`);
-        seen.add("neither");
+        seen.add("not_yet/false");
         continue;
       }
       const slots = s.archiveSlots;
@@ -1549,19 +1551,15 @@ test("RECORD: every source shows BOTH halves of the publication bar", () => {
       // "—" says WE HAVE NOT DONE IT (a gap in our work). For a Yoga Alliance or CRKBO
       // register that is false: Wayback CANNOT capture them, the local browser capture is
       // the only evidence that can exist, and printing "—" reported a correct decision of
-      // ours as a hole in our research. Twelve sources read that way. It is the project's
-      // own finding-vs-gap rule, turned on its own archive — so it gets the same treatment:
-      // the two are never spelled the same.
-      const impossible = !hasPublic && rec.url != null && waybackIsPointless(rec.url);
-      const expectedPublic = impossible
-        ? nl.archiveNotApplicable
-        : hasPublic
-          ? nl.archivePresent
-          : nl.archiveAbsent;
+      // ours as a hole in our research. It is the project's own finding-vs-gap rule, turned
+      // on its own archive — so it gets the same treatment: the two are never spelled the
+      // same. This reads the record's OWN `public_archive.kind`, never re-derived from a URL.
+      const expectedPublic =
+        kind === "impossible" ? nl.archiveNotApplicable : kind === "archived" ? nl.archivePresent : nl.archiveAbsent;
       assert.ok(
         slots.includes(`${nl.archivePublic} ${expectedPublic}`),
-        `${p.id}/${s.id}: the public-archive slot misreports — "${slots}" (archived_url ${hasPublic}, wayback-impossible ${impossible})`);
-      if (impossible) {
+        `${p.id}/${s.id}: the public-archive slot misreports — "${slots}" (public_archive.kind "${kind}")`);
+      if (kind === "impossible") {
         assert.ok(
           !slots.includes(`${nl.archivePublic} ${nl.archiveAbsent}`),
           `${p.id}/${s.id}: an archive Wayback CANNOT make is shown as one we simply have not made`);
@@ -1569,11 +1567,17 @@ test("RECORD: every source shows BOTH halves of the publication bar", () => {
       assert.ok(
         slots.includes(`${nl.archiveLocal} ${hasLocal ? nl.archivePresent : nl.archiveAbsent}`),
         `${p.id}/${s.id}: the local-copy slot misreports (local_snapshot ${hasLocal})`);
-      seen.add(impossible ? "impossible/local" : `${hasPublic}/${hasLocal}`);
+      seen.add(`${kind}/${hasLocal}`);
     }
   }
-  // every shape exists in the dataset — none of the branches above is dead
-  for (const shape of ["true/true", "false/true", "true/false", "neither", "impossible/local"]) {
+  // Every shape the CORPUS holds today is exercised here — none of these branches is dead.
+  // The sixth combination (`not_yet` with no local copy at all — the row that hides) does
+  // NOT occur in today's data: every not-yet-archived source at least has a local capture.
+  // Per this project's own rule against a test whose trigger the corpus might stop holding
+  // (see price-gap.fixture.ts, public-archive.fixture.ts), that branch is not swept for
+  // here — it is pinned by CONSTRUCTION in "'we have not archived it' and 'it cannot be
+  // archived' never read alike", below.
+  for (const shape of ["archived/true", "archived/false", "impossible/true", "impossible/false", "not_yet/true"]) {
     assert.ok(seen.has(shape), `no source has archive shape ${shape} — that branch is untested`);
   }
 });
@@ -1586,22 +1590,32 @@ test("RECORD: 'we have not archived it' and 'it cannot be archived' never read a
   assert.notEqual(nl.archivePresent, nl.archiveNotApplicable);
 
   const local = "data/archives/x/y-2026-01.pdf";
-  const src = (url: string) =>
-    ({ id: "s", type: "register", url, archived_url: null, captured: "2026-06", local_snapshot: local }) as Source;
+  // `localSnapshot` has NO default — a fixture helper that quietly falls back to "has a
+  // local copy" could not construct the "neither" case below at all.
+  const src = (publicArchive: Source["public_archive"], localSnapshot: string | undefined) =>
+    ({ id: "s", type: "register", captured: "2026-06", public_archive: publicArchive, local_snapshot: localSnapshot }) as Source;
 
   const ya = toProviderView({
     ...providerOf("yoga-den"),
-    sources: [src("https://app.yogaalliance.org/schoolpublicprofile?id=1")],
+    sources: [src({ kind: "impossible", reason: "Salesforce JS-shell — Wayback stores no register data" }, local)],
     programs: [],
   } as unknown as Provider).sources[0];
   const crkbo = toProviderView({
     ...providerOf("yoga-den"),
-    sources: [src("https://www.crkbo.nl/Register/Instellingen")],
+    sources: [src({ kind: "impossible", reason: "search interface, no per-row permalink" }, local)],
     programs: [],
   } as unknown as Provider).sources[0];
   const ordinary = toProviderView({
     ...providerOf("yoga-den"),
-    sources: [src("https://example.test/opleiding")],
+    sources: [src({ kind: "not_yet" }, local)],
+    programs: [],
+  } as unknown as Provider).sources[0];
+  // The shape "RECORD: every source shows BOTH halves…" cannot sweep for: nothing
+  // archived at all, public OR local. Pinned here, by construction, so the row-hiding
+  // branch of archiveSlots() stays exercised even though no record is in this state today.
+  const neither = toProviderView({
+    ...providerOf("yoga-den"),
+    sources: [src({ kind: "not_yet" }, undefined)],
     programs: [],
   } as unknown as Provider).sources[0];
 
@@ -1611,6 +1625,16 @@ test("RECORD: 'we have not archived it' and 'it cannot be archived' never read a
     ordinary.archiveSlots?.includes(`${nl.archivePublic} ${nl.archiveAbsent}`),
     "an ordinary page with no public archive is a GAP — that one really is a '—', and it must stay one",
   );
+  assert.equal(neither.archiveSlots, null, "nothing archived at all — public or local — hides the row entirely");
+});
+
+test("PRESENT: a gap and a finding do not render identically", () => {
+  // If these two ever produce the same string, the project is telling a reader it looked
+  // when it did not, or that a page cannot be archived when nobody tried.
+  const { provider } = threeStateProvider(providers);
+  const view = toProviderView(provider);
+  const [, finding, gap] = view.sources;
+  assert.notEqual(finding.archiveSlots, gap.archiveSlots, "a gap and a finding must never read the same");
 });
 
 test("RECORD: the source count never overstates what is archived", () => {
@@ -1618,7 +1642,7 @@ test("RECORD: the source count never overstates what is archived", () => {
   // counts are printed, and each is the literal count of the field it names.
   for (const p of providers) {
     const view = toProviderView(p);
-    assert.equal(view.sourcesArchivedPublic, p.sources.filter((s) => s.archived_url != null).length);
+    assert.equal(view.sourcesArchivedPublic, p.sources.filter((s) => s.public_archive.kind === "archived").length);
     assert.equal(view.sourcesArchivedLocal, p.sources.filter((s) => s.local_snapshot != null).length);
     assert.ok(view.sourcesArchivedPublic <= view.sources.length);
     assert.ok(view.sourcesArchivedLocal <= view.sources.length);
@@ -2227,7 +2251,7 @@ test("record: a schedule adds a derived ceiling row (ours), and a disconnect row
         schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
       },
     }], modules: [], claims: [], people: [], inquiries: [],
-    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    sources: [{ id: "s", type: "website", captured: "2026-07", public_archive: { kind: "not_yet" } }],
     depth: "listed", last_verified: "2026-07",
   } as unknown as import("../schema").Provider;
 
@@ -2255,7 +2279,7 @@ test("record: no schedule → no ceiling row and no disconnect row", () => {
       price: { period: "total", vat: "unknown", published: "unknown" },
       hours_claimed: { total: 200, breakdown_published: "not_published", contact_published: "not_published" },
     }], modules: [], claims: [], people: [], inquiries: [],
-    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    sources: [{ id: "s", type: "website", captured: "2026-07", public_archive: { kind: "not_yet" } }],
     depth: "listed", last_verified: "2026-07",
   } as unknown as import("../schema").Provider;
 
@@ -2277,7 +2301,7 @@ test("record: a published total at or below the ceiling → ceiling row present,
         schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
       },
     }], modules: [], claims: [], people: [], inquiries: [],
-    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    sources: [{ id: "s", type: "website", captured: "2026-07", public_archive: { kind: "not_yet" } }],
     depth: "listed", last_verified: "2026-07",
   } as unknown as import("../schema").Provider;
 
@@ -2301,7 +2325,7 @@ test("record: a schedule with NO total at all → ceiling row present, disconnec
         schedule: { source: "s", blocks: [{ count: 21, start: "10:00", end: "17:00" }] },
       },
     }], modules: [], claims: [], people: [], inquiries: [],
-    sources: [{ id: "s", type: "website", captured: "2026-07" }],
+    sources: [{ id: "s", type: "website", captured: "2026-07", public_archive: { kind: "not_yet" } }],
     depth: "listed", last_verified: "2026-07",
   } as unknown as import("../schema").Provider;
 
