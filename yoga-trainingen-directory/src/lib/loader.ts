@@ -102,12 +102,27 @@ export function integrityErrors(
     // that shows none of what we cite. One of them (namaste-studios' YA profile) had been
     // returning 404 for weeks: a public archive that did not exist at all. The local,
     // browser-rendered (and where needed, filtered) copy IS the evidence for these; the
-    // public half is honestly absent, and the record must say so with `archived_url: null`.
-    if (s.url && s.archived_url && waybackIsPointless(s.url) && /web\.archive\.org/i.test(s.archived_url)) {
+    // public half is honestly absent, and the record must say so with
+    // `public_archive: {kind: "impossible", reason: …}`.
+    if (s.url && s.public_archive.kind === "archived" && waybackIsPointless(s.url) &&
+        /web\.archive\.org/i.test(s.public_archive.url)) {
       errors.push(
         `${file}: source '${s.id}' claims a Wayback archive of ${s.url} — but Wayback cannot evidence it ` +
-          `(${waybackPointlessReason(s.url)}). The local capture is the evidence; set archived_url: null so ` +
-          `the record says "publiek n.v.t. (niet vast te leggen)", which is true, instead of "publiek ✓", which is not.`,
+          `(${waybackPointlessReason(s.url)}). The local capture is the evidence; use ` +
+          `public_archive: {kind: impossible} so the record says "publiek n.v.t. (niet vast te leggen)", ` +
+          `which is true, instead of "publiek ✓", which is not.`,
+      );
+    }
+
+    // THE REASON IS STORED, SO IT MUST NOT DRIFT FROM THE FUNCTION THAT GENERATED IT.
+    // Only where the URL is Wayback-pointless: with no URL (a gated PDF, an author-supplied
+    // image) or an ordinary one (robots.txt, a paywall) there is nothing to derive from, and
+    // the stored sentence is the whole finding.
+    if (s.url && s.public_archive.kind === "impossible" && waybackIsPointless(s.url) &&
+        s.public_archive.reason !== waybackPointlessReason(s.url)) {
+      errors.push(
+        `${file}: source '${s.id}' geeft een andere reden dan waybackPointlessReason(${s.url}) — ` +
+          `verwacht "${waybackPointlessReason(s.url)}". Pas de reden aan, of de functie als die verouderd is.`,
       );
     }
   }
@@ -382,13 +397,27 @@ export function loadReferences(cwd: string = process.cwd()): ReferenceLoadResult
     // one public archive that would actually work, while claiming to be the provider rule.
     if (
       ref.url &&
-      ref.archived_url &&
+      ref.public_archive.kind === "archived" &&
       waybackIsPointless(ref.url) &&
-      /web\.archive\.org/i.test(ref.archived_url)
+      /web\.archive\.org/i.test(ref.public_archive.url)
     )
       errors.push(
-        `references/${file}: archived_url op een Wayback-zinloze bron — ` +
-          `${waybackPointlessReason(ref.url)}; gebruik archived_url: null + de lokale kopie`,
+        `references/${file}: public_archive op een Wayback-zinloze bron — ` +
+          `${waybackPointlessReason(ref.url)}; gebruik public_archive: {kind: impossible} + de lokale kopie`,
+      );
+
+    // THE REASON IS STORED, SO IT MUST NOT DRIFT FROM THE FUNCTION THAT GENERATED IT — the
+    // same rule the provider records are held to, above. Only where the URL is
+    // Wayback-pointless: with no URL, or an ordinary one, there is nothing to derive from.
+    if (
+      ref.url &&
+      ref.public_archive.kind === "impossible" &&
+      waybackIsPointless(ref.url) &&
+      ref.public_archive.reason !== waybackPointlessReason(ref.url)
+    )
+      errors.push(
+        `references/${file}: geeft een andere reden dan waybackPointlessReason(${ref.url}) — ` +
+          `verwacht "${waybackPointlessReason(ref.url)}". Pas de reden aan, of de functie als die verouderd is.`,
       );
 
     // A RECORD THAT FAILED ITS OWN CHECKS IS NOT A LOADED RECORD. Returning it alongside the
