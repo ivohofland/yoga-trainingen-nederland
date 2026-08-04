@@ -54,7 +54,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000TQhQPYA1&sid=001TR00000OhIbmYAF&name=The-Heart-of-Connection
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "The Heart
@@ -68,7 +71,10 @@ sources:
   - id: ya-teacher-selma-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000jrolBAAQ
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       YA-docentprofiel Selma van der Graaf (Kotten, NL; talen NL/EN; First
@@ -80,7 +86,9 @@ sources:
   - id: site-hatha-2026-06
     type: website
     url: https://theheartofconnection.com/hatha-yoga-teacher-training/
-    archived_url: https://web.archive.org/web/20260628155232/https://theheartofconnection.com/hatha-yoga-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628155232/https://theheartofconnection.com/hatha-yoga-teacher-training/
     captured: "2026-06"
     note: >
       LIVE (browser-gerenderd) 200u Hatha Yoga TT op Hof van Kairos
@@ -100,7 +108,9 @@ sources:
   - id: site-yin-2026-06
     type: website
     url: https://theheartofconnection.com/yin-teacher-training/
-    archived_url: https://web.archive.org/web/20260628155316/https://theheartofconnection.com/yin-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628155316/https://theheartofconnection.com/yin-teacher-training/
     captured: "2026-06"
     note: >
       75u Yin Yoga TT, residentiële week 2-8 nov op Hof van Kairos; €1800 incl.
@@ -110,7 +120,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "heartofconnection + Heart of Conn (Instellingen) + Graaf (Docenten)"
     captured: "2026-06"
     note: >

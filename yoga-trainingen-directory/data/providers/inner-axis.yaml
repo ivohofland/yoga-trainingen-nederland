@@ -60,7 +60,9 @@ sources:
   - id: site-maxstrom-2026-06
     type: website
     url: https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/
-    archived_url: https://web.archive.org/web/20260620133612/https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620133612/https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/
     captured: "2026-06-18"
     note: "Opleidingspagina: structuur, faculty, dagrooster, ethiek-code. Geen prijs
       of cohortdatum."
@@ -68,7 +70,9 @@ sources:
   - id: signup-2026-06
     type: website
     url: https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom
-    archived_url: https://web.archive.org/web/20260620133755/https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620133755/https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom
     captured: "2026-06-18"
     note: "Kajabi interesse-/aanmeldformulier; geen prijs of data. Linkt een
       'Medical disclaimer'."
@@ -76,7 +80,9 @@ sources:
   - id: host-2026-06
     type: website
     url: https://yogamoves.nl/teacher-training/max-strom-inner-axis-tt/
-    archived_url: https://web.archive.org/web/20260620133927/https://www.yogamoves.nl/teacher-training
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620133927/https://www.yogamoves.nl/teacher-training
     captured: "2026-06-18"
     note: "Gastpagina van Yoga Moves Utrecht die de Inner Axis TT host/aankondigt
       (bevestigt de host-relatie)."
@@ -84,7 +90,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgscAAA&sid=0013g000002nmYlAAI&name=Yoga-Moves
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-18"
     note: >
       Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde
@@ -94,7 +103,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Strom"
     captured: "2026-06-18"
     note: >

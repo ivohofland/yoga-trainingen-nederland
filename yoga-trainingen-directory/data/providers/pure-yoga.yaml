@@ -68,7 +68,9 @@ sources:
   - id: site-pureteacher-2026-06
     type: website
     url: https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher
-    archived_url: https://web.archive.org/web/20260630134409/https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260630134409/https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher
     captured: "2026-06"
     note: >
       LIVE (browser-gerenderd) "Pureteacher — erkende 200 uur Yoga docenten
@@ -85,7 +87,8 @@ sources:
   - id: site-opbouw-2026-06
     type: website
     url: https://www.pureyoga.nl/site/index.php/opbouw-en-thema-s-pt
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06"
     note: "Module-/thema-opbouw van de Pureteacher (modules I-IV met onderliggende
       thema-pagina's); bron voor de modulestructuur."
@@ -93,7 +96,9 @@ sources:
   - id: site-prijzen-2026-06
     type: website
     url: https://www.pureyoga.nl/site/index.php/prijzen-pt
-    archived_url: https://web.archive.org/web/20260630134621/https://www.pureyoga.nl/site/index.php/prijzen-pt
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260630134621/https://www.pureyoga.nl/site/index.php/prijzen-pt
     captured: "2026-06"
     note: >
       Prijzen (vanaf 18 jan 2025): volledige opleiding (4 modules) €3.885,50
@@ -108,7 +113,9 @@ sources:
   - id: site-docenten-2026-06
     type: website
     url: https://www.pureyoga.nl/site/index.php/docenten-pt
-    archived_url: https://web.archive.org/web/20260630134715/https://www.pureyoga.nl/site/index.php/docenten-pt
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260630134715/https://www.pureyoga.nl/site/index.php/docenten-pt
     captured: "2026-06"
     note: >
       Docenten: Rineke Vierhoven (Senior Teacher, geaccrediteerd bij Yoga
@@ -120,7 +127,8 @@ sources:
   - id: site-leerdoelen-2026-06
     type: website
     url: https://www.pureyoga.nl/site/index.php/leerdoelen-en-toetsing
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06"
     note: >
       Leerdoelen & toetsing: toepassen van yogaprincipes/-filosofie, inspreken &
@@ -132,7 +140,9 @@ sources:
   - id: site-deelname-2026-06
     type: website
     url: https://www.pureyoga.nl/site/index.php/deelname-pt
-    archived_url: https://web.archive.org/web/20260630134953/https://www.pureyoga.nl/site/index.php/deelname-pt
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260630134953/https://www.pureyoga.nl/site/index.php/deelname-pt
     captured: "2026-06"
     note: >
       Toelatingsvoorwaarden: toegankelijk voor beginners t/m gevorderden &
@@ -144,7 +154,9 @@ sources:
   - id: site-accreditatie-2026-06
     type: website
     url: https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher
-    archived_url: https://web.archive.org/web/20260630135042/https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260630135042/https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher
     captured: "2026-06"
     note: >
       "Erkende 200u docentenopleiding Pureteacher": Pureyoga afficheert zich als
@@ -163,10 +175,17 @@ sources:
       2023 Zwolle (Module I/II 2023 Zwolle). Alle getoonde cohorten liggen in
       het verleden (laatste = 2023 Zwolle); geen 2024-2026-cohort getoond. Bron
       voor de cohort-data.
+    public_archive:
+      kind: impossible
+      reason: "door de gebruiker aangeleverde afbeelding: er is geen publieke bron-URL
+        om te archiveren"
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Pureyoga (instelling, naam + website); Vierhoven (docent)"
     captured: "2026-06"
     note: >
@@ -245,16 +264,16 @@ programs:
           De deelnamevoorwaarden, letterlijk: "Je hebt 2 jaar zelf yoga
           beoefend." Ervaringseis, geen aankoop.
       - kind: experience
-        label: "tijdens de opleiding yogalessen bij een yogadocent blijven volgen
-          (een VEREISTE volgens de school)"
+        label: "tijdens de opleiding yogalessen bij een yogadocent blijven volgen (een
+          VEREISTE volgens de school)"
         source: site-deelname-2026-06
         note: >
           Een doorlopende verplichting NAAST de opleiding, geen voorafgaande
-          opleiding — en de school hangt er geen prijs aan (die hangt af van waar
-          je die lessen volgt). Een echte kostenpost voor de student, met een
-          bedrag dat op geen enkele pagina staat: dus wél vastgelegd als poort,
-          niet als bedrag (spec §4.3 — een gat dat je niet kunt prijzen is geen
-          gat dat je mag verzwijgen).
+          opleiding — en de school hangt er geen prijs aan (die hangt af van
+          waar je die lessen volgt). Een echte kostenpost voor de student, met
+          een bedrag dat op geen enkele pagina staat: dus wél vastgelegd als
+          poort, niet als bedrag (spec §4.3 — een gat dat je niet kunt prijzen
+          is geen gat dat je mag verzwijgen).
     price:
       amount_eur: 4235.20
       vat: incl

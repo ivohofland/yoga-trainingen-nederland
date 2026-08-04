@@ -53,7 +53,9 @@ sources:
   - id: site-hatha-2026-06
     type: website
     url: https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/
-    archived_url: https://web.archive.org/web/20260627084538/https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627084538/https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/
     captured: "2026-06-25"
     note: >
       200u Hatha Yoga Docent Opleiding (volledig online, self-paced): 6 modules,
@@ -63,7 +65,9 @@ sources:
   - id: site-yin-2026-06
     type: website
     url: https://newnatureyoga.com/200-uur-yin-yoga-opleiding/
-    archived_url: https://web.archive.org/web/20260627084732/https://newnatureyoga.com/200-uur-yin-yoga-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627084732/https://newnatureyoga.com/200-uur-yin-yoga-opleiding/
     captured: "2026-06-25"
     note: >
       200u Yin Yoga Docent Opleiding (volledig online, self-paced): 6 modules,
@@ -73,7 +77,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pkN1AAI&sid=0013g000002npiWAAQ&name=NewNature-Yoga
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'NewNature
       Yoga', Silvolde, RYS 200, First Registered July 2019, 0 training dates;
@@ -82,7 +89,10 @@ sources:
   - id: ya-teacher-dorien-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023rDEAAY
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "YA-docentprofiel Dorien Bortels (E-RYT, Silvolde; Yin TT bij Bernie
       Clark; teaching: Online Yoga Classes; First Registered July 2019)."
@@ -90,7 +100,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "NewNature"
     captured: "2026-06-25"
     note: >

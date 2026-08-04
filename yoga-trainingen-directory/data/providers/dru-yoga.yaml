@@ -61,14 +61,16 @@ sources:
   - id: site-2026-06
     type: website
     url: https://www.druyogaopleiding.nl
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06-18"
     note: "Opleidingspagina met programma, contacturen, data en volledige prijs."
     local_snapshot: data/archives/dru-yoga/site-2026-06-2026-06-18.pdf
   - id: checkout-2026-06
     type: website
     url: https://drunetherlands.plugandpay.nl/checkout/druyoga2026-aanbetaling
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06-18"
     note: "Aanbetaling-checkout (€250, niet-restitueerbaar); tenant 'Dru Health &
       Wellbeing'."
@@ -76,7 +78,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgXKAAY&sid=0013g000002nm5WAAQ&name=International-School-of-Dru-Yoga-(Arnhem)
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-18"
     note: "Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde
       lokale capture nodig."
@@ -84,7 +89,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Dru Health"
     captured: "2026-06-18"
     note: >

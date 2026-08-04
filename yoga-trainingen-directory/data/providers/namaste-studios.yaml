@@ -34,14 +34,19 @@ sources:
   - id: site-2026-06
     type: website
     url: https://namastestudios.nl/yogadocentopleiding
-    archived_url: https://web.archive.org/web/20260714093616/https://namastestudios.nl/yogadocentopleiding
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260714093616/https://namastestudios.nl/yogadocentopleiding
     local_snapshot: data/archives/namaste-studios/site-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
   - id: ya-school-profile-2026-06
     type: register
     url: "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&si\
       d=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga"
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     local_snapshot: data/archives/namaste-studios/ya-school-profile-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
     note: >
@@ -53,7 +58,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-12"
     local_snapshot: data/archives/namaste-studios/crkbo-register-2026-06-2026-07-14.pdf
 

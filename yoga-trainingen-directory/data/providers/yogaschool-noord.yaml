@@ -59,7 +59,9 @@ sources:
   - id: site-vinyasa-2026-06
     type: website
     url: https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding
-    archived_url: https://web.archive.org/web/20260628173433/https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628173433/https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding
     captured: "2026-06"
     note: >
       LIVE (browser-gerenderd) 200u Vinyasa Yoga TT, lead Esther van Voorst
@@ -80,7 +82,9 @@ sources:
   - id: site-yin-2026-06
     type: website
     url: https://www.yogaschoolnoord.nl/yin-yoga-opleiding
-    archived_url: https://web.archive.org/web/20260628173559/https://www.yogaschoolnoord.nl/yin-yoga-opleiding
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628173559/https://www.yogaschoolnoord.nl/yin-yoga-opleiding
     captured: "2026-06"
     note: >
       200u Yin Yoga-opleiding (4×50u modules: Anatomie / Energie-meridianen /
@@ -95,7 +99,8 @@ sources:
   - id: site-voorwaarden-2026-06
     type: website
     url: https://www.yogaschoolnoord.nl/voorwaarden-opleidingen
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06"
     note: "Algemene voorwaarden opleidingen: studieovereenkomst (volledige
       studieduur), bedenktijd, inschrijving & annulering."
@@ -103,7 +108,10 @@ sources:
   - id: ya-search-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Yogaschool%20Noord
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     query: "Yogaschool Noord (school); van Voorst (teacher); Kaden (teacher)"
     captured: "2026-06"
     note: >
@@ -116,7 +124,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "yogaschoolnoord"
     captured: "2026-06"
     note: >

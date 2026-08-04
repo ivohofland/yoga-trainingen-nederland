@@ -30,25 +30,35 @@ sources:
   - id: site-att-2026-06
     type: website
     url: https://reinierdorrepaal.nl/ashtanga-teacher-training/
-    archived_url: https://web.archive.org/web/20260612190235/https://reinierdorrepaal.nl/ashtanga-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260612190235/https://reinierdorrepaal.nl/ashtanga-teacher-training/
     captured: "2026-06-12"
     local_snapshot: data/archives/jai-yoga/site-att-2026-06-2026-06-12.pdf
   - id: site-ptt-2026-06
     type: website
     url: https://reinierdorrepaal.nl/pranayama-teacher-training/
-    archived_url: https://web.archive.org/web/20260612190614/https://reinierdorrepaal.nl/pranayama-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260612190614/https://reinierdorrepaal.nl/pranayama-teacher-training/
     captured: "2026-06-12"
     local_snapshot: data/archives/jai-yoga/site-ptt-2026-06-2026-06-12.pdf
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-12"
     local_snapshot: data/archives/jai-yoga/ya-register-2026-06-2026-06-12.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-12"
     local_snapshot: data/archives/jai-yoga/crkbo-register-2026-06-2026-06-12.pdf
 

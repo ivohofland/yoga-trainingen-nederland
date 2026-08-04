@@ -46,7 +46,9 @@ sources:
   - id: site-tt-2026-06
     type: website
     url: https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/
-    archived_url: https://web.archive.org/web/20260630084309/https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260630084309/https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/
     captured: "2026-06"
     note: >
       LIVE (browser-gerenderd) "200Hr Bhakti Vinyasa Teacher Training — YOGA
@@ -65,7 +67,9 @@ sources:
   - id: yogibit-event-2026-06
     type: website
     url: https://theyogahome.yogibit.nl/web/nl/events/4678
-    archived_url: https://web.archive.org/web/20260630084407/https://theyogahome.yogibit.nl/web/nl/events/4678
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260630084407/https://theyogahome.yogibit.nl/web/nl/events/4678
     captured: "2026-06"
     note: "Yogibit boekings-/eventpagina voor het 2026-cohort (event 4678). Pointer;
       niet diep uitgelezen."
@@ -73,7 +77,10 @@ sources:
   - id: ya-search-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Yoga%20Home
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     query: "Yoga Home (school); Mindful Seva (school)"
     captured: "2026-06"
     note: >
@@ -85,7 +92,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Yoga Home / Mindful Seva / theyogahome"
     captured: "2026-06"
     note: >

@@ -27,7 +27,9 @@ sources:
   - id: site-2026-06
     type: website
     url: https://www.arhantayoga.nl/yoga-opleiding-nederland/
-    archived_url: https://archive.ph/newest/https://www.arhantayoga.nl/yoga-opleiding-nederland/
+    public_archive:
+      kind: archived
+      url: https://archive.ph/newest/https://www.arhantayoga.nl/yoga-opleiding-nederland/
     local_snapshot: data/archives/arhanta-yoga/site-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
     note: >
@@ -40,14 +42,20 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-12"
     note: "YA-directory, country=Netherlands; JS-gerenderd, browser nodig"
     local_snapshot: data/archives/arhanta-yoga/ya-register-2026-06-2026-07-14.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-12"
     local_snapshot: data/archives/arhanta-yoga/crkbo-register-2026-06-2026-07-14.pdf
 

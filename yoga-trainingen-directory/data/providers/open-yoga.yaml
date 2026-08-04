@@ -37,14 +37,18 @@ sources:
   - id: site-basis-2026-06
     type: website
     url: https://openyoga.nl/basis-yoga-opleiding/
-    archived_url: https://web.archive.org/web/20260620163507/https://openyoga.nl/basis-yoga-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620163507/https://openyoga.nl/basis-yoga-opleiding/
     captured: "2026-06-20"
     note: "200u Basis Yoga Opleiding (NL): programma, prijs, data, docenten."
     local_snapshot: data/archives/open-yoga/site-basis-2026-06-2026-06-20.pdf
   - id: site-fundamental-2026-06
     type: website
     url: https://openyoga.nl/fundamental-yoga-teacher-training/
-    archived_url: https://web.archive.org/web/20260620163652/https://openyoga.nl/fundamental-yoga-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620163652/https://openyoga.nl/fundamental-yoga-teacher-training/
     captured: "2026-06-20"
     note: "Engelstalige variant van de 200u-opleiding ('Fundamental Teacher
       Training')."
@@ -52,7 +56,9 @@ sources:
   - id: site-advanced-2026-06
     type: website
     url: https://openyoga.nl/advanced-yoga-teacher-training/
-    archived_url: https://web.archive.org/web/20260620163848/https://openyoga.nl/advanced-yoga-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620163848/https://openyoga.nl/advanced-yoga-teacher-training/
     captured: "2026-06-20"
     note: "300u Advanced Teacher Training (Continuing Education): zelf samen te
       stellen modulair traject."
@@ -60,7 +66,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phtaAAA&sid=0013g000002nnCHAAY&name=Open-Yoga
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-20"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Titel bevestigt 'Open
       Yoga | Registered Yoga School'."
@@ -68,7 +77,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Open Yoga"
     captured: "2026-06-20"
     note: >

@@ -25,26 +25,36 @@ sources:
   - id: site-200-2026-06
     type: website
     url: https://yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/
-    archived_url: https://web.archive.org/web/20260613081202/https://en.yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260613081202/https://en.yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/
     captured: "2026-06-13"
     local_snapshot: data/archives/yoga-nature-studio/site-200-2026-06-2026-06-13.pdf
   - id: site-300-2026-06
     type: website
     url: https://yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/
-    archived_url: https://web.archive.org/web/20260613081307/https://en.yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260613081307/https://en.yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/
     captured: "2026-06-13"
     note: "prijzen niet op deze pagina; per module geboekt"
     local_snapshot: data/archives/yoga-nature-studio/site-300-2026-06-2026-06-13.pdf
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-13"
     local_snapshot: data/archives/yoga-nature-studio/ya-register-2026-06-2026-06-13.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-13"
     local_snapshot: data/archives/yoga-nature-studio/crkbo-register-2026-06-2026-06-13.pdf
 
@@ -76,10 +86,10 @@ programs:
         note: >
           FAQ, letterlijk: "Do I need any yoga experience to participate in this
           yoga training? Yes, we require at least one to two years of regular
-          yoga experience." (Staat in de HTML-kopie; in de PDF-render is de
-          FAQ ingeklapt — vgl. de HTML/PDF-splitsing in provenance.ts.) Plus:
-          "We expect you to have spent a significant amount of time on the mat
-          and have a good foundation of practice." Ervaringseis, geen aankoop.
+          yoga experience." (Staat in de HTML-kopie; in de PDF-render is de FAQ
+          ingeklapt — vgl. de HTML/PDF-splitsing in provenance.ts.) Plus: "We
+          expect you to have spent a significant amount of time on the mat and
+          have a good foundation of practice." Ervaringseis, geen aankoop.
     price:
       amount_eur: 2700 # comparable base: super early bird
       variants:
@@ -173,10 +183,10 @@ programs:
         source: site-300-2026-06
         note: >
           "Yoga teachers with a 200-hour Yoga Teacher Training" — en "of
-          vergelijkbare ervaring": de eis is niet aan deze school gebonden, en de
-          studio verkoopt zelf een 200u (€ 2.700) zonder die te verplichten. Geen
-          bedrag opgeteld; bovendien publiceert de studio voor de 300u zelf geen
-          prijs, dus er is ook geen pad om bij op te tellen.
+          vergelijkbare ervaring": de eis is niet aan deze school gebonden, en
+          de studio verkoopt zelf een 200u (€ 2.700) zonder die te verplichten.
+          Geen bedrag opgeteld; bovendien publiceert de studio voor de 300u zelf
+          geen prijs, dus er is ook geen pad om bij op te tellen.
     price:
       amount_eur: null
       vat: unknown

@@ -43,7 +43,9 @@ sources:
   - id: site-multistyle-2026-06
     type: website
     url: https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/
-    archived_url: https://web.archive.org/web/20260629190947/https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260629190947/https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/
     captured: "2026-06"
     note: >
       LIVE (browser-gerenderd) "Multi Style Yoga Docent Opleiding 200 uur (Yoga
@@ -57,7 +59,9 @@ sources:
   - id: site-yinxl-2026-06
     type: website
     url: https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
-    archived_url: https://web.archive.org/web/20260629191031/https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260629191031/https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/
     captured: "2026-06"
     note: >
       LIVE "Yin Yoga XL Docent Opleiding 200 uur (Yoga Alliance)", in 2 delen:
@@ -80,10 +84,17 @@ sources:
       TT 200u (28 sep 2024 - 5 apr 2025); Yin XL yoga TT 200u (29 mrt - 15 nov
       2025); Yoga Nidra verdieping voor docenten 20u (10-11 aug 2024). Bron voor
       de cohort-data.
+    public_archive:
+      kind: impossible
+      reason: "door de gebruiker aangeleverde afbeelding: er is geen publieke bron-URL
+        om te archiveren"
   - id: ya-search-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Adhouna
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     query: "Adhouna (school)"
     captured: "2026-06"
     note: >
@@ -94,7 +105,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Adhouna"
     captured: "2026-06"
     note: >
@@ -135,9 +149,9 @@ modules:
       source: site-yinxl-2026-06
     note: >
       "Deel II van deze Yin Yoga Opleiding kost € 1.305,00 incl. BTW (€ 1.078,50
-      excl. BTW). Dit is inclusief syllabus en examen." (site-yinxl-2026-06). "De
-      inschrijving voor deel II wordt ná de start van deel I opengesteld. Deel II
-      vindt doorgang bij voldoende belangstelling!"
+      excl. BTW). Dit is inclusief syllabus en examen." (site-yinxl-2026-06).
+      "De inschrijving voor deel II wordt ná de start van deel I opengesteld.
+      Deel II vindt doorgang bij voldoende belangstelling!"
 
 programs:
   - id: 200-multistyle
@@ -172,11 +186,11 @@ programs:
       note: >
         Geen prijs op de Multi Style-pagina (site-multistyle-2026-06). vat =
         unknown (§4.11): die pagina rept met geen woord over btw — niet in de
-        HTML, niet in de browser-render. De eerdere 'incl' was overgenomen van de
-        pagina van een ANDERE opleiding (site-yinxl-2026-06: "Deel I van deze Yin
-        Yoga Opleiding kost € 1.420,00 incl. BTW"). Een btw-behandeling die van
-        het productblad van een ander product is afgelezen, is geen feit over
-        deze opleiding; btw wordt waargenomen of is niet bekend.
+        HTML, niet in de browser-render. De eerdere 'incl' was overgenomen van
+        de pagina van een ANDERE opleiding (site-yinxl-2026-06: "Deel I van deze
+        Yin Yoga Opleiding kost € 1.420,00 incl. BTW"). Een btw-behandeling die
+        van het productblad van een ander product is afgelezen, is geen feit
+        over deze opleiding; btw wordt waargenomen of is niet bekend.
       source: site-multistyle-2026-06
     hours_claimed:
       total: 200
@@ -236,16 +250,17 @@ programs:
       published: yes
       includes: "syllabus en examen (per deel)"
       note: >
-        ADHOUNA PUBLICEERT GEEN TOTAALPRIJS. De pagina noemt twee bedragen, apart:
-        "Deel I van deze Yin Yoga Opleiding kost € 1.420,00 incl. BTW (€ 1.173,55
-        excl. BTW)" en "Deel II ... kost € 1.305,00 incl. BTW (€ 1.078,50 excl.
-        BTW)", beide "inclusief syllabus en examen"; een herexamen kost € 50,00.
-        € 1.420 + € 1.305 = € 2.725 is ONZE optelling — het getal 2725 staat op
-        geen enkele gearchiveerde pagina van deze school, en `amount_eur` blijft
-        daarom leeg (spec §6/v0.8: afgeleide waarden worden niet opgeslagen; het
-        totaal wordt bij het renderen als het onze getoond). Inschrijven per deel;
-        Deel II wordt ná de start van Deel I opengesteld en gaat door bij
-        voldoende belangstelling. btw = incl (directe waarneming, §4.11).
+        ADHOUNA PUBLICEERT GEEN TOTAALPRIJS. De pagina noemt twee bedragen,
+        apart: "Deel I van deze Yin Yoga Opleiding kost € 1.420,00 incl. BTW (€
+        1.173,55 excl. BTW)" en "Deel II ... kost € 1.305,00 incl. BTW (€
+        1.078,50 excl. BTW)", beide "inclusief syllabus en examen"; een
+        herexamen kost € 50,00. € 1.420 + € 1.305 = € 2.725 is ONZE optelling —
+        het getal 2725 staat op geen enkele gearchiveerde pagina van deze
+        school, en `amount_eur` blijft daarom leeg (spec §6/v0.8: afgeleide
+        waarden worden niet opgeslagen; het totaal wordt bij het renderen als
+        het onze getoond). Inschrijven per deel; Deel II wordt ná de start van
+        Deel I opengesteld en gaat door bij voldoende belangstelling. btw = incl
+        (directe waarneming, §4.11).
       source: site-yinxl-2026-06
     hours_claimed:
       total: 200

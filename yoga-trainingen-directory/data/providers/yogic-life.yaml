@@ -26,7 +26,9 @@ sources:
   - id: site-ryt200-2026-06
     type: website
     url: https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/
-    archived_url: https://web.archive.org/web/20260612191731/https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260612191731/https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/
     captured: "2026-06-12"
     note: "JS-gerenderd; web fetch gaf lege body, uitgelezen via browser — lokale
       kopie via archiveerscript essentieel"
@@ -34,20 +36,27 @@ sources:
   - id: site-ryt300-2026-06
     type: website
     url: https://yogiclife.eu/nl/yoga-docent-opleiding/ryt300-yoga-docentenopleiding/
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06-12"
     note: "JS-gerenderd; idem"
     local_snapshot: data/archives/yogic-life/site-ryt300-2026-06-2026-06-12.pdf
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-12"
     local_snapshot: data/archives/yogic-life/ya-register-2026-06-2026-06-12.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-12"
     local_snapshot: data/archives/yogic-life/crkbo-register-2026-06-2026-06-12.pdf
 
@@ -58,7 +67,7 @@ programs:
     format_label: "200"
     style_claimed: "Multi Style: Raja, Hatha, Yin, Kundalini & Ashtanga;
       traditionele Indiase yogatraditie + moderne inzichten"
-    styles: [multistyle, raja, hatha, yin, kundalini, ashtanga]  # zelf-gelabeld "Multi Style"
+    styles: [ multistyle, raja, hatha, yin, kundalini, ashtanga ] # zelf-gelabeld "Multi Style"
     accreditation:
       - body: yoga_alliance
         label_claimed: "Yoga Alliance Gecertificeerd; erkend door Yoga Alliance International"
@@ -116,7 +125,7 @@ programs:
     style_claimed: "Multi Style incl. Naad Yoga; kosha's, chakra's, guna's, '9
       Dimensies van Bewustzijn'; neuroplasticiteit en trauma-geïnformeerd
       lesgeven"
-    styles: [multistyle]  # zelf-gelabeld "Multi Style"
+    styles: [ multistyle ] # zelf-gelabeld "Multi Style"
     accreditation:
       - body: yoga_alliance
         label_claimed: "officieel erkend door de Yoga Alliance als een RYT300-uur
@@ -136,8 +145,8 @@ programs:
         note: >
           Letterlijk: "Toelatingseis: Een afgeronde RYT200 Yoga
           Docentenopleiding." Geen eis dat die bij Yogic Life zelf is behaald
-          (zij verkopen er wél één, € 2.399) — dus een poort die in de markt geld
-          kost, maar geen bedrag dat wij bij DEZE opleiding mogen optellen.
+          (zij verkopen er wél één, € 2.399) — dus een poort die in de markt
+          geld kost, maar geen bedrag dat wij bij DEZE opleiding mogen optellen.
     price:
       amount_eur: 3599
       vat: unknown

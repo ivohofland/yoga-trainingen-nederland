@@ -85,7 +85,9 @@ sources:
   - id: site-cyt-2026-07
     type: website
     url: https://quenosportopleidingen.nl/100-200-en-500-uur-cyt-certificering-yoga-alliance-international-india/
-    archived_url: https://web.archive.org/web/20260714114801/https://quenosportopleidingen.nl/100-200-en-500-uur-cyt-certificering-yoga-alliance-international-india/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260714114801/https://quenosportopleidingen.nl/100-200-en-500-uur-cyt-certificering-yoga-alliance-international-india/
     captured: "2026-07-11"
     note: >
       De CYT-pagina: de enige gearchiveerde pagina van de aanbieder, en de bron
@@ -101,7 +103,10 @@ sources:
   - id: crkbo-register-2026-07
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Queno"
     captured: "2026-07-11"
     note: >

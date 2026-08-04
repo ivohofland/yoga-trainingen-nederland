@@ -62,7 +62,9 @@ sources:
   - id: site-ytt-2026-06
     type: website
     url: https://gurugian.nl/ky-teachertraining/
-    archived_url: https://web.archive.org/web/20260628053240/https://gurugian.nl/ky-teachertraining/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628053240/https://gurugian.nl/ky-teachertraining/
     captured: "2026-06"
     note: >
       "Kundalini Yoga Teacher Training Level 1 (Lerarenopleiding)" — de RYS-200
@@ -76,7 +78,9 @@ sources:
   - id: site-home-2026-06
     type: website
     url: https://gurugian.nl
-    archived_url: https://web.archive.org/web/20260628053316/https://gurugian.nl/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628053316/https://gurugian.nl/
     captured: "2026-06"
     note: >
       Homepage Guru Gian / Gian Instituut: footer met KvK 34342492, btw
@@ -87,7 +91,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000tNrkrAAC&name=Gian-Instituut
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Gian
       Instituut', Groet (Achterweg 9), RYS 200, First Registered October 2023,
@@ -97,7 +104,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Gian"
     captured: "2026-06"
     note: >

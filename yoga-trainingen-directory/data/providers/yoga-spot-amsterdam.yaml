@@ -49,7 +49,9 @@ sources:
   - id: site-2026-06
     type: website
     url: https://yogaspot.nl/hatha-yoga-teacher-training/
-    archived_url: https://web.archive.org/web/20260627091949/https://yogaspot.nl/hatha-yoga-teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627091949/https://yogaspot.nl/hatha-yoga-teacher-training/
     captured: "2026-06-25"
     note: >
       200u Hatha (Flow) Yoga Teacher Training: inhoud, docenten (Lahma Muris &
@@ -59,7 +61,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002piadAAA&sid=0013g000002noAUAAY&name=Yoga-Spot-Amsterdam
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga Spot
       Amsterdam', Amsterdam, RYS 200, First Registered December 2019, 1 review,
@@ -68,7 +73,10 @@ sources:
   - id: ya-teacher-margriet-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000022ufYAAQ
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "YA-docentprofiel Margriet Verhagen (RYT, Amsterdam; First Registered
       February 2013; talen EN/NL; YACEP)."
@@ -76,7 +84,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Yogaspot"
     captured: "2026-06-25"
     note: >

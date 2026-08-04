@@ -56,7 +56,9 @@ sources:
   - id: site-overview-2026-06
     type: website
     url: https://poyomicenter.nl/pages/the-awakening-yoga-soul-teacher-training-retreat
-    archived_url: https://web.archive.org/web/20260627185901/https://poyomicenter.nl/pages/the-awakening-yoga-soul-teacher-training-retreat
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627185901/https://poyomicenter.nl/pages/the-awakening-yoga-soul-teacher-training-retreat
     captured: "2026-06-25"
     note: "Overzichtspagina The Awakening Yoga Soul Teacher Training & Retreat: 3
       stijlen (Kundalini/Yin/Easy Vinyasa), kamerprijzen (€2400 gedeeld / €2700
@@ -65,7 +67,9 @@ sources:
   - id: site-product-2026-06
     type: website
     url: https://poyomicenter.nl/products/the-aweking-yoga-soul-teacher-training-retreat
-    archived_url: https://web.archive.org/web/20260627185940/https://poyomicenter.nl/products/the-aweking-yoga-soul-teacher-training-retreat
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627185940/https://poyomicenter.nl/products/the-aweking-yoga-soul-teacher-training-retreat
     captured: "2026-06-25"
     note: >
       Productpagina (200u, 7 maanden): volledige beschrijving, stijlen,
@@ -76,7 +80,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000phaPtAAI&sid=0013g00000ENEPYAA5&name=PoYoMi-Teacher-Training-Community
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'PoYoMi
       Teacher Training Community', Waalwijk, RYS 200, First Registered May 2023,
@@ -86,7 +93,10 @@ sources:
   - id: ya-teacher-leonie-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023E5HAAU
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "YA-docentprofiel Leonie van der Linden (RYT, Waalwijk; First Registered
       August 2017; YACEP; teaching: Online Yoga Classes/Zoom)."
@@ -94,7 +104,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "PoYoMi"
     captured: "2026-06-25"
     note: "Negatieve check: 'PoYoMi'/website 'poyomi' → 0 in Instellingen; 'van der
@@ -189,8 +202,8 @@ programs:
 claims:
   - id: poyomi-lineage
     scope: program:200-awakening
-    quote: "Wij leren je de kundalini yoga volgens de oude tradities en niet volgens de
-      leer van Yogi Bhajan, in verband met zijn omstreden verleden"
+    quote: "Wij leren je de kundalini yoga volgens de oude tradities en niet volgens
+      de leer van Yogi Bhajan, in verband met zijn omstreden verleden"
     category: lineage_authority
     source: site-product-2026-06
 

@@ -53,7 +53,9 @@ sources:
   - id: site-2026-06
     type: website
     url: https://www.dutchyogaacademy.com/opleiding
-    archived_url: https://web.archive.org/web/20260613075249/https://www.dutchyogaacademy.com/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260613075249/https://www.dutchyogaacademy.com/
     captured: "2026-06-25"
     note: >
       200u Vinyasa Yoga Docentopleiding (Wix): inhoud (asana/pranayama,
@@ -65,7 +67,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002qgT9AAI&sid=0013g000002qaTwAAI&name=Dutch-Yoga-Academy
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Dutch Yoga
       Academy', Nijmegen (Prins Hendrikstraat 16), RYS 200, First Registered
@@ -75,7 +80,10 @@ sources:
   - id: ya-teacher-merel-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000234pbAAA
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: >
       YA-docentprofiel Merel Martens (E-RYT 500, YACEP; First Registered Feb
@@ -86,7 +94,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Dutch Yoga Academy"
     captured: "2026-06-25"
     note: >

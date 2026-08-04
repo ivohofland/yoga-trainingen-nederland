@@ -55,19 +55,19 @@ registrations:
       gehost door Yoga Moves maar gecertificeerd door Marilou van Hoeks eigen
       school "Pranayama" (pranayama.nl) — een aparte YA-RYS, niet de Yoga
       Moves-registratie. Diploma komt van Pranayama; btw-vrijstelling loopt via
-      Yoga Moves' CRKBO.
-      HER-VERIFICATIE 2026-06-25 (plaatsingsbesluit gecontroleerd): het live
-      YA-profiel "Pranayama" is een ECHTE zelfstandige RYS (eigen adres Franz
-      Lehársingel, Utrecht — NIET het Yoga Moves-studioadres; First Registered
-      September 2020; 4.78/16 reviews; enige teaching staff Marilou van Hoek,
-      E-RYT 500/YACEP; 0 upcoming training dates). De Ashtanga-200u wordt echter
-      uitsluitend op yogamoves.nl gemarket en geboekt; pranayama.nl is een
-      brochure-site (slideshow) zonder eigen 200u-inschrijving (eerder alleen een
-      100u Sādhana Mentorship waargenomen). Volgens decision #9 (canonieke
-      marketing + booking = yogamoves.nl) blijft de Ashtanga-TT dus een programma
-      ONDER Yoga Moves, met Pranayama als holder-nuance. SPLITS-TRIGGER: zodra
-      pranayama.nl zelf een 200/300/500u-traject mét eigen inschrijving voert,
-      Pranayama als eigen provider-record afsplitsen.
+      Yoga Moves' CRKBO. HER-VERIFICATIE 2026-06-25 (plaatsingsbesluit
+      gecontroleerd): het live YA-profiel "Pranayama" is een ECHTE zelfstandige
+      RYS (eigen adres Franz Lehársingel, Utrecht — NIET het Yoga
+      Moves-studioadres; First Registered September 2020; 4.78/16 reviews; enige
+      teaching staff Marilou van Hoek, E-RYT 500/YACEP; 0 upcoming training
+      dates). De Ashtanga-200u wordt echter uitsluitend op yogamoves.nl gemarket
+      en geboekt; pranayama.nl is een brochure-site (slideshow) zonder eigen
+      200u-inschrijving (eerder alleen een 100u Sādhana Mentorship waargenomen).
+      Volgens decision #9 (canonieke marketing + booking = yogamoves.nl) blijft
+      de Ashtanga-TT dus een programma ONDER Yoga Moves, met Pranayama als
+      holder-nuance. SPLITS-TRIGGER: zodra pranayama.nl zelf een
+      200/300/500u-traject mét eigen inschrijving voert, Pranayama als eigen
+      provider-record afsplitsen.
 legal:
   legal_name: "Yoga Moves B.V."
 founded_year:
@@ -81,25 +81,33 @@ sources:
   - id: site-200-2026-06
     type: website
     url: https://www.yogamoves.nl/yoga-moves-vinyasa-200hr
-    archived_url: https://web.archive.org/web/20260618124846/https://www.yogamoves.nl/yoga-moves-vinyasa-200hr
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260618124846/https://www.yogamoves.nl/yoga-moves-vinyasa-200hr
     captured: "2026-06-18"
     local_snapshot: data/archives/yoga-moves/site-200-2026-06-2026-06-18.pdf
   - id: site-300-2026-06
     type: website
     url: https://www.yogamoves.nl/advanceyouryoga
-    archived_url: https://web.archive.org/web/20260618124930/https://www.yogamoves.nl/advanceyouryoga
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260618124930/https://www.yogamoves.nl/advanceyouryoga
     captured: "2026-06-18"
     local_snapshot: data/archives/yoga-moves/site-300-2026-06-2026-06-18.pdf
   - id: site-ashtanga-2026-06
     type: website
     url: https://www.yogamoves.nl/ashtanga-teacher-training
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06-18"
     local_snapshot: data/archives/yoga-moves/site-ashtanga-2026-06-2026-06-18.pdf
   - id: ya-register-ym-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgfOAAQ&sid=0013g000002nmHJAAY&name=Yoga-Moves-studio-ONE
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-18"
     note: "Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde
       lokale capture nodig."
@@ -107,7 +115,10 @@ sources:
   - id: ya-register-pranayama-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000phi5VAAQ&sid=0013g000004vaKlAAI&name=Pranayama
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-18"
     note: "Aparte YA-entiteit 'Pranayama' (Marilou van Hoek); zelfde
       Salesforce-rendering."
@@ -115,7 +126,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Yoga Moves"
     captured: "2026-06-18"
     note: >
@@ -232,9 +246,9 @@ programs:
         source: site-300-2026-06
         note: >
           "... as long as you already hold a 200-hour certificate from a
-          recognised school." Uitdrukkelijk ELKE erkende school — geen verplichte
-          aankoop bij Yoga Moves (die zelf een 200u van € 2.860 verkoopt), dus
-          geen bedrag opgeteld.
+          recognised school." Uitdrukkelijk ELKE erkende school — geen
+          verplichte aankoop bij Yoga Moves (die zelf een 200u van € 2.860
+          verkoopt), dus geen bedrag opgeteld.
     price:
       amount_eur: 3950
       variants:
@@ -356,8 +370,8 @@ programs:
       praktijk bij instroom uit andere stijl"
     prerequisite:
       - kind: experience
-        label: "eigen Ashtanga-praktijk (Led/Mysore), bij voorkeur ≥ 1 jaar; ≥ 3
-          maanden bij instroom uit een andere stijl"
+        label: "eigen Ashtanga-praktijk (Led/Mysore), bij voorkeur ≥ 1 jaar; ≥ 3 maanden
+          bij instroom uit een andere stijl"
         source: site-ashtanga-2026-06
         note: >
           Een ervaringseis, geen aankoop: de pagina vraagt een eigen praktijk

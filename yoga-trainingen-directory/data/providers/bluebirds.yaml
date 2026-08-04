@@ -29,11 +29,11 @@ crkbo:
     registered)" → dat programma: price.vat = exempt_crkbo. De pagina van het
     2025-cohort is een ANDERE pagina — de (inmiddels gearchiveerde) eigen site
     van Marlene (yoginimarleen.wixsite.com) — en die stelt het tegendeel:
-    "€2950,- Excl BTW" / "€3150,- Excl BTW". Dat programma: price.vat = excl.
-    De CRKBO-zin van de ene pagina op de opleiding van de andere plakken is
-    precies de afleiding die §4.11 verbiedt; de prijs die tussen de cohorten
-    bewoog is vastgelegd in Cohort.price_at_time (§4.5) en is een BEVINDING,
-    geen correctie om weg te werken.
+    "€2950,- Excl BTW" / "€3150,- Excl BTW". Dat programma: price.vat = excl. De
+    CRKBO-zin van de ene pagina op de opleiding van de andere plakken is precies
+    de afleiding die §4.11 verbiedt; de prijs die tussen de cohorten bewoog is
+    vastgelegd in Cohort.price_at_time (§4.5) en is een BEVINDING, geen
+    correctie om weg te werken.
 registrations:
   - body: yoga_alliance
     identifier: "RYS 200"
@@ -82,23 +82,28 @@ sources:
   - id: site-2025-vinyasa-2026-06
     type: website
     url: https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr
-    archived_url: https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr
     captured: "2025-08-09"
     note: >
       2025-cohort Vinyasa Flow Teacher Training (200u) — Wayback-capture van de
-      EIGEN SITE VAN MARLENE (yoginimarleen.wixsite.com), niet van blue-birds.nl.
-      Inhoud: 8 weekenden + 6 zaterdagen over 7 mnd (13 sep 2025-15 mrt 2026),
-      max 16, lead Fleur & Marlene. PRICING OPTIONS, verbatim: "Early Bird
-      €2950,- Excl BTW (1st of July)" en "Regular €3150,- Excl BTW". Dat is ALLES
-      wat deze pagina over btw zegt — géén CRKBO, géén 0%-vermelding, en geen
-      member-korting. De eerder genoteerde derde prijs (€2835) en de zin "all
-      prices at 0% VAT as we are CRKBO registered" stonden op de blue-birds.nl-
-      pagina van het ANDERE (2026-)cohort en zijn hier verwijderd (§4.11).
+      EIGEN SITE VAN MARLENE (yoginimarleen.wixsite.com), niet van
+      blue-birds.nl. Inhoud: 8 weekenden + 6 zaterdagen over 7 mnd (13 sep
+      2025-15 mrt 2026), max 16, lead Fleur & Marlene. PRICING OPTIONS,
+      verbatim: "Early Bird €2950,- Excl BTW (1st of July)" en "Regular €3150,-
+      Excl BTW". Dat is ALLES wat deze pagina over btw zegt — géén CRKBO, géén
+      0%-vermelding, en geen member-korting. De eerder genoteerde derde prijs
+      (€2835) en de zin "all prices at 0% VAT as we are CRKBO registered"
+      stonden op de blue-birds.nl- pagina van het ANDERE (2026-)cohort en zijn
+      hier verwijderd (§4.11).
     local_snapshot: data/archives/bluebirds/site-2025-vinyasa-2026-06-2026-06-27.pdf
   - id: site-2026-hybrid-2026-06
     type: website
     url: https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/
-    archived_url: https://web.archive.org/web/20260627185357/https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627185357/https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/
     captured: "2026-06-25"
     note: >
       2026-cohort Vinyasa Hybrid Teacher Training (200u) — Bluebirds Academy ×
@@ -110,7 +115,10 @@ sources:
   - id: ya-register-marlene-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000YikjoAAB&sid=0013g00000RBeW7AAL&name=MarleneYoga
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "YA-profiel 'MarleneYoga' (certificerende RYS 2025-cohort): Amsterdam, RYS
       200, First Registered October 2021, 4.92/6 reviews (afstudeerders jun
@@ -119,7 +127,10 @@ sources:
   - id: ya-register-embodied-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000pA1qJYAS&sid=001TR00000hZqXeYAK&name=Embodied-Bodhi-Academy
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "YA-profiel 'Embodied Bodhi Academy' (certificerende RYS 2026-cohort):
       Amsterdam, RYS 200, First Registered December 2025, 0 reviews/0 dates;
@@ -128,7 +139,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Bluebird"
     captured: "2026-06-25"
     note: >
@@ -178,19 +192,20 @@ programs:
       published: yes
       note: >
         DE GECITEERDE PAGINA ZEGT HET TEGENDEEL VAN WAT HIER STOND. Verbatim, en
-        het is alles wat zij over btw zegt: "PRICING OPTIONS — Early Bird €2950,-
-        Excl BTW (1st of July) / Regular €3150,- Excl BTW"
+        het is alles wat zij over btw zegt: "PRICING OPTIONS — Early Bird
+        €2950,- Excl BTW (1st of July) / Regular €3150,- Excl BTW"
         (site-2025-vinyasa-2026-06, de eigen site van Marlene). Dit record droeg
         `vat: exempt_crkbo` plus de zin "all prices at 0% VAT as we are CRKBO
         registered" — maar die zin staat op de blue-birds.nl-pagina van het
-        ANDERE (2026-)cohort, niet op deze. Een btw-behandeling wordt waargenomen
-        op de pagina die haar stelt, of is niet bekend; van een zusteropleiding
-        aflezen is precies wat §4.11 verbiedt. → vat = excl. Ook de eerder
-        genoteerde variant "Bluebirds member (10% korting) €2835" is verwijderd:
-        die staat niet op deze pagina. Anatomie via de online cursus van David
-        Keil is inbegrepen. De prijs én de btw-behandeling BEWOGEN tussen de
-        cohorten (2025: €3150 excl. btw op Marlene's site; 2026: €2990 tegen 0%
-        btw onder Bluebirds BV) — vastgelegd per cohort in `price_at_time` (§4.5).
+        ANDERE (2026-)cohort, niet op deze. Een btw-behandeling wordt
+        waargenomen op de pagina die haar stelt, of is niet bekend; van een
+        zusteropleiding aflezen is precies wat §4.11 verbiedt. → vat = excl. Ook
+        de eerder genoteerde variant "Bluebirds member (10% korting) €2835" is
+        verwijderd: die staat niet op deze pagina. Anatomie via de online cursus
+        van David Keil is inbegrepen. De prijs én de btw-behandeling BEWOGEN
+        tussen de cohorten (2025: €3150 excl. btw op Marlene's site; 2026: €2990
+        tegen 0% btw onder Bluebirds BV) — vastgelegd per cohort in
+        `price_at_time` (§4.5).
       source: site-2025-vinyasa-2026-06
     hours_claimed:
       total: 200
@@ -329,8 +344,8 @@ programs:
           Online vanaf half sep; studio-immersie 19-24 okt 2026; residentieel
           21-27 nov 2026 (Mariënkroon). AANGEKONDIGD, niet bevestigd (§8).
           Verkocht onder Bluebirds BV tegen 0% btw ("all prices at 0% VAT as we
-          are CRKBO registered"); het cohort van 2025 hierboven werd op een andere
-          site verkocht tegen €3150 EXCL. btw.
+          are CRKBO registered"); het cohort van 2025 hierboven werd op een
+          andere site verkocht tegen €3150 EXCL. btw.
     teachers:
       - person_id: pascalle-van-haaften
         role: "lead teacher (Embodied Bodhi; E-RYT 500)"

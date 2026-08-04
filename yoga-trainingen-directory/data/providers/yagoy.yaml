@@ -40,7 +40,9 @@ sources:
   - id: site-yin-2026-06
     type: website
     url: https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/
-    archived_url: https://web.archive.org/web/20260620143907/https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620143907/https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/
     captured: "2026-06-20"
     note: >
       Yin 200u: programma, faculty, 10-weekend-structuur, examens,
@@ -51,7 +53,9 @@ sources:
   - id: site-vinyasa-2026-06
     type: website
     url: https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/
-    archived_url: https://web.archive.org/web/20260620144015/https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620144015/https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/
     captured: "2026-06-20"
     note: "Vinyasa 200u (november-start): RYT200, locatie Yagoy Pijp, Engelstalig.
       Prijs niet op de pagina."
@@ -59,7 +63,8 @@ sources:
   - id: overview-yin-2026-06
     type: website
     url: https://yagoy.nl/teacher-training-yin/
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06-20"
     note: "Yin-overzichtspagina met 'Training fee': Early Bird €2300 (max 10
       inschrijvingen), regulier €2500, termijn €2600; 2026/2027-deadlines."
@@ -67,7 +72,9 @@ sources:
   - id: overview-vinyasa-2026-06
     type: website
     url: https://yagoy.nl/teacher-trainings-vinyasa/
-    archived_url: https://web.archive.org/web/20260620144240/https://yagoy.nl/teacher-trainings-vinyasa/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620144240/https://yagoy.nl/teacher-trainings-vinyasa/
     captured: "2026-06-20"
     note: "Vinyasa-overzichtspagina met 'Costs': Early Bird €2300 (max 10, 'Early
       Bird has Closed'), regulier €2500, termijn €2600; 2026/2027-deadlines."
@@ -75,7 +82,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pi9zAAA&sid=0013g000002nnhPAAQ&name=Yagoy---Yoga-Your-Way
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-20"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yagoy -
       Yoga Your Way', Amsterdam, taal English."
@@ -83,7 +93,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Yagoy"
     captured: "2026-06-20"
     note: >
