@@ -1,0 +1,138 @@
+.head {
+  padding: 40px 0 8px;
+}
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.title {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 12px;
+}
+.lead {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  max-width: 640px;
+  margin: 0;
+}
+
+.list {
+  margin-top: 28px;
+  border-top: 1px solid var(--ink);
+}
+
+/* Each entry is the anchor target of every [[ref:id]] citation, rendered as a
+   /referenties#<id> link (Task 4). :target gives a reader who lands here from a
+   citation a visible confirmation they arrived at the right document. */
+.item {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--rule);
+  scroll-margin-top: 24px;
+}
+.item:target {
+  background: var(--hover);
+  margin: 0 -16px;
+  padding: 28px 16px;
+}
+
+.itemTitle {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+.meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.url {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  word-break: break-all;
+  margin: 0 0 8px;
+}
+.url a {
+  color: var(--muted);
+}
+
+/* The three public_archive states (spec §4.1b) — three DIFFERENT inks, borrowed
+   from the quad vocabulary (globals.css) because the shape is the same one this
+   project already names: `archived` is established fact, `impossible` is a
+   finding about the evidence itself, `not_yet` is a gap in our own archiving
+   work. Not routed through <Quad> — that component owns the Quad TYPE, and
+   PublicArchive is a different union — but the ink means the same thing. */
+.archiveArchived {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  word-break: break-all;
+  margin: 0 0 4px;
+}
+.archiveArchived a {
+  color: var(--ink);
+}
+.archiveImpossible {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--finding);
+  margin: 0 0 4px;
+}
+.archiveNotYet {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--gap);
+  font-style: italic;
+  margin: 0 0 4px;
+}
+
+.localSnapshot {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  word-break: break-all;
+  margin: 0 0 12px;
+}
+
+.appliesTo,
+.lineage {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 0 0 6px;
+}
+
+.note {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  max-width: 760px;
+  margin: 14px 0 0;
+  /* Reference notes come from a YAML folded (`>`) scalar: a blank line in the
+     source survives as a single "\n" in the parsed string, everything else
+     collapses to spaces. pre-line renders exactly that — paragraph breaks kept,
+     no manual splitting needed in the component. */
+  white-space: pre-line;
+}
+
+/* Honest empty state (spec §1), matching /notities: a plain statement, not
+   chrome dressed up as content. */
+.empty {
+  padding: 40px 0;
+  border-top: 1px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 560px;
+}

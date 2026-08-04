@@ -85,7 +85,8 @@
           ]
         },
         "local_snapshot": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "captured": {
           "type": "string",
@@ -113,6 +114,7 @@
         "publisher",
         "type",
         "public_archive",
+        "local_snapshot",
         "captured"
       ],
       "additionalProperties": false

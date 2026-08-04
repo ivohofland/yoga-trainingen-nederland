@@ -455,6 +455,37 @@ export const nl = {
     byPrefix: "door",
     readTimeSuffix: "leestijd",
   },
+
+  // /referenties (spec §4.1b, v0.13): the shared normative documents, cited from
+  // provider notes as `[[ref:<id>]]`. One page, one entry per document, anchored
+  // by id so a citation resolves to the document it names.
+  references: {
+    navLabel: "Referenties",
+    eyebrow: "Gedeelde bronnen",
+    title: "Referenties",
+    lead:
+      "Normatieve documenten die bij geen enkele aanbieder horen — standaarden en regels " +
+      "van Yoga Alliance, één keer bewaard en gearchiveerd, en aangehaald vanuit notities " +
+      "met [[ref:…]]. Geen bron voor een specifiek gegeven van een school (§4.1b): dat blijft " +
+      "de bron op het record zelf.",
+    empty: "Nog geen referenties.",
+    appliesToLabel: "van toepassing op",
+    supersedesLabel: "vervangt",
+    supersededByLabel: "vervangen door",
+    // The three public_archive states, distinct — an `impossible` carries a REASON
+    // and must show it; a bare "n.v.t." throws away the payload the union exists
+    // to carry (see PublicArchive in schema/index.ts).
+    archiveArchived: "publiek archief:",
+    archiveImpossible: "geen publiek archief mogelijk —",
+    archiveNotYet: "nog niet publiek gearchiveerd",
+    // The path itself, not just an "aanwezig"-boilerplate: `local_snapshot` is
+    // REQUIRED and non-empty on every reference (schema §4.1b), so a bare presence
+    // marker would say the same thing on all five rows. The path is the one piece
+    // of information that differs — and it is the file the committed `.sha256`
+    // beside it (gitignored body aside) proves exists and is unaltered.
+    localSnapshotLabel: (path: string) => `lokale kopie: ${path}`,
+  } as const,
+
   // Never one number: a count of public archives alone reads as archive coverage,
   // and the bar is BOTH halves. Both counts, side by side, over the total.
   sourcesHeading: (total: number, publicArchived: number, localCopies: number) =>
