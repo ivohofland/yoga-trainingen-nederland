@@ -6,7 +6,7 @@
  *   - a claim is rendered VERBATIM, never characterized (spec §3), UNDER the
  *     thing its `scope` says it was said about — never in one flat list, which
  *     misattributes a 300-hour page's claim to the 200-hour programme;
- *   - every fact carries its SOURCE, as a link to that source below (<Cite>);
+ *   - every fact carries its SOURCE, as a link to that source below (<SourceCite>);
  *   - an absent optional object renders as a GAP ("nog niet onderzocht"), never
  *     as a finding — <Quad> is the only thing that colours a quad;
  *   - a note renders BESIDE the fact it annotates: provenance, not a findings list;
@@ -21,6 +21,7 @@ import { Quad } from "@/components/Quad";
 import { inkFor, quadForInquiry } from "@/lib/quad";
 import { emailCorrectionUrl, githubCorrectionUrl } from "@/lib/corrections";
 import { nl } from "@/lib/strings";
+import { Cite } from "./Cite";
 import styles from "./page.module.css";
 
 export function generateStaticParams() {
@@ -30,6 +31,11 @@ export function generateStaticParams() {
 
 /**
  * A fact's citation: a link down to that source in the Sources section.
+ *
+ * NOT to be confused with `<Cite>` (./Cite.tsx), which resolves a `[[ref:<id>]]`
+ * marker inside a note's prose to the shared reference store at /referenties.
+ * This one is narrower: it links a FACT to the provider's OWN `sources[]` entry
+ * below on this same page, so it is named `SourceCite` to keep the two apart.
  *
  * /methodologie promises "Bij elk gegeven staat een bron en een datum … Je hoeft
  * dus noch mij, noch de AI te geloven: je kunt elke bron zelf naslaan", and the
@@ -46,7 +52,7 @@ export function generateStaticParams() {
  * NOT a quad, and deliberately quiet: --finding and --gap say something about the
  * PROVIDER. This says only where we got it. Mono, muted — a footnote marker.
  */
-function Cite({ source }: { source: string | null }) {
+function SourceCite({ source }: { source: string | null }) {
   if (!source) return null;
   return (
     <a className={styles.cite} href={`#bron-${source}`} title={nl.sourceCiteTitle(source)}>
@@ -66,7 +72,7 @@ function Claim({ claim, showScope }: { claim: ClaimView; showScope: boolean }) {
       </div>
       {/* The schema REQUIRES a claim's source: it is what makes it a recorded
           claim rather than an assertion of our own. It is shown. */}
-      <Cite source={claim.source} />
+      <SourceCite source={claim.source} />
       {/* Layer 3. Separated from the quote, and stamped with BOTH the methodology
           version it was made under and the month it was made. /methodologie
           promises the reader "een bron én een datum"; an analysis is the one thing
@@ -83,7 +89,7 @@ function Claim({ claim, showScope }: { claim: ClaimView; showScope: boolean }) {
               claim.analysis.methodologyVersion,
             )}
           </div>
-          <p className={styles.analysisBody}>{claim.analysis.note}</p>
+          <p className={styles.analysisBody}><Cite text={claim.analysis.note} /></p>
         </div>
       )}
     </blockquote>
@@ -141,8 +147,8 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
               v.crkbo.register && `${nl.registerLabel}: ${v.crkbo.register}`,
               v.crkbo.checked && `${nl.checkedLabel} ${formatMonth(v.crkbo.checked.slice(0, 7))}`]
               .filter(Boolean).join(" · ")}
-            {v.crkbo.note && <div className={styles.note}>{v.crkbo.note}</div>}
-            <Cite source={v.crkbo.source} />
+            {v.crkbo.note && <div className={styles.note}><Cite text={v.crkbo.note} /></div>}
+            <SourceCite source={v.crkbo.source} />
           </div>
         </div>
         {v.registrations.map((r, i) => (
@@ -153,8 +159,8 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
               {[r.identifier, r.holder && `${nl.holderLabel}: ${r.holder}`,
                 r.firstRegistered && `${nl.since} ${formatMonth(r.firstRegistered.slice(0, 7))}`]
                 .filter(Boolean).join(" · ")}
-              {r.note && <div className={styles.note}>{r.note}</div>}
-              <Cite source={r.source} />
+              {r.note && <div className={styles.note}><Cite text={r.note} /></div>}
+              <SourceCite source={r.source} />
             </div>
           </div>
         ))}
@@ -200,12 +206,12 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                   ) : (
                     <Quad state={row.state}>{row.value}</Quad>
                   )}
-                  {row.note && <div className={styles.note}>{row.note}</div>}
+                  {row.note && <div className={styles.note}><Cite text={row.note} /></div>}
                   {/* A derived row has NO `source` KEY (KeyValueRow) — §6: our arithmetic
                       cites no page of theirs. `?? null` is that fact reaching the DOM, not
-                      a defensive default: <Cite> renders nothing for it, and the parts the
-                      figure was computed from carry their citations in their own rows. */}
-                  <Cite source={row.source ?? null} />
+                      a defensive default: <SourceCite> renders nothing for it, and the parts
+                      the figure was computed from carry their citations in their own rows. */}
+                  <SourceCite source={row.source ?? null} />
                 </div>
               </div>
             ))}
@@ -217,8 +223,8 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                   {prog.accreditation.map((a, i) => (
                     <div key={i}>
                       {a.body} — “{a.label}” <Quad state={a.verified} />
-                      {a.note && <div className={styles.note}>{a.note}</div>}
-                      <Cite source={a.source} />
+                      {a.note && <div className={styles.note}><Cite text={a.note} /></div>}
+                      <SourceCite source={a.source} />
                     </div>
                   ))}
                 </div>
@@ -242,8 +248,8 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                           was populated nowhere and rendered nowhere until now. It stands
                           beside the cohort's own source, which is what makes it evidence. */}
                       {c.priceAtTime && <div className={styles.note}>{c.priceAtTime}</div>}
-                      {c.note && <div className={styles.note}>{c.note}</div>}
-                      <Cite source={c.source} />
+                      {c.note && <div className={styles.note}><Cite text={c.note} /></div>}
+                      <SourceCite source={c.source} />
                     </div>
                   ))}
                 </div>
@@ -260,8 +266,8 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 <div className={styles.k}>{s.label}</div>
                 <div className={styles.v}>
                   <Quad state={s.state}>{s.value}</Quad>
-                  {s.note && <div className={styles.note}>{s.note}</div>}
-                  <Cite source={s.source} />
+                  {s.note && <div className={styles.note}><Cite text={s.note} /></div>}
+                  <SourceCite source={s.source} />
                 </div>
               </div>
             ))}
@@ -272,7 +278,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 <div className={styles.k}>{s.label}</div>
                 <div className={styles.v}>
                   <Quad state={s.state}>{s.value}</Quad>
-                  <Cite source={s.source} />
+                  <SourceCite source={s.source} />
                 </div>
               </div>
             ))}
@@ -294,11 +300,11 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 <div className={styles.k}>{s.label}</div>
                 <div className={styles.v}>
                   <Quad state={s.state}>{s.value}</Quad>
-                  <Cite source={s.source} />
+                  <SourceCite source={s.source} />
                 </div>
               </div>
             ))}
-            {prog.contractNote && <div className={styles.note}>{prog.contractNote}</div>}
+            {prog.contractNote && <div className={styles.note}><Cite text={prog.contractNote} /></div>}
 
             {/* The claims made about THIS programme — where the record's `scope`
                 puts them. Flattened into one provider-level list, a claim quoted
@@ -390,7 +396,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
         </p>
       </section>
 
-      {/* Sources. Each row is the anchor target of every <Cite> that names it —
+      {/* Sources. Each row is the anchor target of every <SourceCite> that names it —
           id="bron-<source-id>". Source ids are unique within a provider record and
           a record page renders exactly one provider, so the ids are unique on the
           page. */}
@@ -408,7 +414,7 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
             </div>
             <div className={styles.srcUrl}>
               {s.url ? <a href={s.url} target="_blank" rel="noopener">{s.url}</a> : s.id}
-              {s.note && <div className={styles.note}>{s.note}</div>}
+              {s.note && <div className={styles.note}><Cite text={s.note} /></div>}
             </div>
             {/*
              * NOT a quad. <Quad state="not_published"> would print "niet
