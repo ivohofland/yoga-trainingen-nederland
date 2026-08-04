@@ -14,7 +14,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { loadDataset } from "./loader";
+import { loadDataset, loadReferences } from "./loader";
 import { toApiPayload, programDerived } from "./api";
 import { ourWorking, scheduledHoursCeiling, hoursDisconnect } from "./derive";
 import { toListingRows, toProviderView } from "./presenters";
@@ -22,10 +22,12 @@ import { priceAmountIsOurGap, priceQuad } from "./rules";
 import { saysNotPublished, quadClass } from "./quad";
 import { nl } from "./strings";
 import { priceGapProvider } from "./price-gap.fixture";
+import { collectCitations } from "./citations";
 
 const { providers } = loadDataset();
+const { references } = loadReferences();
 const NOW = new Date("2026-07-01T00:00:00Z");
-const PAYLOAD = toApiPayload(providers);
+const PAYLOAD = toApiPayload(providers, references);
 
 /** The price cell as each of the three surfaces renders it, for one programme. */
 const surfaces = (providerId: string, programId: string) => {
@@ -270,7 +272,7 @@ test("API: every programme that publishes a price we do not hold is OUR gap in t
   assert.ok(priceAmountIsOurGap(gapProvider, gapProgram),
     "the fixture is not in the state this test exists to pin — it pins nothing");
 
-  const gapPayload = toApiPayload([gapProvider]);
+  const gapPayload = toApiPayload([gapProvider], references);
   const api = gapPayload.providers[0].programs[0];
   const listing = toListingRows([gapProvider], NOW)[0];
   const record = toProviderView(gapProvider)
@@ -329,7 +331,7 @@ test("API: no derived price_state is a value-less FACT — the bare “ja”/“
   // case (price-gap.fixture.ts), and the `gaps > 0` guard below is met honestly rather
   // than by waiting for a defect to reappear in the data.
   const { provider: gapProvider } = priceGapProvider(providers);
-  const exported = [...PAYLOAD.providers, ...toApiPayload([gapProvider]).providers];
+  const exported = [...PAYLOAD.providers, ...toApiPayload([gapProvider], references).providers];
 
   let facts = 0;
   let findings = 0;
@@ -416,7 +418,7 @@ test("API: the export is a rendering, not a source — nothing derived is writte
   // produces the same bytes (data_current_as_of is a function of the data, not of
   // the clock, so the committed file does not churn on every build).
   const before = JSON.stringify(providers);
-  const again = toApiPayload(providers);
+  const again = toApiPayload(providers, references);
   assert.equal(JSON.stringify(providers), before,
     "toApiPayload mutated the records it was rendering — a derived value has leaked into the source");
   assert.equal(JSON.stringify(again), JSON.stringify(PAYLOAD),
@@ -455,9 +457,9 @@ test("API: data_current_as_of is the NEWEST last_verified — never the oldest",
 
   // ...and it is a function of the DATA, never of the clock: unchanged data must re-export
   // byte-identically, or the committed JSON churns on every build.
-  assert.equal(toApiPayload(providers).data_current_as_of, PAYLOAD.data_current_as_of);
+  assert.equal(toApiPayload(providers, references).data_current_as_of, PAYLOAD.data_current_as_of);
   // An empty corpus has no date at all — not today's, and not the epoch.
-  assert.equal(toApiPayload([]).data_current_as_of, null);
+  assert.equal(toApiPayload([], references).data_current_as_of, null);
 });
 
 test("API: multistyle is published per programme, and a single-style school is never 'allround'", () => {
@@ -527,4 +529,20 @@ test("API: a published total at or below the ceiling ships hours_disconnect as n
   const derived = programDerived(provider, provider.programs[0]!);
   assert.equal(derived.hours_disconnect.kind, "no_shortfall");
   assert.equal(derived.hours_disconnect.value, null);
+});
+
+test("API: the payload carries every reference its notes cite", () => {
+  // Notes ship WITH their markers. That is only honest if the payload also carries the
+  // referents — otherwise a consumer holds syntax it cannot resolve. Either half alone
+  // is worse than neither: strip the markers and the citation is lost.
+  const { providers } = loadDataset();
+  const { references } = loadReferences();
+  const payload = toApiPayload(providers, references);
+
+  const cited = new Set<string>();
+  collectCitations(payload.providers, cited);
+  assert.ok(cited.size > 0, "the corpus must contain citations, or this test proves nothing");
+
+  const shipped = new Set(payload.references.map((r) => r.id));
+  for (const id of cited) assert.ok(shipped.has(id), `payload cites ${id} but does not ship it`);
 });

@@ -25,7 +25,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { loadDataset } from "../src/lib/loader";
+import { loadDataset, loadReferences } from "../src/lib/loader";
 import { API_VERSION, toApiPayload } from "../src/lib/api";
 
 /** Provider ids whose YAML is tracked in git. Untracked = a draft; drafts are not published. */
@@ -51,6 +51,15 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
+// Notes ship with their `[[ref:<id>]]` markers intact, so the payload has to carry the
+// referents too — a payload whose referents failed to load would ship syntax a consumer
+// can never resolve. Fail exactly the way loadDataset's own errors already fail the build.
+const { references, errors: referenceErrors } = loadReferences();
+if (referenceErrors.length > 0) {
+  console.error(referenceErrors.join("\n"));
+  process.exit(1);
+}
+
 const committed = committedProviderIds();
 const published = committed ? providers.filter((p) => committed.has(p.id)) : providers;
 const drafts = providers.filter((p) => !published.includes(p));
@@ -59,7 +68,7 @@ const outDir = path.join(process.cwd(), "public", "data", API_VERSION);
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(
   path.join(outDir, "providers.json"),
-  JSON.stringify(toApiPayload(published), null, 2),
+  JSON.stringify(toApiPayload(published, references), null, 2),
 );
 
 console.log(

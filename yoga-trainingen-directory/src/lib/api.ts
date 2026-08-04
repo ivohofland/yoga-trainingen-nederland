@@ -49,7 +49,7 @@ import {
   type TotalPrice,
 } from "./derive";
 import { priceBand, priceQuad, pphQuad, type PriceBand } from "./rules";
-import type { Program, Provider, Quad } from "../schema";
+import type { Program, Provider, Quad, Reference } from "../schema";
 
 /** The current API version — the directory the export is written to. */
 export const API_VERSION = "v1";
@@ -242,6 +242,11 @@ export interface ApiPayload {
   /** Read this before rendering anything from a record. It is not decoration. */
   readme: string;
   providers: ExportedProvider[];
+  /** The shared reference store (spec §4.1b). Notes ship with their `[[ref:<id>]]`
+   *  markers intact, so the payload has to carry the referents or a consumer holds
+   *  syntax it cannot resolve. Prose-cited by design: a normative document is evidence
+   *  about the RULE, never about a school, so it is deliberately not `source:`-resolvable. */
+  references: Reference[];
 }
 
 const README =
@@ -293,9 +298,12 @@ const README =
   "terug te vinden zijn. Beide zijn van ons; `no_schedule`/`no_comparison` = geen rooster of geen " +
   "geclaimd totaal. `hours_disconnect` vergelijkt alleen tegen een DOOR DE SCHOOL GEPUBLICEERD " +
   "totaal (een door ons opgeteld totaal telt niet als hun claim → `no_comparison`); is het " +
-  "gepubliceerde totaal ≤ het plafond, dan is er geen tekort → `no_shortfall`.";
+  "gepubliceerde totaal ≤ het plafond, dan is er geen tekort → `no_shortfall`. " +
+  "NOTITIES KUNNEN `[[ref:<id>]]` BEVATTEN, een verwijzing naar een genormeerd document uit " +
+  "de gedeelde referentiestore (spec §4.1b) — `references[]` op dit object bevat elk document " +
+  "dat zo wordt aangehaald, om die verwijzing op te lossen.";
 
-export function toApiPayload(providers: Provider[]): ApiPayload {
+export function toApiPayload(providers: Provider[], references: Reference[]): ApiPayload {
   return {
     // Currency is a pure function of the data: the most recent last_verified across
     // all records. Build time would change on every run (churning the committed
@@ -319,5 +327,6 @@ export function toApiPayload(providers: Provider[]): ApiPayload {
       ...p,
       programs: p.programs.map((program) => ({ ...program, derived: programDerived(p, program) })),
     })),
+    references,
   };
 }
