@@ -111,7 +111,7 @@ Every one of these reads `kind`, never truthiness:
 Mitigations, in order:
 
 1. The 107 are classified by the same predicate the loader then cross-checks, so a mislabel there fails the build rather than shipping.
-2. The 14 non-mechanical records are enumerated in the plan by file and id, and each is decided explicitly rather than by rule.
+2. The 16 non-mechanical records — 4 `impossible`, 12 `not_yet` — are enumerated in the plan by file and id, and each is decided explicitly rather than by rule.
 3. `git diff` after the migration must touch only the field's own lines.
 4. `npm run validate`, `npm run provenance` (✓ 165/165), `npm test`, `npm run test:ci` and `npm run build` all green — and `/qa`'s red count must land on exactly 10, which is the assertion that the fix did what the measurement predicted.
 5. No file under `data/archives/` is touched at all. This is a change to records, never to evidence.
