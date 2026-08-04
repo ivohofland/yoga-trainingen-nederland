@@ -16,13 +16,18 @@
  *
  * Built by SPREADING A REAL RECORD so it cannot drift from the schema: a real,
  * schema-valid provider with its first three sources' `public_archive` replaced by one
- * of each state, and nothing else about the record touched.
+ * of each state, and nothing else about the record's SHAPE touched.
  *
- * The ids are nobody's finding: the base is a real business, mutated only to hold this
- * shape for the test, and no assertion made against this fixture is a statement about
- * that business's actual archive coverage.
+ * The id and name are NOT inherited from the base (see below) — no assertion made
+ * against this fixture, and no failure message it prints, may ever name a real business
+ * for a state it is not in.
  */
 import type { Provider } from "../schema";
+
+export const THREE_STATE_PROVIDER_ID = "synthetisch-drie-archiefstaten";
+
+/** Same on all three constructed sources — see the note on `local_snapshot` below. */
+const FIXTURE_LOCAL_SNAPSHOT = "data/archives/synthetisch-drie-archiefstaten/bron-2026-01.pdf";
 
 /**
  * The synthetic provider: a real record's first three sources set to `archived`,
@@ -45,10 +50,35 @@ export function threeStateProvider(providers: readonly Provider[]): { provider: 
   return {
     provider: {
       ...base,
+      // Not the base's own id/name: no failure message this fixture produces may ever
+      // read as a finding about a real business (mirrors price-gap.fixture.ts).
+      id: THREE_STATE_PROVIDER_ID,
+      name: "Synthetisch — drie archiefstaten in één record",
       sources: [
-        { ...a, public_archive: { kind: "archived" as const, url: "https://web.archive.org/web/2026/x" } },
-        { ...b, public_archive: { kind: "impossible" as const, reason: "JS-shell (Salesforce)" } },
-        { ...c, public_archive: { kind: "not_yet" as const } },
+        {
+          ...a,
+          public_archive: { kind: "archived" as const, url: "https://web.archive.org/web/2026/x" },
+          // `local_snapshot` is forced to the SAME value on all three below, not inherited
+          // from the base — the rendered string the PRESENT test compares depends on BOTH
+          // halves of the bar, and the base's own sources hold whatever local-snapshot
+          // presence they happen to hold. adhouna, third in load order, is
+          // [true, true, false]: fed in unmodified, its `not_yet` source would carry no
+          // local copy either, `archiveSlots()` would return `null` for it, and
+          // `assert.notEqual(finding.archiveSlots, gap.archiveSlots)` would pass by
+          // comparing a STRING to `null` — even under a total collapse of `impossible`
+          // into `not_yet`, the exact failure this fixture exists to prevent. Forcing one
+          // shared value makes `public_archive.kind` the ONLY variable between the three,
+          // by construction, regardless of which provider ends up as the base. (Verified:
+          // pointing the base at adhouna directly still builds and the PRESENT test still
+          // passes — genuinely, not vacuously; see task-3-report.md, fix round 1.)
+          local_snapshot: FIXTURE_LOCAL_SNAPSHOT,
+        },
+        {
+          ...b,
+          public_archive: { kind: "impossible" as const, reason: "JS-shell (Salesforce)" },
+          local_snapshot: FIXTURE_LOCAL_SNAPSHOT,
+        },
+        { ...c, public_archive: { kind: "not_yet" as const }, local_snapshot: FIXTURE_LOCAL_SNAPSHOT },
       ],
     },
   };
