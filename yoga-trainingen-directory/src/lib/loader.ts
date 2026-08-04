@@ -373,48 +373,52 @@ export function loadReferences(cwd: string = process.cwd()): ReferenceLoadResult
     // so it binds in CI, and it catches the typo case strictly harder: a mistyped path has no
     // sidecar that LISTS it, and it additionally proves the capture was really hashed rather
     // than merely named. ("No sidecar" would be false — see the extension case below.)
-    if (ref.local_snapshot) {
-      if (!ref.local_snapshot.startsWith("data/archives/_references/"))
+    // No `if (ref.local_snapshot)` guard here: the schema requires `.min(1)`, so by the time
+    // the loader sees `ref`, local_snapshot is guaranteed non-empty and these checks always
+    // run. A truthy guard on a value the type already guarantees is non-empty is not a no-op —
+    // `""` is falsy, so a bare `z.string()` plus this guard together let an empty string skip
+    // every check below and load into the store with zero errors, which is the loophole
+    // `.min(1)` on the schema closes.
+    if (!ref.local_snapshot.startsWith("data/archives/_references/"))
+      errors.push(
+        `references/${file}: local_snapshot must live under data/archives/_references/ (§4.1b)`,
+      );
+    // A SNAPSHOT IS A CAPTURE OF THEIR DOCUMENT, NEVER TEXT WE WROTE. The provider records
+    // carry this rule because five of them once pointed `local_snapshot` at our own `.md`
+    // reading notes, and the provenance gate duly certified seven claims about four named
+    // businesses against our own homework. References carry the longest hand-written notes
+    // in the corpus, so the temptation here is strictly higher, not lower.
+    else if (/\.(md|txt)$/i.test(ref.local_snapshot))
+      errors.push(
+        `references/${file}: local_snapshot is een ${path.extname(ref.local_snapshot)}-bestand — ` +
+          `een snapshot is een capture van HUN document, nooit tekst die wij schreven`,
+      );
+    else {
+      // THE SIDECAR MUST LIST THIS EXACT FILENAME, not merely exist. Asserting only that
+      // the file is there passes on an extension typo, because one sidecar covers every
+      // artifact of a capture: `<id>-<date>.sha256` is the receipt for BOTH `<id>-<date>.pdf`
+      // and `<id>-<date>.html`, so a `local_snapshot` naming the `.html` of a capture that
+      // only ever produced a `.pdf` resolves to a sidecar that exists and never mentions it.
+      // That is exactly the pair this project keeps two of on purpose (the JS-rendered-price
+      // trap), so it is the typo most likely to be made and the one least likely to be seen.
+      const sidecar = ref.local_snapshot.replace(/\.[a-z0-9]+$/i, ".sha256");
+      const sidecarPath = path.join(cwd, sidecar);
+      if (!fs.existsSync(sidecarPath))
         errors.push(
-          `references/${file}: local_snapshot must live under data/archives/_references/ (§4.1b)`,
-        );
-      // A SNAPSHOT IS A CAPTURE OF THEIR DOCUMENT, NEVER TEXT WE WROTE. The provider records
-      // carry this rule because five of them once pointed `local_snapshot` at our own `.md`
-      // reading notes, and the provenance gate duly certified seven claims about four named
-      // businesses against our own homework. References carry the longest hand-written notes
-      // in the corpus, so the temptation here is strictly higher, not lower.
-      else if (/\.(md|txt)$/i.test(ref.local_snapshot))
-        errors.push(
-          `references/${file}: local_snapshot is een ${path.extname(ref.local_snapshot)}-bestand — ` +
-            `een snapshot is een capture van HUN document, nooit tekst die wij schreven`,
+          `references/${file}: geen vastgelegde hash voor local_snapshot — ${sidecar} ontbreekt ` +
+            `(de body is gitignored; de .sha256 is het gepubliceerde bewijs dat de capture bestaat)`,
         );
       else {
-        // THE SIDECAR MUST LIST THIS EXACT FILENAME, not merely exist. Asserting only that
-        // the file is there passes on an extension typo, because one sidecar covers every
-        // artifact of a capture: `<id>-<date>.sha256` is the receipt for BOTH `<id>-<date>.pdf`
-        // and `<id>-<date>.html`, so a `local_snapshot` naming the `.html` of a capture that
-        // only ever produced a `.pdf` resolves to a sidecar that exists and never mentions it.
-        // That is exactly the pair this project keeps two of on purpose (the JS-rendered-price
-        // trap), so it is the typo most likely to be made and the one least likely to be seen.
-        const sidecar = ref.local_snapshot.replace(/\.[a-z0-9]+$/i, ".sha256");
-        const sidecarPath = path.join(cwd, sidecar);
-        if (!fs.existsSync(sidecarPath))
+        const listed = fs
+          .readFileSync(sidecarPath, "utf8")
+          .split("\n")
+          .map((l) => l.trim().split(/\s+/)[1])
+          .filter((name): name is string => !!name);
+        if (!listed.includes(path.basename(ref.local_snapshot)))
           errors.push(
-            `references/${file}: geen vastgelegde hash voor local_snapshot — ${sidecar} ontbreekt ` +
-              `(de body is gitignored; de .sha256 is het gepubliceerde bewijs dat de capture bestaat)`,
+            `references/${file}: ${sidecar} noemt ${path.basename(ref.local_snapshot)} niet ` +
+              `(wel: ${listed.join(", ") || "niets"}) — de hash dekt dit bestand dus niet`,
           );
-        else {
-          const listed = fs
-            .readFileSync(sidecarPath, "utf8")
-            .split("\n")
-            .map((l) => l.trim().split(/\s+/)[1])
-            .filter((name): name is string => !!name);
-          if (!listed.includes(path.basename(ref.local_snapshot)))
-            errors.push(
-              `references/${file}: ${sidecar} noemt ${path.basename(ref.local_snapshot)} niet ` +
-                `(wel: ${listed.join(", ") || "niets"}) — de hash dekt dit bestand dus niet`,
-            );
-        }
       }
     }
 
