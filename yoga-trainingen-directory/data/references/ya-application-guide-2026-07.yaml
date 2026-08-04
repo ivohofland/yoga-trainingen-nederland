@@ -27,15 +27,15 @@ note: >
   deze positieve definitie (leerling leert actief, trainer aanwezig), maar
   ya-hours-per-day-2026-07 noemt "public classes, regardless of the location
   where such activities take place" uitdrukkelijk als NIET-meetellend. De
-  specifieke uitsluiting gaat dan voor de algemene definitie. Over observeren
-  en assisteren zwijgen beide documenten: die staan op geen van beide lijsten.
+  specifieke uitsluiting gaat dan voor de algemene definitie. Over observeren en
+  assisteren zwijgen beide documenten: die staan op geen van beide lijsten.
 
   VERDER RELEVANT: de Glossary eist bij de aanvraag een "Training Schedule" die
-  moet bevatten: "Dates and times you meet / Number of modules and if
-  successive or intermittent / Educational Categories and other curriculum for
-  each day and time / Schedule and length of breaks for each day." Een RYS
-  heeft dus een dagrooster mét pauzes bij YA liggen, ook wanneer de school er
-  publiek geen publiceert.
+  moet bevatten: "Dates and times you meet / Number of modules and if successive
+  or intermittent / Educational Categories and other curriculum for each day and
+  time / Schedule and length of breaks for each day." Een RYS heeft dus een
+  dagrooster mét pauzes bij YA liggen, ook wanneer de school er publiek geen
+  publiceert.
 
   NIET VERWARREN: verderop in het document staat "a deduction of ___ hour from
   their total contact hours". Dat is een INVULSJABLOON voor het
@@ -43,4 +43,6 @@ note: >
   onderstrepingen zijn invulvelden. Het document zegt niets over observeren,
   assisteren of practicum.
 local_snapshot: data/archives/_references/ya-application-guide-2026-07-2026-07-31.pdf
-archived_url: https://web.archive.org/web/20260731194009/https://yogaalliance.org/wp-content/uploads/2025/05/Guide-to-RYS-Application-Process_NB_22my-.pdf
+public_archive:
+  kind: archived
+  url: https://web.archive.org/web/20260731194009/https://yogaalliance.org/wp-content/uploads/2025/05/Guide-to-RYS-Application-Process_NB_22my-.pdf

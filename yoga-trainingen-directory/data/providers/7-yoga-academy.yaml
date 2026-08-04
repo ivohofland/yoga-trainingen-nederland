@@ -33,7 +33,9 @@ sources:
   - id: site-2026-06
     type: website
     url: https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1
-    archived_url: https://web.archive.org/web/20260621061914/https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260621061914/https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1
     captured: "2026-06-20"
     note: "RYT200-opleidingspagina (Wix): programma, prijs, locatie,
       annuleringsbeleid. Toont het jan-2026-cohort als 'Afgelopen / niet meer
@@ -42,7 +44,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjliAAA&sid=0013g000002npDZAAY&name=7-Yoga-Academy
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-20"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als '7Yoga.nl',
       Maarssen, talen NL+EN, RYS."
@@ -50,7 +55,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "7Yoga"
     captured: "2026-06-20"
     note: "Negatieve check: '7Yoga' en '7 Yoga' → 0 treffers (2026-06-20).

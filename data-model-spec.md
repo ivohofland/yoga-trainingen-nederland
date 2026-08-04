@@ -2,6 +2,8 @@
 
 *Follow-up to `yoga-opleidingen-directory-overwegingen.md`. This document makes the deferred decisions concrete: storage/stack, the flat-vs-entity question, the full schema with layer markings, and two example records.*
 
+**v0.14 (2026-08-04)** — `archived_url` → `public_archive`, a required discriminated union. `archived_url: null` carried two OPPOSITE editorial meanings in one key: a GAP ("consciously not yet archived", §4.1's own words) and a FINDING (`loader.ts` instructed authors to write `null` for a Salesforce-rendered register whose Wayback snapshot is an empty shell — no public archive can evidence the page at all). That is the quad's `unknown`-vs-`not_published` error (§2.2), landing in the field the entire archive discipline rests on: a reader could not tell "nobody has tried yet" from "we tried and no public archive is possible" — both rendered as the same blank. `public_archive` is now `{kind: archived, url}` | `{kind: impossible, reason}` | `{kind: not_yet}` — variants with DIFFERENT KEY SETS, so "impossible with no reason" and "archived with no url" do not parse, and a consumer reading `url` when present is right by construction, not by accident. `reason` is free text EXCEPT where the URL is Wayback-pointless (a JS-shell register, a no-permalink search register): there it must equal `waybackPointlessReason(url)`, so the 107 records this covers cannot drift silently from the function that classified them. `local_snapshot` is unaffected — it is not part of this union.
+
 **v0.13 (2026-07-31)** — `data/references/` : a **shared reference store** for normative documents that belong to no single provider. A source lived on exactly one provider record, which is right for *their* price page and wrong for a rule that governs the whole corpus. The Yoga Alliance RYS standards were duly filed under `tribes-academy/` — the one school that happened to prompt reading them — so the next 47 records would each need their own copy of the same PDF, each with its own hash, and a reader comparing two schools against "the standard" would be comparing two archives. Worse, the document turned out to contain **five different credential standards** (RYS 200/300/500/RCYS/RPYS) whose rules contradict each other if cross-cited: the RYS 300 practicum rules were quoted at a 200-hour training on the first reading of it. A reference is therefore stored once, archived once under `data/archives/_references/`, and **cited in prose** (§4.1b) — deliberately NOT resolvable from a `source:` field, because provider integrity (`integrityErrors`) and the provenance gate both key on "this programme's own cited page", and a normative document is evidence about the *rule*, never about the school. Validated and floor-checked like the corpus; synced to the private archive repo by the same append-only path.
 
 **v0.12 (2026-07-18)** — `hours_claimed.schedule` + two derived values (`scheduled_hours_ceiling`, `hours_disconnect`). A programme claims a round total (200 uur) and often publishes no contact-hour figure, so the total stands unexamined — while the *schedule* is published (the DNYS Intensive: 21 dagen, 10:00–17:00). Contact time can only ever be ≤ time in the room, so the raw clock sum is a strict **upper bound** on contact hours: at most 147 u, ≥ 53 u short of the claimed 200. The figure is OURS (derived ink, working shown, `contact_published` untouched — *they* didn't publish it, *we* bounded it); a published break (`pause_min`) tightens the ceiling downward but never makes it a precise claim, because we can only subtract the breaks they state. `schedule.blocks[]` model irregular timetables (Friday evening + full Saturday + half Sunday = three blocks). Silent without a schedule; no new finding axis.
@@ -123,7 +125,7 @@ Provenance anchor; everything contested points at one of these.
 | `id` | slug | e.g. `site-pricing-2026-05` |
 | `type` | enum | `website \| wayback \| brochure \| register \| inquiry_response \| reader_report \| email \| other` — `reader_report` = a validated correction from a reader ("meld een fout" route); validation happens before entry, the source type preserves provenance |
 | `url` | url? | |
-| `archived_url` | url? | Wayback/archive.today — archive *before* citing critically |
+| `public_archive` | union | `{kind: archived, url}` \| `{kind: impossible, reason}` \| `{kind: not_yet}`. **Required.** A missing public archive is either a FINDING (no public archive can evidence this page — a JS-shell register, a gated PDF) or a GAP (not attempted yet, below the publication bar). `null` used to mean both. `reason` exists only on `impossible`, and where the URL is Wayback-pointless it must equal `waybackPointlessReason(url)` |
 | `query` | string? | reproducible search term for a **no-permalink register** (CRKBO, the Salesforce-rendered YA grids): the exact text typed into the register's name filter to isolate the entry. These registers have no per-entry URL and no API, and a plain fetch/Wayback only ever captures page 1 — so the archive script types `query` into the filter, waits for the server callback, and snapshots the *filtered* result; that dated local snapshot is the evidence. Operationalizes §4.11's "record the searched names so the finding is falsifiable" |
 | `captured` | date | when you saw it |
 | `note` | string? | |
@@ -141,7 +143,7 @@ standards, a regulator's price-display rule, a sector code. Stored once in
 | `publisher` | string | the issuing body — **the exact legal entity**. Yoga Alliance (US) is not Yoga Alliance Professionals, not Yoga Alliance India, not the Yoga Alliance European Registry; they are separate organisations publishing similar-looking standards |
 | `type` | enum | same enum as `Source.type` (§4.1) |
 | `url` | url? | |
-| `archived_url` | url? | |
+| `public_archive` | union | `{kind: archived, url}` \| `{kind: impossible, reason}` \| `{kind: not_yet}`. **Required.** A missing public archive is either a FINDING (no public archive can evidence this page — a JS-shell register, a gated PDF) or a GAP (not attempted yet, below the publication bar). `null` used to mean both. `reason` exists only on `impossible`, and where the URL is Wayback-pointless it must equal `waybackPointlessReason(url)` |
 | `local_snapshot` | path? | under `data/archives/_references/` |
 | `captured` | YearMonth | |
 | `applies_to` | string[]? | which credentials/scopes the document governs, when it governs several that differ (`["RYS 200"]`). **A document covering several regimes must say so** — see below |
@@ -389,11 +391,16 @@ sources:
   - id: site-2026-06
     type: website
     url: https://studionoord.example.nl/opleiding
-    archived_url: https://web.archive.org/web/20260610/...
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260610/...
     captured: 2026-06-10
   - id: crkbo-register
     type: register
     url: https://www.crkbo.nl/register
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
     captured: 2026-06-10
 
 programs:

@@ -66,6 +66,20 @@ export const Time = z
 
 const slug = z.string().regex(/^[a-z0-9][a-z0-9-]*$/, "expected kebab-case slug");
 
+/** A missing public archive is either a FINDING or a GAP, and the record must say which.
+ *  `null` meant both: spec §4.1 called it "consciously not yet archived" (a gap) while
+ *  loader.ts instructed authors to write it for pages Wayback cannot evidence (a finding) —
+ *  not_published collapsed into unknown, in the field the archive discipline rests on.
+ *  Variants carry DIFFERENT KEY SETS, so "impossible with no reason" and "archived with no
+ *  url" do not compile and a consumer that reads `url` when present is right by
+ *  construction. Spec §4.1, v0.14. */
+export const PublicArchive = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("archived"), url: z.string().url() }),
+  z.object({ kind: z.literal("impossible"), reason: z.string().min(1) }),
+  z.object({ kind: z.literal("not_yet") }),
+]);
+export type PublicArchive = z.infer<typeof PublicArchive>;
+
 /* ---------- Source (provenance anchor, spec §4.1) ---------- */
 
 export const Source = strictObject({
@@ -81,8 +95,9 @@ export const Source = strictObject({
     "other",
   ]),
   url: z.string().url().optional(),
-  /** Archive BEFORE citing critically. null = consciously not yet archived. */
-  archived_url: z.string().url().nullable().optional(),
+  /** Archive BEFORE citing critically. Required: a missing public archive is either a
+   *  FINDING (`impossible`) or a GAP (`not_yet`), and the record must say which. */
+  public_archive: PublicArchive,
   /** Reproducible search term for a no-permalink register (CRKBO, the Salesforce
    *  YA grids — spec §4.1/§4.11). The archive script types it into the register's
    *  name filter and snapshots the FILTERED result; a bare fetch/Wayback of these
@@ -119,7 +134,7 @@ export const Reference = strictObject({
   publisher: z.string(),
   type: Source.shape.type,
   url: z.string().url().optional(),
-  archived_url: z.string().url().nullable().optional(),
+  public_archive: PublicArchive,
   local_snapshot: z.string().optional(),
   captured: YearMonth,
   /** Which credentials/scopes the document governs, where it governs several that DIFFER.

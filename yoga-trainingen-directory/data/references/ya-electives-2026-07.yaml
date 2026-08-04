@@ -5,7 +5,10 @@ publisher: "Yoga Alliance (Verenigde Staten) — Help Center"
 type: website
 url: https://help.yogaalliance.org/s/article/What-topics-can-be-considered-as-electives-within-an-RYS-curriculum
 captured: "2026-07"
-archived_url: null
+public_archive:
+  kind: impossible
+  reason: "JS-shell (Salesforce): Wayback bewaart alleen het omhulsel, geen letter
+    van het artikel"
 applies_to: [ "RYS 200", "RYS 300", "RYS 500", "RCYS", "RPYS" ]
 note: >
   GEEN PUBLIEK ARCHIEF MOGELIJK — Salesforce-shell, net als het YA-register.
@@ -13,7 +16,8 @@ note: >
   JavaScript met TACHTIG tekens zichtbare tekst ("Yoga Alliance | Help Center
   --> Loading × Sorry to interrupt CSS Error Refresh") en geen woord van het
   artikel. De browser-gerenderde lokale kopie bevat het wel volledig; die is
-  hier het bewijs. Domein staat daarom in WAYBACK_POINTLESS (src/lib/wayback.ts).
+  hier het bewijs. Domein staat daarom in WAYBACK_POINTLESS
+  (src/lib/wayback.ts).
 
   DE REGEL. "Yoga Alliance honors and respects all disciplines and traditions
   related to yoga, but all required hours for each designation (i.e., 200 hours
@@ -33,8 +37,8 @@ note: >
   Tai Chi, Tapping Therapy, Thai Massage, Western Astrology. (* verwijst naar de
   Code of Conduct.) De pagina verwijst verder naar de Scope of Practice.
 
-  LET OP DE REIKWIJDTE: dit gaat over ONDERWERPEN (waar de uren inhoudelijk
-  over mogen gaan), niet over ACTIVITEITSVORMEN (of het volgen, observeren of
+  LET OP DE REIKWIJDTE: dit gaat over ONDERWERPEN (waar de uren inhoudelijk over
+  mogen gaan), niet over ACTIVITEITSVORMEN (of het volgen, observeren of
   assisteren van lessen als classroom hour telt). Die vraag beantwoordt deze
   pagina niet; zie ya-application-guide-2026-07 voor de positieve definitie en
   ya-hours-per-day-2026-07 voor de uitsluitingslijst.

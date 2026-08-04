@@ -47,7 +47,9 @@ sources:
   - id: site-odaka-2026-06
     type: website
     url: https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/
-    archived_url: https://web.archive.org/web/20260627090418/https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627090418/https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/
     captured: "2026-06-25"
     note: "RYT 200 Odaka Yoga (Level 1): verplichte kernmodules, stijlbeschrijving
       (eb/vloed-golven, surfing-spots, Bushido), in-person; geen prijs op de
@@ -56,7 +58,9 @@ sources:
   - id: site-yin-2026-06
     type: website
     url: https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/
-    archived_url: https://web.archive.org/web/20260627090457/https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627090457/https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/
     captured: "2026-06-25"
     note: "RYT 200 Yin Yoga: één meerdaagse module + losse weekend-studiedagen;
       thema's (Wu Shen/Wu Xing TCM, pranayama, Achtvoudig Pad,
@@ -66,7 +70,9 @@ sources:
   - id: site-masterclasses-2026-06
     type: website
     url: https://yogacentrumoosterwold.nl/masterclasses/
-    archived_url: https://web.archive.org/web/20260627090533/https://yogacentrumoosterwold.nl/masterclasses/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627090533/https://yogacentrumoosterwold.nl/masterclasses/
     captured: "2026-06-25"
     note: >
       Masterclasses/bijscholingen: YA-gecertificeerde CE-modules van 15-75u,
@@ -78,7 +84,9 @@ sources:
   - id: site-voorwie-2026-06
     type: website
     url: https://yogacentrumoosterwold.nl/opleidingen-voor-wie/
-    archived_url: https://web.archive.org/web/20260627090608/https://yogacentrumoosterwold.nl/opleidingen-voor-wie/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627090608/https://yogacentrumoosterwold.nl/opleidingen-voor-wie/
     captured: "2026-06-25"
     note: "Doelgroep/uniek: kleinschalige groepen 3-10 deelnemers; basisopleidingen
       ook voor niet-docenten; RYT 200-registratie na afronding."
@@ -86,7 +94,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pkOeAAI&sid=0013g000002npjyAAA&name=Yoga-Centrum-Oosterwold---Yoga-Meirink
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: >
       Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga
@@ -100,7 +111,10 @@ sources:
   - id: ya-teacher-petra-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023hrqAAA
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: >
       YA-docentprofiel Petra Meirink (RYT; First Registered Aug 2017). Teaching
@@ -112,7 +126,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Meirink"
     captured: "2026-06-25"
     note: "Negatieve check: 'Meirink'/'Oosterwold' → 0 in Instellingen; 'Meirink' →

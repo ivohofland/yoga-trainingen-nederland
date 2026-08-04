@@ -59,7 +59,9 @@ sources:
   - id: site-klassikaal-2026-06
     type: website
     url: https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal
-    archived_url: https://web.archive.org/web/20260620190230/https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620190230/https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal
     captured: "2026-06-20"
     note: "Klassikale RYT/VYN200 Yin & Yang: 4×50u modules, prijzen, data, toetsing,
       docenten."
@@ -67,7 +69,8 @@ sources:
   - id: site-online-2026-06
     type: website
     url: https://sanayou.com/overzicht-online-ryt200-yoga-opleidingen
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-06-20"
     note: "Online RYT200 (3 routes: Yin, Yin & Yang, Yang); modulair,
       Nederlandstalig, YA-erkend."
@@ -75,7 +78,9 @@ sources:
   - id: site-300-2026-06
     type: website
     url: https://sanayou.com/overzicht-ryt300-yoga-opleidingen
-    archived_url: https://web.archive.org/web/20260620190653/https://sanayou.com/overzicht-ryt300-yoga-opleidingen
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620190653/https://sanayou.com/overzicht-ryt300-yoga-opleidingen
     captured: "2026-06-20"
     note: "RYT300 'The Art of Advanced Teaching' (hybride): 2 richtingen Yin
       Mastery/Yoga Awakening; €2250; YA-erkend."
@@ -83,7 +88,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjNrAAI&sid=0013g000002noscAAA&name=SanaYou-YOGAcademy
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-20"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als
       'SanaYouYOGA', Zwolle, talen NL+EN, RYS."
@@ -91,7 +99,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "SanaYou"
     captured: "2026-06-20"
     note: "Zoekrecept: tik 'SanaYou' → 1 treffer 'SanaYouYOGA, Zwolle'. Gefilterde
@@ -100,7 +111,9 @@ sources:
   - id: vyn-register-2026-06
     type: register
     url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
-    archived_url: https://web.archive.org/web/20260620190919/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620190919/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
     captured: "2026-06-20"
     note: >
       VYN (Vereniging Yogadocenten Nederland) register van erkende
@@ -244,26 +257,26 @@ programs:
         - label: "Yang (online route)"
           amount_eur: 1250
       note: >
-        € 1.250,- per route, en alle drie de routes (Yin Yoga / Yin & Yang / Yang)
-        kosten hetzelfde — de overzichtspagina zet ze naast elkaar met driemaal
-        "€ 1.250,-" en "Betaling in 1, 5 of 10 termijnen". Er is dus geen keuze te
-        maken tussen routes voor de vergelijkbare basisprijs (§4-conventie): ze zijn
-        identiek. Bedrag uitgelezen uit het gearchiveerde artefact van
-        site-online-2026-06 (vastgelegd 2026-06-20).
+        € 1.250,- per route, en alle drie de routes (Yin Yoga / Yin & Yang /
+        Yang) kosten hetzelfde — de overzichtspagina zet ze naast elkaar met
+        driemaal "€ 1.250,-" en "Betaling in 1, 5 of 10 termijnen". Er is dus
+        geen keuze te maken tussen routes voor de vergelijkbare basisprijs
+        (§4-conventie): ze zijn identiek. Bedrag uitgelezen uit het
+        gearchiveerde artefact van site-online-2026-06 (vastgelegd 2026-06-20).
 
         Btw: de pagina noemt geen btw-behandeling bij de prijs. Het enige
-        btw-woord in het artefact is het BTW-nummer in de footer
-        ("BTW nummer: NL001422164B38") — een registratienummer, geen uitspraak
-        over de prijs. SanaYou ís CRKBO-geregistreerd, maar §4.11 verbiedt de
-        vrijstelling daaruit af te leiden → vat blijft unknown.
+        btw-woord in het artefact is het BTW-nummer in de footer ("BTW nummer:
+        NL001422164B38") — een registratienummer, geen uitspraak over de prijs.
+        SanaYou ís CRKBO-geregistreerd, maar §4.11 verbiedt de vrijstelling
+        daaruit af te leiden → vat blijft unknown.
 
         CORRECTIE 2026-07-12: deze notitie stelde eerder dat de geciteerde bron
         "zélf geen bedrag" bevat en dat de prijzen op niet-gearchiveerde
         module-/inschrijfpagina's stonden. Dat was onjuist en het was ONZE fout,
         niet die van de aanbieder: het bedrag stond al die tijd in ons eigen
         archief van deze pagina. De bewering kwam uit een eerste, kapotte versie
-        van de provenance-check die PDF's met `strings` doorzocht — dat leest geen
-        gecomprimeerde tekststromen, dus las het "geen bedrag" waar er drie
+        van de provenance-check die PDF's met `strings` doorzocht — dat leest
+        geen gecomprimeerde tekststromen, dus las het "geen bedrag" waar er drie
         stonden. De definitieve check (pdftotext, HTML én browser-render) heeft
         deze bron nooit geflagd.
       source: site-online-2026-06

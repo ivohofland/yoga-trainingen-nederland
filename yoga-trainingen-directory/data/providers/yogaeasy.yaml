@@ -55,7 +55,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000O7UjVYAV&sid=001TR00000JpaWLYAZ&name=YogaEasy-Academy---English
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "YogaEasy
@@ -67,7 +70,9 @@ sources:
   - id: site-academy-tt-2026-06
     type: website
     url: https://studio.yogaeasy.com/pages/academy-tt
-    archived_url: https://web.archive.org/web/20260628151247/https://studio.yogaeasy.com/pages/academy-tt
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628151247/https://studio.yogaeasy.com/pages/academy-tt
     captured: "2026-06"
     note: >
       LIVE (browser-gerenderd) "Academy 200hr YTT": online Hatha Vinyasa 200u,
@@ -86,7 +91,9 @@ sources:
   - id: pdf-schedule-2026-06
     type: brochure
     url: https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf
-    archived_url: https://web.archive.org/web/20260628151316/https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628151316/https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf
     captured: "2026-06"
     note: "Downloadbare 'October 2026 — Live sessions schedule' (weekschema live
       sessies + rustweken). Niet machine-gelezen; pointer."
@@ -94,7 +101,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "yogaeasy / ekhart (website) + Ekhart (naam)"
     captured: "2026-06"
     note: >

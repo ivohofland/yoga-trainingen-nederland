@@ -73,7 +73,9 @@ sources:
   - id: site-basis-2026-07
     type: website
     url: https://yogaschool.nl/yoga-opleiding/
-    archived_url: https://web.archive.org/web/20260702063435/https://yogaschool.nl/yoga-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260702063435/https://yogaschool.nl/yoga-opleiding/
     captured: "2026-07"
     note: >
       /yoga-opleiding/ — een ALGEMENE opleidingspagina, NIET de eigen pagina van
@@ -98,26 +100,29 @@ sources:
   - id: site-basisopleiding-2026-07
     type: website
     url: https://yogaschool.nl/basisopleiding/
-    archived_url: https://web.archive.org/web/20260713202536/https://yogaschool.nl/basisopleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260713202536/https://yogaschool.nl/basisopleiding/
     captured: "2026-07"
     note: >
-      DE EIGEN PAGINA VAN DE BASISOPLEIDING — de opleiding die verplicht is
-      vóór de Docentenopleiding, en tot v0.9 nergens in dit record als bron
-      stond. Letterlijk: "De kosten voor de Basisopleiding vanaf januari 2026
-      zijn € 1590,00 per seizoen of lesjaar van 40 weken. Dit wordt betaald in
+      DE EIGEN PAGINA VAN DE BASISOPLEIDING — de opleiding die verplicht is vóór
+      de Docentenopleiding, en tot v0.9 nergens in dit record als bron stond.
+      Letterlijk: "De kosten voor de Basisopleiding vanaf januari 2026 zijn €
+      1590,00 per seizoen of lesjaar van 40 weken. Dit wordt betaald in
       termijnen van € 159,00 per maand (10 maanden)." Lesmateriaal/lesboeken
       (t.w.v. € 125) inbegrepen. Duur: "De basisopleiding bestaat uit 40
-      lesblokken van wekelijks 2 1/2 uur, verspreid over een jaar" — één lesjaar,
-      dus één periode. "Er zijn minimaal 100 lesuren en er staan 80
+      lesblokken van wekelijks 2 1/2 uur, verspreid over een jaar" — één
+      lesjaar, dus één periode. "Er zijn minimaal 100 lesuren en er staan 80
       thuisstudie-uren per lesjaar." De poort, letterlijk: "Aangezien de
-      Basisopleiding je het fundament over Raja Yoga bijbrengt, is deze opleiding
-      verplicht als je wilt starten met de Docentenopleiding." Geen
+      Basisopleiding je het fundament over Raja Yoga bijbrengt, is deze
+      opleiding verplicht als je wilt starten met de Docentenopleiding." Geen
       btw-vermelding op de pagina.
     local_snapshot: data/archives/de-yogaschool-enschede/site-basisopleiding-2026-07-2026-07-13.pdf
   - id: site-docenten-2026-07
     type: website
     url: https://yogaschool.nl/docentenopleiding/
-    archived_url: null
+    public_archive:
+      kind: not_yet
     captured: "2026-07"
     note: >
       LIVE Docentenopleiding Raja Yoga (vervolg op de Basisopleiding): 120
@@ -138,7 +143,9 @@ sources:
   - id: site-meester-2026-07
     type: website
     url: https://yogaschool.nl/meesteropleiding/
-    archived_url: https://web.archive.org/web/20260702063729/https://yogaschool.nl/meesteropleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260702063729/https://yogaschool.nl/meesteropleiding/
     captured: "2026-07"
     note: >
       LIVE Meesteropleiding Raja Yoga (vervolg ná de Docentenopleiding): 120
@@ -153,7 +160,10 @@ sources:
   - id: crkbo-register-2026-07
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Yogaschool (naam + website)"
     captured: "2026-07"
     note: >
@@ -212,14 +222,14 @@ programs:
         periods: 1
         source: site-basisopleiding-2026-07
         note: >
-          "Aangezien de Basisopleiding je het fundament over Raja Yoga bijbrengt,
-          is deze opleiding verplicht als je wilt starten met de
+          "Aangezien de Basisopleiding je het fundament over Raja Yoga
+          bijbrengt, is deze opleiding verplicht als je wilt starten met de
           Docentenopleiding." Kosten: "€ 1590,00 per seizoen of lesjaar van 40
           weken" (vanaf januari 2026), en de opleiding duurt één lesjaar ("40
           lesblokken ... verspreid over een jaar") → één periode, € 1.590. De
-          Basisopleiding is GEEN docentenopleiding en staat daarom niet als eigen
-          `program` in dit record; haar prijs staat hier, geciteerd aan de pagina
-          die haar afdrukt. LET OP: de algemene opleidingspagina
+          Basisopleiding is GEEN docentenopleiding en staat daarom niet als
+          eigen `program` in dit record; haar prijs staat hier, geciteerd aan de
+          pagina die haar afdrukt. LET OP: de algemene opleidingspagina
           (site-basis-2026-07) noemt voor de Basisopleiding €1510,00 per jaar —
           twee gepubliceerde bedragen voor dezelfde opleiding; zie de bronnoten.
     price:
@@ -322,11 +332,11 @@ programs:
         note: >
           "De Meesteropleing Raja Yoga kan je volgen nadat je de
           Docentenopleiding succesvol hebt afgesloten." Die opleiding staat als
-          `program` in dit record en draagt haar eigen (afgeleide) totaal én haar
-          eigen poort — de Basisopleiding. Het pad is dus drie schakels lang:
-          Basisopleiding → Docentenopleiding → Meesteropleiding. Geen bedrag
-          hier: dat zou een tweede, verouderbare kopie zijn van een prijs die de
-          Docentenopleiding zelf al draagt.
+          `program` in dit record en draagt haar eigen (afgeleide) totaal én
+          haar eigen poort — de Basisopleiding. Het pad is dus drie schakels
+          lang: Basisopleiding → Docentenopleiding → Meesteropleiding. Geen
+          bedrag hier: dat zou een tweede, verouderbare kopie zijn van een prijs
+          die de Docentenopleiding zelf al draagt.
     price:
       amount_eur: 1530
       period: per_year

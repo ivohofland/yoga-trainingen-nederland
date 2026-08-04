@@ -39,11 +39,12 @@ registrations:
     source: ya-register-2026-06
     note: >
       RYS 500 bevestigd via de designatie-badge (RYS500.png) op het profiel. Het
-      500u-traject is een GESTAPELDE leerroute, en de school publiceert die route
-      en het totaal zelf: "Samen vormen de 200-uurs basisopleiding en de 300 uur
-      aan verdiepingsmodules een totaal van 500 uur opleiding" (pagina "Yoga
-      Alliance – Opleidingsopbouw", site-yoga-alliance-2026-07). Zie programma
-      500-pathway: de 50-uursmodule van die 500 is nog niet aangeboden.
+      500u-traject is een GESTAPELDE leerroute, en de school publiceert die
+      route en het totaal zelf: "Samen vormen de 200-uurs basisopleiding en de
+      300 uur aan verdiepingsmodules een totaal van 500 uur opleiding" (pagina
+      "Yoga Alliance – Opleidingsopbouw", site-yoga-alliance-2026-07). Zie
+      programma 500-pathway: de 50-uursmodule van die 500 is nog niet
+      aangeboden.
 legal:
   legal_name: "Wahé yoga en ayurveda academie"
   note: "Lead/eigenaar Gitty de Gier (YA: 'Wahe Gitty de Gier'). KvK-nr + exacte
@@ -58,7 +59,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000F0RE5YAN&sid=001TR000005Q4rbYAC&name=Wahe-yoga-en-ayurveda-academie
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       Salesforce-LWC; browser-gerenderde capture nodig. Rendert als "Wahé yoga
@@ -70,7 +74,10 @@ sources:
   - id: ya-teacher-gitty-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00001fvJwKAAU
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       YA-docentprofiel "Wahe Gitty de Gier" (3742 CH Baarn; First Registered
@@ -80,7 +87,9 @@ sources:
   - id: site-vinyasa200-2026-06
     type: website
     url: https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/
-    archived_url: https://web.archive.org/web/20260628114838/https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628114838/https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/
     captured: "2026-06"
     note: >
       LIVE (browser-gerenderd) 200u Vinyasa Flow & (Ayur)Vedische TT:
@@ -98,7 +107,9 @@ sources:
   - id: site-yin150-2026-06
     type: website
     url: https://wahe-by-gitty.nl/lunar-flow-yin-pad/
-    archived_url: https://web.archive.org/web/20260628114920/https://wahe-by-gitty.nl/lunar-flow-yin-pad/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628114920/https://wahe-by-gitty.nl/lunar-flow-yin-pad/
     captured: "2026-06"
     note: >
       150u Yin Yoga & Lunar Flow TT, "diepgeworteld in de Vedische traditie":
@@ -110,7 +121,9 @@ sources:
   - id: site-restorative100-2026-06
     type: website
     url: https://wahe-by-gitty.nl/restorative-yoga-opleiding/
-    archived_url: https://web.archive.org/web/20260628115001/https://wahe-by-gitty.nl/restorative-yoga-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628115001/https://wahe-by-gitty.nl/restorative-yoga-opleiding/
     captured: "2026-06"
     note: >
       100u Restorative & Ayurveda Yoga TT: restorative + zelfonderzoek +
@@ -121,7 +134,9 @@ sources:
   - id: site-overview-2026-06
     type: website
     url: https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/
-    archived_url: https://web.archive.org/web/20260712135015/https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260712135015/https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/
     captured: "2026-06"
     note: >
       Opleidingsoverzicht: 200u Vinyasa & Ayurveda, 150u Yin/Lunar, 100u
@@ -132,7 +147,9 @@ sources:
   - id: site-yoga-alliance-2026-07
     type: website
     url: https://wahe-by-gitty.nl/yoga-alliance/
-    archived_url: https://web.archive.org/web/20260712135053/https://wahe-by-gitty.nl/yoga-alliance/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260712135053/https://wahe-by-gitty.nl/yoga-alliance/
     captured: "2026-07"
     note: >
       De pagina waarop Wahé de gestapelde 500-uursroute zélf beschrijft
@@ -143,7 +160,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Wah / wahe / de Gier (Docenten)"
     captured: "2026-06"
     note: >
@@ -155,7 +175,9 @@ sources:
   - id: acm-consumentenprijs
     type: other
     url: https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden
-    archived_url: https://web.archive.org/web/20260628115211/https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628115211/https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden
     captured: "2026-06"
     note: >
       ACM (Autoriteit Consument en Markt): een verkoopprijs aan consumenten moet
@@ -179,9 +201,9 @@ modules:
     sold_separately: yes
     price: { amount_eur: 2495, vat: excl, source: site-vinyasa200-2026-06 }
     note: >
-      "De basis van de opleiding is de 200-uurs Vinyasa Teacher Training."
-      Eigen opleidingspagina met data en inschrijving; ook los te volgen.
-      Zie programma 200-vinyasa-ayurveda.
+      "De basis van de opleiding is de 200-uurs Vinyasa Teacher Training." Eigen
+      opleidingspagina met data en inschrijving; ook los te volgen. Zie
+      programma 200-vinyasa-ayurveda.
   - id: yin-lunar-150
     name: "150 uur Yin / Lunar Yoga (verdiepingsmodule)"
     url: https://wahe-by-gitty.nl/lunar-flow-yin-pad/
@@ -210,8 +232,8 @@ modules:
     sold_separately: unknown
     note: >
       De vierde bouwsteen van de 500-uursroute, en de enige zonder eigen
-      opleidingspagina: de pagina "Yoga Alliance – Opleidingsopbouw" somt hem
-      op als "50 uur Filosofie, Pranayama en meditatie opleiding", maar het
+      opleidingspagina: de pagina "Yoga Alliance – Opleidingsopbouw" somt hem op
+      als "50 uur Filosofie, Pranayama en meditatie opleiding", maar het
       opleidingsoverzicht plaatst hem onder het kopje "Coming:" en er zijn geen
       data, geen prijs en geen inschrijving (captures 2026-06-28 / 2026-07-12).
       Zonder deze module is 450 van de gepubliceerde 500 uur boekbaar; geen url,
@@ -456,7 +478,8 @@ programs:
         wel geprijsd (200u €2495, 100u €1495, beide excl. btw; 150u geen prijs).
         vat = unknown (§4.11): de routepagina noemt geen btw, en een
         btw-behandeling wordt waargenomen of is niet bekend — de excl-btw van de
-        losse opleidingen is een feit óver die opleidingen, niet over deze route.
+        losse opleidingen is een feit óver die opleidingen, niet over deze
+        route.
       source: site-yoga-alliance-2026-07
     hours_claimed:
       total: 500
@@ -473,12 +496,13 @@ programs:
         (200 + 150 + 100 + 50) — dat is een module-opdeling, geen
         contact/zelfstudie-opdeling; een geïsoleerd contacturental ontbreekt.
         BEPERKING VAN DE ROUTE (feit, geen oordeel): van de vier onderdelen
-        hebben er drie (200u Vinyasa, 150u Yin/Lunar, 100u Restorative) een eigen
-        opleidingspagina met data en inschrijving; de 50-uursmodule Filosofie,
-        Pranayama en meditatie heeft die niet — het opleidingsoverzicht zet die
-        onder het kopje "Coming:" (capture 2026-06-28) en er staan geen data en
-        geen prijs bij. De 500-uursroute is daarmee op dit moment niet af te
-        ronden: 450 van de 500 uur zijn boekbaar.
+        hebben er drie (200u Vinyasa, 150u Yin/Lunar, 100u Restorative) een
+        eigen opleidingspagina met data en inschrijving; de 50-uursmodule
+        Filosofie, Pranayama en meditatie heeft die niet — het
+        opleidingsoverzicht zet die onder het kopje "Coming:" (capture
+        2026-06-28) en er staan geen data en geen prijs bij. De 500-uursroute is
+        daarmee op dit moment niet af te ronden: 450 van de 500 uur zijn
+        boekbaar.
     composition:
       type: fixed_modular
       modules: [ vinyasa-200, yin-lunar-150, restorative-100, filosofie-pranayama-50 ]
@@ -505,15 +529,15 @@ claims:
   - id: 500-uurs-niveau-ya
     scope: "program:500-pathway"
     quote: "Samen vormen de 200-uurs basisopleiding en de 300 uur aan
-      verdiepingsmodules een totaal van 500 uur opleiding, wat voldoet aan de eisen
-      voor registratie op het 500-uurs niveau bij Yoga Alliance."
+      verdiepingsmodules een totaal van 500 uur opleiding, wat voldoet aan de
+      eisen voor registratie op het 500-uurs niveau bij Yoga Alliance."
     category: accreditation
     source: site-yoga-alliance-2026-07
   - id: losse-modules-registreerbaar
     scope: "program:500-pathway"
     quote: "De modules kunnen ook los worden gevolgd en geregistreerd bij Yoga
-      Alliance. Studenten hoeven dus niet eerst de volledige 200-uursopleiding te
-      hebben afgerond om aan een verdiepingsmodule deel te nemen."
+      Alliance. Studenten hoeven dus niet eerst de volledige 200-uursopleiding
+      te hebben afgerond om aan een verdiepingsmodule deel te nemen."
     category: accreditation
     source: site-yoga-alliance-2026-07
 

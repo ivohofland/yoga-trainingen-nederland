@@ -28,23 +28,30 @@ sources:
   - id: site-2026-06
     type: website
     url: https://www.blikopener.info/
-    archived_url: https://web.archive.org/web/20260613080628/https://www.blikopener.info/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260613080628/https://www.blikopener.info/
     captured: "2026-06-13"
     note: "homepage; bevat zélf geen bedrag, geen urental en geen structuur — linkt
       alleen door naar de pagina's die dat wél stellen (tarieven-2026-07 en
-      opleiding-2026-07). Draagt hier nog uitsluitend de cohortdatum (start 31 aug
-      2026), die de homepage zelf noemt."
+      opleiding-2026-07). Draagt hier nog uitsluitend de cohortdatum (start 31
+      aug 2026), die de homepage zelf noemt."
     local_snapshot: data/archives/de-blikopener/site-2026-06-2026-06-13.pdf
   - id: vyn-register-2026-06
     type: register
     url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
-    archived_url: https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
     captured: "2026-06-13"
     local_snapshot: data/archives/de-blikopener/vyn-register-2026-06-2026-06-13.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-13"
     local_snapshot: data/archives/de-blikopener/crkbo-register-2026-06-2026-06-13.pdf
   - id: tarieven-2026-07
@@ -55,7 +62,9 @@ sources:
       alleen naar). Noemt géén btw: geen 'incl.', geen 'excl.', geen
       'vrijgesteld', geen CRKBO."
     local_snapshot: data/archives/de-blikopener/tarieven-2026-07-2026-07-12.pdf
-    archived_url: https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/
   - id: opleiding-2026-07
     type: website
     url: https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/
@@ -63,7 +72,9 @@ sources:
     note: "de opleidingspagina zelf — de pagina die de OMVANG en de STRUCTUUR stelt
       (urental, aantal jaren, beide varianten). De homepage doet dat nergens."
     local_snapshot: data/archives/de-blikopener/opleiding-2026-07-2026-07-12.pdf
-    archived_url: https://web.archive.org/web/20260712131118/https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260712131118/https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/
 
 # TWEE OPLEIDINGEN, GEEN ÉÉN. De opleidingspagina (opleiding-2026-07) beschrijft twee
 # trajecten met een eigen omvang, een eigen duur en een eigen afsluiting: "De
@@ -93,16 +104,16 @@ programs:
       duration_months_min: 48
       duration_months_max: 48
       language: nl
-    prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan
-      23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een
-      persoonlijk instapgesprek vooraf"
+    prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger
+      dan 23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70
+      jaar; een persoonlijk instapgesprek vooraf"
     prerequisite:
       - kind: experience
         label: "ten minste twee jaar yoga-ervaring"
         source: opleiding-2026-07
         note: >
-          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee
-          jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
+          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste
+          twee jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
           instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen:
           geen bedrag opgeteld.
     price:
@@ -118,8 +129,10 @@ programs:
       period: per_year
       periods: 4
       variants:
-        - { label: "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli
-            2026", amount_eur: 1220 }
+        - {
+            label: "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli 2026",
+            amount_eur: 1220
+          }
       # GECORRIGEERD naar `unknown` (was `exempt_crkbo`). De gearchiveerde
       # tarievenpagina — de enige bron die de prijs stelt — noemt géén btw: geen
       # 'incl.', geen 'excl.', geen 'vrijgesteld', geen CRKBO. Spec §4.11 verbiedt het
@@ -133,9 +146,9 @@ programs:
         335,-')."
       note: "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12), niet per
         opleiding: het traject loopt vier jaar en een totaalprijs publiceren zij
-        nergens. Het totaal in het overzicht is ONZE vermenigvuldiging (4 × € 1.290),
-        als zodanig gemarkeerd. BTW: de tarievenpagina noemt geen btw — `vat` is
-        daarom `unknown` (spec §4.11: een vrijstelling mag niet uit de
+        nergens. Het totaal in het overzicht is ONZE vermenigvuldiging (4 × €
+        1.290), als zodanig gemarkeerd. BTW: de tarievenpagina noemt geen btw —
+        `vat` is daarom `unknown` (spec §4.11: een vrijstelling mag niet uit de
         CRKBO-registratie worden afgeleid). Correctie t.o.v. de eerdere waarde
         `exempt_crkbo`, die op geen bron rustte."
       source: tarieven-2026-07
@@ -155,13 +168,14 @@ programs:
       source: opleiding-2026-07
       note: "500 u over vier jaar (opleidingspagina). De pagina verwijst voor de
         uitsplitsing naar een aparte pagina 'Uren opleiding'; die is nog niet
-        vastgelegd, dus over de contact-/zelfstudie-uren doen wij geen uitspraak."
+        vastgelegd, dus over de contact-/zelfstudie-uren doen wij geen
+        uitspraak."
     assessment_described:
       exists: "yes"
       final: "yes"
       quote: "Als je voor het 500 u-traject wilt gaan, kun je aansluitend een 4e jaar
-        volgen met verdiepende modules, dat je afsluit met een praktijkexamen en een
-        afstudeerscriptie."
+        volgen met verdiepende modules, dat je afsluit met een praktijkexamen en
+        een afstudeerscriptie."
     coherence_signals:
       single_cohort_intake: "yes"
       single_cohort_intake_note: "jaarlijkse start; 1e jaar start eind augustus /
@@ -202,16 +216,16 @@ programs:
       duration_months_min: 36
       duration_months_max: 36
       language: nl
-    prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger dan
-      23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70 jaar; een
-      persoonlijk instapgesprek vooraf"
+    prerequisites_claimed: "HBO-niveau; ten minste twee jaar yoga-ervaring; jonger
+      dan 23 jaar: minimaal een havo-diploma; inschrijving open tot en met 70
+      jaar; een persoonlijk instapgesprek vooraf"
     prerequisite:
       - kind: experience
         label: "ten minste twee jaar yoga-ervaring"
         source: opleiding-2026-07
         note: >
-          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste twee
-          jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
+          "Om toegelaten te worden tot het eerste jaar, vragen we ten minste
+          twee jaar yoga[-ervaring]" — plus HBO-niveau en een persoonlijk
           instapgesprek. Ervaringseis, geen opleiding die je eerst moet kopen:
           geen bedrag opgeteld.
     price:
@@ -222,8 +236,10 @@ programs:
       period: per_year
       periods: 3
       variants:
-        - { label: "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli
-            2026", amount_eur: 1220 }
+        - {
+            label: "vroegboekkorting 1e studiejaar 2026, bij inschrijving vóór 5 juli 2026",
+            amount_eur: 1220
+          }
       # Zie het 500 u-record: de tarievenpagina noemt geen btw (spec §4.11).
       vat: unknown
       published: "yes"
@@ -231,10 +247,11 @@ programs:
         verblijfskosten van het jaarlijkse yogaweekend ('vanaf 1 juli 2026 €
         335,-')."
       note: "€ 1290,- per STUDIEJAAR (tarievenpagina, geharvest 2026-07-12). De
-        tarievenpagina noemt één tarief voor de Hatha-Raja yogadocentenopleiding en
-        onderscheidt de driejarige variant niet apart; het totaal in het overzicht is
-        ONZE vermenigvuldiging (3 × € 1.290), als zodanig gemarkeerd. BTW: de
-        tarievenpagina noemt geen btw — `vat` is daarom `unknown` (spec §4.11)."
+        tarievenpagina noemt één tarief voor de Hatha-Raja yogadocentenopleiding
+        en onderscheidt de driejarige variant niet apart; het totaal in het
+        overzicht is ONZE vermenigvuldiging (3 × € 1.290), als zodanig
+        gemarkeerd. BTW: de tarievenpagina noemt geen btw — `vat` is daarom
+        `unknown` (spec §4.11)."
       source: tarieven-2026-07
     hours_claimed:
       # "Het is ook mogelijk om de 3-jarige opleiding te volgen van 372 u."
@@ -247,7 +264,8 @@ programs:
       contact_published: unknown
       source: opleiding-2026-07
       note: "372 u over drie jaar (opleidingspagina). Voor de uitsplitsing verwijst de
-        pagina naar een aparte pagina 'Uren opleiding'; die is nog niet vastgelegd."
+        pagina naar een aparte pagina 'Uren opleiding'; die is nog niet
+        vastgelegd."
     assessment_described:
       exists: "yes"
       final: "yes"

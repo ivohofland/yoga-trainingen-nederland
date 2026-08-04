@@ -56,8 +56,8 @@ registrations:
       REGIME: ELEVATED RYS 200. First Registered okt 2023 ligt na 27 feb 2020,
       dus geldt de Elevated-standaard: vier Educational Categories en alle 200
       uur als "classroom hours". Contact/non-contact bestaat hier niet — dat
-      loopt alleen nog bij RYS 300/500/RCYS/RPYS. Bronnen:
-      ya-standards-2026-07, ya-hours-per-day-2026-07.
+      loopt alleen nog bij RYS 300/500/RCYS/RPYS. Bronnen: ya-standards-2026-07,
+      ya-hours-per-day-2026-07.
   - body: yoga_alliance
     identifier: "RYS 300"
     holder: "Tribes dance & yoga"
@@ -102,7 +102,9 @@ sources:
   - id: site-vinyasa200-2026-06
     type: website
     url: https://www.tribesacademy.nl/200-hour-modern-vinyasa
-    archived_url: https://web.archive.org/web/20260628055450/https://www.tribesacademy.nl/200-hour-modern-vinyasa
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628055450/https://www.tribesacademy.nl/200-hour-modern-vinyasa
     captured: "2026-06"
     note: >
       200u Modern Vinyasa TT (Wix): 6 weekenden Leiden + retreatweek, cohort 9
@@ -115,7 +117,9 @@ sources:
   - id: site-yin200-2026-06
     type: website
     url: https://www.tribesacademy.nl/training/200-hour-yin-yoga
-    archived_url: https://web.archive.org/web/20260628055536/https://www.tribesacademy.nl/training/200-hour-yin-yoga
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628055536/https://www.tribesacademy.nl/training/200-hour-yin-yoga
     captured: "2026-06"
     note: >
       200u Yin Yoga TT (modulair, 4×50u: The Essence/Channels/Elements/Art):
@@ -128,7 +132,9 @@ sources:
   - id: site-vinyasa300-2026-06
     type: website
     url: https://www.tribesacademy.nl/training/300-hour-modern-vinyasa
-    archived_url: https://web.archive.org/web/20260628055608/https://www.tribesacademy.nl/training/300-hour-modern-vinyasa
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628055608/https://www.tribesacademy.nl/training/300-hour-modern-vinyasa
     captured: "2026-06"
     note: >
       300u Modern Vinyasa TT "Level 2" (gevorderd): 2 retreats (75u, in lijst
@@ -141,7 +147,9 @@ sources:
   - id: site-yogindra-2026-06
     type: website
     url: https://www.yogindra.com/teacher-training/
-    archived_url: https://web.archive.org/web/20260628055637/https://www.yogindra.com/teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260628055637/https://www.yogindra.com/teacher-training/
     captured: "2026-06"
     note: >
       Eigen marketingpagina van Indra Paternotte voor dezelfde 200u Yin-TT: de
@@ -154,7 +162,10 @@ sources:
     local_snapshot: data/archives/tribes-academy/site-yogindra-2026-06-2026-06-28.pdf
   - id: brochure-curriculum-2026-07
     type: brochure
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "niet vrij op de site gepubliceerd (achter een e-mailformulier): er is
+        geen publieke pagina om te archiveren"
     captured: "2026-07"
     note: >
       "200-hour Modern Vinyasa Teacher Training — Full Curriculum" (PDF, 17
@@ -172,7 +183,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000qDYguAAG&sid=0013g00000phI1NAAU&name=Tribes-dance-and-yoga
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       Salesforce-LWC; browser-gerenderde capture nodig. Rendert als registrant
@@ -185,7 +199,10 @@ sources:
   - id: ya-teacher-fanny-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g000009FCJTAA4
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       YA-docentprofiel Fanny Alavoine (Leiden; teaches at Tribes dec 2020-heden;
@@ -195,7 +212,10 @@ sources:
   - id: ya-teacher-willemieke-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000056n7oAAA
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06"
     note: >
       YA-docentprofiel Willemieke Verweij (Doezastraat 2A, Leiden; First
@@ -205,7 +225,10 @@ sources:
   - id: ya-teacher-indra-absent-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=Teacher&keyword=Paternotte
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     query: "Paternotte"
     captured: "2026-06"
     note: >
@@ -217,7 +240,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Tribes"
     captured: "2026-06"
     note: >
@@ -339,11 +365,11 @@ programs:
           publiek/besloten. Die 6 lessen zijn dus verdedigbaar als
           opleidingsuren; de 16 andere niet.
 
-          GEVOLG VOOR DE LEZING VAN HET GAT: van de 22 lessen kunnen er hooguit zes
-          meetellen (ruim een kwart), dus het gat van ±42 u tussen de geclaimde 200 u en
-          deze telling wordt er niet door verklaard. Lees het verschil als
-          "buiten het gepubliceerde rooster" — niet als "niet gegeven", maar
-          evenmin als "elders wel geleverd".
+          GEVOLG VOOR DE LEZING VAN HET GAT: van de 22 lessen kunnen er hooguit
+          zes meetellen (ruim een kwart), dus het gat van ±42 u tussen de
+          geclaimde 200 u en deze telling wordt er niet door verklaard. Lees het
+          verschil als "buiten het gepubliceerde rooster" — niet als "niet
+          gegeven", maar evenmin als "elders wel geleverd".
 
           TWEE STAPPEN HIERIN ZIJN VAN DE GIDS, NIET VAN YA. (a) Dat de
           practicum-omschrijving uit de vijf-categorieënstandaard doorwerkt in

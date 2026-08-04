@@ -61,7 +61,9 @@ sources:
   - id: site-2026-06
     type: website
     url: https://www.youarethebuddha.com/ytt
-    archived_url: https://web.archive.org/web/20260627100609/https://www.youarethebuddha.com/ytt
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627100609/https://www.youarethebuddha.com/ytt
     captured: "2026-06-25"
     note: >
       200u YTT Breda (Wix): 5 modules / 33 lesdagen, curriculum + prijs per
@@ -72,7 +74,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000GLj5EAAT&sid=0013g00000B6xkEAAR&name=You-are-the-Buddha
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga
       Academy You are the Buddha', Breda, RYS 200, First Registered February
@@ -82,7 +87,10 @@ sources:
   - id: ya-teacher-marlies-2026-06
     type: register
     url: https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000230eOAAQ
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-25"
     note: >
       YA-docentprofiel Marlies Tobias (E-RYT 500, YACEP; First Registered Aug
@@ -93,7 +101,9 @@ sources:
   - id: vyn-register-2026-06
     type: register
     url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
-    archived_url: https://web.archive.org/web/20260627100741/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260627100741/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
     captured: "2026-06-25"
     note: "VYN (Vereniging Yogadocenten Nederland) lijst erkende yogaopleidingen;
       'Yoga Academy You are the Buddha' staat erop (browser-gerenderd; geen
@@ -102,7 +112,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Buddha"
     captured: "2026-06-25"
     note: >

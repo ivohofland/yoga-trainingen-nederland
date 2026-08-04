@@ -59,21 +59,27 @@ sources:
   - id: site-vinyasa-2026-06
     type: website
     url: https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/
-    archived_url: https://web.archive.org/web/20260620140652/https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620140652/https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/
     captured: "2026-06-20"
     note: "Vinyasa 200u NL: programma, data, prijs, docenten, examen."
     local_snapshot: data/archives/de-nieuwe-yogaschool/site-vinyasa-2026-06-2026-06-20.pdf
   - id: site-yin-2026-06
     type: website
     url: https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/
-    archived_url: https://web.archive.org/web/20260620140733/https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620140733/https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/
     captured: "2026-06-20"
     note: "Yin 200u NL: programma, prijs, certificering."
     local_snapshot: data/archives/de-nieuwe-yogaschool/site-yin-2026-06-2026-06-20.pdf
   - id: site-intensive-2026-06
     type: website
     url: https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/
-    archived_url: https://web.archive.org/web/20260716133943/https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260716133943/https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/
     captured: "2026-06-20"
     note: "Vinyasa Teacher Training Intensive (EN): 3,5 weken immersion, prijs,
       certificering."
@@ -81,7 +87,9 @@ sources:
   - id: club-yoga-2026-06
     type: website
     url: https://club-yoga.nl/teacher-training/
-    archived_url: https://web.archive.org/web/20260620140953/https://club-yoga.nl/teacher-training/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620140953/https://club-yoga.nl/teacher-training/
     captured: "2026-06-20"
     note: >
       Club Yoga Leeuwarden (Westersingel 2F) — gastlocatie/partner. Promopagina,
@@ -92,7 +100,9 @@ sources:
   - id: netwerk-2026-06
     type: website
     url: https://www.hetnieuweyoganetwerk.nl/
-    archived_url: https://web.archive.org/web/20260620141110/https://www.hetnieuweyoganetwerk.nl/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260620141110/https://www.hetnieuweyoganetwerk.nl/
     captured: "2026-06-20"
     note: >
       "Het Nieuwe Yoganetwerk" — DNYS' EIGEN netwerk/BV (eigen KvK 77928229, btw
@@ -105,7 +115,10 @@ sources:
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phYeAAI&sid=0013g000002nn8dAAA&name=Johan-Noorloos-Teachertraining
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-20"
     note: "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Johan
       Noorloos Teachertraining', Amsterdam, talen NL+EN."
@@ -113,7 +126,10 @@ sources:
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     query: "Nieuwe Yogaschool"
     captured: "2026-06-20"
     note: >
@@ -125,7 +141,9 @@ sources:
   - id: boekenlijst-2026-07
     type: website
     url: https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/
-    archived_url: https://web.archive.org/web/20260716134020/https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260716134020/https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/
     captured: "2026-07-16"
     note: >
       Los gepubliceerde boekenlijst — de "boekenlijst apart gepubliceerd"
@@ -321,10 +339,10 @@ programs:
       schedule:
         source: site-intensive-2026-06
         note: >
-          3,5 weken immersion, 27 jul–19 aug 2026 in vier blokken (drie ma–za, één
-          ma–wo), dagelijks 10:00–17:00; geen pauze op de pagina vermeld. count =
-          21 lesdagen; onze telling is een bovengrens op de contacturen (pauzes
-          niet meegerekend).
+          3,5 weken immersion, 27 jul–19 aug 2026 in vier blokken (drie ma–za,
+          één ma–wo), dagelijks 10:00–17:00; geen pauze op de pagina vermeld.
+          count = 21 lesdagen; onze telling is een bovengrens op de contacturen
+          (pauzes niet meegerekend).
         blocks:
           - { count: 21, start: "10:00", end: "17:00", label: "lesdag" }
       source: site-intensive-2026-06

@@ -31,31 +31,43 @@ sources:
   - id: site-2026-06
     type: website
     url: https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
-    archived_url: https://web.archive.org/web/20260612/https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260612/https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/
     local_snapshot: data/archives/yoga-academie-nederland/site-2026-06-2026-07-14.pdf
     captured: "2026-06-12"
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/directoryregistrants?type=School
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-12"
     local_snapshot: data/archives/yoga-academie-nederland/ya-register-2026-06-2026-07-14.pdf
   - id: vyn-register-2026-06
     type: register
     url: https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
-    archived_url: https://web.archive.org/web/20260714093905/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260714093905/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/
     captured: "2026-06-12"
     local_snapshot: data/archives/yoga-academie-nederland/vyn-register-2026-06-2026-07-14.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-12"
     local_snapshot: data/archives/yoga-academie-nederland/crkbo-register-2026-06-2026-07-14.pdf
   - id: datakosten-pdf-2026-07
     type: brochure
     url: https://yoga-academie.nl/.cm4all/uproc.php/0/YAN_datakosten.pdf
-    archived_url: https://web.archive.org/web/20260714093940/https://yoga-academie.nl/.cm4all/mediadb/YAN_datakosten.pdf
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260714093940/https://yoga-academie.nl/.cm4all/mediadb/YAN_datakosten.pdf
     captured: "2026-07-12"
     note: "'data-overzicht (pdf)' — de PDF die vanaf de opleidingspagina gelinkt
       wordt en die de prijzen draagt (opleidingsprijs, prijs per module,

@@ -27,19 +27,27 @@ sources:
   - id: site-2026-06
     type: website
     url: https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
-    archived_url: https://web.archive.org/web/20260612/https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
+    public_archive:
+      kind: archived
+      url: https://web.archive.org/web/20260612/https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
     local_snapshot: data/archives/centre-body-mind/site-2026-06-2026-06-12.pdf
     captured: "2026-06-12"
   - id: ya-register-2026-06
     type: register
     url: https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pi3LAAQ&sid=0013g000002nnUBAAY&name=The-Centre-of-Body-&-Mind
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "JS-shell (Salesforce): Wayback bewaart header/footer zonder
+        registergegevens"
     captured: "2026-06-13"
     local_snapshot: data/archives/centre-body-mind/ya-register-2026-06-2026-06-12.pdf
   - id: crkbo-register-2026-06
     type: register
     url: https://www.crkbo.nl/Register/Instellingen
-    archived_url: null
+    public_archive:
+      kind: impossible
+      reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit
+        de gezochte rij"
     captured: "2026-06-12"
     local_snapshot: data/archives/centre-body-mind/crkbo-register-2026-06-2026-06-12.pdf
 
@@ -49,7 +57,7 @@ programs:
     url: https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding
     format_label: "200"
     style_claimed: "Hatha, Ashtanga, Vinyasa en Yin; chakra-leer"
-    styles: [hatha, ashtanga, vinyasa, yin]  # 4 co-equale stijlen -> derived multistyle
+    styles: [ hatha, ashtanga, vinyasa, yin ] # 4 co-equale stijlen -> derived multistyle
     accreditation:
       - body: yoga_alliance
         label_claimed: "200 RYT Alliance certificaat"
@@ -66,8 +74,8 @@ programs:
         label: "minimaal twee jaar ervaring met yoga"
         source: site-2026-06
         note: >
-          "twee jaar ervaring" met yoga — een ervaringsdrempel, geen opleiding die
-          je eerst moet kopen. Een echte hindernis, zonder bedrag.
+          "twee jaar ervaring" met yoga — een ervaringsdrempel, geen opleiding
+          die je eerst moet kopen. Een echte hindernis, zonder bedrag.
     price:
       amount_eur: 2600
       vat: excl
