@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { integrityErrors, loadDataset, loadReferences } from "./loader";
+import { integrityErrors, loadDataset, loadReferences, methodologyCitationErrors } from "./loader";
 import {
   bundleDelta,
   contactRatio,
@@ -172,6 +172,70 @@ test("REFERENCES: a `not_yet` left on a Wayback-pointless URL is an error, not a
   );
   assert.match(errors.join("\n"), /not_yet/);
   assert.match(errors.join("\n"), /kind: impossible, reason:/);
+});
+
+/* ---------- I3: a marker inside a REFERENCE's own note must resolve too ----------
+ * `app/referenties/page.tsx` renders `ref.note` through `<Cite>` exactly like a
+ * provider's notes, but `integrityErrors` only ever walks `Provider` — this store had
+ * no counterpart at all until now. The 13 existing bare cross-references between the
+ * five real reference documents are untouched by design (see loadReferences's comment);
+ * these fixtures only exercise a string already in the marked `[[ref:<id>]]` form.
+ */
+
+test("REFNOTE: a marker in a reference's own note naming no known document is an error", () => {
+  const { errors } = refFixture(
+    `${REF_BASE}${REF_SNAPSHOT_LINE}note: "zie [[ref:weg-2026-01]]"\n`,
+    REF_SNAPSHOT_SIDECAR,
+  );
+  assert.equal(errors.filter((e) => /weg-2026-01/.test(e)).length, 1);
+});
+
+test("REFNOTE: a marker in a reference's own note that resolves produces no citation error", () => {
+  // Self-citation: x-2026-07 citing its own id is a degenerate case, but a resolvable
+  // one — the point is only that a KNOWN id must not be flagged.
+  const { errors } = refFixture(
+    `${REF_BASE}${REF_SNAPSHOT_LINE}note: "zie [[ref:x-2026-07]]"\n`,
+    REF_SNAPSHOT_SIDECAR,
+  );
+  assert.deepEqual(errors.filter((e) => /ref:/.test(e)), []);
+});
+
+test("REFNOTE: the committed reference store's citations (if any) all resolve", () => {
+  // Belt and braces over the fixtures above: today's five real documents cite each
+  // other only by BARE id (M4, deferred), so this is expected to find zero markers —
+  // but it must not silently stop checking the moment one is added.
+  const { references, errors } = loadReferences();
+  assert.deepEqual(errors.filter((e) => /cites \[\[ref:/.test(e)), []);
+  assert.ok(references.length >= 5);
+});
+
+/* ---------- I3: a marker inside content/methodologie.md must resolve too ---------- */
+
+test("METHCITE: a citation naming a document the repo does not hold is an error", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "methcite-"));
+  fs.mkdirSync(path.join(root, "content"), { recursive: true });
+  fs.writeFileSync(path.join(root, "content", "methodologie.md"), "… valt onder [[ref:weg-2026-01]] …");
+  const errs = methodologyCitationErrors(new Set(["ya-standards-2026-07"]), root);
+  assert.equal(errs.filter((e) => /weg-2026-01/.test(e)).length, 1);
+  assert.match(errs.join("\n"), /content\/methodologie\.md/);
+});
+
+test("METHCITE: a citation that resolves produces no error", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "methcite-"));
+  fs.mkdirSync(path.join(root, "content"), { recursive: true });
+  fs.writeFileSync(path.join(root, "content", "methodologie.md"), "… valt onder [[ref:ya-standards-2026-07]] …");
+  const errs = methodologyCitationErrors(new Set(["ya-standards-2026-07"]), root);
+  assert.deepEqual(errs, []);
+});
+
+test("METHCITE: the committed methodology's citations all resolve against the committed store", () => {
+  // The real-world case: today's four ids all happen to also be cited from
+  // tribes-academy.yaml, so a RENAME is caught by integrityErrors by coincidence — this
+  // is the check that would catch a TYPO existing only in the methodology, which nothing
+  // else covers.
+  const { references } = loadReferences();
+  const known = new Set(references.map((r) => r.id));
+  assert.deepEqual(methodologyCitationErrors(known), []);
 });
 
 test("every provider id matches its filename slug", () => {

@@ -13,7 +13,7 @@
  * means the page mentions it somewhere, not that the page attributes it to this
  * programme. The line says what the check does, no more.
  */
-import { loadDataset, loadReferences } from "../src/lib/loader";
+import { loadDataset, loadReferences, methodologyCitationErrors } from "../src/lib/loader";
 import { pricePerContactHour, contactRatio, bundleDelta, completeness } from "../src/lib/derive";
 import { allProvenance, PdftotextMissing } from "../src/lib/provenance";
 
@@ -141,6 +141,22 @@ if (references.length < MIN_REFERENCES) {
       `  Zero validation errors does not mean the store is intact — a missing or emptied\n` +
       `  data/references/ validates trivially, and provider notes still cite it.\n`,
   );
+  process.exit(1);
+}
+
+// CITATIONS IN content/methodologie.md MUST RESOLVE TOO (I3, spec §4.1b). The methodology
+// page turns every `[[ref:<id>]]` into an unconditional link (app/methodologie/page.tsx),
+// exactly like a provider record's notes — but `integrityErrors` only ever walks `Provider`,
+// so a typo'd id here would ship a dead link in published prose about a named organisation
+// with every other gate green. Today's four methodology ids happen to also be cited from
+// tribes-academy.yaml, so the provider check catches a RENAME by coincidence; it cannot
+// catch a typo that exists only here. (Reference notes get the same treatment inside
+// loadReferences() itself, above — see its own comment.)
+const knownReferenceIds = new Set(references.map((r) => r.id));
+const methodologyErrors = methodologyCitationErrors(knownReferenceIds);
+if (methodologyErrors.length > 0) {
+  console.error(`\n✗ ${methodologyErrors.length} methodology citation error(s):\n`);
+  for (const e of methodologyErrors) console.error(`  - ${e}`);
   process.exit(1);
 }
 
