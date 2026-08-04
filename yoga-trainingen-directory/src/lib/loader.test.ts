@@ -148,6 +148,17 @@ test("REFERENCES: a Wayback URL on a JS shell fails — but archive.today does N
   assert.deepEqual(viaArchiveToday.errors, [], "archive.today must remain allowed");
 });
 
+test("REFERENCES: a `not_yet` left on a Wayback-pointless URL is an error, not a gap", () => {
+  // The mirror of the provider-side check: the reference store is held to the same rule the
+  // provider records are, and `not_yet` on a pointless URL was the one shape neither the
+  // `archived` check nor the `impossible` reason-drift check covered.
+  const { errors } = refFixture(
+    `${REF_BASE_CORE}url: https://help.yogaalliance.org/s/article/x\npublic_archive:\n  kind: not_yet\n`,
+  );
+  assert.match(errors.join("\n"), /not_yet/);
+  assert.match(errors.join("\n"), /kind: impossible, reason:/);
+});
+
 test("every provider id matches its filename slug", () => {
   const { providers } = loadDataset();
   for (const p of providers) {
@@ -1164,7 +1175,7 @@ test("LOADER: an impossible whose stored reason drifts from the deriver is an er
     public_archive: { kind: "impossible", reason: "een andere reden dan de functie geeft" },
   });
   const errs = integrityErrors(p, "x.yaml");
-  assert.equal(errs.filter((e) => /reden/i.test(e)).length, 1);
+  assert.equal(errs.filter((e) => /reason/i.test(e)).length, 1);
 });
 
 test("LOADER: an impossible with NO url accepts any reason", () => {
@@ -1174,7 +1185,7 @@ test("LOADER: an impossible with NO url accepts any reason", () => {
     url: undefined,
     public_archive: { kind: "impossible", reason: "niet vrij op de site gepubliceerd" },
   });
-  assert.deepEqual(integrityErrors(p, "x.yaml").filter((e) => /reden/i.test(e)), []);
+  assert.deepEqual(integrityErrors(p, "x.yaml").filter((e) => /reason/i.test(e)), []);
 });
 
 test("LOADER: an ARCHIVED Wayback url on a Wayback-pointless page is still an error", () => {
@@ -1185,6 +1196,23 @@ test("LOADER: an ARCHIVED Wayback url on a Wayback-pointless page is still an er
     public_archive: { kind: "archived", url: "https://web.archive.org/web/2026/x" },
   });
   assert.equal(integrityErrors(p, "x.yaml").filter((e) => /Wayback/i.test(e)).length, 1);
+});
+
+test("LOADER: a `not_yet` left on a Wayback-pointless page is an error, not a gap", () => {
+  // The two checks above cover `archived` (claims a public archive that proves nothing) and
+  // `impossible` (a drifted reason). Neither covered the third shape: the archiver already
+  // knows this URL is pointless — it prints "Wayback overgeslagen" for it — but leaves `kind`
+  // exactly as it found it, so a fresh register source defaults to `not_yet` and stays there.
+  // Left alone, the record renders "publiek — · lokaal ✓" (a GAP: we have not done it) where
+  // the truth is "publiek n.v.t." (a FINDING: it cannot be done).
+  const p = providerWithSource({
+    url: "https://app.yogaalliance.org/SchoolProfile?id=1",
+    public_archive: { kind: "not_yet" },
+  });
+  const errs = integrityErrors(p, "x.yaml").filter((e) => /not_yet/.test(e));
+  assert.equal(errs.length, 1, "a pointless URL left at not_yet must fail the load");
+  assert.match(errs[0], /Wayback cannot evidence it/);
+  assert.match(errs[0], /kind: impossible, reason:/, "the error must tell the author what to write instead");
 });
 
 test("INTEGRITY: a register MISS is not a register FINDING (§4.11, v0.10)", () => {

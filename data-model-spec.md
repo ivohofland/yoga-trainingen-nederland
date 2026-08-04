@@ -397,7 +397,7 @@ sources:
     captured: 2026-06-10
   - id: crkbo-register
     type: register
-    url: https://www.crkbo.nl/register
+    url: https://www.crkbo.nl/Register/Instellingen
     public_archive:
       kind: impossible
       reason: "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"

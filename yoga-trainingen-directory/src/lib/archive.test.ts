@@ -180,6 +180,32 @@ test("CAPTURE: an `impossible` is never submitted and never overwritten", () => 
   });
 });
 
+test("CAPTURE: --force does not override an `impossible` either", () => {
+  // scripts/archive.ts:397-398 commits to this in a comment: "--force means capture again,
+  // not revise the finding." The URL here is ordinary (not Wayback-pointless), so the
+  // WAYBACK_POINTLESS branch cannot be the thing protecting it — only the `kind === "impossible"
+  // ? false : …` guard can be, and until now nothing exercised that guard with force: true.
+  const node = nodeFrom(
+    "id: s\nurl: https://example.com/robots-blocked\npublic_archive:\n  kind: impossible\n  reason: robots.txt block\n",
+  );
+  return captureNode(
+    node,
+    "demo",
+    deps({
+      capture: fakeCapture(),
+      force: true,
+      skipWayback: false,
+      submitWayback: async () => {
+        throw new Error("must never submit for an impossible, even with --force");
+      },
+    }),
+  ).then((r) => {
+    assert.equal(String(node.getIn(["public_archive", "kind"])), "impossible");
+    assert.equal(String(node.getIn(["public_archive", "reason"])), "robots.txt block");
+    assert.equal(r.failedCapture, null);
+  });
+});
+
 test("CAPTURE: a `not_yet` IS submitted, and becomes archived", () => {
   const node = nodeFrom("id: s\nurl: https://example.com/x\npublic_archive:\n  kind: not_yet\n");
   return captureNode(

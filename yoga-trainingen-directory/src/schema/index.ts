@@ -72,8 +72,9 @@ const slug = z.string().regex(/^[a-z0-9][a-z0-9-]*$/, "expected kebab-case slug"
  *  not_published collapsed into unknown, in the field the archive discipline rests on.
  *  Variants carry DIFFERENT KEY SETS, so "impossible with no reason" and "archived with no
  *  url" do not compile and a consumer that reads `url` when present is right by
- *  construction. Spec §4.1, v0.14. */
-/** Members are STRICT, not `z.object` — a plain `z.object` strips unknown keys instead
+ *  construction. Spec §4.1, v0.14.
+ *
+ *  Members are STRICT, not `z.object` — a plain `z.object` strips unknown keys instead
  *  of rejecting them, and `Source`/`Reference` being strict does not help: strictness
  *  does not recurse into a nested object. Without this, `{kind: "not_yet", url: "…"}`
  *  silently parsed as `{kind: "not_yet"}` (a real Wayback URL DELETED from the loaded
