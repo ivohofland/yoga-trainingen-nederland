@@ -2,6 +2,33 @@
 
 *Follow-up to `yoga-opleidingen-directory-overwegingen.md`. This document makes the deferred decisions concrete: storage/stack, the flat-vs-entity question, the full schema with layer markings, and two example records.*
 
+**v0.15 (2026-08-04)** — §4.1b's citation form is now `[[ref:<id>]]`, MARKED — the bare-id
+form this section instructed until now (*"…zie referentie `ya-standards-2026-07`"*) is
+checked by nothing and renders as an ordinary word, indistinguishable from any other, so a
+renamed reference could silently stop resolving and no gate would notice. The marked form is
+both RENDERED — a link, on the provider record page (`Cite.tsx`) and on the methodology (a
+pre-`marked.parse` substitution), both resolving through the one `refHref()` — and CHECKED:
+the id must exist in the loaded reference store, or the record does not load. The check now
+binds on THREE surfaces, not the one it shipped on: a provider's own prose (`integrityErrors`,
+unchanged), `content/methodologie.md` (new — nothing had ever opened this file before; its
+four ids happened to resolve only because all four are *also* cited from a provider record,
+so a RENAME was caught by coincidence and a TYPO would not have been), and a reference's own
+note (new — `data/references/*.yaml` cross-references its siblings 13 times, still by BARE id
+on purpose: converting those is a deliberately separate follow-up, sequenced strictly AFTER
+this fix, so it cannot turn 13 inert strings into 13 unchecked live links). A resolving id is
+not the whole guarantee, either: five dataset-prose interpolations on the record page (a
+claim's `quote`, a provider's `disclosure`, a cohort's `priceAtTime`, an inquiry's
+`summary`/`replySummary`) sit outside every existing structural check, so
+`scripts/verify-export.ts` — the one script that opens the BUILT html, on every build — now
+fails if any shipped page contains a raw, resolvable marker; the JSON API is exempt on
+purpose, because it ships markers verbatim BY DESIGN so a consumer can resolve them against
+the shipped `references[]` itself (§6). Separately, `Reference.local_snapshot` is corrected
+from `path?` to `path` — required, non-empty: the schema (`src/schema/index.ts`) already
+enforced this and the spec had not caught up. Unlike `Source.local_snapshot` (still
+optional), a reference's local copy is the one half of its evidence that can never be
+honestly absent — `public_archive` already allows `{kind: impossible}` for a document no
+public archive can capture at all, so the local capture is the only proof left that can exist.
+
 **v0.14 (2026-08-04)** — `archived_url` → `public_archive`, a required discriminated union. `archived_url: null` carried two OPPOSITE editorial meanings in one key: a GAP ("consciously not yet archived", §4.1's own words) and a FINDING (`loader.ts` instructed authors to write `null` for a Salesforce-rendered register whose Wayback snapshot is an empty shell — no public archive can evidence the page at all). That is the quad's `unknown`-vs-`not_published` error (§2.2), landing in the field the entire archive discipline rests on: a reader could not tell "nobody has tried yet" from "we tried and no public archive is possible" — both rendered as the same blank. `public_archive` is now `{kind: archived, url}` | `{kind: impossible, reason}` | `{kind: not_yet}` — variants with DIFFERENT KEY SETS, so "impossible with no reason" and "archived with no url" do not parse, and a consumer reading `url` when present is right by construction, not by accident. `reason` is free text EXCEPT where the URL is Wayback-pointless (a JS-shell register, a no-permalink search register): there it must equal `waybackPointlessReason(url)`, so the 107 records this covers cannot drift silently from the function that classified them. `local_snapshot` is unaffected — it is not part of this union.
 
 **v0.13 (2026-07-31)** — `data/references/` : a **shared reference store** for normative documents that belong to no single provider. A source lived on exactly one provider record, which is right for *their* price page and wrong for a rule that governs the whole corpus. The Yoga Alliance RYS standards were duly filed under `tribes-academy/` — the one school that happened to prompt reading them — so the next 47 records would each need their own copy of the same PDF, each with its own hash, and a reader comparing two schools against "the standard" would be comparing two archives. Worse, the document turned out to contain **five different credential standards** (RYS 200/300/500/RCYS/RPYS) whose rules contradict each other if cross-cited: the RYS 300 practicum rules were quoted at a 200-hour training on the first reading of it. A reference is therefore stored once, archived once under `data/archives/_references/`, and **cited in prose** (§4.1b) — deliberately NOT resolvable from a `source:` field, because provider integrity (`integrityErrors`) and the provenance gate both key on "this programme's own cited page", and a normative document is evidence about the *rule*, never about the school. Validated and floor-checked like the corpus; synced to the private archive repo by the same append-only path.
@@ -144,7 +171,7 @@ standards, a regulator's price-display rule, a sector code. Stored once in
 | `type` | enum | same enum as `Source.type` (§4.1) |
 | `url` | url? | |
 | `public_archive` | union | `{kind: archived, url}` \| `{kind: impossible, reason}` \| `{kind: not_yet}`. **Required.** A missing public archive is either a FINDING (no public archive can evidence this page — a JS-shell register, a gated PDF) or a GAP (not attempted yet, below the publication bar). `null` used to mean both. `reason` exists only on `impossible`, and where the URL is Wayback-pointless it must equal `waybackPointlessReason(url)`. A Wayback-pointless URL may equally not be left at `not_yet`: that renders a GAP where the truth is a FINDING, and the loader rejects it |
-| `local_snapshot` | path? | under `data/archives/_references/` |
+| `local_snapshot` | path | **required**, non-empty, under `data/archives/_references/` (v0.15) — unlike `Source.local_snapshot`, which stays optional. `public_archive` already allows `{kind: impossible}` for a document no public archive can evidence at all, so the local copy is the one half of a reference's evidence that can never be honestly absent: it is what the evidentiary chain — and the verbatim quotations in `note` — rest on |
 | `captured` | YearMonth | |
 | `applies_to` | string[]? | which credentials/scopes the document governs, when it governs several that differ (`["RYS 200"]`). **A document covering several regimes must say so** — see below |
 | `supersedes` / `superseded_by` | slug? | when a publisher reissues without version numbers |
@@ -154,8 +181,20 @@ standards, a regulator's price-display rule, a sector code. Stored once in
 that states *that provider's* fact — that is what `integrityErrors` checks and what the
 provenance gate opens. A standards document states a **rule**, not a fact about a school,
 so pointing `hours_claimed.source` at it would make the gate look for a price in a rulebook.
-Provider notes cite a reference by its `id` in the prose ("valt onder de Elevated RYS
-200-standaard, zie referentie `ya-standards-2026-07`").
+
+**Cited with a marked citation, `[[ref:<id>]]` — never the bare id (v0.15).** A note cites
+a reference in the prose as `"valt onder de Elevated RYS 200-standaard [[ref:ya-standards-
+2026-07]]"`. The earlier convention — a bare id in running text, *"…zie referentie
+`ya-standards-2026-07`"* — is retired: a bare id is indistinguishable from any other word in
+the sentence, so nothing can render it as a link and nothing can check that it still resolves.
+A renamed reference once kept exactly that citation sitting in a note, silently pointing at a
+document the repo no longer held, and nothing noticed until someone read the prose by eye. The
+marked form fixes both halves: it is RENDERED, as a real link, everywhere a note is shown
+(the provider record page, the methodology, a reference's own note); and it is CHECKED — the
+id must resolve against the loaded reference store on all three of those surfaces, or the
+record does not load (provider notes) or `npm run validate` fails outright (the methodology,
+a reference's own note). A citation that can only ever be plain text and is checked by nothing
+is worse than no citation: it reads as sourced and isn't.
 
 **One document, several regimes — record the boundary.** The Yoga Alliance standards PDF
 carries RYS 200, 300, 500, RCYS and RPYS side by side, and their rules genuinely conflict:
