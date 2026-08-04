@@ -56,8 +56,8 @@ registrations:
       REGIME: ELEVATED RYS 200. First Registered okt 2023 ligt na 27 feb 2020,
       dus geldt de Elevated-standaard: vier Educational Categories en alle 200
       uur als "classroom hours". Contact/non-contact bestaat hier niet — dat
-      loopt alleen nog bij RYS 300/500/RCYS/RPYS. Bronnen: ya-standards-2026-07,
-      ya-hours-per-day-2026-07.
+      loopt alleen nog bij RYS 300/500/RCYS/RPYS. Bronnen: [[ref:ya-standards-2026-07]],
+      [[ref:ya-hours-per-day-2026-07]].
   - body: yoga_alliance
     identifier: "RYS 300"
     holder: "Tribes dance & yoga"
@@ -352,16 +352,16 @@ programs:
           2023 en valt dus onder de Elevated RYS 200-standaard, en die kent geen
           contacturen — alle 200 uur moeten "classroom hours" zijn: "time your
           students spend actively learning with a trainer"
-          (ya-application-guide-2026-07). Daarbij sluit YA uitdrukkelijk uit:
+          ([[ref:ya-application-guide-2026-07]]). Daarbij sluit YA uitdrukkelijk uit:
           "public classes, regardless of the location where such activities take
-          place" (ya-hours-per-day-2026-07). De 16 te vólgen lessen zijn precies
+          place" ([[ref:ya-hours-per-day-2026-07]]). De 16 te vólgen lessen zijn precies
           dat — de cursist zit er als leerling in een openbare studioles — en
           tellen dus niet mee, ook al geeft een van de leads ze.
 
           Observeren en assisteren liggen anders: YA noemt "observing others
           teaching" en "assisting students while someone else is teaching"
           uitdrukkelijk als practicumonderdelen
-          (ya-educational-categories-2026-07), en kwalificeert ze nergens met
+          ([[ref:ya-educational-categories-2026-07]]), en kwalificeert ze nergens met
           publiek/besloten. Die 6 lessen zijn dus verdedigbaar als
           opleidingsuren; de 16 andere niet.
 
@@ -424,8 +424,9 @@ programs:
         ze geeft. Het assisteren (2) en observeren (4) zijn wél als
         practicumonderdelen benoemd en zijn dus verdedigbaar. Zie de
         `schedule`-note voor wat dat met het gat doet, en de referenties
-        ya-application-guide-2026-07, ya-hours-per-day-2026-07 en
-        ya-educational-categories-2026-07 voor de bronnen.
+        [[ref:ya-application-guide-2026-07]],
+        [[ref:ya-hours-per-day-2026-07]] en
+        [[ref:ya-educational-categories-2026-07]] voor de bronnen.
 
         Eindtoets: open-book essay (thuis) + groeps-lesexamen, lesgeven in een
         groepje van 3 à 4. Geen geïsoleerd contact-/lespraktijk-urental

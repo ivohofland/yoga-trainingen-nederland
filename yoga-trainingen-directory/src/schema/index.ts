@@ -143,7 +143,12 @@ export const Reference = strictObject({
   type: Source.shape.type,
   url: z.string().url().optional(),
   public_archive: PublicArchive,
-  local_snapshot: z.string().optional(),
+  /** REQUIRED, unlike Source's. public_archive is already required, and `impossible` is a
+   *  legitimate public half — a JS-shell help-centre article genuinely cannot be publicly
+   *  archived. The LOCAL copy is the half that can never be honestly absent: it is what the
+   *  evidentiary chain rests on, and a normative document quoted in published prose with no
+   *  capture behind it is what §3 forbids. All five records already comply. */
+  local_snapshot: z.string(),
   captured: YearMonth,
   /** Which credentials/scopes the document governs, where it governs several that DIFFER.
    *  The YA PDF carries RYS 200/300/500/RCYS/RPYS side by side and their rules conflict:
