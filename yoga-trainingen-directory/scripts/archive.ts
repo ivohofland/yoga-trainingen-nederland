@@ -29,7 +29,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { parseDocument } from "yaml";
+import { parseDocument, YAMLMap } from "yaml";
 import { WAYBACK_POINTLESS as WAYBACK_POINTLESS_DOMAINS } from "../src/lib/wayback";
 import { syncArchive } from "./sync-archive";
 
@@ -382,16 +382,20 @@ export async function captureNode(
   }
 
   // NO HALF-RECORD. CLAUDE.md: "ALWAYS both" — a public archive AND a dated local copy.
-  // Writing `archived_url` here, with the local capture just failed, produces a record
-  // claiming a public archive it holds no local copy for: the exact inverse of what
-  // methodologie.md publishes. Returning also skips a pointless submission and its 10-30s
-  // throttle pause on a run that has already failed. The run still exits non-zero and
-  // names this source; the next run retries both halves together.
+  // Writing `public_archive: {kind: archived}` here, with the local capture just failed,
+  // produces a record claiming a public archive it holds no local copy for: the exact
+  // inverse of what methodologie.md publishes. Returning also skips a pointless submission
+  // and its 10-30s throttle pause on a run that has already failed. The run still exits
+  // non-zero and names this source; the next run retries both halves together.
   if (failedCapture) return { changed, failedCapture };
 
   // 2. publiek archief
-  const archived = node.get("archived_url") as string | null | undefined;
-  const needsWayback = archived == null || deps.force;
+  // A FINDING OUTRANKS THE ARCHIVER. `impossible` is a published claim that no public
+  // archive can evidence this page; a re-run that replaced it with a Wayback URL would
+  // overwrite a finding with an archive showing none of what we cite — and --force must not
+  // override it either, because --force means "capture again", not "revise the finding".
+  const kind = String(node.getIn(["public_archive", "kind"]) ?? "not_yet");
+  const needsWayback = kind === "impossible" ? false : kind === "not_yet" || deps.force;
   if (excluded) {
     if (needsWayback) console.log(`  ${sourceId}: Wayback-exclusie — handmatig via archive.today`);
   } else if (WAYBACK_POINTLESS.some((re) => re.test(url))) {
@@ -401,7 +405,14 @@ export async function captureNode(
     process.stdout.write(`  ${sourceId}: wayback… `);
     const snapshot = await deps.submitWayback(url);
     if (snapshot) {
-      node.set("archived_url", snapshot);
+      // A plain JS object here would serialize correctly (the stringifier converts it on
+      // the fly) but stay invisible to node.getIn/get — a re-run's `kind` read above would
+      // silently see `undefined` and submit again. A real YAMLMap is what makes the write
+      // legible to the same node it was just written on.
+      const publicArchive = new YAMLMap();
+      publicArchive.set("kind", "archived");
+      publicArchive.set("url", snapshot);
+      node.set("public_archive", publicArchive);
       changed = true;
       console.log("ok");
     } else console.log("geen snapshot");

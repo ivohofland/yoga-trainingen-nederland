@@ -4,7 +4,8 @@ Mijn fetch-toegang tot web.archive.org is geblokkeerd, dus deze submissions
 moeten één keer met de hand. Elke link hieronder opent de Wayback "Save Page
 Now" voor de betreffende bron — klikken, wachten op de snapshot, en de
 resulterende `https://web.archive.org/web/<timestamp>/...`-URL in het
-bijbehorende record bij `archived_url` zetten (bron-id staat erbij).
+bijbehorende record bij `public_archive: {kind: archived, url: ...}` zetten
+(bron-id staat erbij).
 
 ## Providerpagina's (5)
 

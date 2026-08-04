@@ -1,7 +1,8 @@
 /**
- * `public_archive` (spec §4.1/§4.1b, v0.14) replaces `archived_url`. The old field's
- * `null` carried two opposite editorial meanings — a gap (not archived yet) and a
- * finding (no public archive can evidence this page) — in one key. The union's
+ * `public_archive` (spec §4.1/§4.1b, v0.14) replaces the old nullable URL field it is
+ * named for in the version log. That field's `null` carried two opposite editorial
+ * meanings — a gap (not archived yet) and a finding (no public archive can evidence
+ * this page) — in one key. The union's
  * variants carry DIFFERENT KEY SETS so those two states cannot be confused: this
  * is a schema-shape test, the convention for which lives in `src/lib/*-schema.test.ts`
  * (see `schedule-schema.test.ts`), since there is no test file under `src/schema/`.
