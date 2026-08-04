@@ -14,6 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parse } from "yaml";
 import { Provider, Reference } from "../schema";
+import { collectCitations } from "./citations";
 import { waybackIsPointless, waybackPointlessReason } from "./wayback";
 
 const DATA_DIR = path.join(process.cwd(), "data", "providers");
@@ -55,6 +56,7 @@ export function integrityErrors(
   p: Provider,
   file: string,
   today: string = new Date().toISOString().slice(0, 10),
+  knownReferenceIds: ReadonlySet<string> = new Set(),
 ): string[] {
   const errors: string[] = [];
   const sourceIds = new Set(p.sources.map((s) => s.id));
@@ -66,6 +68,21 @@ export function integrityErrors(
   collectSourceRefs(p, refs);
   for (const ref of refs) {
     if (!sourceIds.has(ref)) errors.push(`${file}: source ref '${ref}' not found in sources[]`);
+  }
+
+  // A CITATION MUST RESOLVE. `collectSourceRefs` has done this for `source:` refs since
+  // v0.1; references had no counterpart, so renaming a reference file left validate green
+  // while three notes cited a document the repo does not hold. Recurses every string,
+  // because the corpus cites from registrations[].note, hours_claimed.note AND
+  // hours_claimed.schedule.note — four levels down.
+  const cited = new Set<string>();
+  collectCitations(p, cited);
+  for (const id of cited) {
+    if (!knownReferenceIds.has(id))
+      errors.push(
+        `${file}: cites [[ref:${id}]] but no such reference exists in data/references/. ` +
+          `A citation a reader can follow to nothing is worse than no citation.`,
+      );
   }
 
   // 1b. A SNAPSHOT IS A CAPTURE OF THEIR PAGE — NEVER A FILE WE WROTE.
@@ -476,6 +493,15 @@ export function loadDataset(): LoadResult {
   const errors: string[] = [];
   if (!fs.existsSync(DATA_DIR)) return { providers, errors: [`data dir not found: ${DATA_DIR}`] };
 
+  // The real id set a citation must resolve against. `loadReferences` may itself report
+  // errors (a bad reference file); those are NOT swallowed here — they are surfaced through
+  // the existing error-reporting path below, same as any other load error. Whatever DID
+  // load successfully still supplies its ids, so a citation error in one reference file
+  // does not also mask every citation that correctly resolves against the other four.
+  const { references, errors: referenceErrors } = loadReferences();
+  const knownReferenceIds = new Set(references.map((r) => r.id));
+  errors.push(...referenceErrors);
+
   for (const file of fs.readdirSync(DATA_DIR).filter((f) => f.endsWith(".yaml"))) {
     const raw = parse(fs.readFileSync(path.join(DATA_DIR, file), "utf8"));
     const result = Provider.safeParse(raw);
@@ -487,7 +513,7 @@ export function loadDataset(): LoadResult {
     }
     if (result.data.id !== file.replace(/\.yaml$/, ""))
       errors.push(`${file}: provider id '${result.data.id}' does not match filename`);
-    errors.push(...integrityErrors(result.data, file));
+    errors.push(...integrityErrors(result.data, file, undefined, knownReferenceIds));
     providers.push(result.data);
   }
   return { providers, errors };

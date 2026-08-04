@@ -126,8 +126,20 @@ test("REFERENCES: a snapshot filed under a provider fails — a rulebook belongs
   assert.match(errors.join("\n"), /_references/);
 });
 
+// A valid local_snapshot + its committed sidecar, for fixtures below that do not care
+// about local_snapshot content — local_snapshot is REQUIRED (spec §4.1b), so every
+// schema-valid fixture from here on needs one, and these tests exercise OTHER checks
+// (id/filename, Wayback) that only run once the record has parsed at all.
+const REF_SNAPSHOT_LINE = "local_snapshot: data/archives/_references/x-2026-07-2026-07-31.pdf\n";
+const REF_SNAPSHOT_SIDECAR = {
+  "data/archives/_references/x-2026-07-2026-07-31.sha256": `${REF_SHA}  x-2026-07-2026-07-31.pdf\n`,
+};
+
 test("REFERENCES: id and filename must agree, as they must for a provider record", () => {
-  const { errors, references } = refFixture(REF_BASE.replace("x-2026-07", "y-2026-07"));
+  const { errors, references } = refFixture(
+    `${REF_BASE.replace("x-2026-07", "y-2026-07")}${REF_SNAPSHOT_LINE}`,
+    REF_SNAPSHOT_SIDECAR,
+  );
   assert.match(errors.join("\n"), /does not match filename/);
   assert.equal(references.length, 0, "a record that failed its checks is not a loaded record");
 });
@@ -135,7 +147,8 @@ test("REFERENCES: id and filename must agree, as they must for a provider record
 test("REFERENCES: a Wayback URL on a JS shell fails — but archive.today does NOT", () => {
   const shell = "url: https://help.yogaalliance.org/s/article/x\n";
   const viaWayback = refFixture(
-    `${REF_BASE_CORE}${shell}public_archive:\n  kind: archived\n  url: https://web.archive.org/web/20260731/https://help.yogaalliance.org/s/article/x\n`,
+    `${REF_BASE_CORE}${shell}public_archive:\n  kind: archived\n  url: https://web.archive.org/web/20260731/https://help.yogaalliance.org/s/article/x\n${REF_SNAPSHOT_LINE}`,
+    REF_SNAPSHOT_SIDECAR,
   );
   assert.match(viaWayback.errors.join("\n"), /Wayback-zinloze bron/);
 
@@ -143,7 +156,8 @@ test("REFERENCES: a Wayback URL on a JS shell fails — but archive.today does N
   // are Wayback-pointless, not archive-pointless; rejecting the one fallback that works was
   // a real divergence from the provider rule this claims to mirror.
   const viaArchiveToday = refFixture(
-    `${REF_BASE_CORE}${shell}public_archive:\n  kind: archived\n  url: https://archive.ph/abcde\n`,
+    `${REF_BASE_CORE}${shell}public_archive:\n  kind: archived\n  url: https://archive.ph/abcde\n${REF_SNAPSHOT_LINE}`,
+    REF_SNAPSHOT_SIDECAR,
   );
   assert.deepEqual(viaArchiveToday.errors, [], "archive.today must remain allowed");
 });
@@ -153,7 +167,8 @@ test("REFERENCES: a `not_yet` left on a Wayback-pointless URL is an error, not a
   // provider records are, and `not_yet` on a pointless URL was the one shape neither the
   // `archived` check nor the `impossible` reason-drift check covered.
   const { errors } = refFixture(
-    `${REF_BASE_CORE}url: https://help.yogaalliance.org/s/article/x\npublic_archive:\n  kind: not_yet\n`,
+    `${REF_BASE_CORE}url: https://help.yogaalliance.org/s/article/x\npublic_archive:\n  kind: not_yet\n${REF_SNAPSHOT_LINE}`,
+    REF_SNAPSHOT_SIDECAR,
   );
   assert.match(errors.join("\n"), /not_yet/);
   assert.match(errors.join("\n"), /kind: impossible, reason:/);
@@ -1323,4 +1338,35 @@ test("INQUIRY: you may not publish a silence you have not waited out", () => {
   const backwards = integrityErrors(withInquiry("awaiting", "2026-07-01"), "x.yaml", "2026-07-14");
   assert.equal(backwards.length, 1);
   assert.match(backwards[0], /already expired is not a window/);
+});
+
+/* ---------- reference citations must resolve (spec §4.1b, v0.13) ---------- */
+
+test("REFCITE: a citation naming a document the repo does not hold is an error", () => {
+  // The rename regression, and the whole reason the form is marked rather than bare.
+  const base = providerOf("adhouna");
+  const p = { ...base, registrations: [{ ...base.registrations[0]!, note: "zie [[ref:weg-2026-01]]" }] };
+  const errs = integrityErrors(p, "x.yaml", "2026-08-04", new Set(["ya-standards-2026-07"]));
+  assert.equal(errs.filter((e) => /weg-2026-01/.test(e)).length, 1);
+});
+
+test("REFCITE: a citation that resolves produces no error", () => {
+  const base = providerOf("adhouna");
+  const p = { ...base, registrations: [{ ...base.registrations[0]!, note: "zie [[ref:ya-standards-2026-07]]" }] };
+  const errs = integrityErrors(p, "x.yaml", "2026-08-04", new Set(["ya-standards-2026-07"]));
+  assert.deepEqual(errs.filter((e) => /ref:/.test(e)), []);
+});
+
+test("REFCITE: the check reaches a citation nested inside hours_claimed.schedule.note", () => {
+  // Where the real corpus keeps one. A shallower scan would pass this record while it
+  // cites a document that does not exist.
+  const base = providerOf("tribes-academy");
+  const prog = base.programs[0]!;
+  const p = {
+    ...base,
+    programs: [{ ...prog, hours_claimed: { ...prog.hours_claimed,
+      schedule: { ...prog.hours_claimed.schedule!, note: "diep [[ref:weg-2026-01]]" } } }],
+  };
+  const errs = integrityErrors(p, "x.yaml", "2026-08-04", new Set());
+  assert.equal(errs.filter((e) => /weg-2026-01/.test(e)).length, 1);
 });
