@@ -96,9 +96,9 @@ sources:
       buiten de scope van deze directory valt), de samenstellende opleidingen,
       de stage-uren, de examenvorm en de begeleidingskosten. Noemt GEEN
       opleidingsprijzen (verwijst daarvoor naar de agenda-pagina, die niet is
-      vastgelegd) en GEEN btw-regel. Op dat moment: geen publieke archiefkopie
-      bekend; alleen de lokale snapshot (html + browser-gerenderde pdf) bestaat,
-      en die haalt de publicatiedrempel niet.
+      vastgelegd) en GEEN btw-regel. Publiek gearchiveerd op Wayback
+      (2026-07-14); de lokale snapshot (html + browser-gerenderde pdf,
+      2026-07-11) bestaat ook.
     local_snapshot: data/archives/queno-sportopleidingen/site-cyt-2026-07-2026-07-11.pdf
   - id: crkbo-register-2026-07
     type: register
