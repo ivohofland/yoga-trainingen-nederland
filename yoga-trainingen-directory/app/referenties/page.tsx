@@ -104,7 +104,7 @@ function ReferenceEntry({ data: ref }: { data: Reference }) {
 
 export default function ReferentiesPage() {
   const { references, errors } = loadReferences();
-  if (errors.length > 0) throw new Error(`Referenties ongeldig:\n${errors.join("\n")}`);
+  if (errors.length > 0) throw new Error(`References invalid:\n${errors.join("\n")}`);
 
   return (
     <main>
