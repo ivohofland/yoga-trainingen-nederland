@@ -74,7 +74,7 @@ sources:
       niet-inbegrepen kosten). De opleidingspagina zelf noemt geen bedrag. Een
       gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan
       vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs.
-      archived_url: null — Wayback weigerde de capture op 2026-07-12 ('already
+      geen publieke archiefkopie op dat moment — Wayback weigerde de capture op 2026-07-12 ('already
       captured 1 times today, which is a daily limit we have set for that
       Resource type') en de availability-API kent nog geen snapshot. Opnieuw
       indienen (`npm run archive -- yoga-academie-nederland`); tot die tijd is

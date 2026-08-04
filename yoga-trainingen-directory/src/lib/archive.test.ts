@@ -126,7 +126,7 @@ test("CAPTURE: --force re-captures even when the snapshot exists", async () => {
   }
 });
 
-test("CAPTURE: a Wayback-pointless URL never gets an archived_url written", async () => {
+test("CAPTURE: a Wayback-pointless URL never gets public_archive written", async () => {
   const node = nodeFrom("id: ya\nurl: https://app.yogaalliance.org/schoolpublicprofile?id=1\n");
   const r = await captureNode(
     node,
@@ -138,7 +138,7 @@ test("CAPTURE: a Wayback-pointless URL never gets an archived_url written", asyn
       },
     }),
   );
-  assert.equal(node.get("archived_url"), undefined);
+  assert.equal(node.getIn(["public_archive", "kind"]), undefined);
   assert.equal(r.failedCapture, null);
 });
 
@@ -154,13 +154,52 @@ test("CAPTURE: --skip-wayback suppresses submission", async () => {
       },
     }),
   );
-  assert.equal(node.get("archived_url"), undefined);
+  assert.equal(node.getIn(["public_archive", "kind"]), undefined);
+});
+
+test("CAPTURE: an `impossible` is never submitted and never overwritten", () => {
+  // The record's finding outranks the archiver's optimism. A re-run that turned a published
+  // "no public archive can evidence this" into a Wayback URL would silently replace a
+  // finding with an archive that shows none of what we cite.
+  const node = nodeFrom(
+    "id: s\nurl: https://example.com/x\npublic_archive:\n  kind: impossible\n  reason: JS-shell\n",
+  );
+  return captureNode(
+    node,
+    "demo",
+    deps({
+      capture: fakeCapture(),
+      skipWayback: false,
+      submitWayback: async () => {
+        throw new Error("must never submit for an impossible");
+      },
+    }),
+  ).then((r) => {
+    assert.equal(String(node.getIn(["public_archive", "kind"])), "impossible");
+    assert.equal(r.failedCapture, null);
+  });
+});
+
+test("CAPTURE: a `not_yet` IS submitted, and becomes archived", () => {
+  const node = nodeFrom("id: s\nurl: https://example.com/x\npublic_archive:\n  kind: not_yet\n");
+  return captureNode(
+    node,
+    "demo",
+    deps({
+      capture: fakeCapture(),
+      skipWayback: false,
+      submitWayback: async () => "https://web.archive.org/web/2026/x",
+    }),
+  ).then(() => {
+    assert.equal(String(node.getIn(["public_archive", "kind"])), "archived");
+    assert.equal(String(node.getIn(["public_archive", "url"])), "https://web.archive.org/web/2026/x");
+  });
 });
 
 test("CAPTURE: an already-captured source STILL gets its public half", async () => {
-  // Every archived_url assertion above this line asserts undefined, and deps()'s default
+  // Every public_archive assertion above this line asserts undefined, and deps()'s default
   // (skipWayback: true, submitWayback: async () => null) means none of them can tell "the
-  // guard correctly did not fire" from "nothing would have written archived_url anyway". The
+  // guard correctly did not fire" from "nothing would have written public_archive anyway". The
   // MOST COMMON node on an --all run is exactly this one — a local copy already on disk, so
   // section 1 is skipped and `changed` is still false when the no-half-record guard is
   // reached. A guard misread as `if (!changed) return { changed, failedCapture }` — plausible
@@ -190,8 +229,9 @@ test("CAPTURE: an already-captured source STILL gets its public half", async () 
     );
     assert.equal(capture.calls.length, 0, "the file exists — local capture must still be skipped");
     assert.equal(submitted, 1, "the no-half-record guard must not fire on an already-captured source");
+    assert.equal(String(node.getIn(["public_archive", "kind"])), "archived");
     assert.equal(
-      node.get("archived_url"),
+      String(node.getIn(["public_archive", "url"])),
       "https://web.archive.org/web/20260802000000/https://example.com/x",
     );
     assert.equal(r.changed, true);
@@ -200,7 +240,7 @@ test("CAPTURE: an already-captured source STILL gets its public half", async () 
   }
 });
 
-test("CAPTURE: a FRESH successful capture also reaches Wayback and records archived_url", async () => {
+test("CAPTURE: a FRESH successful capture also reaches Wayback and records public_archive", async () => {
   // The test above only exercises hasLocal === true: the local capture is skipped, `changed`
   // starts false, and the no-half-record guard must NOT fire. It says nothing about the more
   // common case — a brand-new source, where the local capture SUCCEEDS and sets `changed =
@@ -232,8 +272,9 @@ test("CAPTURE: a FRESH successful capture also reaches Wayback and records archi
   );
   assert.equal(capture.calls.length, 1, "no existing snapshot — the local capture must run");
   assert.equal(submitted, 1, "a fresh successful capture must still reach Wayback");
+  assert.equal(String(node.getIn(["public_archive", "kind"])), "archived");
   assert.equal(
-    node.get("archived_url"),
+    String(node.getIn(["public_archive", "url"])),
     "https://web.archive.org/web/20260802000000/https://example.com/x",
   );
   assert.equal(r.changed, true);
@@ -387,7 +428,7 @@ test("ORPHAN: the .png fallback failing must not abort before the sidecar", () =
 
 test("HALF-RECORD: a failed capture must not let Wayback write alone", () => {
   // CLAUDE.md: "ALWAYS both" — a public archive AND a dated local copy. If the local
-  // capture threw and the Wayback submission then succeeded, the node got an archived_url
+  // capture threw and the Wayback submission then succeeded, the node got a public_archive
   // with no local_snapshot: a record claiming a public archive it holds no local copy for,
   // which is the exact inverse of what methodologie.md publishes.
   //
@@ -409,7 +450,7 @@ test("HALF-RECORD: a failed capture must not let Wayback write alone", () => {
     }),
   ).then((r) => {
     assert.equal(r.failedCapture, "unreachable");
-    assert.equal(node.get("archived_url"), undefined, "no public archive without a local copy");
+    assert.equal(node.getIn(["public_archive", "kind"]), undefined, "no public archive without a local copy");
     assert.equal(node.get("local_snapshot"), undefined);
     assert.equal(r.changed, false, "nothing was written, so nothing needs saving");
   });

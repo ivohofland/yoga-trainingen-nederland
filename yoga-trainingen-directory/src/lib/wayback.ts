@@ -21,8 +21,8 @@
  *     school"), which no snapshot of page 1 can evidence either way.
  *
  * In every case the browser-rendered local copy — filtered, if the page was a search — is
- * the evidence, and the public half is honestly absent (`archived_url: null`). The record
- * then says "publiek n.v.t. (niet vast te leggen) · lokaal ✓" — NOT "publiek — · lokaal ✓",
+ * the evidence, and the public half is honestly absent (`public_archive: {kind: impossible}`).
+ * The record then says "publiek n.v.t. (niet vast te leggen) · lokaal ✓" — NOT "publiek — · lokaal ✓",
  * which this comment claimed for a while. That distinction is the quad rule again: "—"
  * (`archiveAbsent`) means WE HAVE NOT DONE IT, a gap; "n.v.t." (`archiveNotApplicable`)
  * means IT CANNOT BE DONE, a finding. Printing the gap over a correct decision of ours
@@ -44,9 +44,9 @@ export const WAYBACK_POINTLESS: readonly RegExp[] = [
   /app\.yogaalliance\.org/i,
   // The YA HELP CENTER is the same Salesforce shell as the register, and it was measured,
   // not assumed: the Wayback snapshot of the electives article (web.archive.org/web/
-  // 20260731195006/, measured 2026-07-31 — recorded here because `archived_url` is null by
-  // design, so nothing else in the repo names the capture) is 525.967 bytes of JavaScript
-  // containing 78 characters of visible text — "Yoga Alliance | Help Center --> Loading
+  // 20260731195006/, measured 2026-07-31 — recorded here because `public_archive` is
+  // `{kind: impossible}` by design, so nothing else in the repo names the capture) is
+  // 525.967 bytes of JavaScript containing 78 characters of visible text — "Yoga Alliance | Help Center --> Loading
   // × Sorry to interrupt CSS Error Refresh". Not a word of the article. The Playwright
   // local capture renders it in full, so the local copy is the evidence and the public half
   // is honestly absent. (WebFetch hit the same wall, which is what sent us to check.)

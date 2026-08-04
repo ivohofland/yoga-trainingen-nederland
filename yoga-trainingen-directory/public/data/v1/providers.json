@@ -155,7 +155,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1",
-          "archived_url": "https://web.archive.org/web/20260621061914/https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260621061914/https://www.7yoga.nl/service-page/yoga-teacher-training-ryt-200-1"
+          },
           "local_snapshot": "data/archives/7-yoga-academy/site-2026-06-2026-06-21.pdf",
           "captured": "2026-06-20",
           "note": "RYT200-opleidingspagina (Wix): programma, prijs, locatie, annuleringsbeleid. Toont het jan-2026-cohort als 'Afgelopen / niet meer boekbaar'."
@@ -164,7 +167,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjliAAA&sid=0013g000002npDZAAY&name=7-Yoga-Academy",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/7-yoga-academy/ya-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als '7Yoga.nl', Maarssen, talen NL+EN, RYS."
@@ -173,7 +179,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "7Yoga",
           "local_snapshot": "data/archives/7-yoga-academy/crkbo-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-20",
@@ -443,7 +452,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.aalo.nl/yoga-academie/",
-          "archived_url": "https://web.archive.org/web/20260613081543/https://www.aalo.nl/yoga-academie/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613081543/https://www.aalo.nl/yoga-academie/"
+          },
           "local_snapshot": "data/archives/aalo-yoga-academie/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13",
           "note": "overzichtspagina; bevat zélf geen enkel bedrag — de prijzen staan op de opleidingspagina's per training (site-yin-yang-2026-07, site-yin-2026-07), die hieronder als aparte bronnen staan en waaruit de prijzen zijn overgenomen."
@@ -452,7 +464,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/aalo-yoga-academie/ya-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         },
@@ -460,7 +475,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/aalo-yoga-academie/crkbo-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         },
@@ -468,7 +486,10 @@
           "id": "site-yin-yang-2026-07",
           "type": "website",
           "url": "https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/",
-          "archived_url": "https://web.archive.org/web/20260712065457/https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260712065457/https://www.aalo.nl/yoga-academie/yin-yang-yoga-teacher-training-ryt-200/"
+          },
           "local_snapshot": "data/archives/aalo-yoga-academie/site-yin-yang-2026-07-2026-07-12.pdf",
           "captured": "2026-07-12",
           "note": "opleidingspagina Yin/Yang RYT-200 — draagt zelf de prijs; de overzichtspagina (site-2026-06) linkt er alleen naar."
@@ -477,7 +498,10 @@
           "id": "site-yin-2026-07",
           "type": "website",
           "url": "https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/",
-          "archived_url": "https://web.archive.org/web/20260712070739/https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260712070739/https://www.aalo.nl/yoga-academie/yin-yoga-teacher-training-ryt-200/"
+          },
           "local_snapshot": "data/archives/aalo-yoga-academie/site-yin-2026-07-2026-07-12.pdf",
           "captured": "2026-07-12",
           "note": "opleidingspagina Yin RYT-200 — draagt zelf de prijs; de overzichtspagina (site-2026-06) linkt er alleen naar."
@@ -778,7 +802,10 @@
           "id": "site-multistyle-2026-06",
           "type": "website",
           "url": "https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/",
-          "archived_url": "https://web.archive.org/web/20260629190947/https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260629190947/https://www.adhouna.nl/yoga-opleidingen-brunssum/multi-style-yoga-docent-opleiding-200-uur-yoga-alliance/"
+          },
           "local_snapshot": "data/archives/adhouna/site-multistyle-2026-06-2026-06-29.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) \"Multi Style Yoga Docent Opleiding 200 uur (Yoga Alliance)\": multistyle (Hatha/Yin/Ashtanga/Power/Vinyasa flow + kinder-/ zwangerschaps-/menstruatieyoga), filosofie, anatomie/fysiologie, pranayama, mudra's/bandha's, mantra, meditatie, Ayurveda, lesopbouw & lespraktijk; RYT 200; toegankelijk voor alle niveaus; ook een 100u-Hatha → +100u → 200u-route. Brunssum, lesdagen 9:00-18:30. Pagina adverteert nog de start 28 sep 2024 (nu verstreken); geen prijs op de pagina.\n"
@@ -787,7 +814,10 @@
           "id": "site-yinxl-2026-06",
           "type": "website",
           "url": "https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/",
-          "archived_url": "https://web.archive.org/web/20260629191031/https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260629191031/https://www.adhouna.nl/yoga-opleidingen-brunssum/yin-yoga-xl-docent-opleiding-200-uur-yoga-alliance/"
+          },
           "local_snapshot": "data/archives/adhouna/site-yinxl-2026-06-2026-06-29.pdf",
           "captured": "2026-06",
           "note": "LIVE \"Yin Yoga XL Docent Opleiding 200 uur (Yoga Alliance)\", in 2 delen: Yin yoga (geschiedenis/principes/filosofie, anatomie, meridianen & chakra's, pranayama, meditatie, Yin & Yang, lesopbouw/lespraktijk) + mindfulness + \"Anatomie van de Mind\" + Yoga Nidra theorie & praktijk; RYT 200. Tarieven, zoals de pagina ze afdrukt: \"Deel I ... kost € 1.420,00 incl. BTW (€ 1.173,55 excl. BTW)\" en \"Deel II ... kost € 1.305,00 incl. BTW (€ 1.078,50 excl. BTW)\", beide \"inclusief syllabus en examen\"; herexamen € 50,00. GEEN TOTAALPRIJS op de pagina — de som van de twee delen zou de onze zijn, niet die van hen. Inschrijven per deel (Deel II bij voldoende belangstelling). Brunssum, 10:00-18:00.\n"
@@ -795,6 +825,10 @@
         {
           "id": "overview-image-2026-06",
           "type": "brochure",
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "door de gebruiker aangeleverde afbeelding: er is geen publieke bron-URL om te archiveren"
+          },
           "captured": "2026-06",
           "note": "Door de gebruiker aangeleverde opleidingsoverzicht-afbeelding (met RYS-200- badge): Hatha yoga 100u (28 sep - 14 dec 2024); Multi Style yoga TT 200u (28 sep 2024 - 5 apr 2025); Yin XL yoga TT 200u (29 mrt - 15 nov 2025); Yoga Nidra verdieping voor docenten 20u (10-11 aug 2024). Bron voor de cohort-data.\n"
         },
@@ -802,7 +836,10 @@
           "id": "ya-search-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Adhouna",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "query": "Adhouna (school)",
           "local_snapshot": "data/archives/adhouna/ya-search-2026-06-2026-06-29.pdf",
           "captured": "2026-06",
@@ -812,7 +849,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Adhouna",
           "local_snapshot": "data/archives/adhouna/crkbo-register-2026-06-2026-06-29.pdf",
           "captured": "2026-06",
@@ -992,7 +1032,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.arhantayoga.nl/yoga-opleiding-nederland/",
-          "archived_url": "https://archive.ph/newest/https://www.arhantayoga.nl/yoga-opleiding-nederland/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://archive.ph/newest/https://www.arhantayoga.nl/yoga-opleiding-nederland/"
+          },
           "local_snapshot": "data/archives/arhanta-yoga/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12",
           "note": "WAYBACK-EXCLUSIE: \"This URL has been excluded from the Wayback Machine\" (vastgesteld 2026-06-12). Domeinbrede uitsluiting — ook historische snapshots ontoegankelijk; §8-cohortreconstructie via Wayback is voor deze provider onmogelijk. Oorzaak van buiten niet vast te stellen (eigenaar-verzoek, robots-beleid of juridisch verzoek). Alternatief: archive.today + lokale PDF.\n"
@@ -1001,7 +1044,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/arhanta-yoga/ya-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12",
           "note": "YA-directory, country=Netherlands; JS-gerenderd, browser nodig"
@@ -1010,7 +1056,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/arhanta-yoga/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         }
@@ -1344,7 +1393,10 @@
           "id": "site-denhaag-2026-06",
           "type": "website",
           "url": "https://balanzs.nl/trainingen/200h-den-haag/",
-          "archived_url": "https://web.archive.org/web/20260620154600/https://balanzs.nl/trainingen/200h-den-haag/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620154600/https://balanzs.nl/trainingen/200h-den-haag/"
+          },
           "local_snapshot": "data/archives/balanzs/site-denhaag-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "200u TT Den Haag: 2-module-opzet, volledige cohortdata okt 2026–jul 2027, prijs, docententeam."
@@ -1353,7 +1405,10 @@
           "id": "site-utrecht-2026-06",
           "type": "website",
           "url": "https://balanzs.nl/trainingen/200h-utrecht/",
-          "archived_url": "https://web.archive.org/web/20260620154729/https://balanzs.nl/trainingen/200h-utrecht/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620154729/https://balanzs.nl/trainingen/200h-utrecht/"
+          },
           "local_snapshot": "data/archives/balanzs/site-utrecht-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "200u TT Utrecht: identieke opzet/prijs, start jan 2027 (data 'volgen later'); Engelstalige variant: balanzs.nl/en/trainings/200h-yoga-teacher-training/.\n"
@@ -1362,7 +1417,10 @@
           "id": "site-rotterdam-2026-06",
           "type": "website",
           "url": "https://balanzs.nl/trainingen/200-hour-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260620154922/https://balanzs.nl/trainingen/200-hour-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620154922/https://balanzs.nl/trainingen/200-hour-teacher-training/"
+          },
           "local_snapshot": "data/archives/balanzs/site-rotterdam-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "200u TT Rotterdam (Balanzs Kleiweg): identieke opzet/prijs/docententeam, start jan 2027 (data later)."
@@ -1371,7 +1429,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002piWxAAI&sid=0013g000002no74AAA&name=Balanzs",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/balanzs/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Balanzs', The Hague, RYS."
@@ -1380,7 +1441,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Balanzs",
           "local_snapshot": "data/archives/balanzs/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
@@ -1390,7 +1454,10 @@
           "id": "brochure-2026-06",
           "type": "brochure",
           "url": "https://balanzs.nl/app/uploads/200h-VinyasaYin-TT-ebook-Algemeen-1.pdf",
-          "archived_url": "https://web.archive.org/web/20260620155042/https://balanzs.nl/app/uploads/200h-VinyasaYin-TT-ebook-Algemeen-1.pdf",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620155042/https://balanzs.nl/app/uploads/200h-VinyasaYin-TT-ebook-Algemeen-1.pdf"
+          },
           "local_snapshot": "data/archives/balanzs/brochure-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "\"200H Yin & Vinyasa Teacher Training\" e-book/brochure (algemeen). Gedetailleerd: 10-weekenden-curriculum (4 in Module 1, 6 in Module 2), per-weekend-inhoud, docentachtergronden, losse moduleprijzen, groepsgroottes, toelatingseisen.\n"
@@ -1399,7 +1466,10 @@
           "id": "terms-2026-06",
           "type": "website",
           "url": "https://balanzs.nl/algemene-voorwaarden/",
-          "archived_url": "https://web.archive.org/web/20260620155229/https://balanzs.nl/algemene-voorwaarden/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620155229/https://balanzs.nl/algemene-voorwaarden/"
+          },
           "local_snapshot": "data/archives/balanzs/terms-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Algemene voorwaarden. Art. 11.1: \"De prijzen zijn in euro's inclusief omzetbelasting, tenzij anders vermeld\" (generieke all-in-clausule, niet TT-specifiek). Art. 7-8: docentenopleiding definitief bij €100 aanbetaling; annuleringsstaffel (≥12 wkn 50%, 6-12 wkn 50%, 1-6 wkn 70%, <1 wk geen restitutie).\n"
@@ -1828,7 +1898,10 @@
           "id": "site-2025-vinyasa-2026-06",
           "type": "website",
           "url": "https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr",
-          "archived_url": "https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20250809221044/https://yoginimarleen.wixsite.com/website-2/vinyasa-yoga-teacher-training-200hr"
+          },
           "local_snapshot": "data/archives/bluebirds/site-2025-vinyasa-2026-06-2026-06-27.pdf",
           "captured": "2025-08-09",
           "note": "2025-cohort Vinyasa Flow Teacher Training (200u) — Wayback-capture van de EIGEN SITE VAN MARLENE (yoginimarleen.wixsite.com), niet van blue-birds.nl. Inhoud: 8 weekenden + 6 zaterdagen over 7 mnd (13 sep 2025-15 mrt 2026), max 16, lead Fleur & Marlene. PRICING OPTIONS, verbatim: \"Early Bird €2950,- Excl BTW (1st of July)\" en \"Regular €3150,- Excl BTW\". Dat is ALLES wat deze pagina over btw zegt — géén CRKBO, géén 0%-vermelding, en geen member-korting. De eerder genoteerde derde prijs (€2835) en de zin \"all prices at 0% VAT as we are CRKBO registered\" stonden op de blue-birds.nl- pagina van het ANDERE (2026-)cohort en zijn hier verwijderd (§4.11).\n"
@@ -1837,7 +1910,10 @@
           "id": "site-2026-hybrid-2026-06",
           "type": "website",
           "url": "https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/",
-          "archived_url": "https://web.archive.org/web/20260627185357/https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627185357/https://blue-birds.nl/item/200h-vinyasa-hybrid-teacher-training-with-david-junior-pascalle/"
+          },
           "local_snapshot": "data/archives/bluebirds/site-2026-hybrid-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "2026-cohort Vinyasa Hybrid Teacher Training (200u) — Bluebirds Academy × Embodied Bodhi (David Rodrigues Junior & Pascalle van Haaften): online + immersie Bluebirds Oost (19-24 okt 2026) + residentieel klooster Mariënkroon (21-27 nov 2026), prijzen €2790/€2990 + €499, 0% btw CRKBO, curriculum.\n"
@@ -1846,7 +1922,10 @@
           "id": "ya-register-marlene-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000YikjoAAB&sid=0013g00000RBeW7AAL&name=MarleneYoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/bluebirds/ya-register-marlene-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-profiel 'MarleneYoga' (certificerende RYS 2025-cohort): Amsterdam, RYS 200, First Registered October 2021, 4.92/6 reviews (afstudeerders jun 2026); Marlene Henny (E-RYT500) + Fleur van Zonneveld (E-RYT200)."
@@ -1855,7 +1934,10 @@
           "id": "ya-register-embodied-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000pA1qJYAS&sid=001TR00000hZqXeYAK&name=Embodied-Bodhi-Academy",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/bluebirds/ya-register-embodied-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-profiel 'Embodied Bodhi Academy' (certificerende RYS 2026-cohort): Amsterdam, RYS 200, First Registered December 2025, 0 reviews/0 dates; David Rodrigues Junior (E-RYT200) + Pascalle van Haaften (E-RYT500)."
@@ -1864,7 +1946,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Bluebird",
           "local_snapshot": "data/archives/bluebirds/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
@@ -2024,7 +2109,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding",
-          "archived_url": "https://web.archive.org/web/20260612/https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260612/https://www.centrebodymind.nl/opleidingen/yoga-docentenopleiding"
+          },
           "local_snapshot": "data/archives/centre-body-mind/site-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         },
@@ -2032,7 +2120,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pi3LAAQ&sid=0013g000002nnUBAAY&name=The-Centre-of-Body-&-Mind",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/centre-body-mind/ya-register-2026-06-2026-06-12.pdf",
           "captured": "2026-06-13"
         },
@@ -2040,7 +2131,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/centre-body-mind/crkbo-register-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         }
@@ -2214,7 +2308,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://criticalalignment.nl/lerarenopleiding/yoga-lerarenopleiding/",
-          "archived_url": "https://web.archive.org/web/20260613075913/https://criticalalignment.nl/lerarenopleiding/yoga-lerarenopleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613075913/https://criticalalignment.nl/lerarenopleiding/yoga-lerarenopleiding/"
+          },
           "local_snapshot": "data/archives/critical-alignment/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13",
           "note": "JS-gerenderd; uitgelezen via browser; lokale kopie via archiveerscript essentieel"
@@ -2530,7 +2627,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.blikopener.info/",
-          "archived_url": "https://web.archive.org/web/20260613080628/https://www.blikopener.info/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613080628/https://www.blikopener.info/"
+          },
           "local_snapshot": "data/archives/de-blikopener/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13",
           "note": "homepage; bevat zélf geen bedrag, geen urental en geen structuur — linkt alleen door naar de pagina's die dat wél stellen (tarieven-2026-07 en opleiding-2026-07). Draagt hier nog uitsluitend de cohortdatum (start 31 aug 2026), die de homepage zelf noemt."
@@ -2539,7 +2639,10 @@
           "id": "vyn-register-2026-06",
           "type": "register",
           "url": "https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
-          "archived_url": "https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/"
+          },
           "local_snapshot": "data/archives/de-blikopener/vyn-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         },
@@ -2547,7 +2650,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/de-blikopener/crkbo-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         },
@@ -2555,7 +2661,10 @@
           "id": "tarieven-2026-07",
           "type": "website",
           "url": "https://www.blikopener.info/agendas-en-tarieven/tarieven/",
-          "archived_url": "https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260712065811/https://www.blikopener.info/agendas-en-tarieven/tarieven/"
+          },
           "local_snapshot": "data/archives/de-blikopener/tarieven-2026-07-2026-07-12.pdf",
           "captured": "2026-07-12",
           "note": "tarievenpagina — de pagina die de prijs STELT (de homepage linkt er alleen naar). Noemt géén btw: geen 'incl.', geen 'excl.', geen 'vrijgesteld', geen CRKBO."
@@ -2564,7 +2673,10 @@
           "id": "opleiding-2026-07",
           "type": "website",
           "url": "https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260712131118/https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260712131118/https://www.blikopener.info/yoga-opleidingen/hatha-raja-yoga-opleiding/"
+          },
           "local_snapshot": "data/archives/de-blikopener/opleiding-2026-07-2026-07-12.pdf",
           "captured": "2026-07-12",
           "note": "de opleidingspagina zelf — de pagina die de OMVANG en de STRUCTUUR stelt (urental, aantal jaren, beide varianten). De homepage doet dat nergens."
@@ -3071,7 +3183,10 @@
           "id": "site-vinyasa-2026-06",
           "type": "website",
           "url": "https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/",
-          "archived_url": "https://web.archive.org/web/20260620140652/https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620140652/https://denieuweyogaschool.nl/dnys-academie/vinyasa-yoga-opleiding-200-uur/"
+          },
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/site-vinyasa-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Vinyasa 200u NL: programma, data, prijs, docenten, examen."
@@ -3080,7 +3195,10 @@
           "id": "site-yin-2026-06",
           "type": "website",
           "url": "https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/",
-          "archived_url": "https://web.archive.org/web/20260620140733/https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620140733/https://denieuweyogaschool.nl/dnys-academie/yin-yoga-opleiding-200-uur/"
+          },
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/site-yin-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Yin 200u NL: programma, prijs, certificering."
@@ -3089,7 +3207,10 @@
           "id": "site-intensive-2026-06",
           "type": "website",
           "url": "https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/",
-          "archived_url": "https://web.archive.org/web/20260716133943/https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260716133943/https://denieuweyogaschool.nl/dnys-academie/vinyasa-teacher-training-intensive/"
+          },
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/site-intensive-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Vinyasa Teacher Training Intensive (EN): 3,5 weken immersion, prijs, certificering."
@@ -3098,7 +3219,10 @@
           "id": "club-yoga-2026-06",
           "type": "website",
           "url": "https://club-yoga.nl/teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260620140953/https://club-yoga.nl/teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620140953/https://club-yoga.nl/teacher-training/"
+          },
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/club-yoga-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Club Yoga Leeuwarden (Westersingel 2F) — gastlocatie/partner. Promopagina, geen eigen boeking: \"Sinds 2016 werken we samen met Johan Noorloos van De Nieuwe Yogaschool... Volg de 200 uurs yin of vinyasa opleiding gewoon bij ons in Leeuwarden.\" Inschrijving loopt via DNYS (Momence).\n"
@@ -3107,7 +3231,10 @@
           "id": "netwerk-2026-06",
           "type": "website",
           "url": "https://www.hetnieuweyoganetwerk.nl/",
-          "archived_url": "https://web.archive.org/web/20260620141110/https://www.hetnieuweyoganetwerk.nl/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620141110/https://www.hetnieuweyoganetwerk.nl/"
+          },
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/netwerk-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "\"Het Nieuwe Yoganetwerk\" — DNYS' EIGEN netwerk/BV (eigen KvK 77928229, btw 861201516B01) van door DNYS opgeleide docenten/coaches. Functioneert als DNYS' eigen certificerende instantie (zelf-certificering, geen onafhankelijke accreditatie). Het openbare register bevat o.a. profielen met als enige vermelde opleiding \"Cacao & Microdose Facilitator Training\" — illustreert dat het HNY-keurmerk geen yoga-opleidingsdrempel impliceert.\n"
@@ -3116,7 +3243,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phYeAAI&sid=0013g000002nn8dAAA&name=Johan-Noorloos-Teachertraining",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Johan Noorloos Teachertraining', Amsterdam, talen NL+EN."
@@ -3125,7 +3255,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Nieuwe Yogaschool",
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
@@ -3135,7 +3268,10 @@
           "id": "boekenlijst-2026-07",
           "type": "website",
           "url": "https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/",
-          "archived_url": "https://web.archive.org/web/20260716134020/https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260716134020/https://denieuweyogaschool.nl/en/dnys-academy/literature-list-200-hour-yin-vinyasa/"
+          },
           "local_snapshot": "data/archives/de-nieuwe-yogaschool/boekenlijst-2026-07-2026-07-16.pdf",
           "captured": "2026-07-16",
           "note": "Los gepubliceerde boekenlijst — de \"boekenlijst apart gepubliceerd\" waarnaar price.excludes van de Yin- en Vinyasa-opleiding verwijst. Bevat per opleiding een \"Verplichte boekenlijst\" én een \"Aanbevolen\" lijst. LET OP: staat op het /en/-pad maar de inhoud is Nederlandstalig (paginatitel \"Yoga Teacher Trainingen Boekenlijst\") en dekt alleen de NL Yin- en Vinyasa-200u — NIET de Engelstalige Vinyasa Teacher Training Intensive.\n"
@@ -3488,7 +3624,10 @@
           "id": "site-basis-2026-07",
           "type": "website",
           "url": "https://yogaschool.nl/yoga-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260702063435/https://yogaschool.nl/yoga-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260702063435/https://yogaschool.nl/yoga-opleiding/"
+          },
           "local_snapshot": "data/archives/de-yogaschool-enschede/site-basis-2026-07-2026-07-02.pdf",
           "captured": "2026-07",
           "note": "/yoga-opleiding/ — een ALGEMENE opleidingspagina, NIET de eigen pagina van de Basisopleiding (dat is /basisopleiding/, zie de bron hieronder). Klassiek 8-ledig systeem (Yama's/Niyama's, asana, energiebeheersing/pranayama, concentratie & meditatie). Iedere maand in 2025 nieuwe Basisopleidingen; toegang na kennismakingsgesprek (met Ylvy of Mascha, Emmastraat 147). Draagt het NRTO-kwaliteitskeurmerk.\nTWEE PAGINA'S, TWEE PRIJZEN — een bevinding, geen keuze. Deze pagina zegt letterlijk: \"De kosten voor de opleiding zijn €1510,00 per jaar. Dit wordt betaald in termijnen van €1510,00 per maand (10 maanden).\" (het termijnbedrag is op de pagina zelf een kennelijke fout: €1510 per maand × 10 ≠ €1510 per jaar). De eigen Basisopleidingspagina zegt: \"De kosten voor de Basisopleiding vanaf januari 2026 zijn € 1590,00 per seizoen of lesjaar van 40 weken.\" Beide staan er, beide zijn gearchiveerd; de school noemt geen van beide bedragen achterhaald. De verplichte-vooropleiding-kosten worden geciteerd aan de pagina die de Basisopleiding zelf beschrijft (site-basisopleiding-2026-07, € 1.590), en dít blijft staan als het gepubliceerde andere bedrag.\n"
@@ -3497,7 +3636,10 @@
           "id": "site-basisopleiding-2026-07",
           "type": "website",
           "url": "https://yogaschool.nl/basisopleiding/",
-          "archived_url": "https://web.archive.org/web/20260713202536/https://yogaschool.nl/basisopleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260713202536/https://yogaschool.nl/basisopleiding/"
+          },
           "local_snapshot": "data/archives/de-yogaschool-enschede/site-basisopleiding-2026-07-2026-07-13.pdf",
           "captured": "2026-07",
           "note": "DE EIGEN PAGINA VAN DE BASISOPLEIDING — de opleiding die verplicht is vóór de Docentenopleiding, en tot v0.9 nergens in dit record als bron stond. Letterlijk: \"De kosten voor de Basisopleiding vanaf januari 2026 zijn € 1590,00 per seizoen of lesjaar van 40 weken. Dit wordt betaald in termijnen van € 159,00 per maand (10 maanden).\" Lesmateriaal/lesboeken (t.w.v. € 125) inbegrepen. Duur: \"De basisopleiding bestaat uit 40 lesblokken van wekelijks 2 1/2 uur, verspreid over een jaar\" — één lesjaar, dus één periode. \"Er zijn minimaal 100 lesuren en er staan 80 thuisstudie-uren per lesjaar.\" De poort, letterlijk: \"Aangezien de Basisopleiding je het fundament over Raja Yoga bijbrengt, is deze opleiding verplicht als je wilt starten met de Docentenopleiding.\" Geen btw-vermelding op de pagina.\n"
@@ -3506,7 +3648,9 @@
           "id": "site-docenten-2026-07",
           "type": "website",
           "url": "https://yogaschool.nl/docentenopleiding/",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/de-yogaschool-enschede/site-docenten-2026-07-2026-07-02.pdf",
           "captured": "2026-07",
           "note": "LIVE Docentenopleiding Raja Yoga (vervolg op de Basisopleiding): 120 lesblokken van wekelijks 3 uur (ochtend of avond), 3 jaar / 360 contacturen + minimaal 240 uur zelfstudie (min. 1 uur zelfwerkzaamheid per dag). \"Start dit jaar voor de 30e keer\"; samen met de Basisopleiding \"beantwoordt ruimschoots aan de standaard van 500 uren van de Internationale Yoga Federatie\" (IYF — géén Yoga Alliance). Afronding met examen (examencommissie: asana's, theorie eerste 4 lesjaren, contemplatievaardigheden; 2 examenmomenten per lesjaar, herkansing mogelijk) → Raja Yogadocent. Lesindeling 1,5u asana+pranayama, 20 min concentratie/meditatie, theepauze, 0,5-1u theorielezing. Kosten per 1 jan 2026 €1530/jaar (termijnen €153/mnd ×10; lesboeken incl.: Atma Vidya (Y. Saraswati), Yogasutra's van Patanjali, Bhagavad Gita, Hatha Yoga Pradipika). Start na zomer- of kerstvakantie. Docenten: Sandra, Ylvy, Linda, Wam, Leonie, Han, Monika, José.\n"
@@ -3515,7 +3659,10 @@
           "id": "site-meester-2026-07",
           "type": "website",
           "url": "https://yogaschool.nl/meesteropleiding/",
-          "archived_url": "https://web.archive.org/web/20260702063729/https://yogaschool.nl/meesteropleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260702063729/https://yogaschool.nl/meesteropleiding/"
+          },
           "local_snapshot": "data/archives/de-yogaschool-enschede/site-meester-2026-07-2026-07-02.pdf",
           "captured": "2026-07",
           "note": "LIVE Meesteropleiding Raja Yoga (vervolg ná de Docentenopleiding): 120 lesblokken van wekelijks 3 uur, min. 3 jaar, min. 1,5u zelfwerkzaamheid per dag. Driejarige themalijn: jaar 1 \"Witte Magie\", jaar 2 \"Esoterische Psychologie\" (7-stralenleer), jaar 3 \"Esoterische Genezing\". Bij succesvol afstuderen \"traditionele erkenning en werk aangeboden als docent van een docentenopleiding\". Kosten €1530/jaar (termijnen €153/mnd ×10; lesboeken incl.). Leerkrachten: Yogacharya's Patrick Ros en Ylvy Vaanholt, plus José Oudhoff en Monika Farkas (o.a. Mascha, Han).\n"
@@ -3524,7 +3671,10 @@
           "id": "crkbo-register-2026-07",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yogaschool (naam + website)",
           "local_snapshot": "data/archives/de-yogaschool-enschede/crkbo-register-2026-07-2026-07-02.pdf",
           "captured": "2026-07",
@@ -3770,7 +3920,9 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.druyogaopleiding.nl",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/dru-yoga/site-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18",
           "note": "Opleidingspagina met programma, contacturen, data en volledige prijs."
@@ -3779,7 +3931,9 @@
           "id": "checkout-2026-06",
           "type": "website",
           "url": "https://drunetherlands.plugandpay.nl/checkout/druyoga2026-aanbetaling",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/dru-yoga/checkout-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18",
           "note": "Aanbetaling-checkout (€250, niet-restitueerbaar); tenant 'Dru Health & Wellbeing'."
@@ -3788,7 +3942,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgXKAAY&sid=0013g000002nm5WAAQ&name=International-School-of-Dru-Yoga-(Arnhem)",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/dru-yoga/ya-register-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18",
           "note": "Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde lokale capture nodig."
@@ -3797,7 +3954,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Dru Health",
           "local_snapshot": "data/archives/dru-yoga/crkbo-register-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18",
@@ -4061,7 +4221,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.dutchyogaacademy.com/opleiding",
-          "archived_url": "https://web.archive.org/web/20260613075249/https://www.dutchyogaacademy.com/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613075249/https://www.dutchyogaacademy.com/"
+          },
           "local_snapshot": "data/archives/dutch-yoga-academy/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-25",
           "note": "200u Vinyasa Yoga Docentopleiding (Wix): inhoud (asana/pranayama, alignment & adjustment, anatomie/fysiologie, meditatie, filosofie, didactiek, sequencing, yoga business), team, weekendopzet, data 2026 (vol) + 2027, kosten (vroegboekkorting €260, aanbetaling €500; geen basisbedrag genoemd), groepsgrootte, eindopdracht/feedback, locatie Bodhi Yogashala.\n"
@@ -4070,7 +4233,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002qgT9AAI&sid=0013g000002qaTwAAI&name=Dutch-Yoga-Academy",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/dutch-yoga-academy/ya-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Dutch Yoga Academy', Nijmegen (Prins Hendrikstraat 16), RYS 200, First Registered February 2020, rating 4.75/2, 0 training dates; teaching staff Merel Martens (E-RYT500/YACEP)."
@@ -4079,7 +4245,10 @@
           "id": "ya-teacher-merel-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000234pbAAA",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/dutch-yoga-academy/ya-teacher-merel-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-docentprofiel Merel Martens (E-RYT 500, YACEP; First Registered Feb 2014; 3115 teaching hours; talen EN/NL/DE/ES/FR). Oprichter Parimukti Yoga & Meditation (voorheen WonderfulYoga), India (Goa & Dharamshala) — bevestigt India-achtergrond.\n"
@@ -4088,7 +4257,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Dutch Yoga Academy",
           "local_snapshot": "data/archives/dutch-yoga-academy/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
@@ -4336,7 +4508,10 @@
           "id": "site-ytt-2026-06",
           "type": "website",
           "url": "https://gurugian.nl/ky-teachertraining/",
-          "archived_url": "https://web.archive.org/web/20260628053240/https://gurugian.nl/ky-teachertraining/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628053240/https://gurugian.nl/ky-teachertraining/"
+          },
           "local_snapshot": "data/archives/gian-instituut/site-ytt-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "\"Kundalini Yoga Teacher Training Level 1 (Lerarenopleiding)\" — de RYS-200 opleidingspagina: 200u / 1 jaar / 4 blokken (20 lesdagen: 2×4 + 1×5 + 1×7 dagen) / 16 overnachtingen, residentieel op Dopersduin (Schoorl), data 27 aug 2026 - 20 jun 2027, prijs €4197 all-in, max ~20 deelnemers, docenten Jasper Kok + Guru Deva + Jasper Jansen + Lauren Grusenmeyer, eigen manuals + Guru Rattana (niet de Aquarian Teacher), uitvoerige Yogi-Bhajan-/KRI- distantiërings-Q&A. Bron voor het programma.\n"
@@ -4345,7 +4520,10 @@
           "id": "site-home-2026-06",
           "type": "website",
           "url": "https://gurugian.nl",
-          "archived_url": "https://web.archive.org/web/20260628053316/https://gurugian.nl/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628053316/https://gurugian.nl/"
+          },
           "local_snapshot": "data/archives/gian-instituut/site-home-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Homepage Guru Gian / Gian Instituut: footer met KvK 34342492, btw NL001658312B73, CRKBO-Instelling-logo, adres Achterweg 9 Groet. Toont het bredere Kundalini-ecosysteem (coaching, online platform Kundalini Yoga Club, tantra, retraites) waarvan de RYS-200 YTT één onderdeel is.\n"
@@ -4354,7 +4532,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000tNrkrAAC&name=Gian-Instituut",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/gian-instituut/ya-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Gian Instituut', Groet (Achterweg 9), RYS 200, First Registered October 2023, rating 5.0/1 review; teaching staff Jasper Kok (E-RYT 500, YACEP); 0 training dates. Gevonden via directory-zoekopdracht keyword 'Gian'."
@@ -4363,7 +4544,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Gian",
           "local_snapshot": "data/archives/gian-instituut/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -4683,7 +4867,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000TQhQPYA1&sid=001TR00000OhIbmYAF&name=The-Heart-of-Connection",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/heart-of-connection/ya-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als \"The Heart of Connection\", Amsterdam, taal NL/EN, First Registered January 2025, 0 reviews / 0 training dates; teaching staff Selma van der Graaf (E-RYT 200, YACEP). RYS 200 bevestigd via de badge-afbeelding (RYS200.png). About noemt \"200 hours Vinyasa Yoga teacher training, 8-month\" — de site biedt nu een Hatha 200u + een Yin 75u (de 'Vinyasa'-omschrijving is generiek/ouder).\n"
@@ -4692,7 +4879,10 @@
           "id": "ya-teacher-selma-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000jrolBAAQ",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/heart-of-connection/ya-teacher-selma-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "YA-docentprofiel Selma van der Graaf (Kotten, NL; talen NL/EN; First Registered May 2021; 2195 lesuren; YACEP; E-RYT 200 per het schoolprofiel). Teaching experience: The Heart of Connection (feb 2023-heden), Bluebirds Zuid (jan 2024-heden), Yogaschool Noord (okt 2022-heden).\n"
@@ -4701,7 +4891,10 @@
           "id": "site-hatha-2026-06",
           "type": "website",
           "url": "https://theheartofconnection.com/hatha-yoga-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260628155232/https://theheartofconnection.com/hatha-yoga-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628155232/https://theheartofconnection.com/hatha-yoga-teacher-training/"
+          },
           "local_snapshot": "data/archives/heart-of-connection/site-hatha-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) 200u Hatha Yoga TT op Hof van Kairos (residentieel, 4 blokken: 16-18 okt + 16-22 nov + 11-13 dec 2026 + 11-17 jan 2027; weekenden vr 09:30-zo 17:00, weken ma 14:00-zo 11:00; dagstructuur 07:30 sadhana - 20:00 avondprogramma). Curriculum: hatha-fundament, asana/sequencing/ lesopbouw + assists/adjustments, pranayama/meditatie/innerlijk werk, filosofie/geschiedenis/mythologie/mantra/mudra/tantra/Ayurveda, lesgeven & communicatie, anatomie/fysiologie/subtiele anatomie/polyvagaaltheorie/trauma- informed yoga, ceremonies. ~3u integratie/week + intervisie. Schriftelijk + praktisch examen. Early bird €3500 (vóór 1 aug 2026) / regulier €3895 / 3×€1350; incl. verblijf+maaltijden+manual+materiaal+certificaat. Team Selma (hoofddocent) + Lútzen Schroor (ademwerk) + Brittany Mock (anatomie/mobiliteit).\n"
@@ -4710,7 +4903,10 @@
           "id": "site-yin-2026-06",
           "type": "website",
           "url": "https://theheartofconnection.com/yin-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260628155316/https://theheartofconnection.com/yin-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628155316/https://theheartofconnection.com/yin-teacher-training/"
+          },
           "local_snapshot": "data/archives/heart-of-connection/site-yin-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "75u Yin Yoga TT, residentiële week 2-8 nov op Hof van Kairos; €1800 incl. verblijf/maaltijden/manual/materiaal/certificaat; bruikbaar voor YA Continuing Education hours (YACEP); voor docenten én serieuze beoefenaars.\n"
@@ -4719,7 +4915,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "heartofconnection + Heart of Conn (Instellingen) + Graaf (Docenten)",
           "local_snapshot": "data/archives/heart-of-connection/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -4944,7 +5143,10 @@
           "id": "site-maxstrom-2026-06",
           "type": "website",
           "url": "https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260620133612/https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620133612/https://maxstrom.com/breathe-to-heal/inner-axis/200hr-yoga-teacher-training/"
+          },
           "local_snapshot": "data/archives/inner-axis/site-maxstrom-2026-06-2026-06-20.pdf",
           "captured": "2026-06-18",
           "note": "Opleidingspagina: structuur, faculty, dagrooster, ethiek-code. Geen prijs of cohortdatum."
@@ -4953,7 +5155,10 @@
           "id": "signup-2026-06",
           "type": "website",
           "url": "https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom",
-          "archived_url": "https://web.archive.org/web/20260620133755/https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620133755/https://breathetoheal.maxstrom.com/200h-teacher-training-with-max-strom"
+          },
           "local_snapshot": "data/archives/inner-axis/signup-2026-06-2026-06-20.pdf",
           "captured": "2026-06-18",
           "note": "Kajabi interesse-/aanmeldformulier; geen prijs of data. Linkt een 'Medical disclaimer'."
@@ -4962,7 +5167,10 @@
           "id": "host-2026-06",
           "type": "website",
           "url": "https://yogamoves.nl/teacher-training/max-strom-inner-axis-tt/",
-          "archived_url": "https://web.archive.org/web/20260620133927/https://www.yogamoves.nl/teacher-training",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620133927/https://www.yogamoves.nl/teacher-training"
+          },
           "local_snapshot": "data/archives/inner-axis/host-2026-06-2026-06-20.pdf",
           "captured": "2026-06-18",
           "note": "Gastpagina van Yoga Moves Utrecht die de Inner Axis TT host/aankondigt (bevestigt de host-relatie)."
@@ -4971,7 +5179,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgscAAA&sid=0013g000002nmYlAAI&name=Yoga-Moves",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/inner-axis/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-18",
           "note": "Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde lokale capture nodig. URL-slug \"Yoga-Moves\" maar rendert als \"Inner Axis - health, transformation, empowerment\", adres Sint Janshovenstraat Utrecht.\n"
@@ -4980,7 +5191,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Strom",
           "local_snapshot": "data/archives/inner-axis/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-18",
@@ -5263,7 +5477,10 @@
           "id": "site-att-2026-06",
           "type": "website",
           "url": "https://reinierdorrepaal.nl/ashtanga-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260612190235/https://reinierdorrepaal.nl/ashtanga-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260612190235/https://reinierdorrepaal.nl/ashtanga-teacher-training/"
+          },
           "local_snapshot": "data/archives/jai-yoga/site-att-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         },
@@ -5271,7 +5488,10 @@
           "id": "site-ptt-2026-06",
           "type": "website",
           "url": "https://reinierdorrepaal.nl/pranayama-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260612190614/https://reinierdorrepaal.nl/pranayama-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260612190614/https://reinierdorrepaal.nl/pranayama-teacher-training/"
+          },
           "local_snapshot": "data/archives/jai-yoga/site-ptt-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         },
@@ -5279,7 +5499,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/jai-yoga/ya-register-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         },
@@ -5287,7 +5510,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/jai-yoga/crkbo-register-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         }
@@ -5448,7 +5674,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://namastestudios.nl/yogadocentopleiding",
-          "archived_url": "https://web.archive.org/web/20260714093616/https://namastestudios.nl/yogadocentopleiding",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714093616/https://namastestudios.nl/yogadocentopleiding"
+          },
           "local_snapshot": "data/archives/namaste-studios/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
@@ -5456,7 +5685,10 @@
           "id": "ya-school-profile-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000RyZ8DYAV&sid=001TR00000NnXqPYAV&name=Maayke-Vidts---Yoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/namaste-studios/ya-school-profile-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12",
           "note": "Salesforce-gerenderd. Wayback-snapshot (2026-06-12) bevat alleen de lege shell (header/footer, géén profieldata) — bewijswaarde nul, bevestigt enkel dat de URL bestond. Primaire evidence = tekstuitlezing in local_snapshot + handmatige pixel-PDF (nog toe te voegen). Dit geldt generiek voor YA-registerpagina's: archiveer ze nooit alleen via Wayback.\n"
@@ -5465,7 +5697,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/namaste-studios/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         }
@@ -5697,7 +5932,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://neoyogatrainingen.nl/yoga-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260625144638/https://neoyogatrainingen.nl/yoga-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260625144638/https://neoyogatrainingen.nl/yoga-teacher-training/"
+          },
           "local_snapshot": "data/archives/neo-yoga-delft/site-2026-06-2026-06-25.pdf",
           "captured": "2026-06-21",
           "note": "200u Hatha Yoga Teacher Training: inhoud, dagindeling, urenverdeling (180 contact + min. 20 zelfstudie), data 2027-cohort, prijs (€2885; €100 vroegboek), toetsing, voorwaarden, docenten David van der Gaag & Gemma Schuurman, max 10 deelnemers.\n"
@@ -5706,7 +5944,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pk6uAAA&sid=0013g000002npWdAAI&name=Neo-Yoga-Delft",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/neo-yoga-delft/ya-register-2026-06-2026-06-25.pdf",
           "captured": "2026-06-21",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Neo Yoga Delft', Delft, RYS 200, First Registered March 2019; teaching staff David van der Gaag (E-RYT500/YACEP) en Akhilesh Bodhi (E-RYT500/YACEP); 1 cohort gelijst (7 jan - 10 apr 2027)."
@@ -5715,7 +5956,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Neo Yoga",
           "local_snapshot": "data/archives/neo-yoga-delft/crkbo-register-2026-06-2026-06-25.pdf",
           "captured": "2026-06-21",
@@ -6063,7 +6307,10 @@
           "id": "site-hatha-2026-06",
           "type": "website",
           "url": "https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/",
-          "archived_url": "https://web.archive.org/web/20260627084538/https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627084538/https://newnatureyoga.com/hatha-yoga-opleiding-200-uur/"
+          },
           "local_snapshot": "data/archives/newnature-yoga/site-hatha-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "200u Hatha Yoga Docent Opleiding (volledig online, self-paced): 6 modules, programma, prijs (€599 → €449), downloadbaar handboek, YA + CRKBO claim, hoofddocent Dorien, gastdocent Yogi Madhav (Sivananda Hatha).\n"
@@ -6072,7 +6319,10 @@
           "id": "site-yin-2026-06",
           "type": "website",
           "url": "https://newnatureyoga.com/200-uur-yin-yoga-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260627084732/https://newnatureyoga.com/200-uur-yin-yoga-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627084732/https://newnatureyoga.com/200-uur-yin-yoga-opleiding/"
+          },
           "local_snapshot": "data/archives/newnature-yoga/site-yin-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "200u Yin Yoga Docent Opleiding (volledig online, self-paced): 6 modules, handboek 250 pp, prijs (€599 → €449), YA + CRKBO claim, Yin-lijn via Bernie Clark (Dorien opgeleid door Bernie Clark).\n"
@@ -6081,7 +6331,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pkN1AAI&sid=0013g000002npiWAAQ&name=NewNature-Yoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/newnature-yoga/ya-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'NewNature Yoga', Silvolde, RYS 200, First Registered July 2019, 0 training dates; teaching staff Dorien Bortels (E-RYT500/RPYT/YACEP) + Jack."
@@ -6090,7 +6343,10 @@
           "id": "ya-teacher-dorien-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023rDEAAY",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/newnature-yoga/ya-teacher-dorien-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-docentprofiel Dorien Bortels (E-RYT, Silvolde; Yin TT bij Bernie Clark; teaching: Online Yoga Classes; First Registered July 2019)."
@@ -6099,7 +6355,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "NewNature",
           "local_snapshot": "data/archives/newnature-yoga/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
@@ -6387,7 +6646,10 @@
           "id": "site-basis-2026-06",
           "type": "website",
           "url": "https://openyoga.nl/basis-yoga-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260620163507/https://openyoga.nl/basis-yoga-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620163507/https://openyoga.nl/basis-yoga-opleiding/"
+          },
           "local_snapshot": "data/archives/open-yoga/site-basis-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "200u Basis Yoga Opleiding (NL): programma, prijs, data, docenten."
@@ -6396,7 +6658,10 @@
           "id": "site-fundamental-2026-06",
           "type": "website",
           "url": "https://openyoga.nl/fundamental-yoga-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260620163652/https://openyoga.nl/fundamental-yoga-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620163652/https://openyoga.nl/fundamental-yoga-teacher-training/"
+          },
           "local_snapshot": "data/archives/open-yoga/site-fundamental-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Engelstalige variant van de 200u-opleiding ('Fundamental Teacher Training')."
@@ -6405,7 +6670,10 @@
           "id": "site-advanced-2026-06",
           "type": "website",
           "url": "https://openyoga.nl/advanced-yoga-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260620163848/https://openyoga.nl/advanced-yoga-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620163848/https://openyoga.nl/advanced-yoga-teacher-training/"
+          },
           "local_snapshot": "data/archives/open-yoga/site-advanced-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "300u Advanced Teacher Training (Continuing Education): zelf samen te stellen modulair traject."
@@ -6414,7 +6682,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phtaAAA&sid=0013g000002nnCHAAY&name=Open-Yoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/open-yoga/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Titel bevestigt 'Open Yoga | Registered Yoga School'."
@@ -6423,7 +6694,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Open Yoga",
           "local_snapshot": "data/archives/open-yoga/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
@@ -6651,7 +6925,10 @@
           "id": "site-overview-2026-06",
           "type": "website",
           "url": "https://poyomicenter.nl/pages/the-awakening-yoga-soul-teacher-training-retreat",
-          "archived_url": "https://web.archive.org/web/20260627185901/https://poyomicenter.nl/pages/the-awakening-yoga-soul-teacher-training-retreat",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627185901/https://poyomicenter.nl/pages/the-awakening-yoga-soul-teacher-training-retreat"
+          },
           "local_snapshot": "data/archives/poyomi/site-overview-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Overzichtspagina The Awakening Yoga Soul Teacher Training & Retreat: 3 stijlen (Kundalini/Yin/Easy Vinyasa), kamerprijzen (€2400 gedeeld / €2700 eenpersoons)."
@@ -6660,7 +6937,10 @@
           "id": "site-product-2026-06",
           "type": "website",
           "url": "https://poyomicenter.nl/products/the-aweking-yoga-soul-teacher-training-retreat",
-          "archived_url": "https://web.archive.org/web/20260627185940/https://poyomicenter.nl/products/the-aweking-yoga-soul-teacher-training-retreat",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627185940/https://poyomicenter.nl/products/the-aweking-yoga-soul-teacher-training-retreat"
+          },
           "local_snapshot": "data/archives/poyomi/site-product-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Productpagina (200u, 7 maanden): volledige beschrijving, stijlen, curriculum, opbouw (live op locatie + live online + opgenomen online + 3-daags retreat), programma/data (25 sep 2026 - 4 apr 2027), prijzen (€2400/€2700, max 8 termijnen), examens, boekenlijst.\n"
@@ -6669,7 +6949,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000phaPtAAI&sid=0013g00000ENEPYAA5&name=PoYoMi-Teacher-Training-Community",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/poyomi/ya-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'PoYoMi Teacher Training Community', Waalwijk, RYS 200, First Registered May 2023, rating 4.5/1, 0 training dates; teaching staff Leonie van der Linden (E-RYT 200, RYT 500, YACEP)."
@@ -6678,7 +6961,10 @@
           "id": "ya-teacher-leonie-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023E5HAAU",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/poyomi/ya-teacher-leonie-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-docentprofiel Leonie van der Linden (RYT, Waalwijk; First Registered August 2017; YACEP; teaching: Online Yoga Classes/Zoom)."
@@ -6687,7 +6973,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "PoYoMi",
           "local_snapshot": "data/archives/poyomi/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
@@ -6970,7 +7259,10 @@
           "id": "site-200-2026-06",
           "type": "website",
           "url": "https://pureenergyyoga.nl/200-uur-yin-yoga-opleiding-training/",
-          "archived_url": "https://web.archive.org/web/20260621171404/https://pureenergyyoga.nl/200-uur-yin-yoga-opleiding-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260621171404/https://pureenergyyoga.nl/200-uur-yin-yoga-opleiding-training/"
+          },
           "local_snapshot": "data/archives/pure-energy-yoga/site-200-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Hoofdpagina 200u Yin Yoga opleiding: opbouw uit 4 × 50u YACEP-modules, moduleinhoud, certificering (50h CE per module; 200u-diploma na 4 modules + online theorie-examen), volgorde-advies, lesmateriaal.\n"
@@ -6979,7 +7271,10 @@
           "id": "site-event-200-2026-06",
           "type": "website",
           "url": "https://pureenergyyoga.nl/event/yin-yoga-opleiding-200h-ya-jan-t-m-apr-2026-amsterdam-korter-traject/",
-          "archived_url": "https://web.archive.org/web/20260621171616/https://pureenergyyoga.nl/event/yin-yoga-opleiding-200h-ya-jan-t-m-apr-2026-amsterdam-korter-traject/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260621171616/https://pureenergyyoga.nl/event/yin-yoga-opleiding-200h-ya-jan-t-m-apr-2026-amsterdam-korter-traject/"
+          },
           "local_snapshot": "data/archives/pure-energy-yoga/site-event-200-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Gebundeld 200u-cohort Amsterdam (25 sep 2026 - 17 apr 2027, 20 dagen, Yogaschool Noord): prijstrappen (€847/1, €1547/2, €2159/3, €2897/4 modules), inhoud per module, data, docent Esther Scheen, annulerings-/lesmateriaalbeleid.\n"
@@ -6988,7 +7283,10 @@
           "id": "site-event-basis-2026-06",
           "type": "website",
           "url": "https://pureenergyyoga.nl/event/yin-yoga-basis-opleiding-amsterdam-yin-yoga-anatomie-50h-ya-2026/",
-          "archived_url": "https://web.archive.org/web/20260621171741/https://pureenergyyoga.nl/event/yin-yoga-basis-opleiding-amsterdam-yin-yoga-anatomie-50h-ya-2026/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260621171741/https://pureenergyyoga.nl/event/yin-yoga-basis-opleiding-amsterdam-yin-yoga-anatomie-50h-ya-2026/"
+          },
           "local_snapshot": "data/archives/pure-energy-yoga/site-event-basis-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Basis-module (Yin Yoga & Anatomie 50h YA) Amsterdam: €847, 5 lesdagen (25 sep - 10 okt 2026), ~12u zelfstudie/huiswerk, gastdocent Angelique Boset (dag 4), inschrijving via Yogaschool Noord.\n"
@@ -6997,7 +7295,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjwYAAQ&sid=0013g000002npNCAAY&name=Pure-Energy-Yoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/pure-energy-yoga/ya-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Pure Energy Yoga', Utrecht, RYS 200, First Registered November 2018; teaching staff Esther Scheen, Angelique Boset (E-RYT500/YACEP), Jeske Papadopoulos (E-RYT500/YACEP)."
@@ -7006,7 +7307,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Docenten",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Scheen",
           "local_snapshot": "data/archives/pure-energy-yoga/crkbo-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
@@ -7302,7 +7606,10 @@
           "id": "site-pureteacher-2026-06",
           "type": "website",
           "url": "https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher",
-          "archived_url": "https://web.archive.org/web/20260630134409/https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260630134409/https://www.pureyoga.nl/site/index.php/opleidingen/pureteacher"
+          },
           "local_snapshot": "data/archives/pure-yoga/site-pureteacher-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) \"Pureteacher — erkende 200 uur Yoga docenten opleiding, erkend door de Yoga Alliance Professionals\". All-round Hatha Yoga docent; tweejarige opzet, 200 contacturen, 39 lesdagen verdeeld over 4 modules: I De basis (Asana, yoga-anatomie, instructie) 10 dagen; II Praktiseren (lesgeven in 4 stijlen: Klassieke Hatha, moderne Hatha, Yin, Vinyasa) 16 dagen; III De essentie (Pranayama, Meditatie, Adjustments, Vedische Filosofie) 10 dagen; IV Vaardigheid (eind-assessments) 3 dagen. Curriculum incl. Vedische filosofie & Patañjali-sūtra's, anatomie/ fysiologie/ kinesiologie, therapeutische werking, adjustments & props, didactiek groepslessen, \"beginner's mind\".\n"
@@ -7311,7 +7618,9 @@
           "id": "site-opbouw-2026-06",
           "type": "website",
           "url": "https://www.pureyoga.nl/site/index.php/opbouw-en-thema-s-pt",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/pure-yoga/site-opbouw-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "Module-/thema-opbouw van de Pureteacher (modules I-IV met onderliggende thema-pagina's); bron voor de modulestructuur."
@@ -7320,7 +7629,10 @@
           "id": "site-prijzen-2026-06",
           "type": "website",
           "url": "https://www.pureyoga.nl/site/index.php/prijzen-pt",
-          "archived_url": "https://web.archive.org/web/20260630134621/https://www.pureyoga.nl/site/index.php/prijzen-pt",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260630134621/https://www.pureyoga.nl/site/index.php/prijzen-pt"
+          },
           "local_snapshot": "data/archives/pure-yoga/site-prijzen-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "Prijzen (vanaf 18 jan 2025): volledige opleiding (4 modules) €3.885,50 excl. btw / €4.235,20 incl. 9% btw. Per module mogelijk: Module I €1.235,50 excl. / €1.346,70 incl.; Module II €1.896,00 excl. / €2.066,64 incl.; Module III €1.235,50 excl. / €1.346,70 incl.; Module IV inbegrepen na succesvol afronden van I-III. Betaling in termijnen mogelijk. OPMERKING: het lage 9%-btw-tarief wordt toegepast (niet het 21%-standaardtarief); consumentenprijs wordt incl. btw getoond (ACM-conform).\n"
@@ -7329,7 +7641,10 @@
           "id": "site-docenten-2026-06",
           "type": "website",
           "url": "https://www.pureyoga.nl/site/index.php/docenten-pt",
-          "archived_url": "https://web.archive.org/web/20260630134715/https://www.pureyoga.nl/site/index.php/docenten-pt",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260630134715/https://www.pureyoga.nl/site/index.php/docenten-pt"
+          },
           "local_snapshot": "data/archives/pure-yoga/site-docenten-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "Docenten: Rineke Vierhoven (Senior Teacher, geaccrediteerd bij Yoga Alliance Professionals; lid Vereniging Yogadocenten Nederland; achtergrond medische wereld, mindfulness, HartFocus, massage) verzorgt min. 30 van de 39 lesdagen; Pepijn van Sandijk (onderwijskundige achtergrond, partner van Rineke) verzorgt de overige ~9 lesdagen.\n"
@@ -7338,7 +7653,9 @@
           "id": "site-leerdoelen-2026-06",
           "type": "website",
           "url": "https://www.pureyoga.nl/site/index.php/leerdoelen-en-toetsing",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/pure-yoga/site-leerdoelen-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "Leerdoelen & toetsing: toepassen van yogaprincipes/-filosofie, inspreken & begeleiden, didactiek + basisanatomie, opzetten van een gebalanceerde les (asana/warming-up/pranayama/meditatie/ontspanning + Vedische filosofie, adjustments, props), en begeleiden van cursisten met blessures/beperkingen. Eind-assessments in Module IV.\n"
@@ -7347,7 +7664,10 @@
           "id": "site-deelname-2026-06",
           "type": "website",
           "url": "https://www.pureyoga.nl/site/index.php/deelname-pt",
-          "archived_url": "https://web.archive.org/web/20260630134953/https://www.pureyoga.nl/site/index.php/deelname-pt",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260630134953/https://www.pureyoga.nl/site/index.php/deelname-pt"
+          },
           "local_snapshot": "data/archives/pure-yoga/site-deelname-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "Toelatingsvoorwaarden: toegankelijk voor beginners t/m gevorderden & docenten; fysiek/emotioneel veeleisend; schriftelijk intake-assessment + intake-gesprek mogelijk. Vereisten: min. 2 jaar eigen yogabeoefening; het is een VEREISTE om naast de opleiding yogalessen bij een yogadocent te blijven volgen; diepe leerwens; vrij van (zware) blessures.\n"
@@ -7356,7 +7676,10 @@
           "id": "site-accreditatie-2026-06",
           "type": "website",
           "url": "https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher",
-          "archived_url": "https://web.archive.org/web/20260630135042/https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260630135042/https://www.pureyoga.nl/site/index.php/2014-03-03-22-25-40/accreditatie/684-erkende-200u-docentenopleiding-pureteacher"
+          },
           "local_snapshot": "data/archives/pure-yoga/site-accreditatie-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "\"Erkende 200u docentenopleiding Pureteacher\": Pureyoga afficheert zich als \"Approved Training Provider\" van Yoga Alliance Professionals (wereldwijd erkend, leden op elk continent). Na de Pureteacher 200u kan de cursist zich als Registered Yoga Teacher met YAP-membership registreren. Bron voor de YAP-claim (los van de US Yoga Alliance).\n"
@@ -7364,6 +7687,10 @@
         {
           "id": "lesdata-image-2026-06",
           "type": "brochure",
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "door de gebruiker aangeleverde afbeelding: er is geen publieke bron-URL om te archiveren"
+          },
           "captured": "2026-06",
           "note": "Door de gebruiker aangeleverde \"Lesdata, tijden en locatie\"-afbeelding van de site: 200u-opleiding + modules per cohort: Cohort 2021 Breda (Module II/III/IV 2021 Breda), Cohort 2022 Drenthe (Module I 2022 Drenthe), Cohort 2023 Zwolle (Module I/II 2023 Zwolle). Alle getoonde cohorten liggen in het verleden (laatste = 2023 Zwolle); geen 2024-2026-cohort getoond. Bron voor de cohort-data.\n"
         },
@@ -7371,7 +7698,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Pureyoga (instelling, naam + website); Vierhoven (docent)",
           "local_snapshot": "data/archives/pure-yoga/crkbo-register-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
@@ -7940,16 +8270,22 @@
           "id": "site-cyt-2026-07",
           "type": "website",
           "url": "https://quenosportopleidingen.nl/100-200-en-500-uur-cyt-certificering-yoga-alliance-international-india/",
-          "archived_url": "https://web.archive.org/web/20260714114801/https://quenosportopleidingen.nl/100-200-en-500-uur-cyt-certificering-yoga-alliance-international-india/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714114801/https://quenosportopleidingen.nl/100-200-en-500-uur-cyt-certificering-yoga-alliance-international-india/"
+          },
           "local_snapshot": "data/archives/queno-sportopleidingen/site-cyt-2026-07-2026-07-11.pdf",
           "captured": "2026-07-11",
-          "note": "De CYT-pagina: de enige gearchiveerde pagina van de aanbieder, en de bron van álle programma-gegevens hieronder. Beschrijft de vier trajecten (Yin 200, Hatha 200, Power 200, Yoga 500 — plus een 100u Kinderyoga-traject dat buiten de scope van deze directory valt), de samenstellende opleidingen, de stage-uren, de examenvorm en de begeleidingskosten. Noemt GEEN opleidingsprijzen (verwijst daarvoor naar de agenda-pagina, die niet is vastgelegd) en GEEN btw-regel. `archived_url: null` — er is geen publieke archiefkopie bekend; alleen de lokale snapshot (html + browser-gerenderde pdf) bestaat, en die haalt de publicatiedrempel niet.\n"
+          "note": "De CYT-pagina: de enige gearchiveerde pagina van de aanbieder, en de bron van álle programma-gegevens hieronder. Beschrijft de vier trajecten (Yin 200, Hatha 200, Power 200, Yoga 500 — plus een 100u Kinderyoga-traject dat buiten de scope van deze directory valt), de samenstellende opleidingen, de stage-uren, de examenvorm en de begeleidingskosten. Noemt GEEN opleidingsprijzen (verwijst daarvoor naar de agenda-pagina, die niet is vastgelegd) en GEEN btw-regel. Op dat moment: geen publieke archiefkopie bekend; alleen de lokale snapshot (html + browser-gerenderde pdf) bestaat, en die haalt de publicatiedrempel niet.\n"
         },
         {
           "id": "crkbo-register-2026-07",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Queno",
           "local_snapshot": "data/archives/queno-sportopleidingen/crkbo-register-2026-07-2026-07-11.pdf",
           "captured": "2026-07-11",
@@ -8128,7 +8464,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://samsara.nl/opleidingen/",
-          "archived_url": "https://web.archive.org/web/20260613075555/https://samsara.nl/opleidingen/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613075555/https://samsara.nl/opleidingen/"
+          },
           "local_snapshot": "data/archives/samsara/site-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         },
@@ -8136,7 +8475,10 @@
           "id": "vyn-register-2026-06",
           "type": "register",
           "url": "https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
-          "archived_url": "https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613075732/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/"
+          },
           "local_snapshot": "data/archives/samsara/vyn-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         }
@@ -8643,7 +8985,10 @@
           "id": "site-klassikaal-2026-06",
           "type": "website",
           "url": "https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal",
-          "archived_url": "https://web.archive.org/web/20260620190230/https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620190230/https://sanayou.com/yin-yang-yoga-teacher-training-ryt200-klassikaal"
+          },
           "local_snapshot": "data/archives/sanayou/site-klassikaal-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Klassikale RYT/VYN200 Yin & Yang: 4×50u modules, prijzen, data, toetsing, docenten."
@@ -8652,7 +8997,9 @@
           "id": "site-online-2026-06",
           "type": "website",
           "url": "https://sanayou.com/overzicht-online-ryt200-yoga-opleidingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/sanayou/site-online-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Online RYT200 (3 routes: Yin, Yin & Yang, Yang); modulair, Nederlandstalig, YA-erkend."
@@ -8661,7 +9008,10 @@
           "id": "site-300-2026-06",
           "type": "website",
           "url": "https://sanayou.com/overzicht-ryt300-yoga-opleidingen",
-          "archived_url": "https://web.archive.org/web/20260620190653/https://sanayou.com/overzicht-ryt300-yoga-opleidingen",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620190653/https://sanayou.com/overzicht-ryt300-yoga-opleidingen"
+          },
           "local_snapshot": "data/archives/sanayou/site-300-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "RYT300 'The Art of Advanced Teaching' (hybride): 2 richtingen Yin Mastery/Yoga Awakening; €2250; YA-erkend."
@@ -8670,7 +9020,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjNrAAI&sid=0013g000002noscAAA&name=SanaYou-YOGAcademy",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/sanayou/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'SanaYouYOGA', Zwolle, talen NL+EN, RYS."
@@ -8679,7 +9032,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "SanaYou",
           "local_snapshot": "data/archives/sanayou/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
@@ -8689,7 +9045,10 @@
           "id": "vyn-register-2026-06",
           "type": "register",
           "url": "https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
-          "archived_url": "https://web.archive.org/web/20260620190919/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620190919/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/"
+          },
           "local_snapshot": "data/archives/sanayou/vyn-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "VYN (Vereniging Yogadocenten Nederland) register van erkende yogaopleidingen. Geen per-school permalink waargenomen; SanaYou-vermelding voor de 200u nog te bevestigen (zie registrations-note over aanvraag vs. erkend).\n"
@@ -9060,7 +9419,10 @@
           "id": "site-200-2026-06",
           "type": "website",
           "url": "https://sparkoflightyoga.com/hatha-yoga-opleiding-200-uur/",
-          "archived_url": "https://web.archive.org/web/20260621152600/https://sparkoflightyoga.com/hatha-yoga-opleiding-200-uur/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260621152600/https://sparkoflightyoga.com/hatha-yoga-opleiding-200-uur/"
+          },
           "local_snapshot": "data/archives/spark-of-light/site-200-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "200u Hatha Yoga Opleiding (nondualistisch shaivisme/tantra): programma, 10 weekenden, data najaar 2026, prijs (€3450, BTW-vrij CRKBO), YA+VYN-erkenning, groepsgrootte, practitioner- vs docent-certificaat, docente Marloes van der Kamp.\n"
@@ -9069,7 +9431,9 @@
           "id": "site-300-2026-06",
           "type": "website",
           "url": "https://sparkoflightyoga.com/yoga-docentopleiding-300-uur/",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/spark-of-light/site-300-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "300u verdiepende opleiding (modulair): Yin (2×50u YA / 2×40u VYN), Yoga Nidra (2×50u), Energetische Aspecten (2×50u + 1×32u); YA = 6×50u, VYN = 7 modules + scriptie + examen (min. 3 jaar). Locatie Doorwerth, max 16. Geen prijs vermeld.\n"
@@ -9078,7 +9442,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjxpAAA&sid=0013g000002npPJAAY&name=Spark-of-Light-Yoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/spark-of-light/ya-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Spark of Light Yoga', Wageningen, talen EN/NL/(DE/FR), First Registered December 2018; designatiebadges RECHTSBOVEN: RYS 200 én RYS 300 (afbeeldingen zonder alt-tekst → alleen visueel zichtbaar). 2 RYS200-cohorten gelijst; docente Marloes van der Kamp (E-RYT500, YACEP)."
@@ -9087,7 +9454,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Andere Boeg",
           "local_snapshot": "data/archives/spark-of-light/crkbo-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
@@ -9303,7 +9673,10 @@
           "id": "site-tt-2026-06",
           "type": "website",
           "url": "https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/",
-          "archived_url": "https://web.archive.org/web/20260630084309/https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260630084309/https://www.theyogahome.nl/teacher-training-bhakti-vinyasa-26/"
+          },
           "local_snapshot": "data/archives/the-yoga-home/site-tt-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) \"200Hr Bhakti Vinyasa Teacher Training — YOGA ALLIANZ\": Integrated Approach (Jivamukti Yoga, Hatha, de Yoga Sutra's van Patanjali, Bhakti Yoga) met Shastra/Sound/teaching skills/Sadhana; asana in vinyasa flow + pranayama/kriya/meditatie + Dharma talks + hands-on assists + mantra/harmonium. Start 14 nov 2026; 6 weekenden (9:00-17:00) t/m apr 2027 + 6-daagse residentiële immersion 2-7 mei 2027. €2795 regular (incl. manual, chantbook, basis-harmoniumles, 5 overnachtingen + maaltijden immersion, thuisopdrachten, graduation, persoonlijke begeleiding). Verplichte literatuur (Sharon Gannon & David Life / Jivamukti, Radhanath Swami, Prabhupada Bhagavad Gita, Satchidananda Yoga Sutra's, Hatha Yoga Pradipika, Iyengar). Hoofddocenten Durga + Kesharini. Betaling aan Mindful Seva Institute.\n"
@@ -9312,7 +9685,10 @@
           "id": "yogibit-event-2026-06",
           "type": "website",
           "url": "https://theyogahome.yogibit.nl/web/nl/events/4678",
-          "archived_url": "https://web.archive.org/web/20260630084407/https://theyogahome.yogibit.nl/web/nl/events/4678",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260630084407/https://theyogahome.yogibit.nl/web/nl/events/4678"
+          },
           "local_snapshot": "data/archives/the-yoga-home/yogibit-event-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
           "note": "Yogibit boekings-/eventpagina voor het 2026-cohort (event 4678). Pointer; niet diep uitgelezen."
@@ -9321,7 +9697,10 @@
           "id": "ya-search-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Yoga%20Home",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "query": "Yoga Home (school); Mindful Seva (school)",
           "local_snapshot": "data/archives/the-yoga-home/ya-search-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
@@ -9331,7 +9710,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yoga Home / Mindful Seva / theyogahome",
           "local_snapshot": "data/archives/the-yoga-home/crkbo-register-2026-06-2026-06-30.pdf",
           "captured": "2026-06",
@@ -9575,7 +9957,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://thriveyoga.nl/events/vinyasa-yoga-opleiding-amsterdam/",
-          "archived_url": "https://web.archive.org/web/20260620171305/https://thriveyoga.nl/events/vinyasa-yoga-opleiding-amsterdam/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620171305/https://thriveyoga.nl/events/vinyasa-yoga-opleiding-amsterdam/"
+          },
           "local_snapshot": "data/archives/thrive-yoga/site-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "200u Vinyasa Yoga Opleiding: programma per weekend, prijs (€3050, btw-vrij CRKBO), data 2 cohorten + upcoming 2027, docenten, locatie IJburg.\n"
@@ -9584,7 +9969,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjWnAAI&sid=0013g000002np1JAAQ&name=Thrive-Yoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/thrive-yoga/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Thrive Yoga', Amsterdam, talen NL+EN, RYS."
@@ -9593,7 +9981,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Thrive",
           "local_snapshot": "data/archives/thrive-yoga/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
@@ -10225,7 +10616,10 @@
           "id": "site-vinyasa200-2026-06",
           "type": "website",
           "url": "https://www.tribesacademy.nl/200-hour-modern-vinyasa",
-          "archived_url": "https://web.archive.org/web/20260628055450/https://www.tribesacademy.nl/200-hour-modern-vinyasa",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628055450/https://www.tribesacademy.nl/200-hour-modern-vinyasa"
+          },
           "local_snapshot": "data/archives/tribes-academy/site-vinyasa200-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "200u Modern Vinyasa TT (Wix): 6 weekenden Leiden + retreatweek, cohort 9 okt 2026 - 21 mrt 2027, €3150 (\"no VAT charged, CRKBO-registered\"), early bird 15% (code Early200), leads Willemieke Verweij & Fanny Alavoine, hands-on 16 lessen volgen / 2 assisteren / 4 observeren bij Studio Tribes, eindtoets (open-book essay thuis + groeps-lesexamen), €500 aanbetaling, 3 termijnen (+5% admin), 2 boeken excl.\n"
@@ -10234,7 +10628,10 @@
           "id": "site-yin200-2026-06",
           "type": "website",
           "url": "https://www.tribesacademy.nl/training/200-hour-yin-yoga",
-          "archived_url": "https://web.archive.org/web/20260628055536/https://www.tribesacademy.nl/training/200-hour-yin-yoga",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628055536/https://www.tribesacademy.nl/training/200-hour-yin-yoga"
+          },
           "local_snapshot": "data/archives/tribes-academy/site-yin200-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "200u Yin Yoga TT (modulair, 4×50u: The Essence/Channels/Elements/Art): lead Indra Paternotte + gastdocenten Willemieke Verweij & Robinson von Grumbkow; modules los boekbaar (ook als continuing ed), start met elke module, eigen tempo; 20% korting bij commitment aan volledige 200u binnen 3 jaar; leslocatie Tribes-studio's Leiden + retreat Tiengemeten; certificaat YA na eindtoets & examen.\n"
@@ -10243,7 +10640,10 @@
           "id": "site-vinyasa300-2026-06",
           "type": "website",
           "url": "https://www.tribesacademy.nl/training/300-hour-modern-vinyasa",
-          "archived_url": "https://web.archive.org/web/20260628055608/https://www.tribesacademy.nl/training/300-hour-modern-vinyasa",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628055608/https://www.tribesacademy.nl/training/300-hour-modern-vinyasa"
+          },
           "local_snapshot": "data/archives/tribes-academy/site-vinyasa300-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "300u Modern Vinyasa TT \"Level 2\" (gevorderd): 2 retreats (75u, in lijst beide 75u — intro noemt afwijkend \"75h & 100h\") + 6×25u modules; leads Willemieke Verweij & Fanny Alavoine + gasten Joy Rae (sound) & Eddie van Dongen (sound/mobility); retreats Boda (Ardennen, BE) + Yonshala (FR); los boekbaar; diploma YA na assessments (10 lessen meedraaien / 2 assisteren / 1 les of workshop leiden met feedback / schriftelijke opdracht).\n"
@@ -10252,7 +10652,10 @@
           "id": "site-yogindra-2026-06",
           "type": "website",
           "url": "https://www.yogindra.com/teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260628055637/https://www.yogindra.com/teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628055637/https://www.yogindra.com/teacher-training/"
+          },
           "local_snapshot": "data/archives/tribes-academy/site-yogindra-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Eigen marketingpagina van Indra Paternotte voor dezelfde 200u Yin-TT: de \"Enroll\" / \"How to Join\"-knoppen verwijzen naar tribesacademy.nl/training/200-hour-yin-yoga; \"All modules take place at the Tribes studio in Leiden\"; toont RYS-200- + YACEP-badges; deelnemers moeten 5 lessen bij Indra volgen (met 20% Tribes-korting). Documenteert de host/teacher-relatie (decision #9): Indra markt op eigen site, Tribes is de boekings- + certificeringsbrand.\n"
@@ -10260,7 +10663,10 @@
         {
           "id": "brochure-curriculum-2026-07",
           "type": "brochure",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "niet vrij op de site gepubliceerd (achter een e-mailformulier): er is geen publieke pagina om te archiveren"
+          },
           "local_snapshot": "data/archives/tribes-academy/brochure-curriculum-2026-07-2026-07-31.pdf",
           "captured": "2026-07",
           "note": "\"200-hour Modern Vinyasa Teacher Training — Full Curriculum\" (PDF, 17 pagina's, bestandsversie V3, omslag \"October 2026 → March 2027\"). NIET vrij op de site gepubliceerd: het stuk komt achter het downloadformulier bij tribesacademy.nl/200 vandaan en vergt afgifte van een e-mailadres. Daarom geen `url` en geen Wayback-capture — er is geen publieke, reproduceerbare URL; het bewijs is de gedateerde lokale kopie (sha256 vastgelegd 2026-07-31). Inhoud: de hoofdstuk-voor-hoofdstukopbouw (7 hoofdstukken, elk met datum, plaats en \"key content\"), de vijf Modern-Vinyasa-principes, de losse weekenddata, de sessietijden, het groepsmaximum (14), het retreatadres, en bio's van beide leads. Verkregen en vastgelegd door de maker van de gids; zie `disclosure`.\n"
@@ -10269,7 +10675,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000qDYguAAG&sid=0013g00000phI1NAAU&name=Tribes-dance-and-yoga",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/tribes-academy/ya-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als registrant \"Tribes dance & yoga\" / merk \"Tribes Academy\", Doezastraat 2A Leiden, First Registered October 2023, rating 4.75/2 reviews; teaching staff Willemieke Verweij (E-RYT 500, YACEP) + Fanny Alavoine (E-RYT 500, YACEP); 0 training dates. Designaties RYS 200 + RYS 300 bevestigd via de directorylijst (keyword \"Tribes\").\n"
@@ -10278,7 +10687,10 @@
           "id": "ya-teacher-fanny-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g000009FCJTAA4",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/tribes-academy/ya-teacher-fanny-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "YA-docentprofiel Fanny Alavoine (Leiden; teaches at Tribes dec 2020-heden; First Registered August 2020; YACEP; talen EN/FR; 1000+ lesuren). Designatie E-RYT 500 per het schoolprofiel (teaching staff).\n"
@@ -10287,7 +10699,10 @@
           "id": "ya-teacher-willemieke-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000056n7oAAA",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/tribes-academy/ya-teacher-willemieke-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "YA-docentprofiel Willemieke Verweij (Doezastraat 2A, Leiden; First Registered August 2023; YACEP). Designatie E-RYT 500 per het schoolprofiel (teaching staff). Achtergrond: dans (MA) + antropologie + somatics.\n"
@@ -10296,7 +10711,10 @@
           "id": "ya-teacher-indra-absent-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=Teacher&keyword=Paternotte",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "query": "Paternotte",
           "local_snapshot": "data/archives/tribes-academy/ya-teacher-indra-absent-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -10306,7 +10724,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Tribes",
           "local_snapshot": "data/archives/tribes-academy/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -10705,7 +11126,10 @@
           "id": "site-yin-2026-06",
           "type": "website",
           "url": "https://www.tulayogastudios.nl/yin-yoga-teacher-training",
-          "archived_url": "https://web.archive.org/web/20260621063759/https://www.tulayogastudios.nl/yin-yoga-teacher-training",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260621063759/https://www.tulayogastudios.nl/yin-yoga-teacher-training"
+          },
           "local_snapshot": "data/archives/tula/site-yin-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Yin Yoga Teacher Training (titel 'RYS 200hrs', nav 'RYT-200'): hybride, 3 modules van 5 studiodagen + 10u online, data 2026-2027, prijs, btw-vrij CRKBO, docent Eva de Hoijer.\n"
@@ -10714,7 +11138,10 @@
           "id": "site-vinyasa-2026-06",
           "type": "website",
           "url": "https://www.tulayogastudios.nl/vinyasa-yoga-teacher-training",
-          "archived_url": "https://web.archive.org/web/20260621063838/https://www.tulayogastudios.nl/vinyasa-yoga-teacher-training",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260621063838/https://www.tulayogastudios.nl/vinyasa-yoga-teacher-training"
+          },
           "local_snapshot": "data/archives/tula/site-vinyasa-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Vinyasa Yoga Teacher Training (titel 'RYS 200hrs'): 12 weekenden, curriculum, data okt-2025-cohort (VOL) + okt-2026, prijs (early bird €2.790 / regulier €2.990, 0% btw CRKBO), docenten Moena de Jong & Beatrice Savaris.\n"
@@ -10723,7 +11150,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjnHAAQ&sid=0013g000002npF6AAI&name=Tula",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/tula/ya-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Tula', Amsterdam, talen EN+NL, RYS, First Registered September 2018; docenten o.a. Eva de Hoijer (E-RYT500) en Moena de Jong (E-RYT500)."
@@ -10732,7 +11162,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Tula",
           "local_snapshot": "data/archives/tula/crkbo-register-2026-06-2026-06-21.pdf",
           "captured": "2026-06-21",
@@ -11335,7 +11768,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000F0RE5YAN&sid=001TR000005Q4rbYAC&name=Wahe-yoga-en-ayurveda-academie",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/wahe/ya-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als \"Wahé yoga en ayurveda academie\", Laanplein 15 Baarn, taal NL, First Registered May 2024, 0 reviews / 0 training dates; teaching staff Wahe Gitty de Gier (E-RYT 500, YACEP). Designaties RYS 200 + RYS 500 bevestigd via de badge-afbeeldingen (RYS200.png + RYS500.png) in de DOM.\n"
@@ -11344,7 +11780,10 @@
           "id": "ya-teacher-gitty-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g00001fvJwKAAU",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/wahe/ya-teacher-gitty-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "YA-docentprofiel \"Wahe Gitty de Gier\" (3742 CH Baarn; First Registered September 2023; YACEP). Designatie E-RYT 500 per het schoolprofiel (teaching staff).\n"
@@ -11353,7 +11792,10 @@
           "id": "site-vinyasa200-2026-06",
           "type": "website",
           "url": "https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260628114838/https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628114838/https://wahe-by-gitty.nl/vinyasa-flow-yoga-opleiding/"
+          },
           "local_snapshot": "data/archives/wahe/site-vinyasa200-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) 200u Vinyasa Flow & (Ayur)Vedische TT: Ashtanga-based start → creatieve flows o.b.v. de 5 elementen; pijlers Vinyasa Flow, adjustments, pranayama/meditatie/mantra/Nataraj/Yin-restorative, Ayurveda & filosofie (8-voudig pad, Bhagavad Gita, Patanjali, constitutie), yogic lifestyle. 11 blokken (vr+za 10:30-17:30) 11 sep 2026 - 29 mei 2027; 22 live dagen Baarn + online; €2495 excl. btw, €500 aanbetaling; max 17. Team: Gitty (lead) + gastdocenten Loed Rakels (pranayama/meditatie), Fleur Gunning (creative sequencing), Sanne Louman (Ashtanga based Vinyasa), India Joy Prosser & Yordi Rahmadi (mantra/muziek), Anouska Stokvis (anatomie, fysiotherapeut), Daan Pels (jump through), Mirjam Visser (support).\n"
@@ -11362,7 +11804,10 @@
           "id": "site-yin150-2026-06",
           "type": "website",
           "url": "https://wahe-by-gitty.nl/lunar-flow-yin-pad/",
-          "archived_url": "https://web.archive.org/web/20260628114920/https://wahe-by-gitty.nl/lunar-flow-yin-pad/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628114920/https://wahe-by-gitty.nl/lunar-flow-yin-pad/"
+          },
           "local_snapshot": "data/archives/wahe/site-yin150-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "150u Yin Yoga & Lunar Flow TT, \"diepgeworteld in de Vedische traditie\": Samkhya-filosofie (5 elementen, 7 chakra's), meridianen (TCM) kort, Free Flow Prana sequences voor gewrichten/wervelkolom/heup. Lestijden 10:30-17:30. Data 2026/2027 (6 feb 2026 vol; 6 nov 2026 volgeboekt/wachtlijst). Prijs niet op de pagina vermeld.\n"
@@ -11371,7 +11816,10 @@
           "id": "site-restorative100-2026-06",
           "type": "website",
           "url": "https://wahe-by-gitty.nl/restorative-yoga-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260628115001/https://wahe-by-gitty.nl/restorative-yoga-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628115001/https://wahe-by-gitty.nl/restorative-yoga-opleiding/"
+          },
           "local_snapshot": "data/archives/wahe/site-restorative100-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "100u Restorative & Ayurveda Yoga TT: restorative + zelfonderzoek + Ayurveda; props (bolsters/dekens/manduka/yin-matten). 4 weekenden (8 live dagen): 13-14 nov, 4-5 dec 2026, 15-16 jan, 5-6 feb 2027 (10:30-17:30). €1495 excl. btw, €250 aanbetaling.\n"
@@ -11380,7 +11828,10 @@
           "id": "site-overview-2026-06",
           "type": "website",
           "url": "https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/",
-          "archived_url": "https://web.archive.org/web/20260712135015/https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260712135015/https://wahe-by-gitty.nl/overzicht-yoga-opleidingen/"
+          },
           "local_snapshot": "data/archives/wahe/site-overview-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Opleidingsoverzicht: 200u Vinyasa & Ayurveda, 150u Yin/Lunar, 100u Restorative, + komende module \"levendige yoga filosofie, pranayama en meditatie\". Beschrijft een YA-leerroute (\"Opleidingsopbouw ... duidelijke en flexibele leerroute\") — basis voor de gestapelde RYS 500.\n"
@@ -11389,7 +11840,10 @@
           "id": "site-yoga-alliance-2026-07",
           "type": "website",
           "url": "https://wahe-by-gitty.nl/yoga-alliance/",
-          "archived_url": "https://web.archive.org/web/20260712135053/https://wahe-by-gitty.nl/yoga-alliance/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260712135053/https://wahe-by-gitty.nl/yoga-alliance/"
+          },
           "local_snapshot": "data/archives/wahe/site-yoga-alliance-2026-07-2026-07-12.pdf",
           "captured": "2026-07",
           "note": "De pagina waarop Wahé de gestapelde 500-uursroute zélf beschrijft (opleidingsopbouw + YA-registratieniveaus). Toegevoegd n.a.v. de provenance-check: 500-pathway citeerde eerder het opleidingsoverzicht, dat het getal 500 nergens noemt.\n"
@@ -11398,7 +11852,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Wah / wahe / de Gier (Docenten)",
           "local_snapshot": "data/archives/wahe/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -11408,7 +11865,10 @@
           "id": "acm-consumentenprijs",
           "type": "other",
           "url": "https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden",
-          "archived_url": "https://web.archive.org/web/20260628115211/https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628115211/https://www.acm.nl/nl/verkoop-aan-consumenten/consumenten-informeren/prijzen-vermelden"
+          },
           "local_snapshot": "data/archives/wahe/acm-consumentenprijs-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "ACM (Autoriteit Consument en Markt): een verkoopprijs aan consumenten moet INCL. btw en eventuele bijkomende kosten worden getoond; alleen een uitsluitend/onmiskenbaar B2B-aanbod mag excl. btw. Referentie voor de prijspresentatie-observatie bij Wahé (geen juridisch oordeel van deze gids).\n"
@@ -11732,7 +12192,10 @@
           "id": "site-yin-2026-06",
           "type": "website",
           "url": "https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/",
-          "archived_url": "https://web.archive.org/web/20260620143907/https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620143907/https://yagoy.nl/teacher-training/yin-yoga-teacher-training-200-hr-ryt/"
+          },
           "local_snapshot": "data/archives/yagoy/site-yin-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Yin 200u: programma, faculty, 10-weekend-structuur, examens, literatuurlijst. LET OP: datumlijst zonder jaartal en intro-workshops verwijzen naar \"September 2024 training\" — mogelijk niet-actuele cohortdata; prijs niet op de pagina (achter 'registration package').\n"
@@ -11741,7 +12204,10 @@
           "id": "site-vinyasa-2026-06",
           "type": "website",
           "url": "https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/",
-          "archived_url": "https://web.archive.org/web/20260620144015/https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620144015/https://yagoy.nl/teacher-training/vinyasa-200-hrs-ryt-nov/"
+          },
           "local_snapshot": "data/archives/yagoy/site-vinyasa-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Vinyasa 200u (november-start): RYT200, locatie Yagoy Pijp, Engelstalig. Prijs niet op de pagina."
@@ -11750,7 +12216,9 @@
           "id": "overview-yin-2026-06",
           "type": "website",
           "url": "https://yagoy.nl/teacher-training-yin/",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/yagoy/overview-yin-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Yin-overzichtspagina met 'Training fee': Early Bird €2300 (max 10 inschrijvingen), regulier €2500, termijn €2600; 2026/2027-deadlines."
@@ -11759,7 +12227,10 @@
           "id": "overview-vinyasa-2026-06",
           "type": "website",
           "url": "https://yagoy.nl/teacher-trainings-vinyasa/",
-          "archived_url": "https://web.archive.org/web/20260620144240/https://yagoy.nl/teacher-trainings-vinyasa/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260620144240/https://yagoy.nl/teacher-trainings-vinyasa/"
+          },
           "local_snapshot": "data/archives/yagoy/overview-vinyasa-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Vinyasa-overzichtspagina met 'Costs': Early Bird €2300 (max 10, 'Early Bird has Closed'), regulier €2500, termijn €2600; 2026/2027-deadlines."
@@ -11768,7 +12239,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pi9zAAA&sid=0013g000002nnhPAAQ&name=Yagoy---Yoga-Your-Way",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yagoy/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yagoy - Yoga Your Way', Amsterdam, taal English."
@@ -11777,7 +12251,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yagoy",
           "local_snapshot": "data/archives/yagoy/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
@@ -12060,7 +12537,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/",
-          "archived_url": "https://web.archive.org/web/20260612/https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260612/https://yoga-academie.nl/Opleidingen/300-uur-Hatha-verdiepingsopleiding/"
+          },
           "local_snapshot": "data/archives/yoga-academie-nederland/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
@@ -12068,7 +12548,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-academie-nederland/ya-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
@@ -12076,7 +12559,10 @@
           "id": "vyn-register-2026-06",
           "type": "register",
           "url": "https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
-          "archived_url": "https://web.archive.org/web/20260714093905/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714093905/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/"
+          },
           "local_snapshot": "data/archives/yoga-academie-nederland/vyn-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
@@ -12084,7 +12570,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/yoga-academie-nederland/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
@@ -12092,10 +12581,13 @@
           "id": "datakosten-pdf-2026-07",
           "type": "brochure",
           "url": "https://yoga-academie.nl/.cm4all/uproc.php/0/YAN_datakosten.pdf",
-          "archived_url": "https://web.archive.org/web/20260714093940/https://yoga-academie.nl/.cm4all/mediadb/YAN_datakosten.pdf",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714093940/https://yoga-academie.nl/.cm4all/mediadb/YAN_datakosten.pdf"
+          },
           "local_snapshot": "data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-14.pdf",
           "captured": "2026-07-12",
-          "note": "'data-overzicht (pdf)' — de PDF die vanaf de opleidingspagina gelinkt wordt en die de prijzen draagt (opleidingsprijs, prijs per module, niet-inbegrepen kosten). De opleidingspagina zelf noemt geen bedrag. Een gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs. archived_url: null — Wayback weigerde de capture op 2026-07-12 ('already captured 1 times today, which is a daily limit we have set for that Resource type') en de availability-API kent nog geen snapshot. Opnieuw indienen (`npm run archive -- yoga-academie-nederland`); tot die tijd is dit bewust niet publiek gearchiveerd en haalt dit record de publicatielat niet."
+          "note": "'data-overzicht (pdf)' — de PDF die vanaf de opleidingspagina gelinkt wordt en die de prijzen draagt (opleidingsprijs, prijs per module, niet-inbegrepen kosten). De opleidingspagina zelf noemt geen bedrag. Een gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs. geen publieke archiefkopie op dat moment — Wayback weigerde de capture op 2026-07-12 ('already captured 1 times today, which is a daily limit we have set for that Resource type') en de availability-API kent nog geen snapshot. Opnieuw indienen (`npm run archive -- yoga-academie-nederland`); tot die tijd is dit bewust niet publiek gearchiveerd en haalt dit record de publicatielat niet."
         }
       ],
       "depth": "listed",
@@ -12465,7 +12957,10 @@
           "id": "site-odaka-2026-06",
           "type": "website",
           "url": "https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/",
-          "archived_url": "https://web.archive.org/web/20260627090418/https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627090418/https://yogacentrumoosterwold.nl/basisopleiding-odaka-yoga/"
+          },
           "local_snapshot": "data/archives/yoga-centrum-oosterwold/site-odaka-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "RYT 200 Odaka Yoga (Level 1): verplichte kernmodules, stijlbeschrijving (eb/vloed-golven, surfing-spots, Bushido), in-person; geen prijs op de pagina."
@@ -12474,7 +12969,10 @@
           "id": "site-yin-2026-06",
           "type": "website",
           "url": "https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/",
-          "archived_url": "https://web.archive.org/web/20260627090457/https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627090457/https://yogacentrumoosterwold.nl/basisopleiding-yin-yoga/"
+          },
           "local_snapshot": "data/archives/yoga-centrum-oosterwold/site-yin-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "RYT 200 Yin Yoga: één meerdaagse module + losse weekend-studiedagen; thema's (Wu Shen/Wu Xing TCM, pranayama, Achtvoudig Pad, Ayurveda/Chakra's); docententeam; Grilley/Powers/Bernie-Clark-lijn; geen prijs op de pagina."
@@ -12483,7 +12981,10 @@
           "id": "site-masterclasses-2026-06",
           "type": "website",
           "url": "https://yogacentrumoosterwold.nl/masterclasses/",
-          "archived_url": "https://web.archive.org/web/20260627090533/https://yogacentrumoosterwold.nl/masterclasses/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627090533/https://yogacentrumoosterwold.nl/masterclasses/"
+          },
           "local_snapshot": "data/archives/yoga-centrum-oosterwold/site-masterclasses-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Masterclasses/bijscholingen: YA-gecertificeerde CE-modules van 15-75u, toegankelijk vanaf level 1 (200u). EXPLICIET als de 300/500-route: \"te gebruiken voor je officiële bijscholingen en als aanvulling van je opleiding tot RYT 500 en 500+\". Dus geen RYS-300/500, maar gestapelde CE richting RYT 500.\n"
@@ -12492,7 +12993,10 @@
           "id": "site-voorwie-2026-06",
           "type": "website",
           "url": "https://yogacentrumoosterwold.nl/opleidingen-voor-wie/",
-          "archived_url": "https://web.archive.org/web/20260627090608/https://yogacentrumoosterwold.nl/opleidingen-voor-wie/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627090608/https://yogacentrumoosterwold.nl/opleidingen-voor-wie/"
+          },
           "local_snapshot": "data/archives/yoga-centrum-oosterwold/site-voorwie-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Doelgroep/uniek: kleinschalige groepen 3-10 deelnemers; basisopleidingen ook voor niet-docenten; RYT 200-registratie na afronding."
@@ -12501,7 +13005,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pkOeAAI&sid=0013g000002npjyAAA&name=Yoga-Centrum-Oosterwold---Yoga-Meirink",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-centrum-oosterwold/ya-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga Centrum Oosterwold - Yoga Meirink', Almere, RYS 200, First Registered November 2019, 0 reviews; 2 cohorten (Odaka 9 aug 2026-10 jan 2027; Yin 1 nov 2026-25 jul 2027). Scholarship-notitie: early bird €300 korting; via korting/werk te verlagen tot €1500 voor een 200u-training, waarvan €1000 in rentevrije maandtermijnen. Teaching staff Petra Meirink (E-RYT500/RPYT/YACEP), Renske Meijer.\n"
@@ -12510,7 +13017,10 @@
           "id": "ya-teacher-petra-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023hrqAAA",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-centrum-oosterwold/ya-teacher-petra-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-docentprofiel Petra Meirink (RYT; First Registered Aug 2017). Teaching experience: Centre Body en Mind (Sassenheim, jun 2016-heden) + Yoga Centrum Oosterwold (aug 2008-heden) + Namaste Body and Mind (Leiden, feb 2019-mrt 2020). DOCENT-OVERLAP-SPECIMEN (cross-provider, zie centre-body-mind & namaste-studios).\n"
@@ -12519,7 +13029,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Meirink",
           "local_snapshot": "data/archives/yoga-centrum-oosterwold/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
@@ -12857,7 +13370,10 @@
           "id": "site-ytt-200-2026-06",
           "type": "website",
           "url": "https://www.yogaden.nl/ytt/training/",
-          "archived_url": "https://web.archive.org/web/20260628111806/https://www.yogaden.nl/ytt/training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628111806/https://www.yogaden.nl/ytt/training/"
+          },
           "local_snapshot": "data/archives/yoga-den/site-ytt-200-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) 200H Vinyasa YTT, editie 2026: \"back for 2026\", TEAM-onderwezen door senior \"Yoga Den E-RYT 500 Teachers\" (Xinia, Sarah, Lize, Anna, Sara, Tina, Soojin e.a.; internationaal, 120+ jaar gecombineerde ervaring); 1-weekse intensive 14-20 sep + weekenden 2-4 okt / 6-8 nov / 4-6 dec 2026; investering €3597 (super early bird tot €1500 korting vóór 15 mrt, €200 vóór 31 mrt — beide verlopen); standalone of als onderdeel van de 500H. LET OP: een eerdere (gecachte) versie toonde de 2025-editie met Nino + Marokko-week — die is hier vervangen door de 2026-teamversie.\n"
@@ -12866,7 +13382,10 @@
           "id": "site-ytt-200-2026-07",
           "type": "website",
           "url": "https://www.yogaden.nl/ytt/training/",
-          "archived_url": "https://web.archive.org/web/20260714085126/https://www.yogaden.nl/ytt/training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714085126/https://www.yogaden.nl/ytt/training/"
+          },
           "local_snapshot": "data/archives/yoga-den/site-ytt-200-2026-07-2026-07-14.pdf",
           "captured": "2026-07",
           "note": "HERCAPTURE (2026-07-14) van dezelfde 200u-pagina als site-ytt-200-2026-06, gemaakt om de prijs te hertoetsen. Het prijsblok is WOORD VOOR WOORD ongewijzigd t.o.v. juni, in HTML én browser-render: \"Pricing / Super Early Bird Special – Sign Up Before March 15 and save up to €1500! / Investment: €3597 (200 euro discount before March 31st)\". Geen btw-vermelding; geen lidmaatschapstarief. De inschrijfknop leidt naar Mindbody — zie mindbody-enrolment-200-2026-07, dat ANDERE bedragen noemt.\n"
@@ -12875,7 +13394,10 @@
           "id": "site-ytt-100h-2026-07",
           "type": "website",
           "url": "https://www.yogaden.nl/ytt/100h-ytt/",
-          "archived_url": "https://web.archive.org/web/20260714085326/https://www.yogaden.nl/ytt/100h-ytt/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714085326/https://www.yogaden.nl/ytt/100h-ytt/"
+          },
           "local_snapshot": "data/archives/yoga-den/site-ytt-100h-2026-07-2026-07-14.pdf",
           "captured": "2026-07",
           "note": "100u Advanced Vinyasa & Detroit Flow YTT (module van de 500u-route), met Sarah & Lize. Prijsblok, identiek in HTML én browser-render: \"Pricing (incl VAT) / € 1697 YD Member / € 1797 Regular / € 100 off Early Bird Discount with Bonus Lecture until Nov 30, 2025\" (die early-bird-datum is verstreken). DIT is de pagina waar Yoga Den de btw-behandeling wél noemt — en de enige. Vastgelegd omdat het record die zin eerder aanhaalde zonder bron: de bewering stond in een notitie, de pagina stond in geen enkel archief.\n"
@@ -12884,7 +13406,10 @@
           "id": "mindbody-enrolment-200-2026-07",
           "type": "website",
           "url": "https://clients.mindbodyonline.com/classic/ws?studioid=5724290&stype=-103&sTG=23&sVT=12&sView=day&sLoc=0&sTrn=100000060&date=09/14/26",
-          "archived_url": "https://web.archive.org/web/20260714085634/https://clients.mindbodyonline.com/ASP/main_enroll.asp?studioid=5724290&tg=23&vt=12&lvl=&stype=-103&view=day&trn=100000060&page=&catid=&prodid=&date=09%2f14%2f26&classid=0&prodGroupId=&sSU=&optForwardingLink=&qParam=&justloggedin=&nLgIn=&pMode=0&loc=1",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714085634/https://clients.mindbodyonline.com/ASP/main_enroll.asp?studioid=5724290&tg=23&vt=12&lvl=&stype=-103&view=day&trn=100000060&page=&catid=&prodid=&date=09%2f14%2f26&classid=0&prodGroupId=&sSU=&optForwardingLink=&qParam=&justloggedin=&nLgIn=&pMode=0&loc=1"
+          },
           "captured": "2026-07",
           "note": "De INSCHRIJFPAGINA waar de knop \"Sign Up Now\" op de 200u-pagina naartoe wijst (Mindbody, studio-id 5724290, cursus 14-20 sep 2026). Prijsblok letterlijk: \"Investment / Member price €3297 until March 31 / Non member price €3397 until March 31 / Super Early Bird Special. Sign up before March 31 and save up to €1500.\" Geen btw-vermelding. Publiek zichtbaar (niet ingelogd) — het zijn dus geen persoonlijke tarieven.\nGEEN LOKALE KOPIE, en dat is bewust: Mindbody blokkeert onze Playwright-capture met een Cloudflare-botcheck (\"Verifying you are human\"), dus het lokale artefact bevatte een captcha in plaats van de pagina — een snapshot die niets bewijst is erger dan geen snapshot, want hij ziet eruit als bewijs. Het WAYBACK-snapshot hierboven bevat de gerenderde pagina wél (gecontroleerd: de vier prijsregels staan er letterlijk in). Dit is het spiegelbeeld van de YA-registers, waar Wayback juist een lege schil opslaat en de lokale kopie het bewijs is. De publieke kopie is hier het bewijs; de lokale helft ontbreekt en het record zegt dat.\n"
         },
@@ -12892,7 +13417,10 @@
           "id": "site-ytt-overview-2026-06",
           "type": "website",
           "url": "https://www.yogaden.nl/ytt/",
-          "archived_url": "https://web.archive.org/web/20260628111858/https://www.yogaden.nl/ytt/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628111858/https://www.yogaden.nl/ytt/"
+          },
           "local_snapshot": "data/archives/yoga-den/site-ytt-overview-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Opleidingsoverzicht met de 500H-modulepagina's als losse trainingen: 100H Advanced YTT, 50H Yin, 50H Advanced Asana & Ayurveda, 50H Ashtanga Intensive, 50H Alignment, 50H Pilates, 50/100H Mentorship, 50H Pranayama & Meditation, Restorative YTT, 50H Rocket. Alles in het Engels.\n"
@@ -12901,7 +13429,10 @@
           "id": "site-teachers-2026-06",
           "type": "website",
           "url": "https://www.yogaden.nl/teachers/",
-          "archived_url": "https://web.archive.org/web/20260628111943/https://www.yogaden.nl/teachers/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628111943/https://www.yogaden.nl/teachers/"
+          },
           "local_snapshot": "data/archives/yoga-den/site-teachers-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Docentenpagina: \"all certified with at least 500 RYT hours\". Roster: Lize (Hot/Vinyasa/Pilates/Yin/Ashtanga), Nick (KPJAYI & SYC L2 Authorized Ashtanga, 500 E-RYT, student R. Sharath Jois), Anna (Vinyasa/Ashtanga), Sara, Sarah (vinyasa/yin/hot/aerial), Bruce (mondiaal; thousands of hours), Katie (500 RYT via YogaMazé), Miho (Ashtanga, geautoriseerd Sharath Jois 2016), Xinia (Ashtanga L2 Authorization 2017; Yoga Diploma Wellpark NZ 2014; BA Dance AUT).\n"
@@ -12910,7 +13441,10 @@
           "id": "site-pricing-2026-06",
           "type": "website",
           "url": "https://www.yogaden.nl/pricing/",
-          "archived_url": "https://web.archive.org/web/20260628112125/https://www.yogaden.nl/pricing/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628112125/https://www.yogaden.nl/pricing/"
+          },
           "local_snapshot": "data/archives/yoga-den/site-pricing-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Prijspagina betreft STUDIO-lidmaatschappen/classpacks (drop-in €25, maand €125, 6-mnd €597, 12-mnd €1122, etc.), niet de opleidingsprijzen. Geen btw-vermelding op deze pagina. (TT-prijs €3597 staat op de 200u-pagina.)\n"
@@ -12919,7 +13453,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001Kf00000qEHdvIAG&sid=0013g00000tNXCkAAO&name=Yoga-Den-Amsterdam",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-den/ya-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als \"Yoga Den Amsterdam\" / registrant \"Yoga Den Netherlands\", Zeilstraat 34h Amsterdam, First Registered November 2023, rating 5.0/7 reviews; teaching staff (6) incl. Bruce Chung (E-RYT 500, YACEP); 1 training date (200H Vinyasa, 2026). Designaties RYS 200 + RYS 500 bevestigd via de directorylijst (keyword \"Yoga Den\"; NL-registrant onderscheiden van de US \"Yoga Den\", yoga-den.com).\n"
@@ -12928,7 +13465,10 @@
           "id": "ya-teacher-xinia-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023Z4BAAU",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-den/ya-teacher-xinia-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "YA-docentprofiel \"XinYoga\" (Xinia van Wijk; Titirangi, Auckland, NZ; First Registered June 2015; 3836 lesuren; YACEP). Teaching experience zelf- gerapporteerd en uitsluitend NZ/Bali/Fiji (Yoga Koh, Wild Self Yoga, Soul Centre) — Yoga Den Amsterdam staat er NIET op (YA-experience is onvolledig zelfrapportage). Bevestigd als Yoga Den 2026-faculty via de docentenpagina.\n"
@@ -12937,7 +13477,10 @@
           "id": "ya-teacher-bruce-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=Teacher&keyword=Bruce%20Chung",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "query": "Bruce Chung",
           "local_snapshot": "data/archives/yoga-den/ya-teacher-bruce-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -12946,6 +13489,10 @@
         {
           "id": "pathway-image-2026-06",
           "type": "brochure",
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "door de gebruiker aangeleverde afbeelding: er is geen publieke bron-URL om te archiveren"
+          },
           "captured": "2026-06",
           "note": "Door de gebruiker aangeleverde infographic \"500H RYT PROGRAM PATHWAY\": 200H Vinyasa als Foundational Module + modules (Advanced Vinyasa & Detroit Flow 100u, Yin 50u, Ayurveda & Advanced Asana 100u, Restorative 50u, Alignment 50u, Pranayama & Meditation 50u, Business Coaching/Mentorship 50/100u). Komt grotendeels overeen met de live modulepagina's (site-ytt-overview), met kleine labelverschillen.\n"
         },
@@ -12953,7 +13500,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yoga Den / yogaden",
           "local_snapshot": "data/archives/yoga-den/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -13530,7 +14080,10 @@
           "id": "site-200-2026-06",
           "type": "website",
           "url": "https://www.yogamoves.nl/yoga-moves-vinyasa-200hr",
-          "archived_url": "https://web.archive.org/web/20260618124846/https://www.yogamoves.nl/yoga-moves-vinyasa-200hr",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260618124846/https://www.yogamoves.nl/yoga-moves-vinyasa-200hr"
+          },
           "local_snapshot": "data/archives/yoga-moves/site-200-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18"
         },
@@ -13538,7 +14091,10 @@
           "id": "site-300-2026-06",
           "type": "website",
           "url": "https://www.yogamoves.nl/advanceyouryoga",
-          "archived_url": "https://web.archive.org/web/20260618124930/https://www.yogamoves.nl/advanceyouryoga",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260618124930/https://www.yogamoves.nl/advanceyouryoga"
+          },
           "local_snapshot": "data/archives/yoga-moves/site-300-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18"
         },
@@ -13546,7 +14102,9 @@
           "id": "site-ashtanga-2026-06",
           "type": "website",
           "url": "https://www.yogamoves.nl/ashtanga-teacher-training",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/yoga-moves/site-ashtanga-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18"
         },
@@ -13554,7 +14112,10 @@
           "id": "ya-register-ym-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pgfOAAQ&sid=0013g000002nmHJAAY&name=Yoga-Moves-studio-ONE",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-moves/ya-register-ym-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18",
           "note": "Salesforce-LWC-pagina; lege shell bij gewone fetch — browser-gerenderde lokale capture nodig."
@@ -13563,7 +14124,10 @@
           "id": "ya-register-pranayama-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000phi5VAAQ&sid=0013g000004vaKlAAI&name=Pranayama",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-moves/ya-register-pranayama-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18",
           "note": "Aparte YA-entiteit 'Pranayama' (Marilou van Hoek); zelfde Salesforce-rendering."
@@ -13572,7 +14136,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yoga Moves",
           "local_snapshot": "data/archives/yoga-moves/crkbo-register-2026-06-2026-06-18.pdf",
           "captured": "2026-06-18",
@@ -13924,7 +14491,10 @@
           "id": "site-200-2026-06",
           "type": "website",
           "url": "https://yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260613081202/https://en.yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613081202/https://en.yoganaturestudio.com/yoga-opleidingen/200u-living-vinyasa-opleiding/"
+          },
           "local_snapshot": "data/archives/yoga-nature-studio/site-200-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         },
@@ -13932,7 +14502,10 @@
           "id": "site-300-2026-06",
           "type": "website",
           "url": "https://yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/",
-          "archived_url": "https://web.archive.org/web/20260613081307/https://en.yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260613081307/https://en.yoganaturestudio.com/yoga-opleidingen/300u-verdiepende-modules/"
+          },
           "local_snapshot": "data/archives/yoga-nature-studio/site-300-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13",
           "note": "prijzen niet op deze pagina; per module geboekt"
@@ -13941,7 +14514,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-nature-studio/ya-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         },
@@ -13949,7 +14525,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/yoga-nature-studio/crkbo-register-2026-06-2026-06-13.pdf",
           "captured": "2026-06-13"
         }
@@ -14175,7 +14754,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://yogaspot.nl/hatha-yoga-teacher-training/",
-          "archived_url": "https://web.archive.org/web/20260627091949/https://yogaspot.nl/hatha-yoga-teacher-training/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627091949/https://yogaspot.nl/hatha-yoga-teacher-training/"
+          },
           "local_snapshot": "data/archives/yoga-spot-amsterdam/site-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "200u Hatha (Flow) Yoga Teacher Training: inhoud, docenten (Lahma Muris & Margriet Verhagen), YA + CRKBO/BTW-vrij claim, prijs €2950 incl. retreat, data 2025-2026-cohort, toetsing/examens, 500u-vervolgmodules.\n"
@@ -14184,7 +14766,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002piadAAA&sid=0013g000002noAUAAY&name=Yoga-Spot-Amsterdam",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-spot-amsterdam/ya-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga Spot Amsterdam', Amsterdam, RYS 200, First Registered December 2019, 1 review, 0 training dates; teaching staff Margriet Verhagen (E-RYT500/YACEP)."
@@ -14193,7 +14778,10 @@
           "id": "ya-teacher-margriet-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000022ufYAAQ",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yoga-spot-amsterdam/ya-teacher-margriet-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-docentprofiel Margriet Verhagen (RYT, Amsterdam; First Registered February 2013; talen EN/NL; YACEP)."
@@ -14202,7 +14790,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yogaspot",
           "local_snapshot": "data/archives/yoga-spot-amsterdam/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
@@ -14448,7 +15039,10 @@
           "id": "site-opleiding-2026-06",
           "type": "website",
           "url": "https://yogacentrumtilburg.nl/ryt-500-allround-yogaopleiding/",
-          "archived_url": "https://web.archive.org/web/20260627092603/https://yogacentrumtilburg.nl/ryt-500-allround-yogaopleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627092603/https://yogacentrumtilburg.nl/ryt-500-allround-yogaopleiding/"
+          },
           "local_snapshot": "data/archives/yogacollege-tilburg/site-opleiding-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "RYT-500 Allround Yogaopleiding (2-jarig): structuur (jaar 1 = RYT 200, jaar 2 = RYT 300), inhoud (klassieke hatha-basis + vinyasa flow), prijzen per jaar + gebundeld, lesdagen, examens, opleidingseisen (HBO-niveau gewenst). Nav: 'RYT-200/300 Allround Yogaopleiding'.\n"
@@ -14457,7 +15051,10 @@
           "id": "site-crkbo-2026-06",
           "type": "website",
           "url": "https://yogacentrumtilburg.nl/registratie-crkbo/",
-          "archived_url": "https://web.archive.org/web/20260627092655/https://yogacentrumtilburg.nl/registratie-crkbo/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627092655/https://yogacentrumtilburg.nl/registratie-crkbo/"
+          },
           "local_snapshot": "data/archives/yogacollege-tilburg/site-crkbo-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Eigen CRKBO-registratiepagina (bevestigt registratie; geen btw-prijsvermelding)."
@@ -14466,7 +15063,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002pjMpAAI&sid=0013g000002nlxaAAA&name=Yogacollege-Tilburg",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogacollege-tilburg/ya-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yogacollege Tilburg', Tilburg, taal NL, First Registered January 2020, 0 training dates, rating 4.44/8. Designatie-badge-asset = RYS500.png (enige). Teaching staff Marloes van Boxtel (E-RYT500/YACEP).\n"
@@ -14475,7 +15075,10 @@
           "id": "ya-teacher-marloes-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000023aFwAAI",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogacollege-tilburg/ya-teacher-marloes-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-docentprofiel Marloes van Boxtel (RYT, Dudokhof 79-01 Tilburg; First Registered January 2020; YACEP)."
@@ -14484,7 +15087,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yogacollege",
           "local_snapshot": "data/archives/yogacollege-tilburg/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
@@ -14733,7 +15339,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=001TR00000O7UjVYAV&sid=001TR00000JpaWLYAZ&name=YogaEasy-Academy---English",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogaeasy/ya-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als \"YogaEasy Academy - English\", Joop Geesinkweg 901-999 Amsterdam, First Registered October 2024, rating 5.0/5 reviews; teaching staff (7) incl. José de Groot - de Haan (E-RYT 500, YACEP) + Esther Ekhart (E-RYT 500, YACEP). RYS 200 bevestigd via de badge-afbeelding (RYS200.png) in de DOM.\n"
@@ -14742,7 +15351,10 @@
           "id": "site-academy-tt-2026-06",
           "type": "website",
           "url": "https://studio.yogaeasy.com/pages/academy-tt",
-          "archived_url": "https://web.archive.org/web/20260628151247/https://studio.yogaeasy.com/pages/academy-tt",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628151247/https://studio.yogaeasy.com/pages/academy-tt"
+          },
           "local_snapshot": "data/archives/yogaeasy/site-academy-tt-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) \"Academy 200hr YTT\": online Hatha Vinyasa 200u, €2500 (eenmalig of betaalplan), start oktober 2026. GEPUBLICEERDE uren-breakdown: 110u pre-recorded klassen + 30u live online lectures/Q&A + 10u small-group teaching practice + wekelijkse assignments/yogalessen; live sessie elke do 18:00 CET; max 20 deelnemers; prereq min. 2 jaar praktijk. 8 docenten: Esther Ekhart (meditatie/zenuwstelsel), David Lurey (asana/ethics/ mantra & mudra), Tashi Dawa (asana/geschiedenis), Gemma Vassallo (asana/ lesmethodiek/professional development), José de Groot (functionele anatomie), Véronique Gauthier (pranayama), Marcel van de Vis Heil (filosofie), Mirjam Wagner (fysiologie). Inclusief 1 jaar YogaEasy-membership (5000+ classes), digitaal manual + workbook, community-platform, gedetailleerde curriculum- download.\n"
@@ -14751,7 +15363,10 @@
           "id": "pdf-schedule-2026-06",
           "type": "brochure",
           "url": "https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf",
-          "archived_url": "https://web.archive.org/web/20260628151316/https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628151316/https://www.yogaeasy.com/wp-content/uploads/2026/06/October-2026_-Live-sessions-schedule.pdf"
+          },
           "local_snapshot": "data/archives/yogaeasy/pdf-schedule-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Downloadbare 'October 2026 — Live sessions schedule' (weekschema live sessies + rustweken). Niet machine-gelezen; pointer."
@@ -14760,7 +15375,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "yogaeasy / ekhart (website) + Ekhart (naam)",
           "local_snapshot": "data/archives/yogaeasy/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -15001,7 +15619,9 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://yogaplace.nl/academy/opleidingen/yoga-docentenopleiding/",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/yogaplace/site-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "200u Ashtanga-based docentenopleiding: programma, data, prijs, certificering, docenten."
@@ -15010,7 +15630,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002piA3AAI&sid=0013g000002nnjIAAQ&name=Yogaplace-Academy",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogaplace/ya-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als \"Yogaplace Academy\", Sittard, talen NL+EN, RYS. RYS-niveau (200) + eerste registratie (2016-04) uit de YA-directory-enumeratie.\n"
@@ -15019,7 +15642,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Yogaplace",
           "local_snapshot": "data/archives/yogaplace/crkbo-register-2026-06-2026-06-20.pdf",
           "captured": "2026-06-20",
@@ -15259,7 +15885,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/",
-          "archived_url": "https://web.archive.org/web/20260714094007/https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260714094007/https://yogapoint.nl/yoga-docenten-opleiding/yoga-verdiepingsopleiding-300-uur/"
+          },
           "local_snapshot": "data/archives/yogapoint/site-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
@@ -15267,7 +15896,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogapoint/ya-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         },
@@ -15275,7 +15907,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/yogapoint/crkbo-register-2026-06-2026-07-14.pdf",
           "captured": "2026-06-12"
         }
@@ -15518,7 +16153,10 @@
           "id": "site-vinyasa-2026-06",
           "type": "website",
           "url": "https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding",
-          "archived_url": "https://web.archive.org/web/20260628173433/https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628173433/https://www.yogaschoolnoord.nl/vinyasa-yoga-opleiding"
+          },
           "local_snapshot": "data/archives/yogaschool-noord/site-vinyasa-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) 200u Vinyasa Yoga TT, lead Esther van Voorst (mede-ontwikkeld 2017 met Sina Kaden). 8 weekenden / 24 lesdagen + 4 verplichte intervisiedagen, start 23 okt 2026 - 16 mei 2027, NDSM Amsterdam (vr 17-21, za 11:30-18:30, zo 12:30-19:30). €2997 early bird (tot 1 aug) / €3497; \"Vrijgesteld van BTW door CRKBO\". Curriculum: asana (100+), alignment/ adjustments, meditatie (Vipassana/Kundalini/Osho/Chakra/Mantra), methodologie, vinyasa sequencing, functionele anatomie, stemtraining/didactiek, tantra & zelfontwikkeling, pranayama, filosofie (Hatha Yoga Pradipika, Bhagavad Gita), Ayurveda, ontspanning, chakra's/energie, voeding (sattvic), inquiry, marketing + dans/ademwerk/ceremonies. 4 masterclasses (Anatomie, Zwangerschap, Breathwork, Dansimprovisatie). Schriftelijk + praktisch examen. Claimt \"door Yoga Alliance gecertificeerd\" + \"Erkend Yoga Alliance diploma\".\n"
@@ -15527,7 +16165,10 @@
           "id": "site-yin-2026-06",
           "type": "website",
           "url": "https://www.yogaschoolnoord.nl/yin-yoga-opleiding",
-          "archived_url": "https://web.archive.org/web/20260628173559/https://www.yogaschoolnoord.nl/yin-yoga-opleiding",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628173559/https://www.yogaschoolnoord.nl/yin-yoga-opleiding"
+          },
           "local_snapshot": "data/archives/yogaschool-noord/site-yin-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "200u Yin Yoga-opleiding (4×50u modules: Anatomie / Energie-meridianen / Myofascial release (MyoYin) / Energiewerk-Qi Gong), \"ontwikkeld in samenwerking met Esther Scheen (Pure Energy Yoga)\"; inhoudelijke vragen via esther@pureenergyyoga.nl; €847-€2897, \"Vrijgesteld van BTW door CRKBO\". DIT programma = Pure Energy's Yin (Grilley-lijn) — geregistreerd onder pure-energy-yoga; Yogaschool Noord is host/booking-home voor de Amsterdam- cohorten. Hier niet als eigen programma opgenomen (decision #9).\n"
@@ -15536,7 +16177,9 @@
           "id": "site-voorwaarden-2026-06",
           "type": "website",
           "url": "https://www.yogaschoolnoord.nl/voorwaarden-opleidingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/yogaschool-noord/site-voorwaarden-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Algemene voorwaarden opleidingen: studieovereenkomst (volledige studieduur), bedenktijd, inschrijving & annulering."
@@ -15545,7 +16188,10 @@
           "id": "ya-search-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School&keyword=Yogaschool%20Noord",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "query": "Yogaschool Noord (school); van Voorst (teacher); Kaden (teacher)",
           "local_snapshot": "data/archives/yogaschool-noord/ya-search-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -15555,7 +16201,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "yogaschoolnoord",
           "local_snapshot": "data/archives/yogaschool-noord/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -15771,7 +16420,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g000002phltAAA&sid=0013g000002nnKVAAY&name=Yogatreat",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogatreat/ya-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als \"Yogatreat\", Meester Ansinkweg 28 Austerlitz, talen EN/ES/NL, First Registered November 2015, rating 4.73/22 reviews, NPS 8.6, 0 training dates; teaching staff José de Groot - de Haan (E-RYT 500, YACEP) + Jasmijn Koelink (E-RYT 500, YACEP). RYS 200 bevestigd via de badge-afbeelding (RYS200.png) in de DOM.\n"
@@ -15780,7 +16432,10 @@
           "id": "ya-teacher-jose-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g0000022VpoAAE",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogatreat/ya-teacher-jose-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "YA-docentprofiel \"José de Groot - de Haan\" (E-RYT 500, YACEP; internationaal docent sinds 2006; First Registered January 2013; 5814 lesuren; talen EN/ES/NL). Teaching experience: \"Online Yoga Classes\" via yogatreat.eu (live Zoom: yogatreat.eu/yin-yoga) + recorded klassen op yogaeasy.com (teacher_options=176) — bevestigt de cross-provider link met YogaEasy.\n"
@@ -15789,7 +16444,10 @@
           "id": "site-yin200-2026-06",
           "type": "website",
           "url": "https://www.yogatreat.eu/online-yin-yoga-teacher-training",
-          "archived_url": "https://web.archive.org/web/20260628161858/https://www.yogatreat.eu/online-yin-yoga-teacher-training",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260628161858/https://www.yogatreat.eu/online-yin-yoga-teacher-training"
+          },
           "local_snapshot": "data/archives/yogatreat/site-yin200-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
           "note": "LIVE (browser-gerenderd) \"Online Functional Yin Yoga Anatomy & Meridians Teacher Training\", 10e editie, 200u, 11 maanden, online + live Zoom. \"Training at a glance\": 80u online learning (50u Yin & Anatomy + 30u Yin & Meridians, pre-recorded) + live adjustment & teaching practice sessions (Zoom) + live mentoring (whole-group + study-group) + maandelijkse 90-min live Yin-les (verplicht, live of opname) + quizzes/homework/closure assignments (e-learning). Functionele Yin (target areas, tension vs compression; 5-element & meridiaan- theorie, Chi; pranayama & orbiting energy; meditatie). Momenteel WAITLIST (\"Starts soon\"; geen open inschrijfdatum of prijs op de pagina).\n"
@@ -15798,7 +16456,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "yogatreat",
           "local_snapshot": "data/archives/yogatreat/crkbo-register-2026-06-2026-06-28.pdf",
           "captured": "2026-06",
@@ -16069,7 +16730,10 @@
           "id": "site-ryt200-2026-06",
           "type": "website",
           "url": "https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/",
-          "archived_url": "https://web.archive.org/web/20260612191731/https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260612191731/https://yogiclife.eu/nl/yoga-docent-opleiding/ryt200-yoga-docent-opleiding/"
+          },
           "local_snapshot": "data/archives/yogic-life/site-ryt200-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12",
           "note": "JS-gerenderd; web fetch gaf lege body, uitgelezen via browser — lokale kopie via archiveerscript essentieel"
@@ -16078,7 +16742,9 @@
           "id": "site-ryt300-2026-06",
           "type": "website",
           "url": "https://yogiclife.eu/nl/yoga-docent-opleiding/ryt300-yoga-docentenopleiding/",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "not_yet"
+          },
           "local_snapshot": "data/archives/yogic-life/site-ryt300-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12",
           "note": "JS-gerenderd; idem"
@@ -16087,7 +16753,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/directoryregistrants?type=School",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/yogic-life/ya-register-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         },
@@ -16095,7 +16764,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "local_snapshot": "data/archives/yogic-life/crkbo-register-2026-06-2026-06-12.pdf",
           "captured": "2026-06-12"
         }
@@ -16375,7 +17047,10 @@
           "id": "site-2026-06",
           "type": "website",
           "url": "https://www.youarethebuddha.com/ytt",
-          "archived_url": "https://web.archive.org/web/20260627100609/https://www.youarethebuddha.com/ytt",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627100609/https://www.youarethebuddha.com/ytt"
+          },
           "local_snapshot": "data/archives/you-are-the-buddha/site-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "200u YTT Breda (Wix): 5 modules / 33 lesdagen, curriculum + prijs per module + totaal €3450, YA + VYN claim, lead teacher Marlies Tobias, locatie Station Breda, start jan 2027, vrijdag 11:00-17:30, min. 85% aanwezigheid.\n"
@@ -16384,7 +17059,10 @@
           "id": "ya-register-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/schoolpublicprofile?id=0013g00000GLj5EAAT&sid=0013g00000B6xkEAAR&name=You-are-the-Buddha",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/you-are-the-buddha/ya-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "Salesforce-LWC; browser-gerenderde capture nodig. Rendert als 'Yoga Academy You are the Buddha', Breda, RYS 200, First Registered February 2021, rating 5.0/4, NPS 10; 1 cohort (9 okt-11 dec 2026); teaching staff Marlies Tobias (E-RYT500/YACEP), Marlou Ansems (RYT500)."
@@ -16393,7 +17071,10 @@
           "id": "ya-teacher-marlies-2026-06",
           "type": "register",
           "url": "https://app.yogaalliance.org/teacherpublicprofile?id=0033g00000230eOAAQ",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "JS-shell (Salesforce): Wayback bewaart header/footer zonder registergegevens"
+          },
           "local_snapshot": "data/archives/you-are-the-buddha/ya-teacher-marlies-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "YA-docentprofiel Marlies Tobias (E-RYT 500, YACEP; First Registered Aug 2015; 11424 teaching hours). Teaching experience: You are the Buddha (okt 2020-heden), eerder Yogaschool Breda (2019-2021) en Clouds Day Spa, Lancaster CA (2017-2018).\n"
@@ -16402,7 +17083,10 @@
           "id": "vyn-register-2026-06",
           "type": "register",
           "url": "https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
-          "archived_url": "https://web.archive.org/web/20260627100741/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/",
+          "public_archive": {
+            "kind": "archived",
+            "url": "https://web.archive.org/web/20260627100741/https://www.yoganederland.nl/yogadocent-worden/erkende-yogaopleidingen/"
+          },
           "local_snapshot": "data/archives/you-are-the-buddha/vyn-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",
           "note": "VYN (Vereniging Yogadocenten Nederland) lijst erkende yogaopleidingen; 'Yoga Academy You are the Buddha' staat erop (browser-gerenderd; geen per-school permalink)."
@@ -16411,7 +17095,10 @@
           "id": "crkbo-register-2026-06",
           "type": "register",
           "url": "https://www.crkbo.nl/Register/Instellingen",
-          "archived_url": null,
+          "public_archive": {
+            "kind": "impossible",
+            "reason": "zoekregister zonder permalink: Wayback legt alleen pagina 1 vast, nooit de gezochte rij"
+          },
           "query": "Buddha",
           "local_snapshot": "data/archives/you-are-the-buddha/crkbo-register-2026-06-2026-06-27.pdf",
           "captured": "2026-06-25",

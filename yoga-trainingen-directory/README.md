@@ -31,7 +31,7 @@ npm run dev               # local site on :3000
 
 The archive script renders each source URL with headless Chromium (full-page
 PDF + HTML + SHA-256 into `data/archives/<provider>/`), submits it to Wayback
-Save Page Now, and writes `archived_url`/`local_snapshot` back into the
+Save Page Now, and writes `public_archive`/`local_snapshot` back into the
 record. Wayback API keys make submissions reliable: free archive.org account →
 https://archive.org/account/s3.php, then `cp .env.example .env` and fill in
 the keys (`.env` is gitignored). Without keys the script falls back to the
@@ -59,5 +59,5 @@ Conventions that matter (spec §2):
 - Provider universe: `../enumeration/providers-enumeration.csv` (94 candidates).
 - Pre-publication deliverables still open: methodology page v0.1,
   complaints/correction procedure (see `../project-decisions.md`).
-- `archived_url: null` everywhere — records do not yet meet the publication
-  bar until the archiving pass is done.
+- `public_archive: {kind: not_yet}` everywhere — records do not yet meet the
+  publication bar until the archiving pass is done.
