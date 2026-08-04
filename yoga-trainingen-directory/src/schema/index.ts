@@ -147,8 +147,13 @@ export const Reference = strictObject({
    *  legitimate public half — a JS-shell help-centre article genuinely cannot be publicly
    *  archived. The LOCAL copy is the half that can never be honestly absent: it is what the
    *  evidentiary chain rests on, and a normative document quoted in published prose with no
-   *  capture behind it is what §3 forbids. All five records already comply. */
-  local_snapshot: z.string(),
+   *  capture behind it is what §3 forbids. All five records already comply.
+   *
+   *  `.min(1)`: "required" at the TYPE level is not the same as "held". A bare `z.string()`
+   *  accepts `""`, which is present but worthless — no path points at any capture — and the
+   *  loader's `if (ref.local_snapshot)` truthy guard treats `""` as falsy, so an empty string
+   *  used to skip every check behind it (path prefix, extension, sidecar hash) and load clean. */
+  local_snapshot: z.string().min(1),
   captured: YearMonth,
   /** Which credentials/scopes the document governs, where it governs several that DIFFER.
    *  The YA PDF carries RYS 200/300/500/RCYS/RPYS side by side and their rules conflict:

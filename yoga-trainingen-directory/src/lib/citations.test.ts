@@ -35,11 +35,33 @@ test("CITE: collectCitations recurses arbitrarily deep, not just top-level notes
   assert.deepEqual([...found], ["deep-2026-01"]);
 });
 
-test("CITE: CITATION_RE is global and stateless across calls", () => {
-  // A global regex carries lastIndex. If the module shares one instance across calls
-  // without resetting, the second call silently finds nothing.
-  const s = "[[ref:a-2026-01]]";
-  assert.equal(parseCitations(s).filter((x) => x.kind === "ref").length, 1);
-  assert.equal(parseCitations(s).filter((x) => x.kind === "ref").length, 1);
-  assert.ok(CITATION_RE.global);
+test("CITE: parseCitations/collectCitations ignore lastIndex state left on the shared CITATION_RE", () => {
+  // Calling parseCitations twice in a row on the same string does NOT pin the guard: JS
+  // resets a global regex's lastIndex to 0 the moment exec() runs out of matches, so two
+  // sequential calls self-heal regardless of whether the implementation clones the regex.
+  //
+  // The realistic threat is a DIFFERENT consumer of the exported CITATION_RE — e.g. a
+  // caller doing `CITATION_RE.test(x)` — leaving lastIndex pointing PAST a real marker
+  // before parseCitations/collectCitations ever run. Since both are pure functions over
+  // `s`, they must not be sensitive to state a stranger left on the shared instance.
+  const s = "[[ref:a-2026-01]] tekst erna";
+  // Poison lastIndex past the marker (which spans indices 0-16): exec() resumes searching
+  // FROM lastIndex, so a shared, un-cloned regex would skip straight past the only marker
+  // in the string and find nothing.
+  CITATION_RE.lastIndex = 20;
+  try {
+    const segs = parseCitations(s);
+    assert.equal(
+      segs.filter((x) => x.kind === "ref").length,
+      1,
+      "a marker before a poisoned lastIndex must still be found",
+    );
+
+    CITATION_RE.lastIndex = 20;
+    const found = new Set<string>();
+    collectCitations({ note: s }, found);
+    assert.deepEqual([...found], ["a-2026-01"]);
+  } finally {
+    CITATION_RE.lastIndex = 0; // must not leak into a later test
+  }
 });

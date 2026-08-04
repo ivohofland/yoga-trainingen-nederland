@@ -24,3 +24,13 @@ test("REFERENCE: a reference with no local_snapshot does not parse", () => {
   const { local_snapshot: _drop, ...without } = VALID_REFERENCE_FIXTURE;
   assert.ok(!Reference.safeParse(without).success, "a normative document must be held");
 });
+
+test("REFERENCE: a reference with local_snapshot: '' does not parse", () => {
+  // "required" at the TYPE level is not the same as "held". `z.string()` alone accepts
+  // an empty string, which is present-but-worthless — it is not a path to any capture,
+  // and the loader's `if (ref.local_snapshot)` guard treats "" as falsy, so an empty
+  // string used to skip every semantic check behind it (path prefix, extension, sidecar
+  // hash) and still load into the store with zero errors. `.min(1)` closes that.
+  const empty = { ...VALID_REFERENCE_FIXTURE, local_snapshot: "" };
+  assert.ok(!Reference.safeParse(empty).success, "an empty snapshot path is not a held capture");
+});
