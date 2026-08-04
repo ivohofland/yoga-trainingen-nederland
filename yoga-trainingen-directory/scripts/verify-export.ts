@@ -21,6 +21,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { CITATION_RE } from "../src/lib/citations";
 
 const APP_DIR = process.cwd();
 const OUT = path.join(APP_DIR, "out");
@@ -142,8 +143,42 @@ if (!fs.existsSync(providerPage)) {
   fail(`out/aanbieder/${sampleId}/index.html is missing — no provider page resolves in the shape the vhost needs`);
 }
 
+// 5. NO RENDERED PAGE MAY SHIP A RAW, RESOLVABLE `[[ref:<id>]]` MARKER (I2, spec §4.1b /
+// citations.ts). Two renderers turn a marker into a link — `<Cite>` on the record page and
+// the methodology's pre-`marked.parse` substitution — and both are unconditional: neither
+// checks that the marker survived to be a plain string first. `citations.test.ts` locks the
+// PARSER (`parseCitations` consumes every marker in the corpus) and the shape of ONE page's
+// note interpolations; neither opens a built page. Five dataset-prose interpolations on the
+// record page sit outside that structural grep — `{claim.quote}`, `{v.disclosure}`,
+// `{c.priceAtTime}`, `{q.summary}`, `{q.replySummary}` — so a marker landing in any of them
+// would render raw with every other gate green. This is the one check that reads what was
+// actually shipped, which is the design's own load-bearing Test 5: "no surface may emit a
+// raw marker."
+//
+// `public/data/v1/providers.json` (and therefore `out/data/v1/providers.json`) is EXEMPT ON
+// PURPOSE, not by oversight: the JSON API ships markers verbatim BY DESIGN (Task 2 —
+// `references[]` in `src/lib/api.ts`), so a consumer can resolve `[[ref:<id>]]` against the
+// shipped reference store itself. `walkHtml` above only ever collects `*.html`, so the JSON
+// is never in scope here regardless of this comment — stated explicitly so the exemption
+// reads as intent, not as an accident of a filter written for the unrelated QA-leak check.
+const htmlFiles = walkHtml(OUT);
+for (const f of htmlFiles) {
+  const html = fs.readFileSync(f, "utf8");
+  // A fresh regex per file: CITATION_RE is a shared, global instance — see citations.ts's
+  // own docblock on why every consumer clones it rather than calling .exec on the export.
+  const re = new RegExp(CITATION_RE.source, "g");
+  const m = re.exec(html);
+  if (m) {
+    fail(
+      `${path.relative(OUT, f)} contains a raw marker ${m[0]} — a citation rendered as ` +
+        `literal text instead of a link. Every marker on a rendered page must resolve ` +
+        `through <Cite> or the methodology's substitution before this script runs.`,
+    );
+  }
+}
+
 console.log(
   `✓ verify-export: /qa absent (path + content), out/index.html present, ` +
     `${outPayload.providers.length} provider(s) in out/data/v1/providers.json (matches public/), ` +
-    `out/aanbieder/${sampleId}/ resolves`,
+    `out/aanbieder/${sampleId}/ resolves, 0 raw markers in ${htmlFiles.length} built page(s)`,
 );

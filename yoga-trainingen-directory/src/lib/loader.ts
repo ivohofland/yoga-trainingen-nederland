@@ -489,7 +489,55 @@ export function loadReferences(cwd: string = process.cwd()): ReferenceLoadResult
         errors.push(`references/${r.id}.yaml: ${key} '${target}' verwijst naar geen bestaande referentie`);
     }
 
+  // A MARKER INSIDE A REFERENCE'S OWN NOTE MUST RESOLVE TOO (I3, spec §4.1b). `<Cite>`
+  // renders `note` on /referenties exactly as it renders a provider's — see the
+  // docblock on `ReferenceEntry` in app/referenties/page.tsx — so a marker here is an
+  // unconditional link and `integrityErrors` never sees it: that function only ever
+  // walks `Provider` records. Today's five reference notes cross-reference each other
+  // by BARE id (13 of them, deliberately not yet converted — see the final review for
+  // this branch, "M4") and this check does not touch those; it only fires on a string
+  // that IS already in the marked `[[ref:<id>]]` form and names a document the store
+  // does not hold, so the 13 bare ids stay silent until a later pass converts them —
+  // which this check is what makes safe to do.
+  for (const r of references) {
+    const cited = new Set<string>();
+    collectCitations(r, cited);
+    for (const id of cited)
+      if (!ids.has(id))
+        errors.push(
+          `references/${r.id}.yaml: cites [[ref:${id}]] but no such reference exists in ` +
+            `data/references/. A citation a reader can follow to nothing is worse than no citation.`,
+        );
+  }
+
   return { references, errors };
+}
+
+// `content/methodologie.md` (spec §4.1b) is the third surface a `[[ref:<id>]]` marker
+// renders as an unconditional link — `app/methodologie/page.tsx` substitutes every
+// marker for a markdown link BEFORE `marked.parse` runs, with no check that the id
+// resolves. `integrityErrors` only ever walks `Provider` records and never sees this
+// file at all, so a typo here (`ya-standard-2026-07`) renders a dead link in published
+// prose about a named organisation with every other gate green. Today's four ids
+// happen to also be cited from `tribes-academy.yaml`, so a RENAME is caught by the
+// provider check by coincidence — that coincidence does not cover a typo that exists
+// only here. Exported so `scripts/validate.ts` can gate the build on it and the test
+// can call it directly, the same shape as `loadReferences`'s own `cwd` parameter.
+export function methodologyCitationErrors(
+  knownReferenceIds: ReadonlySet<string>,
+  cwd: string = process.cwd(),
+): string[] {
+  const md = fs.readFileSync(path.join(cwd, "content", "methodologie.md"), "utf8");
+  const cited = new Set<string>();
+  collectCitations(md, cited);
+  const errors: string[] = [];
+  for (const id of cited)
+    if (!knownReferenceIds.has(id))
+      errors.push(
+        `content/methodologie.md: cites [[ref:${id}]] but no such reference exists in ` +
+          `data/references/. A citation a reader can follow to nothing is worse than no citation.`,
+      );
+  return errors;
 }
 
 export function loadDataset(): LoadResult {
