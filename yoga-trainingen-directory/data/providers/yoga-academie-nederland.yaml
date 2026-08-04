@@ -74,12 +74,10 @@ sources:
       niet-inbegrepen kosten). De opleidingspagina zelf noemt geen bedrag. Een
       gelinkte PDF is precies het artefact dat een aanbieder ongemerkt kan
       vervangen: de lokale kopie (+ SHA-256, gedateerd door git) is het bewijs.
-      geen publieke archiefkopie op dat moment — Wayback weigerde de capture op 2026-07-12 ('already
-      captured 1 times today, which is a daily limit we have set for that
-      Resource type') en de availability-API kent nog geen snapshot. Opnieuw
-      indienen (`npm run archive -- yoga-academie-nederland`); tot die tijd is
-      dit bewust niet publiek gearchiveerd en haalt dit record de publicatielat
-      niet."
+      De eerste capture-poging op 2026-07-12 werd door Wayback geweigerd
+      ('already captured 1 times today, which is a daily limit we have set
+      for that Resource type'); een herindiening slaagde op 2026-07-14 (zie
+      public_archive)."
     local_snapshot: data/archives/yoga-academie-nederland/datakosten-pdf-2026-07-2026-07-14.pdf
 
 # Moduleprijzen: alle acht staan in de datakosten-PDF, onder "KOSTEN MODULES 300
