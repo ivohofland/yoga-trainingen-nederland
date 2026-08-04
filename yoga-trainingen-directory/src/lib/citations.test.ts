@@ -1,6 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
 import { CITATION_RE, collectCitations, parseCitations } from "./citations";
+import { loadDataset } from "./loader";
 
 test("CITE: a marker becomes a ref segment, the rest stays text", () => {
   const segs = parseCitations('gelden ([[ref:ya-application-guide-2026-07]]). Daarbij');
@@ -64,4 +67,51 @@ test("CITE: parseCitations/collectCitations ignore lastIndex state left on the s
   } finally {
     CITATION_RE.lastIndex = 0; // must not leak into a later test
   }
+});
+
+test("CITE: no note in the corpus renders a raw marker", () => {
+  // THE failure this design introduces. A marker that survives to the page shows a
+  // reader literal `[[ref:…]]`. Runs over the REAL corpus, not a fixture, so a citation
+  // added to any note anywhere is covered the day it lands.
+  const { providers } = loadDataset();
+  let markers = 0;
+  const walk = (node: unknown): void => {
+    if (typeof node === "string") {
+      for (const seg of parseCitations(node)) {
+        if (seg.kind === "ref") markers++;
+        else assert.ok(!seg.text.includes("[[ref:"), `raw marker survives parsing: ${seg.text}`);
+      }
+      return;
+    }
+    if (Array.isArray(node)) return node.forEach(walk);
+    if (node && typeof node === "object") return Object.values(node).forEach(walk);
+  };
+  walk(providers);
+  assert.equal(markers, 8, "the corpus should hold exactly the 8 known citations");
+});
+
+test("CITE: every note interpolation on the record page goes through <Cite>", () => {
+  // Structural, and therefore a change-detector — but the alternative is rendering a
+  // Next Server Component in node:test, which this repo does nowhere. It catches the
+  // realistic mistake: a tenth note site added later without the component.
+  //
+  // The negative lookbehind on `=` is not slack in the check: it is what keeps the check
+  // truthful once <Cite> exists at all. `<Cite text={row.note} />` and
+  // `className={styles.note}` both contain the literal substring `{row.note}` /
+  // `{styles.note}` — a PROP VALUE, not text handed straight to the reader — so a bare
+  // regex with no lookbehind flags the very call sites that route a note through <Cite>,
+  // which would make this test unsatisfiable by any correct implementation. A note
+  // rendered directly as JSX CHILD content (the actual bug: `{x.note}` with nothing
+  // consuming it) is never preceded by `=` and is still caught.
+  const src = fs.readFileSync(
+    path.join(process.cwd(), "app", "aanbieder", "[id]", "page.tsx"), "utf8");
+  const bare = [...src.matchAll(/(?<!=)\{[a-z]+\.note\}/g)].map((m) => m[0]);
+  assert.deepEqual(bare, [], `note rendered without <Cite>: ${bare.join(", ")}`);
+});
+
+test("CITE: the methodology substitutes markers before marked.parse", () => {
+  const src = fs.readFileSync(path.join(process.cwd(), "app", "methodologie", "page.tsx"), "utf8");
+  const md = fs.readFileSync(path.join(process.cwd(), "content", "methodologie.md"), "utf8");
+  assert.ok(md.includes("[[ref:"), "the methodology must cite the documents it rests on");
+  assert.match(src, /CITATION_RE|parseCitations/, "…and must convert them before rendering");
 });
