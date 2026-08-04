@@ -465,9 +465,9 @@ export const nl = {
     title: "Referenties",
     lead:
       "Normatieve documenten die bij geen enkele aanbieder horen — standaarden en regels " +
-      "van Yoga Alliance, één keer bewaard en gearchiveerd, en aangehaald vanuit notities " +
-      "met [[ref:…]]. Geen bron voor een specifiek gegeven van een school (§4.1b): dat blijft " +
-      "de bron op het record zelf.",
+      "van Yoga Alliance, één keer bewaard en gearchiveerd, en aangehaald vanuit de notities " +
+      "bij de aanbieders. Geen bron voor een specifiek gegeven van een school (§4.1b): dat " +
+      "blijft de bron op het record zelf.",
     empty: "Nog geen referenties.",
     appliesToLabel: "van toepassing op",
     supersedesLabel: "vervangt",

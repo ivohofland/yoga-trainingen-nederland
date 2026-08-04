@@ -13,6 +13,14 @@ export const CITATION_RE = /\[\[ref:([a-z0-9-]+)\]\]/g;
 
 export type CiteSegment = { kind: "text"; text: string } | { kind: "ref"; id: string };
 
+/** The ONE place a `[[ref:<id>]]` marker becomes a URL. Both rendering surfaces
+ *  (`Cite.tsx` and the methodology's pre-`marked.parse` substitution) call this
+ *  rather than building `/referenties#${id}` themselves, so the two can never
+ *  drift into linking a different path. */
+export function refHref(id: string): string {
+  return `/referenties#${id}`;
+}
+
 /** Split prose into literal text and citations. Every marker is consumed: a `text`
  *  segment can never contain one, which is what stops a reader seeing raw markup. */
 export function parseCitations(s: string): CiteSegment[] {

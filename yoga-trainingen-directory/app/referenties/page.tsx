@@ -12,6 +12,7 @@
 import { loadReferences } from "@/lib/loader";
 import { formatMonth } from "@/lib/presenters";
 import { nl } from "@/lib/strings";
+import { Cite } from "@/components/Cite";
 import type { PublicArchive, Reference } from "@/schema";
 import styles from "./page.module.css";
 
@@ -97,7 +98,13 @@ function ReferenceEntry({ data: ref }: { data: Reference }) {
         </p>
       )}
 
-      {ref.note && <p className={styles.note}>{ref.note}</p>}
+      {/* A reference's own note cross-references other references by BARE id today
+          (e.g. "zie ya-electives-2026-07" inside ya-educational-categories-2026-07's
+          note) — not the marked `[[ref:<id>]]` form, so nothing here resolves to a
+          link yet. Still routed through <Cite>, same as every other dataset-prose
+          field on this site: if a marker is ever added to a reference's own note,
+          it must not render raw, and this is the one place that guarantees it. */}
+      {ref.note && <p className={styles.note}><Cite text={ref.note} /></p>}
     </section>
   );
 }

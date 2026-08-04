@@ -21,7 +21,7 @@ import { Quad } from "@/components/Quad";
 import { inkFor, quadForInquiry } from "@/lib/quad";
 import { emailCorrectionUrl, githubCorrectionUrl } from "@/lib/corrections";
 import { nl } from "@/lib/strings";
-import { Cite } from "./Cite";
+import { Cite } from "@/components/Cite";
 import styles from "./page.module.css";
 
 export function generateStaticParams() {
@@ -32,10 +32,11 @@ export function generateStaticParams() {
 /**
  * A fact's citation: a link down to that source in the Sources section.
  *
- * NOT to be confused with `<Cite>` (./Cite.tsx), which resolves a `[[ref:<id>]]`
- * marker inside a note's prose to the shared reference store at /referenties.
- * This one is narrower: it links a FACT to the provider's OWN `sources[]` entry
- * below on this same page, so it is named `SourceCite` to keep the two apart.
+ * NOT to be confused with `<Cite>` (src/components/Cite.tsx), which resolves a
+ * `[[ref:<id>]]` marker inside a note's prose to the shared reference store at
+ * /referenties. This one is narrower: it links a FACT to the provider's OWN
+ * `sources[]` entry below on this same page, so it is named `SourceCite` to
+ * keep the two apart.
  *
  * /methodologie promises "Bij elk gegeven staat een bron en een datum … Je hoeft
  * dus noch mij, noch de AI te geloven: je kunt elke bron zelf naslaan", and the
