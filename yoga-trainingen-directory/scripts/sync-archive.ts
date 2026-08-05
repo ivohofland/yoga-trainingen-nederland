@@ -47,6 +47,14 @@ export interface SyncOptions {
   repoUrl: string;
   /** Off in tests: the two rules below are what the tests are for, not the network. */
   push: boolean;
+  /** What actually writes a file into the destination. Injected for exactly one reason:
+   *  fs.copyFileSync cannot be made to write short from inside a test, and a short write is
+   *  the failure the verification pass below exists for. A failure nobody can produce on
+   *  demand is pinned by nothing. Same move, for the same reason, as archive.ts's `Capture`
+   *  dep ("Injected so a test can drive captureNode without a browser — and, in #6, make the
+   *  capture fail on demand"). Production never passes this; defaultOptions() supplies the
+   *  real thing, and every other test in the suite exercises that default. */
+  copyFile: (src: string, dst: string) => void;
 }
 
 export function defaultOptions(): SyncOptions {
@@ -57,6 +65,7 @@ export function defaultOptions(): SyncOptions {
     repoPath:
       process.env.ARCHIVE_REPO_PATH ?? path.resolve(CWD, "..", "..", "yoga-trainingen-archief"),
     push: true,
+    copyFile: (src, dst) => fs.copyFileSync(src, dst),
   };
 }
 
@@ -290,13 +299,13 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   for (const rel of toCopy) {
     const dst = path.join(dest, rel);
     fs.mkdirSync(path.dirname(dst), { recursive: true });
-    fs.copyFileSync(path.join(o.archiveDir, rel), dst);
+    o.copyFile(path.join(o.archiveDir, rel), dst);
     // The receipt travels with the body, so the private repo is self-contained. No existence
     // check: this body is here only because publishedHash() read a hash for it OUT OF that
     // sidecar, so it is there. A conditional would describe a state the skip above has made
     // unreachable — and a dead branch is how the next reader learns the wrong invariant.
     const sidecar = sidecarFor(rel);
-    fs.copyFileSync(path.join(o.archiveDir, sidecar), path.join(dest, sidecar));
+    o.copyFile(path.join(o.archiveDir, sidecar), path.join(dest, sidecar));
     added.push(rel);
   }
 
