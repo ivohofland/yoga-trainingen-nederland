@@ -589,13 +589,19 @@ test("SYNC: a body that lands WRONG is never committed — the hash is checked A
     });
   });
 
+  // node:assert throws on the first failing assertion, so the assertion that discriminates
+  // hardest against the pre-fix code has to run first or it is never the one you see. This is
+  // the headline claim — a corrupt body WAS committed before the fix — and `mislanded` does not
+  // exist there at all, so reading it first kills the test with a TypeError and the committed
+  // corruption goes unshown.
+  const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
+  assert.doesNotMatch(msg, /^Archief:/, "a run whose write failed its own receipt must not commit");
+
   assert.equal(r!.mislanded.length, 1, "what landed fails the hash we published for it");
   assert.match(r!.mislanded[0], /site-2026-07\.pdf/, "and the body must be NAMED");
   assert.match(log, /VERKEERD aan/, "the report must say what went wrong");
   assert.match(log, /het kopiëren ging mis/, "the source is intact here, so this is a bad WRITE");
   assert.equal(process.exitCode, 1, "a run that wrote something wrong must not exit 0");
-  const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
-  assert.doesNotMatch(msg, /^Archief:/, "a run whose write failed its own receipt must not commit");
   assert.equal(r!.pushed, false);
   process.exitCode = 0;
 });
@@ -608,13 +614,20 @@ test("SYNC: a mislanded body is LEFT EXACTLY AS IT LANDED — this script repair
   const archiveDir = archiveWith("de pagina zoals een lezer hem zag");
   const repoPath = archiveRepo();
 
+  let r: ReturnType<typeof syncArchive> | undefined;
   captureLog(() => {
-    syncArchive({
+    r = syncArchive({
       archiveDir, repoPath, repoUrl: "unused", push: false,
       copyFile: shortWriteOn("site-2026-07.pdf"),
     });
   });
 
+  // The premise, asserted rather than assumed. Everything below is about bytes on disk, and
+  // bytes on disk are equally untouched by a run that never noticed anything was wrong — so
+  // deleting pass 3 outright would leave this test green under a name claiming it covers a
+  // MISLANDED body. It is also the assertion that discriminates against the pre-fix code, so
+  // it runs first.
+  assert.equal(r!.mislanded.length, 1, "the run must have REPORTED this body as mislanded");
   assert.equal(
     fs.readFileSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf"), "utf8"),
     "de p",
