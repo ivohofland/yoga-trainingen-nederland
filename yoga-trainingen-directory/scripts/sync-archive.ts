@@ -172,6 +172,13 @@ function ensureClone(o: SyncOptions): void {
  *  a run whose output may have scrolled away days ago. The gate's has to be correct WITHOUT
  *  knowing what put the files there.
  *
+ *  Which is why `reasons` is the CALLER's. Only what is true in both cases lives in the shared
+ *  body; the sentence explaining why these files must not be committed by hand is the one thing
+ *  the two refusals disagree about. The gate never verified them, and that is its reason. The
+ *  mislanded block verified them and they FAILED, which is its reason and the opposite claim.
+ *  A shared block asserting either would be read as a statement about the tree by a caller that
+ *  knows better, and be wrong half the time.
+ *
  *  `git clean` rather than `rm`: its safety is structural rather than a matter of care — it
  *  cannot remove a tracked file, and everything ever archived IS tracked. An instruction that
  *  depends on the author being careful inside an evidence tree is the instruction that once
@@ -186,14 +193,17 @@ function ensureClone(o: SyncOptions): void {
  *  The "always a copy" claim is held to a CHECK rather than asserted. It is true of everything
  *  this code can produce — the source is still in data/archives/, so the copy is never the only
  *  exemplar of anything — but the gate also fires on files no version of this script wrote, and
- *  a universal claim that is merely usually true is not one this project ships. */
-function cleanupAdvice(repoPath: string): string[] {
+ *  a universal claim that is merely usually true is not one this project ships.
+ *
+ *  It promises nothing about the NEXT run, either. Whether these paths get copied and verified
+ *  again depends on why they are here, which is precisely what this block does not know:
+ *  after a drifted source, Rule 1 refuses until a human has worked out what changed. Where the
+ *  answer is knowable, sourceVerdict() has already printed it, two lines up. */
+function cleanupAdvice(repoPath: string, reasons: string[]): string[] {
   return [
-    "  Leg hier NIETS met de hand vast: deze sync heeft deze bestanden nooit geverifieerd,",
-    "  en vastleggen is precies de bewering dat hij dat wél deed.",
+    ...reasons,
     "  Elke body die hier hoort staat óók in data/archives/. Controleer dat per pad hierboven —",
-    "  klopt het, dan is dit een kopie en nooit het enige exemplaar, en kopieert en controleert",
-    "  de volgende run hem alsnog:",
+    "  klopt het, dan is dit een kopie en nooit het enige exemplaar, en kun je hem hier weghalen:",
     `    git -C ${repoPath} clean -ndx -- ${DEST_SUBDIR}   (kijken)`,
     `    git -C ${repoPath} clean -fdx -- ${DEST_SUBDIR}   (opruimen)`,
     "  `git clean` raakt nooit iets aan dat is vastgelegd.",
@@ -299,7 +309,13 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     for (const line of dirtyLines) console.error(`    ${line.trim()}`);
     console.error("  Er is NIETS gesynchroniseerd. Een body die daar ongecommit staat telt");
     console.error("  hier als 'al vastgelegd', terwijl hij nergens geback-upt is.");
-    for (const line of cleanupAdvice(o.repoPath)) console.error(line);
+    // This refusal's own reason: the gate knows nothing about these files except that THIS run
+    // never looked at them, which is exactly what committing one would claim it did.
+    const advice = cleanupAdvice(o.repoPath, [
+      "  Leg hier NIETS met de hand vast: deze sync heeft deze bestanden nooit geverifieerd,",
+      "  en vastleggen is precies de bewering dat hij dat wél deed.",
+    ]);
+    for (const line of advice) console.error(line);
     process.exitCode = 1;
     return empty;
   }
@@ -383,8 +399,10 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   // the run is already known to be refusal-free. copyFileSync rather than writeFileSync(buf):
   // the kernel copies the file, so no body is ever held in memory here — the corpus is
   // ≈403 MB decimal (402,748,291 bytes) across 465 bodies, the largest ≈60 MB decimal
-  // (60,444,725 bytes). The cost is that these bytes are re-read rather than being the ones
-  // pass 1 hashed; the design doc records why that window is accepted.
+  // (60,444,725 bytes). These bytes are therefore re-read rather than being the ones pass 1
+  // hashed — and pass 3 below re-hashes what LANDED, which is what closes that gap: a source
+  // that drifted in the window between the two reads produces a destination that fails there,
+  // in this run.
   for (const rel of toCopy) {
     const dst = path.join(dest, rel);
     fs.mkdirSync(path.dirname(dst), { recursive: true });
@@ -453,7 +471,19 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     console.error("  dit script haalt nooit iets uit een bewijsboom — en juist dit bestand is");
     console.error("  het enige bewijs van HOE het misging.");
     for (const line of sourceVerdict(o.archiveDir, failures.map((f) => f.rel))) console.error(line);
-    for (const line of cleanupAdvice(o.repoPath)) console.error(line);
+    // This refusal's own reason, and it is the opposite of the gate's: pass 3 DID verify these
+    // files — that is why nothing was committed. The instruction is the same; the reason is not,
+    // and the reason is what makes an instruction stick.
+    // The order inside it is load-bearing. The file that failed is the only evidence of HOW it
+    // failed, and the last thing printed is the thing that gets done, so "look at it" has to
+    // come before the commands that clear it away.
+    const advice = cleanupAdvice(o.repoPath, [
+      "  Leg hier NIETS met de hand vast: deze bestanden zijn wél geverifieerd en ze klopten",
+      "  niet — daarom is er niets vastgelegd.",
+      "  Kijk er eerst zelf naar voordat je hier iets opruimt: de grootte en de inhoud van wat",
+      "  er landde zijn wat een afgebroken schrijfactie onderscheidt van iets anders.",
+    ]);
+    for (const line of advice) console.error(line);
     process.exitCode = 1;
     // No guard is needed against the "up-to-date" claim below: `added` is non-empty whenever
     // `mislanded` is, so that early return is unreachable from here. #7 had to ADD such a
@@ -491,9 +521,11 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   // every body in this commit really was verified, so the sentence is true as written. The
   // extra line exists so the archive's own history cannot read as a complete backup when it
   // was not; it counts what stayed behind without naming files this repo does not contain.
-  // (Verified against the bytes pass 1 read, not the bytes pass 2 wrote: a source body edited
-  // in that window would ship unverified, but Rule 1 or Rule 2 catches the mismatch on the
-  // NEXT run — see the design doc's "cost this accepts" section.)
+  // Verified against the bytes that actually LANDED, which is what the sentence claims: pass 3
+  // re-hashed every body in this commit where it now sits in the destination, against the hash
+  // the public repo published for it, and refuses before `git commit` if one disagrees. So a
+  // commit can only exist for a run whose landed bytes matched — the attestation is about the
+  // files this repo holds, not about the source they were copied from.
   const body =
     "De bodies horend bij de hashes die in de publieke repo staan.\n\n" +
     added.map((r) => `  ${r}`).join("\n") +
