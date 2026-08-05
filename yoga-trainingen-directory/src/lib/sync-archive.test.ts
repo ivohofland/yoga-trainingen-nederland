@@ -90,6 +90,16 @@ function addVerifiedBodyBefore(dir: string): string {
   return rel;
 }
 
+/** A `copyFile` that lands the file whose path ends in `needle` SHORT — four bytes — and
+ *  copies everything else faithfully. This is the disk-full / killed-mid-write / flushed-late
+ *  failure, and there is no way to make the real fs.copyFileSync do it from inside a test.
+ *  Selective on purpose: pass 3 checks the body and its receipt separately, and a fake that
+ *  broke both at once could not tell the two checks apart. */
+const shortWriteOn = (needle: string) => (src: string, dst: string) =>
+  src.endsWith(needle)
+    ? fs.writeFileSync(dst, fs.readFileSync(src).subarray(0, 4))
+    : fs.copyFileSync(src, dst);
+
 /** A git repo standing in for the private archive, with a real `origin` to push to. */
 function archiveRepo(): string {
   const bare = fs.mkdtempSync(path.join(os.tmpdir(), "sync-origin-"));
@@ -443,6 +453,7 @@ test("SYNC: a clean multi-body run still copies every body AND every receipt", (
   const r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
 
   assert.deepEqual(r.refused, []);
+  assert.deepEqual(r.mislanded, [], "a clean run must not become a new way to stop backing evidence up");
   assert.deepEqual(
     r.added,
     [earlier, path.join("testco", "site-2026-07.pdf")],
@@ -549,5 +560,110 @@ test("SYNC: a stray non-junk file alongside a .DS_Store still halts the run", ()
     "the run must still refuse — one real leftover is enough, junk or no junk",
   );
   assert.equal(process.exitCode, 1);
+  process.exitCode = 0;
+});
+
+test("SYNC: a body that lands WRONG is never committed — the hash is checked AFTER the write", () => {
+  // Passes 1 and 2 both work from the SOURCE: pass 1 hashes the bytes it reads, pass 2
+  // re-reads that same file to copy it. Neither ever looks at what arrived, so a short write
+  // shipped and committed under a message attesting every body was verified — and then
+  // deadlocked the next run on Rule 2, a state this script created itself.
+  const archiveDir = archiveWith("de pagina zoals een lezer hem zag");
+  const repoPath = archiveRepo();
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  const log = captureLog(() => {
+    r = syncArchive({
+      archiveDir, repoPath, repoUrl: "unused", push: false,
+      copyFile: shortWriteOn("site-2026-07.pdf"),
+    });
+  });
+
+  assert.equal(r!.mislanded.length, 1, "what landed fails the hash we published for it");
+  assert.match(r!.mislanded[0], /site-2026-07\.pdf/, "and the body must be NAMED");
+  assert.match(log, /VERKEERD aan/, "the report must say what went wrong");
+  assert.equal(process.exitCode, 1, "a run that wrote something wrong must not exit 0");
+  const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
+  assert.doesNotMatch(msg, /^Archief:/, "a run whose write failed its own receipt must not commit");
+  assert.equal(r!.pushed, false);
+  process.exitCode = 0;
+});
+
+test("SYNC: a mislanded body is LEFT EXACTLY AS IT LANDED — this script repairs nothing", () => {
+  // Deleting it would be the obvious tidy-up and it is forbidden twice over: this script
+  // never removes from an evidence tree, and that file is the only evidence of HOW the write
+  // failed. A body whose length is a fraction of its source says "disk full" to a human, and
+  // says nothing at all once it is gone.
+  const archiveDir = archiveWith("de pagina zoals een lezer hem zag");
+  const repoPath = archiveRepo();
+
+  captureLog(() => {
+    syncArchive({
+      archiveDir, repoPath, repoUrl: "unused", push: false,
+      copyFile: shortWriteOn("site-2026-07.pdf"),
+    });
+  });
+
+  assert.equal(
+    fs.readFileSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf"), "utf8"),
+    "de p",
+    "the failed copy must still be there, unrepaired and unremoved",
+  );
+  assert.equal(
+    fs.readFileSync(path.join(archiveDir, "testco", "site-2026-07.pdf"), "utf8"),
+    "de pagina zoals een lezer hem zag",
+    "and the SOURCE must be untouched — nothing under data/archives/ is ever written by a sync",
+  );
+  process.exitCode = 0;
+});
+
+test("SYNC: pass 3 checks EVERY body it wrote, not up to the first failure", () => {
+  // The mirror of the sort trap that hid #20's defect. If the loop stopped at the first
+  // failure, `mislanded` would still be non-empty and every assertion above would pass while
+  // the second corrupt body went unnamed.
+  const archiveDir = archiveWith("de pagina");
+  addVerifiedBodyBefore(archiveDir);
+  const repoPath = archiveRepo();
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  captureLog(() => {
+    r = syncArchive({
+      archiveDir, repoPath, repoUrl: "unused", push: false,
+      copyFile: shortWriteOn(".pdf"),
+    });
+  });
+
+  assert.equal(r!.mislanded.length, 2, "both bodies landed short and both must be named");
+  assert.match(r!.mislanded[0], /aaaco/);
+  assert.match(r!.mislanded[1], /testco/);
+  process.exitCode = 0;
+});
+
+test("SYNC: one body landing wrong does not un-write the good copies — `added` says what is on disk", () => {
+  // localBodies() sorts, so aaaco is copied first; here it is the one that lands short and
+  // testco lands fine. `added` must still hold BOTH, because both really are in the
+  // destination working tree. Emptying it would rebuild the exact lie #20 removed: a return
+  // value describing a tree tidier than the one on disk.
+  const archiveDir = archiveWith("de pagina");
+  const earlier = addVerifiedBodyBefore(archiveDir);
+  const repoPath = archiveRepo();
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  captureLog(() => {
+    r = syncArchive({
+      archiveDir, repoPath, repoUrl: "unused", push: false,
+      copyFile: shortWriteOn("eerder-2026-07.pdf"),
+    });
+  });
+
+  assert.deepEqual(r!.added, [earlier, path.join("testco", "site-2026-07.pdf")], "both were WRITTEN");
+  assert.equal(r!.mislanded.length, 1, "only one of them landed wrong");
+  assert.match(r!.mislanded[0], /eerder-2026-07\.pdf/);
+  assert.equal(r!.pushed, false, "and nothing reached the archive");
+  assert.equal(
+    fs.readFileSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf"), "utf8"),
+    "de pagina",
+    "the good copy is left alone too — this script removes nothing, ever",
+  );
   process.exitCode = 0;
 });
