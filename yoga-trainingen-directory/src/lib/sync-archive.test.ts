@@ -100,6 +100,16 @@ const shortWriteOn = (needle: string) => (src: string, dst: string) =>
     ? fs.writeFileSync(dst, fs.readFileSync(src).subarray(0, 4))
     : fs.copyFileSync(src, dst);
 
+/** A `copyFile` that rewrites the SOURCE and then copies it faithfully — the
+ *  time-of-check/time-of-use drift #20 accepted between its two passes, and which pass 3
+ *  closes. The destination ends up a perfect copy of a file that is no longer the one pass 1
+ *  verified. That is a different event from a short write and needs the opposite response
+ *  from the author, so the report must not confuse the two. */
+const driftingCopy = (src: string, dst: string) => {
+  if (src.endsWith(".pdf")) fs.writeFileSync(src, "de bron veranderde onder ons");
+  fs.copyFileSync(src, dst);
+};
+
 /** A git repo standing in for the private archive, with a real `origin` to push to. */
 function archiveRepo(): string {
   const bare = fs.mkdtempSync(path.join(os.tmpdir(), "sync-origin-"));
@@ -582,6 +592,7 @@ test("SYNC: a body that lands WRONG is never committed — the hash is checked A
   assert.equal(r!.mislanded.length, 1, "what landed fails the hash we published for it");
   assert.match(r!.mislanded[0], /site-2026-07\.pdf/, "and the body must be NAMED");
   assert.match(log, /VERKEERD aan/, "the report must say what went wrong");
+  assert.match(log, /het kopiëren ging mis/, "the source is intact here, so this is a bad WRITE");
   assert.equal(process.exitCode, 1, "a run that wrote something wrong must not exit 0");
   const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
   assert.doesNotMatch(msg, /^Archief:/, "a run whose write failed its own receipt must not commit");
@@ -698,5 +709,19 @@ test("SYNC: a PERFECT body whose RECEIPT landed corrupt is mislanded too", () =>
     "de pagina",
     "the body itself landed perfectly — that is the whole point of this fixture",
   );
+  process.exitCode = 0;
+});
+
+test("SYNC: when the SOURCE drifted, the report says so — not that the copy broke", () => {
+  const archiveDir = archiveWith("de pagina");
+  const repoPath = archiveRepo();
+
+  const log = captureLog(() => {
+    syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false, copyFile: driftingCopy });
+  });
+
+  assert.match(log, /VERKEERD aan/, "it is still a mislanded body");
+  assert.match(log, /de BRON is veranderd/, "and the cause is an evidence event, not a bad disk");
+  assert.doesNotMatch(log, /het kopiëren ging mis/, "which is the opposite of what a short write means");
   process.exitCode = 0;
 });
