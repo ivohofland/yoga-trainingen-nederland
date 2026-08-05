@@ -667,3 +667,31 @@ test("SYNC: one body landing wrong does not un-write the good copies — `added`
   );
   process.exitCode = 0;
 });
+
+test("SYNC: a PERFECT body whose RECEIPT landed corrupt is mislanded too", () => {
+  // The receipt is what makes the private repo self-contained — pass 2's own comment says so.
+  // A body arriving beside a garbled .sha256 is a body nobody downstream can verify, which is
+  // exactly as broken as a garbled body. A fix that hashes only bodies is green on every test
+  // above and blind to this.
+  const archiveDir = archiveWith("de pagina");
+  const repoPath = archiveRepo();
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  captureLog(() => {
+    r = syncArchive({
+      archiveDir, repoPath, repoUrl: "unused", push: false,
+      copyFile: shortWriteOn("site-2026-07.sha256"),
+    });
+  });
+
+  assert.equal(r!.mislanded.length, 1);
+  assert.match(r!.mislanded[0], /\.sha256/, "the report must say it is the RECEIPT that failed");
+  assert.equal(
+    fs.readFileSync(path.join(repoPath, DEST_SUBDIR, "testco", "site-2026-07.pdf"), "utf8"),
+    "de pagina",
+    "the body itself landed perfectly — that is the whole point of this fixture",
+  );
+  const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
+  assert.doesNotMatch(msg, /^Archief:/, "and it must not be committed");
+  process.exitCode = 0;
+});
