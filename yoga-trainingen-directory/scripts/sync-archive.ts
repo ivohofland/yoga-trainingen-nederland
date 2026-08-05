@@ -83,6 +83,13 @@ export interface SyncResult {
    *  left behind. Collapsing the two would either let one forgotten sidecar block every
    *  provider's backup, or stop a genuine mismatch being an emergency. */
   skipped: string[];
+  /** Bodies this run WROTE into the destination whose landed bytes do not match the hash the
+   *  public repo published for them. NOT folded into `refused`, for the reason #7 refused to
+   *  fold `skipped` into it: a Rule 1 or Rule 2 refusal carries the guarantee that the
+   *  destination was never touched, and this carries the opposite. Nothing is committed and
+   *  nothing is pushed — and nothing is deleted either.
+   *  See docs/superpowers/specs/2026-08-05-sync-verify-what-landed-design.md */
+  mislanded: string[];
   pushed: boolean;
 }
 
@@ -161,7 +168,14 @@ function ensureClone(o: SyncOptions): void {
 
 export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   const o: SyncOptions = { ...defaultOptions(), ...opts };
-  const empty: SyncResult = { added: [], unchanged: 0, refused: [], skipped: [], pushed: false };
+  const empty: SyncResult = {
+    added: [],
+    unchanged: 0,
+    refused: [],
+    skipped: [],
+    mislanded: [],
+    pushed: false,
+  };
   if (!fs.existsSync(o.archiveDir)) return empty;
 
   try {
@@ -287,7 +301,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     console.error("  Er is NIETS gepusht. Een hash is een bewering over precies deze bytes —");
     console.error("  hash de file niet opnieuw, zoek uit waaróm hij veranderd is.");
     process.exitCode = 1;
-    return { added: [], unchanged, refused, skipped, pushed: false };
+    return { added: [], unchanged, refused, skipped, mislanded: [], pushed: false };
   }
 
   // PASS 2 — WRITE. This pass decides NOTHING; every body here was classified in pass 1 and
@@ -309,11 +323,62 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     added.push(rel);
   }
 
+  // PASS 3 — VERIFY WHAT LANDED. Passes 1 and 2 both work from the SOURCE, so nothing here
+  // had ever looked at the destination: a short write — disk full, a process killed
+  // mid-write, a filesystem reporting success before it flushed — shipped and committed under
+  // a message attesting that every body was verified, and then deadlocked the NEXT run on
+  // Rule 2, against a state this script created itself.
+  //
+  // The authority is the SOURCE-side sidecar — the one the public repo committed — never the
+  // destination's own copy of it. A receipt that landed corrupt could agree with a body that
+  // landed corrupt, and comparing a file to the receipt that travelled with it proves only
+  // that the two arrived together.
+  //
+  // This also closes the time-of-check/time-of-use window #20 accepted between passes 1 and
+  // 2: a source that drifted in it produces a destination that fails this check, in the same
+  // run rather than on the next one.
+  //
+  // It iterates `added` and nothing else, deliberately. An `unchanged` body was already
+  // verified from the destination side in THIS run — pass 1 read the destination and compared
+  // it against a source buffer it had just matched to the published hash — and `skipped` and
+  // `refused` bodies were never written at all. So this reads exactly the bytes this run
+  // wrote: nothing on a no-op run, which is almost every run.
+  const failures: { rel: string; why: string }[] = [];
+  for (const rel of added) {
+    // publishedHash() is non-null for everything in `added` — pass 1 read a hash for each of
+    // them out of that same sidecar. A null HERE is therefore not #7's gap ("no receipt was
+    // ever published"); it means the sidecar stopped listing this body while we ran, which is
+    // a landing that cannot be vouched for either way.
+    const want = publishedHash(o.archiveDir, rel);
+    if (want === null || sha256(fs.readFileSync(path.join(dest, rel))) !== want) {
+      failures.push({ rel, why: "wat er landde komt niet overeen met de gepubliceerde hash" });
+    }
+  }
+  const mislanded = failures.map((f) => `${f.rel} — ${f.why}`);
+
+  if (mislanded.length) {
+    console.error(`\n✗ archief: ${mislanded.length} body/bodies kwamen VERKEERD aan in de kloon:`);
+    for (const m of mislanded) console.error(`    ${m}`);
+    console.error("  Er is NIETS vastgelegd en NIETS gepusht. Er is ook niets verwijderd:");
+    console.error("  dit script haalt nooit iets uit een bewijsboom — en juist dit bestand is");
+    console.error("  het enige bewijs van HOE het misging.");
+    process.exitCode = 1;
+    // No guard is needed against the "up-to-date" claim below: `added` is non-empty whenever
+    // `mislanded` is, so that early return is unreachable from here. #7 had to ADD such a
+    // guard for `skipped`, so the next reader will look for one — this is why there isn't.
+    //
+    // `added` is deliberately NOT emptied. Those files really are in the destination working
+    // tree; `added` means WRITTEN and `pushed` means IN THE ARCHIVE, and the two were only
+    // ever equal by luck. Returning `added: []` here would rebuild, in the code that fixes
+    // it, the same lie #20 closed: a result describing a tree tidier than the one on disk.
+    return { added, unchanged, refused, skipped, mislanded, pushed: false };
+  }
+
   if (!added.length) {
     // "up-to-date" is a claim of COMPLETENESS. A run that skipped something is not entitled
     // to it; the skip report and its non-zero exit have already fired above.
     if (!skipped.length) console.log(`archief: up-to-date (${unchanged} bodies al vastgelegd).`);
-    return { added, unchanged, refused, skipped, pushed: false };
+    return { added, unchanged, refused, skipped, mislanded, pushed: false };
   }
 
   // --force ON PURPOSE. The private repo is a copy of the project, so it can inherit the
@@ -325,7 +390,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   if (!git(o.repoPath, ["diff", "--cached", "--name-only"]).trim()) {
     console.error("✗ archief: bodies gekopieerd, maar git stagede niets — negeert de archiefrepo ze?");
     process.exitCode = 1;
-    return { added, unchanged, refused, skipped, pushed: false };
+    return { added, unchanged, refused, skipped, mislanded, pushed: false };
   }
 
   const providers = [...new Set(added.map((r) => r.split(path.sep)[0]))].sort();
@@ -347,13 +412,13 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
       : "");
   git(o.repoPath, ["commit", "--quiet", "-m", subject, "-m", body]);
 
-  if (!o.push) return { added, unchanged, refused, skipped, pushed: false };
+  if (!o.push) return { added, unchanged, refused, skipped, mislanded, pushed: false };
 
   process.stdout.write(`archief: ${added.length} nieuwe body/bodies — pushen… `);
   git(o.repoPath, ["push", "--quiet", "origin", "main"]);
   console.log("ok");
   console.log(`  ${providers.length} aanbieder(s): ${providers.join(", ")}`);
-  return { added, unchanged, refused, skipped, pushed: true };
+  return { added, unchanged, refused, skipped, mislanded, pushed: true };
 }
 
 // Direct aanroepbaar: `npx tsx scripts/sync-archive.ts`
