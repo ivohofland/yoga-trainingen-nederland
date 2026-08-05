@@ -725,3 +725,39 @@ test("SYNC: when the SOURCE drifted, the report says so — not that the copy br
   assert.doesNotMatch(log, /het kopiëren ging mis/, "which is the opposite of what a short write means");
   process.exitCode = 0;
 });
+
+test("SYNC: the run AFTER a mislanded one is refused — and told NOT to commit the debris", () => {
+  // Pass 3 commits nothing and deletes nothing, so the clone is left holding untracked files:
+  // precisely the state #20's dirty-clone gate refuses to sync on top of. The deadlock is
+  // correct and deliberate. What the author is TOLD about it is the design work — and the
+  // gate's old advice, "commit what belongs", is how the corrupt body would enter history.
+  const archiveDir = archiveWith("de pagina");
+  const repoPath = archiveRepo();
+  captureLog(() => {
+    syncArchive({
+      archiveDir, repoPath, repoUrl: "unused", push: false,
+      copyFile: shortWriteOn("site-2026-07.pdf"),
+    });
+  });
+  process.exitCode = 0;
+
+  let r: ReturnType<typeof syncArchive> | undefined;
+  const log = captureLog(() => {
+    r = syncArchive({ archiveDir, repoPath, repoUrl: "unused", push: false });
+  });
+
+  assert.match(log, /niet-vastgelegde/, "the gate must fire on the debris the failed run left");
+  assert.match(log, /site-2026-07\.pdf/, "and name it, or the refusal is unactionable");
+  assert.doesNotMatch(log, /leg vast wat er wél hoort/, "committing it is how the bad body enters history");
+  // Assert the whole COMMAND, not just the repo path: ensureClone() already prints that path
+  // ("archief: <repoPath> — bijwerken… "), so a bare path assertion would pass against a
+  // message that left `<repo>` in the command for the author to fill in by hand.
+  const escaped = repoPath.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  assert.match(log, new RegExp(`git -C ${escaped} clean -fdx`),
+    "the command must arrive complete — one completed by hand is one completed wrongly");
+  assert.match(log, /raakt nooit iets aan dat is vastgelegd/,
+    "and it must say WHY that command is safe, or it reads as `rm` in an evidence tree");
+  assert.deepEqual(r!.added, [], "and nothing is synced on top of a tree nobody can account for");
+  assert.equal(process.exitCode, 1);
+  process.exitCode = 0;
+});

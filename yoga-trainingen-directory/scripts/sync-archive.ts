@@ -166,6 +166,40 @@ function ensureClone(o: SyncOptions): void {
   execFileSync("git", ["clone", "--quiet", o.repoUrl, o.repoPath], { stdio: "inherit" });
 }
 
+/** What to do with untracked files under the archive subdirectory of the clone. Printed by
+ *  BOTH refusals that can leave them — the dirty-clone gate and the mislanded block — because
+ *  both leave the author facing the same tree, and because the specific message prints once, in
+ *  a run whose output may have scrolled away days ago. The gate's has to be correct WITHOUT
+ *  knowing what put the files there.
+ *
+ *  `git clean` rather than `rm`: its safety is structural rather than a matter of care — it
+ *  cannot remove a tracked file, and everything ever archived IS tracked. An instruction that
+ *  depends on the author being careful inside an evidence tree is the instruction that once
+ *  destroyed 364 lines of unrecoverable research.
+ *
+ *  `-x` is deliberate, and pairs with the gate's own `--ignored`. The private repo can inherit
+ *  the PUBLIC repo's .gitignore — which is exactly why `git add --force` exists further down —
+ *  and without `-x` a body the gate has just listed could be one `clean` silently declines to
+ *  remove. An instruction that appears to do nothing is worse than no instruction. It stays
+ *  safe for the reason above: tracked files are untouchable either way.
+ *
+ *  The "always a copy" claim is held to a CHECK rather than asserted. It is true of everything
+ *  this code can produce — the source is still in data/archives/, so the copy is never the only
+ *  exemplar of anything — but the gate also fires on files no version of this script wrote, and
+ *  a universal claim that is merely usually true is not one this project ships. */
+function cleanupAdvice(repoPath: string): string[] {
+  return [
+    "  Leg hier NIETS met de hand vast: deze sync heeft deze bestanden nooit geverifieerd,",
+    "  en vastleggen is precies de bewering dat hij dat wél deed.",
+    "  Elke body die hier hoort staat óók in data/archives/. Controleer dat per pad hierboven —",
+    "  klopt het, dan is dit een kopie en nooit het enige exemplaar, en kopieert en controleert",
+    "  de volgende run hem alsnog:",
+    `    git -C ${repoPath} clean -ndx -- ${DEST_SUBDIR}   (kijken)`,
+    `    git -C ${repoPath} clean -fdx -- ${DEST_SUBDIR}   (opruimen)`,
+    "  `git clean` raakt nooit iets aan dat is vastgelegd.",
+  ];
+}
+
 /** WHICH of the two causes a mislanded body had. A landed body can fail its published hash
  *  because the WRITE was short or corrupt (the source is fine), or because the SOURCE drifted
  *  between pass 1's hash and pass 2's read. They are not the same event and the author must do
@@ -265,8 +299,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     for (const line of dirtyLines) console.error(`    ${line.trim()}`);
     console.error("  Er is NIETS gesynchroniseerd. Een body die daar ongecommit staat telt");
     console.error("  hier als 'al vastgelegd', terwijl hij nergens geback-upt is.");
-    console.error("  Verwijder wat hier niet hoort, leg vast wat er wél hoort, en draai daarna");
-    console.error("  opnieuw.");
+    for (const line of cleanupAdvice(o.repoPath)) console.error(line);
     process.exitCode = 1;
     return empty;
   }
@@ -420,6 +453,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     console.error("  dit script haalt nooit iets uit een bewijsboom — en juist dit bestand is");
     console.error("  het enige bewijs van HOE het misging.");
     for (const line of sourceVerdict(o.archiveDir, failures.map((f) => f.rel))) console.error(line);
+    for (const line of cleanupAdvice(o.repoPath)) console.error(line);
     process.exitCode = 1;
     // No guard is needed against the "up-to-date" claim below: `added` is non-empty whenever
     // `mislanded` is, so that early return is unreachable from here. #7 had to ADD such a
