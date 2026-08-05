@@ -352,6 +352,21 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     const want = publishedHash(o.archiveDir, rel);
     if (want === null || sha256(fs.readFileSync(path.join(dest, rel))) !== want) {
       failures.push({ rel, why: "wat er landde komt niet overeen met de gepubliceerde hash" });
+      continue; // one finding per body: a corrupt landing is a corrupt landing, said once.
+    }
+    // The receipt must arrive whole as well. Byte equality rather than a hash check, because
+    // nothing publishes a hash OF a sidecar. Pass 2 claims the receipt travels with the body
+    // "so the private repo is self-contained"; this is what makes that a verified statement
+    // rather than an assumption.
+    // One sidecar can serve SEVERAL bodies — `site.html` and `site.pdf` share `site.sha256`,
+    // the JS-rendered-price pair this whole archive is built around — so it is compared once
+    // per body. `mislanded` is keyed by body, and a receipt that landed corrupt has broken the
+    // evidence for both of them: two entries there is the correct report, not a duplicate.
+    const sidecar = sidecarFor(rel);
+    const landedReceipt = fs.readFileSync(path.join(dest, sidecar));
+    const sourceReceipt = fs.readFileSync(path.join(o.archiveDir, sidecar));
+    if (Buffer.compare(landedReceipt, sourceReceipt) !== 0) {
+      failures.push({ rel, why: "de .sha256 ernaast is niet heel aangekomen" });
     }
   }
   const mislanded = failures.map((f) => `${f.rel} — ${f.why}`);
