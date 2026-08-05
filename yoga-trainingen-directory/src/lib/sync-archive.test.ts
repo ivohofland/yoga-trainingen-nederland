@@ -684,6 +684,13 @@ test("SYNC: a PERFECT body whose RECEIPT landed corrupt is mislanded too", () =>
     });
   });
 
+  // node:assert throws on the first failing assertion, so the assertion that discriminates
+  // hardest against the pre-fix code has to run first or it is never the one you see.
+  // The `doesNotMatch(/^Archief:/)` proves a corrupt receipt gets committed pre-fix, and it
+  // must run before `mislanded.length`, whose failure would otherwise hide it.
+  const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
+  assert.doesNotMatch(msg, /^Archief:/, "and it must not be committed");
+
   assert.equal(r!.mislanded.length, 1);
   assert.match(r!.mislanded[0], /\.sha256/, "the report must say it is the RECEIPT that failed");
   assert.equal(
@@ -691,7 +698,5 @@ test("SYNC: a PERFECT body whose RECEIPT landed corrupt is mislanded too", () =>
     "de pagina",
     "the body itself landed perfectly — that is the whole point of this fixture",
   );
-  const msg = execFileSync("git", ["log", "-1", "--format=%B"], { cwd: repoPath, encoding: "utf8" });
-  assert.doesNotMatch(msg, /^Archief:/, "and it must not be committed");
   process.exitCode = 0;
 });
