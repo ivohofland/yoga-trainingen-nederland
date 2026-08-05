@@ -166,6 +166,48 @@ function ensureClone(o: SyncOptions): void {
   execFileSync("git", ["clone", "--quiet", o.repoUrl, o.repoPath], { stdio: "inherit" });
 }
 
+/** WHICH of the two causes a mislanded body had. A landed body can fail its published hash
+ *  because the WRITE was short or corrupt (the source is fine), or because the SOURCE drifted
+ *  between pass 1's hash and pass 2's read. They are not the same event and the author must do
+ *  opposite things about them, so this reports what it can see NOW rather than guessing.
+ *
+ *  A source we cannot READ is a third answer, kept separate on purpose: an artifact we hold but
+ *  cannot open is a hole in our own tooling, not a finding about the file. Collapsing that into
+ *  "the source is wrong" is the `strings` mistake that put a false sentence about a named
+ *  business into the dataset. */
+function sourceVerdict(archiveDir: string, rels: string[]): string[] {
+  const drifted: string[] = [];
+  const unreadable: string[] = [];
+  for (const rel of rels) {
+    try {
+      const want = publishedHash(archiveDir, rel);
+      if (want === null || sha256(fs.readFileSync(path.join(archiveDir, rel))) !== want) {
+        drifted.push(rel);
+      }
+    } catch {
+      unreadable.push(rel);
+    }
+  }
+  if (unreadable.length) {
+    return [
+      "  Het bronbestand in data/archives/ is NIET te lezen. Dat is een gat in ons eigen",
+      "  gereedschap, geen bevinding over dat bestand — zoek dát eerst uit.",
+    ];
+  }
+  if (drifted.length) {
+    return [
+      "  Het bronbestand in data/archives/ klopt ZELF niet meer met zijn gepubliceerde hash.",
+      "  Het kopiëren ging goed; de BRON is veranderd. Zoek uit waaróm — hash hem niet",
+      "  opnieuw. Opruimen in de kloon is veilig, maar de volgende run weigert terecht",
+      "  onder regel 1 tot dit is uitgezocht.",
+    ];
+  }
+  return [
+    "  Het bronbestand in data/archives/ klopt zelf nog wél met zijn gepubliceerde hash —",
+    "  het kopiëren ging mis, niet de capture.",
+  ];
+}
+
 export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
   const o: SyncOptions = { ...defaultOptions(), ...opts };
   const empty: SyncResult = {
@@ -377,6 +419,7 @@ export function syncArchive(opts: Partial<SyncOptions> = {}): SyncResult {
     console.error("  Er is NIETS vastgelegd en NIETS gepusht. Er is ook niets verwijderd:");
     console.error("  dit script haalt nooit iets uit een bewijsboom — en juist dit bestand is");
     console.error("  het enige bewijs van HOE het misging.");
+    for (const line of sourceVerdict(o.archiveDir, failures.map((f) => f.rel))) console.error(line);
     process.exitCode = 1;
     // No guard is needed against the "up-to-date" claim below: `added` is non-empty whenever
     // `mislanded` is, so that early return is unreachable from here. #7 had to ADD such a
